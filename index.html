@@ -9,100 +9,1474 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
 
-<style>
-/* =========================================================
-   SOFT HANDWRITTEN TYPOGRAPHY
-========================================================= */
+  <style>
+    :root{
+      --ink:#10162a;
+      --muted:#71778a;
+      --purple:#8069eb;
+      --blue:#74aef3;
+      --mint:#89d9c5;
+      --line:rgba(28,35,65,.08);
+    }
 
-/* 큰 날짜 */
-.next-date{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:72px;
-  letter-spacing:-2px;
-  font-weight:400;
-}
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
 
-/* 날짜 옆 요일 */
-.next-date small{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:22px;
-  font-weight:400;
-  letter-spacing:0;
-}
+    html{
+      scroll-behavior:smooth;
+    }
 
-/* 다가오는 일정 카드 날짜 */
-.event-date{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:40px;
-  letter-spacing:-1px;
-  font-weight:400;
-}
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:"Noto Sans KR",sans-serif;
+      color:var(--ink);
+      background:#f8f7fa;
+    }
 
-.event-date small{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:18px;
-  font-weight:400;
-}
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
 
-/* NEXT LIVE / Upcoming / Notice 같은 포인트 영문 */
-.next-top,
-.event-dday{
-  font-family:"Nanum Pen Script", cursive;
-  letter-spacing:.5px;
-  font-size:16px;
-}
+    button{
+      font:inherit;
+      color:inherit;
+    }
 
-/* LIVE 제목도 살짝 부드럽게 */
-.next-live h3{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:27px;
-  font-weight:400;
-}
+    /* ==============================
+       AURORA BACKGROUND
+    ============================== */
 
-/* 카드 안 이벤트명 */
-.event-name{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:21px;
-  font-weight:400;
-}
+    .aurora{
+      position:fixed;
+      inset:0;
+      z-index:-10;
+      overflow:hidden;
+      background:
+        linear-gradient(
+          180deg,
+          #f7f4fa 0%,
+          #f7f6fa 55%,
+          #faf9fb 100%
+        );
+    }
 
-/* D-DAY 알약 */
-.d-day{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:17px;
-  font-weight:400;
-}
+    .aurora::before{
+      content:"";
+      position:absolute;
+      width:1200px;
+      height:700px;
+      top:-300px;
+      right:-260px;
+      border-radius:50%;
+      background:
+        radial-gradient(
+          ellipse at 28% 55%,
+          rgba(139,220,214,.76) 0%,
+          rgba(139,220,214,.33) 25%,
+          transparent 54%
+        ),
+        radial-gradient(
+          ellipse at 53% 38%,
+          rgba(151,173,248,.71) 0%,
+          rgba(151,173,248,.28) 27%,
+          transparent 57%
+        ),
+        radial-gradient(
+          ellipse at 73% 45%,
+          rgba(188,151,244,.66) 0%,
+          rgba(188,151,244,.27) 24%,
+          transparent 54%
+        ),
+        radial-gradient(
+          ellipse at 86% 63%,
+          rgba(239,180,221,.47) 0%,
+          transparent 47%
+        );
+      filter:blur(55px);
+      transform:rotate(-14deg);
+      animation:auroraMove 15s ease-in-out infinite alternate;
+    }
 
-/* ABOUT VOM / 카드 내 포인트 텍스트도 살짝 통일 */
-.about-link,
-.more{
-  font-family:"Nanum Pen Script", cursive;
-  font-size:17px;
-}
+    .aurora::after{
+      content:"";
+      position:absolute;
+      width:650px;
+      height:650px;
+      left:-350px;
+      top:80px;
+      border-radius:50%;
+      background:
+        radial-gradient(
+          circle,
+          rgba(215,198,244,.36),
+          rgba(229,219,245,.16) 35%,
+          transparent 70%
+        );
+      filter:blur(35px);
+    }
 
-/* 모바일 */
-@media(max-width:760px){
+    @keyframes auroraMove{
+      from{
+        transform:translate3d(-2%,0,0) rotate(-14deg) scale(1);
+      }
+      to{
+        transform:translate3d(4%,4%,0) rotate(-9deg) scale(1.08);
+      }
+    }
 
-  .next-date{
-    font-size:62px;
-  }
+    .light-line{
+      position:fixed;
+      z-index:-9;
+      right:-130px;
+      top:70px;
+      width:760px;
+      height:500px;
+      opacity:.38;
+      pointer-events:none;
+      transform:rotate(-17deg);
+      background:
+        linear-gradient(
+          90deg,
+          transparent 18%,
+          rgba(255,255,255,.7) 49%,
+          transparent 53%
+        );
+      filter:blur(11px);
+    }
 
-  .next-date small{
-    font-size:19px;
-  }
+    /* ==============================
+       LAYOUT
+    ============================== */
 
-  .event-date{
-    font-size:35px;
-  }
+    .wrap{
+      width:min(1100px,100%);
+      margin:auto;
+      padding:0 30px 125px;
+    }
 
-  .event-date small{
-    font-size:16px;
-  }
+    /* ==============================
+       HEADER
+    ============================== */
 
-  .next-live h3{
-    font-size:24px;
-  }
+    header{
+      position:relative;
+      z-index:20;
+    }
 
-}
+    .header-inner{
+      width:min(1100px,100%);
+      height:88px;
+      margin:auto;
+      padding:0 30px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .logo{
+      display:flex;
+      flex-direction:column;
+    }
+
+    .logo strong{
+      font-size:29px;
+      line-height:1;
+      font-weight:800;
+      letter-spacing:-1px;
+    }
+
+    .logo small{
+      margin-top:5px;
+      font-size:9px;
+      font-weight:700;
+      letter-spacing:3px;
+    }
+
+    .menu-button{
+      width:52px;
+      height:52px;
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:50%;
+      background:rgba(255,255,255,.67);
+      box-shadow:0 12px 30px rgba(30,37,75,.08);
+      backdrop-filter:blur(18px);
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+    }
+
+    .menu-icon{
+      width:19px;
+      display:grid;
+      gap:5px;
+    }
+
+    .menu-icon span{
+      height:1.5px;
+      border-radius:10px;
+      background:#151b31;
+    }
+
+    /* ==============================
+       HERO
+    ============================== */
+
+    .hero{
+      min-height:540px;
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      align-items:center;
+      gap:62px;
+      padding:70px 0 70px;
+    }
+
+    .hero-eyebrow{
+      display:flex;
+      align-items:center;
+      gap:15px;
+      margin-bottom:22px;
+      color:#42495e;
+      font-size:13px;
+    }
+
+    .hero-eyebrow::before{
+      content:"";
+      width:42px;
+      height:1px;
+      background:#444b61;
+    }
+
+    .hero-title{
+      margin:0;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:clamp(125px,17vw,195px);
+      line-height:.69;
+      font-weight:400;
+      letter-spacing:-9px;
+      color:#11172c;
+    }
+
+    .hero-brand{
+      margin:18px 0 0 8px;
+      font-size:14px;
+      font-weight:600;
+      letter-spacing:10px;
+    }
+
+    .hero-script{
+      margin:31px 0 0 7px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:31px;
+      background:
+        linear-gradient(
+          90deg,
+          #906ce3,
+          #679fea,
+          #79b9b2
+        );
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .hero-copy{
+      margin:25px 0 0 8px;
+      color:#535b70;
+      font-size:14px;
+      line-height:1.8;
+    }
+
+    .info-button{
+      width:max-content;
+      margin:27px 0 0 8px;
+      padding:13px 21px;
+      display:flex;
+      align-items:center;
+      gap:22px;
+      border:1px solid rgba(52,59,88,.22);
+      border-radius:999px;
+      background:rgba(255,255,255,.40);
+      backdrop-filter:blur(15px);
+      font-size:13px;
+      transition:.2s;
+    }
+
+    .info-button:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.75);
+    }
+
+    /* ==============================
+       NEXT LIVE
+    ============================== */
+
+    .next-live{
+      padding:30px;
+      border-radius:29px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.82),
+          rgba(244,240,252,.64)
+        );
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:0 25px 70px rgba(41,45,91,.12);
+      backdrop-filter:blur(24px) saturate(140%);
+    }
+
+    .next-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      color:#646a7d;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:18px;
+      letter-spacing:.4px;
+    }
+
+    .d-day{
+      color:white;
+      padding:6px 12px;
+      border-radius:999px;
+      background:
+        linear-gradient(
+          135deg,
+          #8d6dea,
+          #817cf1
+        );
+      box-shadow:0 6px 15px rgba(124,101,220,.25);
+      font-family:"Nanum Pen Script",cursive;
+      font-size:18px;
+      letter-spacing:.3px;
+    }
+
+    .next-date{
+      margin-top:25px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:78px;
+      line-height:.9;
+      letter-spacing:-2px;
+      font-weight:400;
+    }
+
+    .next-date small{
+      margin-left:7px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:23px;
+      font-weight:400;
+      letter-spacing:0;
+    }
+
+    .next-divider{
+      height:1px;
+      margin:20px 0;
+      background:var(--line);
+    }
+
+    .next-live h3{
+      margin:0;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:28px;
+      font-weight:400;
+    }
+
+    .next-meta{
+      margin-top:8px;
+      color:#596076;
+      font-size:13px;
+      line-height:1.8;
+    }
+
+    .next-link{
+      margin-top:22px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:18px;
+    }
+
+    /* ==============================
+       QUICK NAV
+    ============================== */
+
+    .quick{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      overflow:hidden;
+      border-radius:27px;
+      background:rgba(255,255,255,.67);
+      border:1px solid rgba(255,255,255,.94);
+      box-shadow:0 20px 55px rgba(33,39,78,.08);
+      backdrop-filter:blur(23px) saturate(135%);
+    }
+
+    .quick a{
+      position:relative;
+      min-height:125px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      border-right:1px solid rgba(37,43,74,.07);
+      transition:background .2s, transform .2s;
+    }
+
+    .quick a:last-child{
+      border-right:0;
+    }
+
+    .quick a:hover{
+      background:rgba(255,255,255,.45);
+    }
+
+    .q-icon{
+      width:40px;
+      height:40px;
+      margin-bottom:11px;
+      color:#8068ed;
+    }
+
+    .q-icon svg{
+      width:100%;
+      height:100%;
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.65;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    .quick strong{
+      font-size:14px;
+    }
+
+    .quick small{
+      margin-top:4px;
+      color:#9397a5;
+      font-size:8px;
+      font-weight:600;
+      letter-spacing:1.2px;
+    }
+
+    /* ==============================
+       SECTIONS
+    ============================== */
+
+    .section{
+      margin-top:48px;
+    }
+
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+
+    .section-title{
+      margin:0;
+      font-size:24px;
+      letter-spacing:-1px;
+    }
+
+    .section-title em{
+      margin-left:8px;
+      font-family:"Nanum Pen Script",cursive;
+      font-style:normal;
+      font-size:27px;
+      font-weight:400;
+      color:#7765df;
+    }
+
+    .more{
+      color:#60667a;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:17px;
+    }
+
+    /* ==============================
+       NOTICE + ABOUT
+    ============================== */
+
+    .middle-grid{
+      display:grid;
+      grid-template-columns:1fr 1.15fr;
+      gap:20px;
+    }
+
+    .notice{
+      padding:7px 22px;
+      border-radius:23px;
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:0 14px 38px rgba(31,37,75,.07);
+      backdrop-filter:blur(18px);
+    }
+
+    .notice-row{
+      min-height:70px;
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      align-items:center;
+      gap:14px;
+      border-bottom:1px solid var(--line);
+    }
+
+    .notice-row:last-child{
+      border-bottom:0;
+    }
+
+    .notice-badge{
+      padding:5px 8px;
+      border-radius:7px;
+      color:#745cdc;
+      background:#eee9ff;
+      font-size:9px;
+      font-weight:700;
+    }
+
+    .notice-badge.blue{
+      color:#477fc9;
+      background:#e7f1ff;
+    }
+
+    .notice-row strong{
+      font-size:13px;
+      font-weight:600;
+    }
+
+    .notice-row time{
+      color:#9a9dab;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:17px;
+    }
+
+    .about{
+      min-height:225px;
+      position:relative;
+      overflow:hidden;
+      padding:27px;
+      border-radius:24px;
+      color:white;
+      background:
+        radial-gradient(
+          circle at 82% 13%,
+          rgba(126,224,216,.50),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at 19% 88%,
+          rgba(173,116,244,.60),
+          transparent 42%
+        ),
+        linear-gradient(
+          135deg,
+          #1a274b,
+          #31346b
+        );
+      box-shadow:0 18px 46px rgba(27,35,76,.13);
+    }
+
+    .about::after{
+      content:"";
+      position:absolute;
+      width:280px;
+      height:500px;
+      top:-160px;
+      right:15%;
+      transform:rotate(24deg);
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          rgba(255,255,255,.19),
+          transparent
+        );
+      filter:blur(8px);
+    }
+
+    .about-script{
+      position:relative;
+      z-index:2;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:44px;
+      line-height:.9;
+      color:#ded4ff;
+    }
+
+    .about p{
+      position:relative;
+      z-index:2;
+      margin:35px 0 0;
+      color:rgba(255,255,255,.82);
+      font-size:12px;
+      line-height:1.75;
+    }
+
+    .about-link{
+      position:absolute;
+      z-index:3;
+      left:27px;
+      bottom:24px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+
+    /* ==============================
+       UPCOMING
+    ============================== */
+
+    .events{
+      display:grid;
+      grid-template-columns:1.15fr repeat(3,1fr);
+      gap:14px;
+    }
+
+    .event{
+      min-height:205px;
+      position:relative;
+      padding:22px;
+      border-radius:22px;
+      background:rgba(255,255,255,.77);
+      border:1px solid rgba(255,255,255,.92);
+      box-shadow:0 12px 35px rgba(31,37,74,.07);
+      backdrop-filter:blur(16px);
+    }
+
+    .event.featured{
+      color:white;
+      background:
+        radial-gradient(
+          circle at 75% 15%,
+          rgba(118,235,214,.48),
+          transparent 38%
+        ),
+        radial-gradient(
+          circle at 20% 90%,
+          rgba(158,105,239,.68),
+          transparent 45%
+        ),
+        linear-gradient(
+          145deg,
+          #21325e,
+          #393c84
+        );
+    }
+
+    .event-dday{
+      color:#757b8d;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:16px;
+    }
+
+    .featured .event-dday{
+      color:rgba(255,255,255,.74);
+    }
+
+    .event-date{
+      margin-top:16px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:43px;
+      line-height:.9;
+      letter-spacing:-1px;
+      font-weight:400;
+    }
+
+    .event-date small{
+      font-family:"Nanum Pen Script",cursive;
+      font-size:18px;
+      font-weight:400;
+    }
+
+    .event-name{
+      margin-top:12px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:22px;
+      font-weight:400;
+    }
+
+    .event-meta{
+      margin-top:7px;
+      color:#707689;
+      font-size:11px;
+      line-height:1.65;
+    }
+
+    .featured .event-meta{
+      color:rgba(255,255,255,.76);
+    }
+
+    .event-arrow{
+      position:absolute;
+      left:22px;
+      bottom:18px;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:22px;
+    }
+
+    /* ==============================
+       BOTTOM NAV
+    ============================== */
+
+    .bottom-nav{
+      position:fixed;
+      z-index:80;
+      left:50%;
+      bottom:14px;
+      transform:translateX(-50%);
+      width:min(740px,calc(100% - 26px));
+      height:70px;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      overflow:hidden;
+      border-radius:24px;
+      background:rgba(255,255,255,.79);
+      border:1px solid rgba(255,255,255,.95);
+      box-shadow:0 15px 45px rgba(30,37,75,.13);
+      backdrop-filter:blur(25px) saturate(145%);
+    }
+
+    .nav-item{
+      border:0;
+      background:none;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      color:#767b8e;
+      font-size:8px;
+      font-weight:600;
+      letter-spacing:.6px;
+      cursor:pointer;
+    }
+
+    .nav-item.active{
+      color:#7864e6;
+    }
+
+    .nav-svg{
+      width:20px;
+      height:20px;
+    }
+
+    .nav-svg svg{
+      width:100%;
+      height:100%;
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.7;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    /* ==============================
+       MENU
+    ============================== */
+
+    .menu-overlay{
+      position:fixed;
+      inset:0;
+      z-index:200;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:25px;
+      background:rgba(26,30,54,.36);
+      backdrop-filter:blur(15px);
+    }
+
+    .menu-overlay.open{
+      display:flex;
+    }
+
+    .menu-card{
+      width:min(400px,100%);
+      padding:25px;
+      border-radius:28px;
+      background:rgba(255,255,255,.93);
+      box-shadow:0 28px 80px rgba(20,25,55,.22);
+    }
+
+    .menu-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:13px;
+    }
+
+    .menu-top h3{
+      margin:0;
+      font-family:"Nanum Pen Script",cursive;
+      font-size:34px;
+      font-weight:400;
+    }
+
+    .close{
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:50%;
+      background:#eeeef4;
+      cursor:pointer;
+    }
+
+    .menu-card a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      min-height:57px;
+      border-bottom:1px solid var(--line);
+      font-size:14px;
+    }
+
+    .menu-card a:last-child{
+      border:0;
+    }
+
+    /* ==============================
+       MOBILE
+    ============================== */
+
+    @media(max-width:760px){
+
+      .wrap{
+        padding:0 16px 105px;
+      }
+
+      .header-inner{
+        height:70px;
+        padding:0 17px;
+      }
+
+      .logo strong{
+        font-size:23px;
+      }
+
+      .logo small{
+        font-size:7px;
+      }
+
+      .menu-button{
+        width:43px;
+        height:43px;
+      }
+
+      .aurora::before{
+        width:800px;
+        height:610px;
+        top:-220px;
+        right:-380px;
+        opacity:.92;
+        filter:blur(43px);
+      }
+
+      .hero{
+        min-height:auto;
+        padding:58px 0 45px;
+        grid-template-columns:1fr;
+        gap:35px;
+      }
+
+      .hero-eyebrow{
+        font-size:11px;
+      }
+
+      .hero-title{
+        font-size:122px;
+        letter-spacing:-6px;
+      }
+
+      .hero-brand{
+        margin-top:15px;
+        font-size:10px;
+        letter-spacing:7px;
+      }
+
+      .hero-script{
+        margin-top:26px;
+        font-size:27px;
+      }
+
+      .hero-copy{
+        font-size:13px;
+      }
+
+      .next-live{
+        padding:24px;
+        border-radius:25px;
+      }
+
+      .next-date{
+        font-size:64px;
+      }
+
+      .next-date small{
+        font-size:20px;
+      }
+
+      .next-live h3{
+        font-size:25px;
+      }
+
+      .quick{
+        grid-template-columns:repeat(5,minmax(92px,1fr));
+        overflow-x:auto;
+        border-radius:22px;
+        scrollbar-width:none;
+      }
+
+      .quick::-webkit-scrollbar{
+        display:none;
+      }
+
+      .quick a{
+        min-width:92px;
+        min-height:105px;
+      }
+
+      .q-icon{
+        width:31px;
+        height:31px;
+      }
+
+      .quick strong{
+        font-size:11px;
+      }
+
+      .quick small{
+        font-size:7px;
+      }
+
+      .section{
+        margin-top:35px;
+      }
+
+      .section-title{
+        font-size:21px;
+      }
+
+      .middle-grid{
+        grid-template-columns:1fr;
+      }
+
+      .events{
+        grid-template-columns:repeat(4,minmax(190px,1fr));
+        overflow-x:auto;
+        padding-bottom:5px;
+        scrollbar-width:none;
+      }
+
+      .events::-webkit-scrollbar{
+        display:none;
+      }
+
+      .event{
+        min-width:190px;
+      }
+
+      .event-date{
+        font-size:38px;
+      }
+
+      .event-date small{
+        font-size:16px;
+      }
+
+      .event-name{
+        font-size:20px;
+      }
+
+      .bottom-nav{
+        bottom:8px;
+        height:66px;
+        border-radius:21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="aurora"></div>
+  <div class="light-line"></div>
+
+  <header>
+    <div class="header-inner">
+
+      <a href="/" class="logo">
+        <strong>VOM</strong>
+        <small>VOICE OF MELODY</small>
+      </a>
+
+      <button
+        class="menu-button"
+        onclick="openMenu()"
+        aria-label="메뉴 열기"
+      >
+        <span class="menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="hero">
+
+      <div>
+
+        <div class="hero-eyebrow">
+          노래로 연결되는 우리들의 이야기
+        </div>
+
+        <h1 class="hero-title">
+          Vom
+        </h1>
+
+        <div class="hero-brand">
+          VOICE OF MELODY
+        </div>
+
+        <div class="hero-script">
+          Sing Together, Stay Together.
+        </div>
+
+        <div class="hero-copy">
+          함께 부르고, 듣고, 기록하는 순간들.<br>
+          음악으로 이어지는 VOM의 이야기.
+        </div>
+
+        <a href="/info/" class="info-button">
+          INFO
+          <span>→</span>
+        </a>
+
+      </div>
+
+      <article class="next-live">
+
+        <div class="next-top">
+          <span>NEXT LIVE</span>
+          <span class="d-day">D-14</span>
+        </div>
+
+        <div class="next-date">
+          6.27
+          <small>FRI</small>
+        </div>
+
+        <div class="next-divider"></div>
+
+        <h3>
+          VOM LIVE #02
+        </h3>
+
+        <div class="next-meta">
+          14:00 - 18:00<br>
+          송연습실 송내점
+        </div>
+
+        <a href="/live/" class="next-link">
+          <span>자세히 보기</span>
+          <span>→</span>
+        </a>
+
+      </article>
+
+    </section>
+
+    <section class="quick">
+
+      <a href="/info/">
+        <div class="q-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 11v5"/>
+            <path d="M12 8h.01"/>
+          </svg>
+        </div>
+        <strong>INFO</strong>
+        <small>ABOUT VOM</small>
+      </a>
+
+      <a href="/calendar/">
+        <div class="q-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="16" rx="2"/>
+            <path d="M7 3v4M17 3v4M3 10h18"/>
+            <path d="M7 14h2M11 14h2M15 14h2"/>
+          </svg>
+        </div>
+        <strong>CALENDAR</strong>
+        <small>SCHEDULE</small>
+      </a>
+
+      <a href="/live/">
+        <div class="q-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 12h3l2-5 4 10 2-5h5"/>
+          </svg>
+        </div>
+        <strong>VOM LIVE</strong>
+        <small>LIVE</small>
+      </a>
+
+      <a href="/busking/">
+        <div class="q-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 18V5l10-2v13"/>
+            <ellipse cx="6" cy="18" rx="3" ry="2"/>
+            <ellipse cx="16" cy="16" rx="3" ry="2"/>
+          </svg>
+        </div>
+        <strong>BUSKING</strong>
+        <small>BUSKING</small>
+      </a>
+
+      <a href="/qna/">
+        <div class="q-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 12a8 8 0 0 1-8 8H6l-4 2 1.5-4A8 8 0 1 1 21 12z"/>
+            <path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 2-2 2-2 3"/>
+            <path d="M12 16h.01"/>
+          </svg>
+        </div>
+        <strong>Q&A</strong>
+        <small>QUESTION</small>
+      </a>
+
+    </section>
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <h2 class="section-title">
+          공지사항
+          <em>Notice</em>
+        </h2>
+
+        <a href="/notice/" class="more">
+          전체 보기 →
+        </a>
+
+      </div>
+
+      <div class="middle-grid">
+
+        <div class="notice">
+
+          <a href="/notice/" class="notice-row">
+            <span class="notice-badge">공지</span>
+            <strong>VOM LIVE 안내</strong>
+            <time>NEW</time>
+          </a>
+
+          <a href="/notice/" class="notice-row">
+            <span class="notice-badge">공지</span>
+            <strong>BUSKING 일정 안내</strong>
+            <time>NEW</time>
+          </a>
+
+          <a href="/notice/" class="notice-row">
+            <span class="notice-badge blue">안내</span>
+            <strong>VOM 운영 안내</strong>
+            <time>INFO</time>
+          </a>
+
+        </div>
+
+        <a href="/info/" class="about">
+
+          <div class="about-script">
+            Voice<br>
+            of Melody
+          </div>
+
+          <p>
+            같은 노래를 좋아하는 사람들이 만나<br>
+            함께 더 좋은 순간을 만들어갑니다.
+          </p>
+
+          <div class="about-link">
+            ABOUT VOM →
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <h2 class="section-title">
+          다가오는 일정
+          <em>Upcoming</em>
+        </h2>
+
+        <a href="/calendar/" class="more">
+          CALENDAR →
+        </a>
+
+      </div>
+
+      <div class="events">
+
+        <a href="/live/" class="event featured">
+
+          <div class="event-dday">
+            NEXT
+          </div>
+
+          <div class="event-date">
+            6.27
+            <small>(금)</small>
+          </div>
+
+          <div class="event-name">
+            VOM LIVE #02
+          </div>
+
+          <div class="event-meta">
+            14:00 - 18:00<br>
+            송연습실 송내점
+          </div>
+
+          <div class="event-arrow">
+            →
+          </div>
+
+        </a>
+
+        <a href="/busking/" class="event">
+
+          <div class="event-dday">
+            BUSKING
+          </div>
+
+          <div class="event-date">
+            6.30
+            <small>(월)</small>
+          </div>
+
+          <div class="event-name">
+            BUSKING
+          </div>
+
+          <div class="event-meta">
+            자세한 일정은<br>
+            버스킹 페이지에서 확인
+          </div>
+
+          <div class="event-arrow">
+            →
+          </div>
+
+        </a>
+
+        <a href="/calendar/" class="event">
+
+          <div class="event-dday">
+            SCHEDULE
+          </div>
+
+          <div class="event-date">
+            7.05
+            <small>(토)</small>
+          </div>
+
+          <div class="event-name">
+            VOM 일정
+          </div>
+
+          <div class="event-meta">
+            일정 세부 내용은<br>
+            CALENDAR에서 확인
+          </div>
+
+          <div class="event-arrow">
+            →
+          </div>
+
+        </a>
+
+        <a href="/calendar/" class="event">
+
+          <div class="event-dday">
+            ETC
+          </div>
+
+          <div class="event-date">
+            7.12
+            <small>(토)</small>
+          </div>
+
+          <div class="event-name">
+            VOM 회의
+          </div>
+
+          <div class="event-meta">
+            15:00 - 17:00<br>
+            세부사항 추후 안내
+          </div>
+
+          <div class="event-arrow">
+            →
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+
+    <a href="/" class="nav-item active">
+      <span class="nav-svg">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 11.5 12 4l9 7.5"/>
+          <path d="M5.5 10v10h13V10"/>
+        </svg>
+      </span>
+      HOME
+    </a>
+
+    <a href="/info/" class="nav-item">
+      <span class="nav-svg">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 11v5M12 8h.01"/>
+        </svg>
+      </span>
+      INFO
+    </a>
+
+    <a href="/calendar/" class="nav-item">
+      <span class="nav-svg">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="16" rx="2"/>
+          <path d="M7 3v4M17 3v4M3 10h18"/>
+        </svg>
+      </span>
+      CALENDAR
+    </a>
+
+    <a href="/live/" class="nav-item">
+      <span class="nav-svg">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 12h3l2-5 4 10 2-5h5"/>
+        </svg>
+      </span>
+      LIVE
+    </a>
+
+    <button class="nav-item" onclick="openMenu()">
+      <span class="nav-svg">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 7h16M4 12h16M4 17h16"/>
+        </svg>
+      </span>
+      MENU
+    </button>
+
+  </nav>
+
+  <div class="menu-overlay" id="menu">
+
+    <div class="menu-card">
+
+      <div class="menu-top">
+
+        <h3>VOM Menu</h3>
+
+        <button class="close" onclick="closeMenu()">
+          ✕
+        </button>
+
+      </div>
+
+      <a href="/info/">
+        <span>INFO</span>
+        <span>→</span>
+      </a>
+
+      <a href="/calendar/">
+        <span>CALENDAR</span>
+        <span>→</span>
+      </a>
+
+      <a href="/live/">
+        <span>VOM LIVE</span>
+        <span>→</span>
+      </a>
+
+      <a href="/busking/">
+        <span>BUSKING</span>
+        <span>→</span>
+      </a>
+
+      <a href="/notice/">
+        <span>NOTICE</span>
+        <span>→</span>
+      </a>
+
+      <a href="/qna/">
+        <span>Q&A</span>
+        <span>→</span>
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+    function openMenu(){
+      document
+        .getElementById("menu")
+        .classList
+        .add("open");
+    }
+
+    function closeMenu(){
+      document
+        .getElementById("menu")
+        .classList
+        .remove("open");
+    }
+
+    document
+      .getElementById("menu")
+      .addEventListener("click",function(event){
+
+        if(event.target === this){
+          closeMenu();
+        }
+
+      });
+  </script>
+
+</body>
+</html>
