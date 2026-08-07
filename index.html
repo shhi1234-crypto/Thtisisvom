@@ -3,988 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#11182d" />
+  <meta name="theme-color" content="#18254c" />
+
   <title>VOM · Voice of Melody</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --navy: #0d1530;
-      --text: #13172a;
-      --muted: #71778b;
-      --line: rgba(21, 27, 52, .09);
-      --glass: rgba(255, 255, 255, .76);
-      --glass-strong: rgba(255, 255, 255, .9);
-      --violet: #7567ef;
-      --blue: #75b7ff;
-      --mint: #a6efd2;
-      --pink: #eeb8dc;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: "Noto Sans KR", sans-serif;
-      color: var(--text);
-      background: #f7f7fb;
-      overflow-x: hidden;
-    }
-
-    button,
-    a {
-      font: inherit;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* =========================
-       BACKGROUND
-    ========================= */
-
-    .aurora-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -10;
-      overflow: hidden;
-      background:
-        linear-gradient(
-          180deg,
-          #18254c 0%,
-          #283665 20%,
-          #ebeaf4 47%,
-          #f8f7fb 67%,
-          #f5f5f7 100%
-        );
-    }
-
-    .aurora-bg::before,
-    .aurora-bg::after {
-      content: "";
-      position: absolute;
-      width: 120%;
-      height: 52%;
-      left: -10%;
-      top: -4%;
-      filter: blur(36px);
-      opacity: .82;
-      transform: rotate(-5deg);
-    }
-
-    .aurora-bg::before {
-      background:
-        radial-gradient(
-          ellipse at 15% 40%,
-          rgba(141, 236, 209, .75),
-          transparent 35%
-        ),
-        radial-gradient(
-          ellipse at 48% 15%,
-          rgba(151, 130, 255, .75),
-          transparent 36%
-        ),
-        radial-gradient(
-          ellipse at 75% 45%,
-          rgba(230, 157, 221, .72),
-          transparent 34%
-        ),
-        radial-gradient(
-          ellipse at 90% 10%,
-          rgba(129, 198, 255, .78),
-          transparent 36%
-        );
-      animation: auroraOne 12s ease-in-out infinite alternate;
-    }
-
-    .aurora-bg::after {
-      top: 8%;
-      opacity: .5;
-      background:
-        radial-gradient(
-          ellipse at 36% 18%,
-          rgba(255,255,255,.8),
-          transparent 24%
-        ),
-        radial-gradient(
-          ellipse at 68% 28%,
-          rgba(148, 230, 255, .7),
-          transparent 29%
-        ),
-        radial-gradient(
-          ellipse at 52% 55%,
-          rgba(189, 141, 255, .62),
-          transparent 31%
-        );
-      animation: auroraTwo 15s ease-in-out infinite alternate;
-    }
-
-    @keyframes auroraOne {
-      from {
-        transform: translate3d(-2%, 0, 0) rotate(-6deg) scale(1);
-      }
-      to {
-        transform: translate3d(4%, 2%, 0) rotate(-1deg) scale(1.08);
-      }
-    }
-
-    @keyframes auroraTwo {
-      from {
-        transform: translate3d(3%, -1%, 0) rotate(4deg) scale(1.04);
-      }
-      to {
-        transform: translate3d(-3%, 4%, 0) rotate(-3deg) scale(1.12);
-      }
-    }
-
-    .stars {
-      position: fixed;
-      inset: 0;
-      z-index: -9;
-      pointer-events: none;
-      opacity: .35;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.4px);
-      background-size: 58px 58px;
-      mask-image: linear-gradient(to bottom, #000 0%, transparent 48%);
-    }
-
-    /* =========================
-       COMMON
-    ========================= */
-
-    .page {
-      width: min(1100px, 100%);
-      margin: 0 auto;
-      padding: 0 24px 110px;
-    }
-
-    .glass {
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,.58);
-      box-shadow:
-        0 18px 50px rgba(19, 25, 55, .10),
-        inset 0 1px 0 rgba(255,255,255,.7);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-    }
-
-    .section {
-      margin-top: 42px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 15px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin: 0;
-      font-size: 25px;
-      letter-spacing: -.8px;
-    }
-
-    .section-script {
-      font-family: "Nanum Pen Script", cursive;
-      color: #7668e8;
-      font-size: 25px;
-      font-weight: 400;
-    }
-
-    .section-link {
-      border: 0;
-      background: transparent;
-      color: #4e5468;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    header {
-      position: relative;
-      z-index: 10;
-    }
-
-    .header-inner {
-      width: min(1100px, 100%);
-      height: 88px;
-      padding: 0 24px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: white;
-    }
-
-    .brand {
-      display: inline-flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .brand-main {
-      font-size: 27px;
-      line-height: 1;
-      font-weight: 700;
-      letter-spacing: 6px;
-    }
-
-    .brand-sub {
-      font-size: 10px;
-      letter-spacing: 3px;
-      opacity: .88;
-    }
-
-    .menu-button {
-      width: 48px;
-      height: 48px;
-      border: 1px solid rgba(255,255,255,.35);
-      border-radius: 50%;
-      background: rgba(255,255,255,.13);
-      color: white;
-      backdrop-filter: blur(12px);
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-    }
-
-    .menu-lines {
-      width: 18px;
-      display: grid;
-      gap: 4px;
-    }
-
-    .menu-lines span {
-      display: block;
-      height: 1.5px;
-      border-radius: 3px;
-      background: currentColor;
-    }
-
-    /* =========================
-       HERO
-    ========================= */
-
-    .hero {
-      min-height: 600px;
-      padding: 84px 0 58px;
-      display: grid;
-      grid-template-columns: 1.4fr .8fr;
-      gap: 56px;
-      align-items: center;
-      color: white;
-    }
-
-    .hero-kicker {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-size: 13px;
-      color: rgba(255,255,255,.8);
-      margin-bottom: 14px;
-    }
-
-    .hero-kicker::before {
-      content: "";
-      width: 42px;
-      height: 1px;
-      background: rgba(255,255,255,.7);
-    }
-
-    .hero-logo {
-      margin: 0;
-      font-family: "Nanum Pen Script", cursive;
-      font-size: clamp(112px, 16vw, 190px);
-      line-height: .74;
-      font-weight: 400;
-      letter-spacing: -10px;
-      text-shadow: 0 0 32px rgba(255,255,255,.13);
-    }
-
-    .hero-sublogo {
-      margin-top: 12px;
-      margin-left: 10px;
-      font-family: "Nanum Pen Script", cursive;
-      font-size: 35px;
-      background: linear-gradient(
-        90deg,
-        #d3c2ff,
-        #8fd8ff,
-        #bff1dc
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .hero-copy {
-      margin: 34px 0 0 8px;
-      line-height: 1.85;
-      color: rgba(255,255,255,.92);
-      font-size: 15px;
-    }
-
-    .hero-tagline {
-      margin: 20px 0 0 8px;
-      font-family: "Playfair Display", serif;
-      font-style: italic;
-      font-size: 18px;
-      color: rgba(255,255,255,.72);
-    }
-
-    .outline-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 18px;
-      margin: 27px 0 0 8px;
-      height: 46px;
-      padding: 0 22px;
-      color: white;
-      border: 1px solid rgba(255,255,255,.5);
-      border-radius: 999px;
-      background: rgba(255,255,255,.07);
-      backdrop-filter: blur(10px);
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .outline-button:hover {
-      background: rgba(255,255,255,.14);
-      transform: translateY(-2px);
-    }
-
-    .next-live {
-      border-radius: 30px;
-      padding: 29px;
-      color: var(--text);
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.9),
-          rgba(238,234,255,.72)
-        );
-      border: 1px solid rgba(255,255,255,.7);
-      box-shadow:
-        0 26px 75px rgba(12,16,50,.22),
-        inset 0 1px 0 rgba(255,255,255,.8);
-      backdrop-filter: blur(24px);
-    }
-
-    .live-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #565c73;
-      font-size: 13px;
-      letter-spacing: 1px;
-    }
-
-    .dday {
-      padding: 6px 11px;
-      border-radius: 999px;
-      color: white;
-      font-size: 12px;
-      background:
-        linear-gradient(135deg, #7a64f2, #759cf1);
-    }
-
-    .live-date {
-      margin-top: 25px;
-      font-family: Georgia, serif;
-      font-size: 63px;
-      letter-spacing: -4px;
-    }
-
-    .live-date small {
-      font-family: "Noto Sans KR", sans-serif;
-      font-size: 15px;
-      letter-spacing: 0;
-      margin-left: 5px;
-    }
-
-    .live-divider {
-      height: 1px;
-      background: rgba(26,31,60,.1);
-      margin: 12px 0 18px;
-    }
-
-    .live-name {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .live-info {
-      color: #555c70;
-      line-height: 1.75;
-      font-size: 14px;
-      margin-top: 7px;
-    }
-
-    .live-more {
-      width: 100%;
-      margin-top: 18px;
-      padding-top: 18px;
-      border: 0;
-      border-top: 1px solid rgba(26,31,60,.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: transparent;
-      color: var(--text);
-      cursor: pointer;
-    }
-
-    /* =========================
-       QUICK MENU
-    ========================= */
-
-    .quick-menu {
-      margin-top: -16px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border-radius: 28px;
-      overflow: hidden;
-    }
-
-    .quick-item {
-      border: 0;
-      border-right: 1px solid var(--line);
-      min-height: 125px;
-      padding: 20px 10px;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .quick-item:last-child {
-      border-right: 0;
-    }
-
-    .quick-item:hover {
-      background: rgba(255,255,255,.42);
-    }
-
-    .quick-icon {
-      width: 38px;
-      height: 38px;
-      margin-bottom: 10px;
-      display: grid;
-      place-items: center;
-      font-size: 27px;
-      filter: grayscale(.1);
-    }
-
-    .quick-item strong {
-      font-size: 15px;
-    }
-
-    .quick-item small {
-      margin-top: 3px;
-      color: #7b8093;
-      font-size: 10px;
-      letter-spacing: .6px;
-    }
-
-    /* =========================
-       NOTICE + ABOUT
-    ========================= */
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.07fr;
-      gap: 22px;
-    }
-
-    .notice-card {
-      border-radius: 24px;
-      padding: 8px 22px;
-    }
-
-    .notice-row {
-      min-height: 72px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 13px;
-      border-bottom: 1px solid var(--line);
-      cursor: pointer;
-    }
-
-    .notice-row:last-child {
-      border-bottom: 0;
-    }
-
-    .badge {
-      padding: 5px 9px;
-      border-radius: 7px;
-      background: #eee8ff;
-      color: #6d59d9;
-      font-size: 10px;
-      font-weight: 700;
-    }
-
-    .badge.blue {
-      background: #e5f1ff;
-      color: #4286cf;
-    }
-
-    .notice-row strong {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .notice-row time {
-      font-size: 11px;
-      color: #9398a8;
-    }
-
-    .about-card {
-      min-height: 230px;
-      border-radius: 24px;
-      padding: 27px;
-      color: white;
-      position: relative;
-      overflow: hidden;
-      background:
-        radial-gradient(
-          circle at 70% 20%,
-          rgba(124,255,221,.42),
-          transparent 34%
-        ),
-        radial-gradient(
-          circle at 26% 88%,
-          rgba(197,130,255,.56),
-          transparent 40%
-        ),
-        linear-gradient(
-          135deg,
-          #15244d,
-          #292a61 50%,
-          #11162f
-        );
-    }
-
-    .about-card::after {
-      content: "";
-      position: absolute;
-      inset: -20%;
-      background:
-        linear-gradient(
-          115deg,
-          transparent 20%,
-          rgba(255,255,255,.22) 49%,
-          transparent 70%
-        );
-      transform: rotate(-10deg);
-    }
-
-    .about-script {
-      position: relative;
-      z-index: 2;
-      font-family: "Nanum Pen Script", cursive;
-      font-size: 42px;
-      line-height: .95;
-      color: #e6dcff;
-    }
-
-    .about-text {
-      position: relative;
-      z-index: 2;
-      margin-top: 38px;
-      line-height: 1.7;
-      font-size: 13px;
-      color: rgba(255,255,255,.83);
-    }
-
-    .about-link {
-      position: relative;
-      z-index: 2;
-      margin-top: 17px;
-      display: inline-flex;
-      gap: 15px;
-      align-items: center;
-      font-size: 12px;
-    }
-
-    /* =========================
-       SCHEDULE
-    ========================= */
-
-    .schedule-scroll {
-      display: grid;
-      grid-template-columns: 1.15fr repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    .event-card {
-      border-radius: 22px;
-      padding: 22px;
-      min-height: 205px;
-      background: var(--glass-strong);
-      border: 1px solid rgba(255,255,255,.72);
-      box-shadow: 0 13px 35px rgba(30,37,75,.08);
-    }
-
-    .event-card.featured {
-      color: white;
-      background:
-        radial-gradient(
-          circle at 76% 20%,
-          rgba(114, 255, 220, .55),
-          transparent 38%
-        ),
-        radial-gradient(
-          circle at 30% 80%,
-          rgba(160, 111, 255, .72),
-          transparent 44%
-        ),
-        linear-gradient(
-          145deg,
-          #112249,
-          #273673
-        );
-    }
-
-    .event-dday {
-      font-size: 11px;
-      color: #747a8d;
-    }
-
-    .featured .event-dday {
-      color: rgba(255,255,255,.72);
-    }
-
-    .event-card h4 {
-      margin: 14px 0 8px;
-      font-family: Georgia, serif;
-      font-size: 32px;
-      letter-spacing: -1px;
-    }
-
-    .event-card h4 small {
-      font-family: "Noto Sans KR", sans-serif;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .event-name {
-      margin-top: 7px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .event-meta {
-      margin-top: 8px;
-      line-height: 1.65;
-      font-size: 12px;
-      color: #707689;
-    }
-
-    .featured .event-meta {
-      color: rgba(255,255,255,.76);
-    }
-
-    .event-arrow {
-      margin-top: 17px;
-      font-size: 22px;
-    }
-
-    /* =========================
-       BOTTOM NAV
-    ========================= */
-
-    .bottom-nav {
-      position: fixed;
-      z-index: 50;
-      left: 50%;
-      bottom: 14px;
-      transform: translateX(-50%);
-      width: min(760px, calc(100% - 26px));
-      height: 72px;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border-radius: 24px;
-      background: rgba(255,255,255,.82);
-      border: 1px solid rgba(255,255,255,.72);
-      box-shadow: 0 16px 45px rgba(22,28,66,.15);
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      overflow: hidden;
-    }
-
-    .bottom-item {
-      border: 0;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      align-items: center;
-      justify-content: center;
-      color: #74798a;
-      font-size: 9px;
-      cursor: pointer;
-    }
-
-    .bottom-item .nav-icon {
-      font-size: 20px;
-    }
-
-    .bottom-item.active {
-      color: #7160ed;
-      font-weight: 700;
-    }
-
-    /* =========================
-       MENU MODAL
-    ========================= */
-
-    .menu-panel {
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      padding: 30px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(12,16,40,.46);
-      backdrop-filter: blur(14px);
-    }
-
-    .menu-panel.open {
-      display: flex;
-    }
-
-    .menu-box {
-      width: min(390px, 100%);
-      padding: 24px;
-      border-radius: 28px;
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 24px 70px rgba(0,0,0,.18);
-    }
-
-    .menu-box-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .menu-box h3 {
-      margin: 0;
-      font-size: 23px;
-    }
-
-    .menu-close {
-      border: 0;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #eeeef4;
-      cursor: pointer;
-    }
-
-    .menu-link {
-      width: 100%;
-      border: 0;
-      border-bottom: 1px solid var(--line);
-      padding: 18px 3px;
-      background: transparent;
-      text-align: left;
-      font-size: 15px;
-      cursor: pointer;
-    }
-
-    /* =========================
-       TOAST
-    ========================= */
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 105px;
-      z-index: 200;
-      transform: translate(-50%, 20px);
-      opacity: 0;
-      pointer-events: none;
-      padding: 11px 16px;
-      border-radius: 999px;
-      background: rgba(18,23,46,.9);
-      color: white;
-      font-size: 12px;
-      transition: .25s ease;
-      backdrop-filter: blur(15px);
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 760px) {
-
-      .page {
-        padding: 0 16px 108px;
-      }
-
-      .header-inner {
-        height: 70px;
-        padding: 0 16px;
-      }
-
-      .brand-main {
-        font-size: 22px;
-        letter-spacing: 4px;
-      }
-
-      .brand-sub {
-        font-size: 8px;
-        letter-spacing: 2px;
-      }
-
-      .menu-button {
-        width: 42px;
-        height: 42px;
-      }
-
-      .hero {
-        min-height: auto;
-        padding: 60px 0 42px;
-        grid-template-columns: 1fr;
-        gap: 36px;
-      }
-
-      .hero-kicker {
-        font-size: 11px;
-      }
-
-      .hero-logo {
-        font-size: clamp(110px, 34vw, 160px);
-        letter-spacing: -7px;
-      }
-
-      .hero-sublogo {
-        font-size: 29px;
-      }
-
-      .hero-copy {
-        font-size: 14px;
-      }
-
-      .next-live {
-        padding: 24px;
-        border-radius: 25px;
-      }
-
-      .live-date {
-        font-size: 54px;
-      }
-
-      .quick-menu {
-        margin-top: 0;
-        grid-template-columns: repeat(5, minmax(88px, 1fr));
-        overflow-x: auto;
-        border-radius: 22px;
-        scrollbar-width: none;
-      }
-
-      .quick-menu::-webkit-scrollbar {
-        display: none;
-      }
-
-      .quick-item {
-        min-width: 88px;
-        min-height: 105px;
-        padding: 15px 7px;
-      }
-
-      .quick-icon {
-        font-size: 23px;
-      }
-
-      .quick-item strong {
-        font-size: 12px;
-      }
-
-      .quick-item small {
-        font-size: 8px;
-      }
-
-      .section {
-        margin-top: 32px;
-      }
-
-      .section-title {
-        font-size: 21px;
-      }
-
-      .section-script {
-        font-size: 23px;
-      }
-
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .about-card {
-        min-height: 210px;
-      }
-
-      .schedule-scroll {
-        grid-template-columns: repeat(4, minmax(195px, 1fr));
-        overflow-x: auto;
-        padding-bottom: 8px;
-        scrollbar-width: none;
-      }
-
-      .schedule-scroll::-webkit-scrollbar {
-        display: none;
-      }
-
-      .event-card {
-        min-width: 195px;
-      }
-
-      .bottom-nav {
-        bottom: 8px;
-        height: 66px;
-        border-radius: 21px;
-      }
-
-      .bottom-item .nav-icon {
-        font-size: 18px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 
 <body>
@@ -992,22 +15,30 @@
   <div class="aurora-bg"></div>
   <div class="stars"></div>
 
+  <!-- HEADER -->
   <header>
     <div class="header-inner">
-      <a href="#" class="brand">
+
+      <a href="/" class="brand">
         <span class="brand-main">VOM</span>
         <span class="brand-sub">VOICE OF MELODY</span>
       </a>
 
-      <button class="menu-button" onclick="openMenu()" aria-label="메뉴 열기">
+      <button
+        class="menu-button"
+        onclick="openMenu()"
+        aria-label="메뉴 열기"
+      >
         <span class="menu-lines">
           <span></span>
           <span></span>
           <span></span>
         </span>
       </button>
+
     </div>
   </header>
+
 
   <main class="page">
 
@@ -1015,11 +46,14 @@
     <section class="hero">
 
       <div>
+
         <div class="hero-kicker">
           노래로 연결되는 우리들의 이야기
         </div>
 
-        <h1 class="hero-logo">Vom</h1>
+        <h1 class="hero-logo">
+          Vom
+        </h1>
 
         <div class="hero-sublogo">
           Voice of Melody
@@ -1034,15 +68,20 @@
           Sing Together, Stay Together.
         </div>
 
-        <button
+        <a
+          href="/info/"
           class="outline-button"
-          onclick="showToast('VOM 소개 페이지는 다음 단계에서 연결할게요.')">
-          VOM 소개
+        >
+          INFO
           <span>→</span>
-        </button>
+        </a>
+
       </div>
 
+
+      <!-- NEXT LIVE -->
       <article class="next-live">
+
         <div class="live-top">
           <span>NEXT LIVE</span>
           <span class="dday">D-14</span>
@@ -1064,108 +103,165 @@
           📍 송연습실 송내점
         </div>
 
-        <button
+        <a
+          href="/live/"
           class="live-more"
-          onclick="showToast('LIVE 상세 페이지는 다음 단계에서 연결할게요.')">
+        >
           <span>자세히 보기</span>
           <span>→</span>
-        </button>
+        </a>
+
       </article>
 
     </section>
 
+
+
     <!-- QUICK MENU -->
     <section class="quick-menu glass">
 
-      <button
+      <a
+        href="/info/"
         class="quick-item"
-        onclick="goSchedule()">
-        <div class="quick-icon">▣</div>
-        <strong>전체 일정</strong>
-        <small>SCHEDULE</small>
-      </button>
+      >
+        <div class="quick-icon">ⓘ</div>
+        <strong>INFO</strong>
+        <small>ABOUT VOM</small>
+      </a>
 
-      <button
+
+      <a
+        href="/calendar/"
         class="quick-item"
-        onclick="showToast('VOM LIVE 페이지 준비 중')">
+      >
+        <div class="quick-icon">▣</div>
+        <strong>CALENDAR</strong>
+        <small>SCHEDULE</small>
+      </a>
+
+
+      <a
+        href="/live/"
+        class="quick-item"
+      >
         <div class="quick-icon">〽</div>
         <strong>VOM LIVE</strong>
         <small>LIVE</small>
-      </button>
+      </a>
 
-      <button
+
+      <a
+        href="/busking/"
         class="quick-item"
-        onclick="showToast('버스킹 페이지 준비 중')">
+      >
         <div class="quick-icon">♬</div>
-        <strong>버스킹</strong>
+        <strong>BUSKING</strong>
         <small>BUSKING</small>
-      </button>
+      </a>
 
-      <button
-        class="quick-item"
-        onclick="showToast('연습모임 페이지 준비 중')">
-        <div class="quick-icon">◉</div>
-        <strong>연습모임</strong>
-        <small>PRACTICE</small>
-      </button>
 
-      <button
+      <a
+        href="/qna/"
         class="quick-item"
-        onclick="showToast('Q&A 페이지 준비 중')">
+      >
         <div class="quick-icon">◌</div>
         <strong>Q&A</strong>
         <small>QUESTION</small>
-      </button>
+      </a>
 
     </section>
 
+
+
     <!-- NOTICE -->
-    <section class="section" id="notice">
+    <section
+      class="section"
+      id="notice"
+    >
 
       <div class="section-head">
+
         <h2 class="section-title">
           공지사항
-          <span class="section-script">Notice</span>
+          <span class="section-script">
+            Notice
+          </span>
         </h2>
 
-        <button
+        <a
+          href="/notice/"
           class="section-link"
-          onclick="showToast('전체 공지 페이지 준비 중')">
+        >
           전체 보기 →
-        </button>
+        </a>
+
       </div>
+
 
       <div class="info-grid">
 
+        <!-- NOTICE LIST -->
         <div class="notice-card glass">
 
-          <div
+          <a
+            href="/notice/"
             class="notice-row"
-            onclick="showToast('공지 상세 페이지 준비 중')">
-            <span class="badge">공지</span>
-            <strong>VOM LIVE #02 안내</strong>
-            <time>06.01</time>
-          </div>
+          >
+            <span class="badge">
+              공지
+            </span>
 
-          <div
-            class="notice-row"
-            onclick="showToast('공지 상세 페이지 준비 중')">
-            <span class="badge">공지</span>
-            <strong>6월 버스킹 일정 안내</strong>
-            <time>05.28</time>
-          </div>
+            <strong>
+              VOM LIVE #02 안내
+            </strong>
 
-          <div
+            <time>
+              06.01
+            </time>
+          </a>
+
+
+          <a
+            href="/notice/"
             class="notice-row"
-            onclick="showToast('공지 상세 페이지 준비 중')">
-            <span class="badge blue">알림</span>
-            <strong>연습실 이용 규칙 안내</strong>
-            <time>05.25</time>
-          </div>
+          >
+            <span class="badge">
+              공지
+            </span>
+
+            <strong>
+              6월 버스킹 일정 안내
+            </strong>
+
+            <time>
+              05.28
+            </time>
+          </a>
+
+
+          <a
+            href="/notice/"
+            class="notice-row"
+          >
+            <span class="badge blue">
+              알림
+            </span>
+
+            <strong>
+              VOM 운영 안내
+            </strong>
+
+            <time>
+              05.25
+            </time>
+          </a>
 
         </div>
 
+
+        <!-- ABOUT -->
         <article class="about-card">
+
           <div class="about-script">
             Voice<br>
             of Melody
@@ -1173,41 +269,58 @@
 
           <div class="about-text">
             음악은 우리를 하나로 만든다.<br>
-            VOM과 함께, 더 멋진 순간들을.
+            함께 만들어가는 VOM의 이야기.
           </div>
 
-          <button
+          <a
+            href="/info/"
             class="about-link"
-            style="border:0;background:none;color:white;padding:0;cursor:pointer;"
-            onclick="showToast('VOM 소개 페이지 준비 중')">
-            ABOUT VOM
+          >
+            INFO
             <span>→</span>
-          </button>
+          </a>
+
         </article>
 
       </div>
+
     </section>
 
-    <!-- SCHEDULE -->
-    <section class="section" id="schedule">
+
+
+    <!-- UPCOMING -->
+    <section class="section">
 
       <div class="section-head">
+
         <h2 class="section-title">
           다가오는 일정
-          <span class="section-script">Upcoming</span>
+          <span class="section-script">
+            Upcoming
+          </span>
         </h2>
 
-        <button
+        <a
+          href="/calendar/"
           class="section-link"
-          onclick="goSchedule()">
-          전체 일정 보기 →
-        </button>
+        >
+          CALENDAR →
+        </a>
+
       </div>
+
 
       <div class="schedule-scroll">
 
-        <article class="event-card featured">
-          <div class="event-dday">D-14</div>
+        <!-- EVENT 1 -->
+        <a
+          href="/live/"
+          class="event-card featured"
+        >
+
+          <div class="event-dday">
+            D-14
+          </div>
 
           <h4>
             6.27
@@ -1223,11 +336,22 @@
             송연습실 송내점
           </div>
 
-          <div class="event-arrow">→</div>
-        </article>
+          <div class="event-arrow">
+            →
+          </div>
 
-        <article class="event-card">
-          <div class="event-dday">D-17</div>
+        </a>
+
+
+        <!-- EVENT 2 -->
+        <a
+          href="/busking/"
+          class="event-card"
+        >
+
+          <div class="event-dday">
+            D-17
+          </div>
 
           <h4>
             6.30
@@ -1235,7 +359,7 @@
           </h4>
 
           <div class="event-name">
-            버스킹 @신촌
+            BUSKING @신촌
           </div>
 
           <div class="event-meta">
@@ -1243,11 +367,22 @@
             신촌 스타광장
           </div>
 
-          <div class="event-arrow">→</div>
-        </article>
+          <div class="event-arrow">
+            →
+          </div>
 
-        <article class="event-card">
-          <div class="event-dday">D-22</div>
+        </a>
+
+
+        <!-- EVENT 3 -->
+        <a
+          href="/calendar/"
+          class="event-card"
+        >
+
+          <div class="event-dday">
+            D-22
+          </div>
 
           <h4>
             7.5
@@ -1255,19 +390,30 @@
           </h4>
 
           <div class="event-name">
-            연습모임
+            VOM 일정
           </div>
 
           <div class="event-meta">
             10:00 - 13:00<br>
-            송연습실 송내점
+            송내
           </div>
 
-          <div class="event-arrow">→</div>
-        </article>
+          <div class="event-arrow">
+            →
+          </div>
 
-        <article class="event-card">
-          <div class="event-dday">D-29</div>
+        </a>
+
+
+        <!-- EVENT 4 -->
+        <a
+          href="/calendar/"
+          class="event-card"
+        >
+
+          <div class="event-dday">
+            D-29
+          </div>
 
           <h4>
             7.12
@@ -1283,133 +429,154 @@
             온라인
           </div>
 
-          <div class="event-arrow">→</div>
-        </article>
+          <div class="event-arrow">
+            →
+          </div>
+
+        </a>
 
       </div>
+
     </section>
 
   </main>
 
+
+
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
 
-    <button
+    <a
+      href="/"
       class="bottom-item active"
-      onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    >
       <span class="nav-icon">⌂</span>
       HOME
-    </button>
+    </a>
 
-    <button
+
+    <a
+      href="/info/"
       class="bottom-item"
-      onclick="goSchedule()">
+    >
+      <span class="nav-icon">ⓘ</span>
+      INFO
+    </a>
+
+
+    <a
+      href="/calendar/"
+      class="bottom-item"
+    >
       <span class="nav-icon">▣</span>
-      SCHEDULE
-    </button>
+      CALENDAR
+    </a>
 
-    <button
+
+    <a
+      href="/live/"
       class="bottom-item"
-      onclick="showToast('LIVE 페이지 준비 중')">
+    >
       <span class="nav-icon">〽</span>
       LIVE
-    </button>
+    </a>
+
 
     <button
       class="bottom-item"
-      onclick="document.getElementById('notice').scrollIntoView({behavior:'smooth'})">
-      <span class="nav-icon">♢</span>
-      NOTICE
-    </button>
-
-    <button
-      class="bottom-item"
-      onclick="openMenu()">
+      onclick="openMenu()"
+    >
       <span class="nav-icon">☰</span>
       MENU
     </button>
 
   </nav>
 
-  <!-- MENU -->
-  <div class="menu-panel" id="menuPanel">
+
+
+  <!-- FULL MENU -->
+  <div
+    class="menu-panel"
+    id="menuPanel"
+  >
+
     <div class="menu-box">
 
       <div class="menu-box-top">
-        <h3>VOM Menu</h3>
+
+        <h3>
+          VOM Menu
+        </h3>
 
         <button
           class="menu-close"
-          onclick="closeMenu()">
+          onclick="closeMenu()"
+        >
           ✕
         </button>
+
       </div>
 
-      <button class="menu-link" onclick="goSchedule();closeMenu()">
-        전체 일정
-      </button>
 
-      <button class="menu-link" onclick="showToast('VOM LIVE 페이지 준비 중');closeMenu()">
+      <a
+        href="/info/"
+        class="menu-link"
+      >
+        INFO
+      </a>
+
+
+      <a
+        href="/calendar/"
+        class="menu-link"
+      >
+        CALENDAR
+      </a>
+
+
+      <a
+        href="/live/"
+        class="menu-link"
+      >
         VOM LIVE
-      </button>
+      </a>
 
-      <button class="menu-link" onclick="showToast('버스킹 페이지 준비 중');closeMenu()">
-        버스킹
-      </button>
 
-      <button class="menu-link" onclick="showToast('연습모임 페이지 준비 중');closeMenu()">
-        연습모임
-      </button>
+      <a
+        href="/busking/"
+        class="menu-link"
+      >
+        BUSKING
+      </a>
 
-      <button class="menu-link" onclick="showToast('Q&A 페이지 준비 중');closeMenu()">
+
+      <a
+        href="/notice/"
+        class="menu-link"
+      >
+        NOTICE
+      </a>
+
+
+      <a
+        href="/qna/"
+        class="menu-link"
+      >
         Q&A
-      </button>
+      </a>
 
     </div>
+
   </div>
 
-  <div class="toast" id="toast"></div>
 
-  <script>
-    function openMenu() {
-      document.getElementById("menuPanel").classList.add("open");
-    }
+  <div
+    class="toast"
+    id="toast"
+  ></div>
 
-    function closeMenu() {
-      document.getElementById("menuPanel").classList.remove("open");
-    }
 
-    function goSchedule() {
-      document
-        .getElementById("schedule")
-        .scrollIntoView({
-          behavior: "smooth"
-        });
-    }
-
-    let toastTimer;
-
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-
-      toast.textContent = message;
-      toast.classList.add("show");
-
-      clearTimeout(toastTimer);
-
-      toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 1800);
-    }
-
-    document
-      .getElementById("menuPanel")
-      .addEventListener("click", function(event) {
-        if (event.target === this) {
-          closeMenu();
-        }
-      });
-  </script>
+  <script src="/assets/js/common.js"></script>
 
 </body>
 </html>
