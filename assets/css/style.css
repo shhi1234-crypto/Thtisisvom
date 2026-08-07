@@ -24,3 +24,48 @@
 .stars {
   display: none;
 }
+/* ===== HOME AURORA IMAGE ===== */
+
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(11, 19, 46, 0.08) 0%,
+      rgba(255, 255, 255, 0.05) 45%,
+      rgba(248, 247, 251, 0.85) 78%,
+      #f7f7fb 100%
+    ),
+    url("/assets/images/aurora-home.png") center top / cover no-repeat;
+}
+
+.aurora-bg::before,
+.aurora-bg::after {
+  display: none;
+}
+
+.stars {
+  display: none;
+}
+
+
+/* 모바일 */
+@media (max-width: 760px) {
+
+  .aurora-bg {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(11, 19, 46, 0.05) 0%,
+        rgba(255, 255, 255, 0.03) 42%,
+        rgba(248, 247, 251, 0.88) 76%,
+        #f7f7fb 100%
+      ),
+      url("/assets/images/aurora-home.png") center top / auto 760px no-repeat,
+      #f7f7fb;
+  }
+
+}
