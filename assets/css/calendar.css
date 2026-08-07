@@ -1,0 +1,257 @@
+/* =========================================================
+   VOM CALENDAR
+   ========================================================= */
+
+.calendar-hero {
+  min-height: 330px;
+  padding: 72px 0 44px;
+  color: white;
+}
+
+.calendar-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 10px;
+}
+
+.calendar-title {
+  margin: 0;
+  font-family: "Nanum Pen Script", cursive;
+  font-size: clamp(82px, 12vw, 130px);
+  line-height: .8;
+  font-weight: 400;
+}
+
+.calendar-sub {
+  margin-top: 22px;
+  max-width: 520px;
+  color: rgba(255,255,255,.82);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+
+/* FILTER */
+
+.calendar-filter {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+  scrollbar-width: none;
+}
+
+.calendar-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-btn {
+  flex: 0 0 auto;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 999px;
+  padding: 10px 15px;
+  background: rgba(255,255,255,.78);
+  color: #676d81;
+  cursor: pointer;
+  font-size: 12px;
+  backdrop-filter: blur(14px);
+}
+
+.filter-btn.active {
+  background: #7668e8;
+  color: white;
+  border-color: #7668e8;
+}
+
+
+/* MONTH HEADER */
+
+.month-card {
+  border-radius: 28px;
+  padding: 26px;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.75);
+  box-shadow: 0 18px 48px rgba(25,31,70,.08);
+}
+
+.month-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.month-head h2 {
+  margin: 0;
+  font-family: Georgia, serif;
+  font-size: 31px;
+  letter-spacing: -1px;
+}
+
+.month-head small {
+  color: #858a9a;
+  font-size: 11px;
+}
+
+
+/* EVENT LIST */
+
+.calendar-list {
+  display: grid;
+  gap: 12px;
+}
+
+.calendar-event {
+  display: grid;
+  grid-template-columns: 74px 1fr auto;
+  align-items: center;
+  gap: 18px;
+
+  min-height: 112px;
+  padding: 17px 18px;
+
+  border-radius: 22px;
+  background: rgba(255,255,255,.91);
+  border: 1px solid rgba(255,255,255,.76);
+  box-shadow: 0 10px 28px rgba(24,31,67,.06);
+
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.calendar-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px rgba(24,31,67,.10);
+}
+
+.event-datebox {
+  width: 74px;
+  min-height: 74px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: #f2f0ff;
+}
+
+.event-datebox strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.event-datebox span {
+  display: block;
+  margin-top: 5px;
+  font-size: 9px;
+  color: #777d90;
+  letter-spacing: .8px;
+}
+
+.calendar-event.live .event-datebox {
+  background:
+    linear-gradient(145deg, #7268eb, #6fa5ef);
+  color: white;
+}
+
+.calendar-event.live .event-datebox span {
+  color: rgba(255,255,255,.76);
+}
+
+.calendar-event.busking .event-datebox {
+  background:
+    linear-gradient(145deg, #e7dfff, #d9efff);
+}
+
+.event-type {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  color: #7366df;
+}
+
+.event-content h3 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: -.4px;
+}
+
+.event-content p {
+  margin: 6px 0 0;
+  color: #72788b;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.event-go {
+  font-size: 22px;
+  color: #8d91a1;
+}
+
+
+/* EMPTY / NOTE */
+
+.calendar-note {
+  margin-top: 14px;
+  padding: 17px 19px;
+  border-radius: 20px;
+  background: rgba(255,255,255,.65);
+  border: 1px solid rgba(255,255,255,.68);
+  color: #73798b;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 760px) {
+
+  .calendar-hero {
+    min-height: 280px;
+    padding: 48px 0 38px;
+  }
+
+  .calendar-title {
+    font-size: 78px;
+  }
+
+  .calendar-sub {
+    font-size: 12px;
+  }
+
+  .month-card {
+    padding: 20px;
+    border-radius: 24px;
+  }
+
+  .calendar-event {
+    grid-template-columns: 64px 1fr auto;
+    gap: 13px;
+    min-height: 98px;
+    padding: 14px;
+  }
+
+  .event-datebox {
+    width: 64px;
+    min-height: 64px;
+    border-radius: 16px;
+  }
+
+  .event-datebox strong {
+    font-size: 24px;
+  }
+
+  .event-content h3 {
+    font-size: 14px;
+  }
+
+  .event-content p {
+    font-size: 11px;
+  }
+
+}
