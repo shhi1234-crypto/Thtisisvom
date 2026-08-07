@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THIS IS VOM</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      background: #fffaf2;
+      color: #161616;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 16px 100px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,250,242,.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #eee4d8;
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      height: 64px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .logo small {
+      display: block;
+      font-size: 9px;
+      letter-spacing: 1.4px;
+      margin-top: -2px;
+    }
+
+    .menu-btn {
+      border: 0;
+      background: #111;
+      color: white;
+      border-radius: 999px;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+
+    .hero {
+      padding: 42px 0 26px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #d86d2c;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: clamp(44px, 12vw, 82px);
+      line-height: .92;
+      margin: 0;
+      letter-spacing: -4px;
+      font-weight: 900;
+    }
+
+    .script {
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 25px;
+      margin-top: 12px;
+    }
+
+    .hero-copy {
+      margin-top: 20px;
+      color: #666;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .hero-card {
+      margin-top: 28px;
+      border-radius: 28px;
+      min-height: 300px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 20% 20%, #ffd4bc 0 18%, transparent 19%),
+        radial-gradient(circle at 85% 35%, #ffd95c 0 16%, transparent 17%),
+        linear-gradient(135deg, #111 0 50%, #2a2a2a 100%);
+      color: white;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0,0,0,.12);
+    }
+
+    .hero-card::after {
+      content: "♪";
+      position: absolute;
+      right: 20px;
+      bottom: 4px;
+      font-size: 120px;
+      opacity: .12;
+      transform: rotate(-12deg);
+    }
+
+    .hero-card .tag {
+      display: inline-block;
+      background: #fff;
+      color: #111;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-card h2 {
+      font-size: 32px;
+      margin: 22px 0 10px;
+    }
+
+    .hero-card p {
+      color: #ddd;
+      line-height: 1.6;
+      margin: 0;
+      max-width: 420px;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-title h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .section-title span {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .next-event {
+      background: #fff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 8px 26px rgba(0,0,0,.06);
+      border: 1px solid #f0e7dc;
+    }
+
+    .next-event .label {
+      color: #e66c2c;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    .event-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    .event-date {
+      font-size: 40px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .event-info {
+      color: #666;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .dday {
+      background: #111;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .quick {
+      min-height: 150px;
+      padding: 20px;
+      border-radius: 22px;
+      background: #fff;
+      border: 1px solid #f0e7dc;
+      box-shadow: 0 7px 20px rgba(0,0,0,.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quick:nth-child(1) { background: #fff2c9; }
+    .quick:nth-child(2) { background: #e7f4eb; }
+    .quick:nth-child(3) { background: #ffe6d6; }
+    .quick:nth-child(4) { background: #efe5f5; }
+
+    .quick .icon {
+      font-size: 30px;
+      margin-bottom: 14px;
+    }
+
+    .quick h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .quick p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .news-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .news {
+      background: white;
+      border: 1px solid #f0e7dc;
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .news small {
+      color: #999;
+      font-size: 11px;
+    }
+
+    .news strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .fun-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .fun-card {
+      background: #111;
+      color: white;
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .fun-card.light {
+      background: #fff;
+      color: #111;
+      border: 1px solid #f0e7dc;
+    }
+
+    .fun-card h4 {
+      margin: 0 0 8px;
+      font-size: 19px;
+    }
+
+    .fun-card p {
+      color: #aaa;
+      font-size: 13px;
+      margin: 0 0 18px;
+      line-height: 1.6;
+    }
+
+    .fun-card.light p { color: #666; }
+
+    button.action {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #ffd353;
+      color: #111;
+    }
+
+    .random-song {
+      margin-top: 12px;
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .attendance {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .day {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #eee;
+      font-size: 11px;
+    }
+
+    .day.on {
+      background: #ffd353;
+      font-weight: 900;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(760px, 100%);
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #eee;
+      height: 72px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      z-index: 20;
+    }
+
+    .nav-item {
+      text-align: center;
+      font-size: 11px;
+      padding-top: 11px;
+      color: #555;
+    }
+
+    .nav-item b {
+      display: block;
+      font-size: 20px;
+      margin-bottom: 4px;
+      color: #111;
+    }
+
+    @media (min-width: 680px) {
+      .quick-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .fun-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      VOM
+      <small>VOICE OF MELODY</small>
+    </div>
+    <button class="menu-btn">♪</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">VOICE OF MELODY</div>
+    <h1>THIS IS<br>VOM</h1>
+    <div class="script">Sing Together, Stay Together.</div>
+    <div class="hero-copy">
+      노래로 연결되는 우리만의 이야기.<br>
+      함께 부르고, 듣고, 기록하는 순간들.
+    </div>
+
+    <div class="hero-card">
+      <span class="tag">VOM COMMUNITY</span>
+      <h2>우리가 만드는<br>음악의 기록</h2>
+      <p>
+        공연, 버스킹, 연습모임, 셋리스트와 추억까지.
+        VOM의 모든 순간을 한곳에서 확인하세요.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h3>다음 일정</h3>
+      <span>전체 일정 보기 →</span>
+    </div>
+
+    <div class="next-event">
+      <div class="label">NEXT VOM LIVE</div>
+      <div class="event-main">
+        <div>
+          <div class="event-date">6.27</div>
+          <div class="event-info">
+            봄라이브 #02<br>
+            14:00 - 18:00 · 숨연습실 송내점
+          </div>
+        </div>
+        <div class="dday">D-DAY</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h3>바로가기</h3>
+    </div>
+
+    <div class="quick-grid">
+      <div class="quick">
+        <div class="icon">🗓️</div>
+        <h4>일정</h4>
+        <p>VOM의 모든 일정을 한눈에 확인</p>
+      </div>
+
+      <div class="quick">
+        <div class="icon">🎤</div>
+        <h4>VOM LIVE</h4>
+        <p>라이브 공연과 테마 기록</p>
+      </div>
+
+      <div class="quick">
+        <div class="icon">🎸</div>
+        <h4>버스킹</h4>
+        <p>버스킹 일정과 셋리스트 확인</p>
+      </div>
+
+      <div class="quick">
+        <div class="icon">🎧</div>
+        <h4>연습모임</h4>
+        <p>연습실 예약과 모임 후기</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h3>최근 소식</h3>
+      <span>더보기 →</span>
+    </div>
+
+    <div class="news-list">
+      <div class="news">
+        <small>VOM LIVE</small>
+        <strong>봄라이브 #02 참가 신청이 열렸습니다.</strong>
+      </div>
+
+      <div class="news">
+        <small>BUSKING</small>
+        <strong>다음 버스킹 프로젝트 준비가 시작됐습니다.</strong>
+      </div>
+
+      <div class="news">
+        <small>NOTICE</small>
+        <strong>새로운 운영진 모집이 진행 중입니다.</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <h3>오늘의 VOM</h3>
+    </div>
+
+    <div class="fun-grid">
+
+      <div class="fun-card">
+        <h4>🎲 오늘의 랜덤곡</h4>
+        <p>버튼을 눌러 오늘 한 곡 골라보세요.</p>
+        <button class="action" onclick="pickSong()">곡 뽑기</button>
+        <div class="random-song" id="song">?</div>
+      </div>
+
+      <div class="fun-card light">
+        <h4>💬 VOM 한마디</h4>
+        <p>오늘의 한마디를 남겨보세요.</p>
+        <div class="input-row">
+          <input id="message" placeholder="한마디 입력">
+          <button class="action" onclick="saveMessage()">남기기</button>
+        </div>
+        <div class="random-song" id="savedMessage"></div>
+      </div>
+
+      <div class="fun-card light">
+        <h4>✅ 출석체크</h4>
+        <p>이번 주도 VOM 출석.</p>
+        <div class="attendance">
+          <div class="day on">월</div>
+          <div class="day on">화</div>
+          <div class="day on">수</div>
+          <div class="day">목</div>
+          <div class="day">금</div>
+          <div class="day">토</div>
+          <div class="day">일</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<nav class="bottom-nav">
+  <div class="nav-item"><b>⌂</b>홈</div>
+  <div class="nav-item"><b>▣</b>일정</div>
+  <div class="nav-item"><b>🎤</b>LIVE</div>
+  <div class="nav-item"><b>●</b>소식</div>
+  <div class="nav-item"><b>☰</b>더보기</div>
+</nav>
+
+<script>
+  const songs = [
+    "고백 - 델리스파이스",
+    "나였으면 - 나윤권",
+    "사랑했나봐 - 윤도현",
+    "좋니 - 윤종신",
+    "밤편지 - 아이유",
+    "너의 모든 순간 - 성시경",
+    "나는 반딧불 - 황가람"
+  ];
+
+  function pickSong() {
+    const pick = songs[Math.floor(Math.random() * songs.length)];
+    document.getElementById("song").innerText = pick;
+  }
+
+  function saveMessage() {
+    const input = document.getElementById("message");
+    const value = input.value.trim();
+
+    if (!value) return;
+
+    document.getElementById("savedMessage").innerText = "“" + value + "”";
+    input.value = "";
+  }
+</script>
+
+</body>
+</html>
