@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#18254c" />
+
+  <title>CALENDAR · VOM</title>
+
+  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/calendar.css" />
+</head>
+
+<body>
+
+  <div class="aurora-bg"></div>
+  <div class="stars"></div>
+
+  <header>
+    <div class="header-inner">
+
+      <a href="/" class="brand">
+        <span class="brand-main">VOM</span>
+        <span class="brand-sub">VOICE OF MELODY</span>
+      </a>
+
+      <button
+        class="menu-button"
+        onclick="openMenu()"
+        aria-label="메뉴 열기"
+      >
+        <span class="menu-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+    </div>
+  </header>
+
+
+  <main class="page">
+
+    <section class="calendar-hero">
+
+      <div class="calendar-label">
+        VOM SCHEDULE
+      </div>
+
+      <h1 class="calendar-title">
+        Calendar
+      </h1>
+
+      <div class="calendar-sub">
+        VOM의 주요 일정과 모임을 한눈에 확인하세요.<br>
+        LIVE, BUSKING, 회의 등 필요한 일정만 빠르게 볼 수 있습니다.
+      </div>
+
+    </section>
+
+
+    <section>
+
+      <div class="calendar-filter">
+
+        <button
+          class="filter-btn active"
+          onclick="filterEvents('all', this)"
+        >
+          ALL
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterEvents('live', this)"
+        >
+          VOM LIVE
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterEvents('busking', this)"
+        >
+          BUSKING
+        </button>
+
+        <button
+          class="filter-btn"
+          onclick="filterEvents('etc', this)"
+        >
+          ETC
+        </button>
+
+      </div>
+
+
+      <div class="month-card">
+
+        <div class="month-head">
+
+          <h2>
+            June 2026
+          </h2>
+
+          <small>
+            06
+          </small>
+
+        </div>
+
+
+        <div class="calendar-list">
+
+          <a
+            href="/live/"
+            class="calendar-event live"
+            data-type="live"
+          >
+
+            <div class="event-datebox">
+              <div>
+                <strong>27</strong>
+                <span>FRI</span>
+              </div>
+            </div>
+
+            <div class="event-content">
+              <span class="event-type">
+                VOM LIVE
+              </span>
+
+              <h3>
+                VOM LIVE #02
+              </h3>
+
+              <p>
+                14:00 - 18:00 · 송연습실 송내점
+              </p>
+            </div>
+
+            <div class="event-go">
+              →
+            </div>
+
+          </a>
+
+
+          <a
+            href="/busking/"
+            class="calendar-event busking"
+            data-type="busking"
+          >
+
+            <div class="event-datebox">
+              <div>
+                <strong>30</strong>
+                <span>MON</span>
+              </div>
+            </div>
+
+            <div class="event-content">
+              <span class="event-type">
+                BUSKING
+              </span>
+
+              <h3>
+                BUSKING @신촌
+              </h3>
+
+              <p>
+                19:00 - 21:00 · 신촌 스타광장
+              </p>
+            </div>
+
+            <div class="event-go">
+              →
+            </div>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="month-card" style="margin-top:16px;">
+
+        <div class="month-head">
+
+          <h2>
+            July 2026
+          </h2>
+
+          <small>
+            07
+          </small>
+
+        </div>
+
+
+        <div class="calendar-list">
+
+          <a
+            href="#"
+            class="calendar-event"
+            data-type="etc"
+            onclick="showToast('상세 일정 페이지는 나중에 연결할게요.')"
+          >
+
+            <div class="event-datebox">
+              <div>
+                <strong>05</strong>
+                <span>SAT</span>
+              </div>
+            </div>
+
+            <div class="event-content">
+              <span class="event-type">
+                ETC
+              </span>
+
+              <h3>
+                VOM 일정
+              </h3>
+
+              <p>
+                10:00 - 13:00 · 송내
+              </p>
+            </div>
+
+            <div class="event-go">
+              →
+            </div>
+
+          </a>
+
+
+          <a
+            href="#"
+            class="calendar-event"
+            data-type="etc"
+            onclick="showToast('상세 일정 페이지는 나중에 연결할게요.')"
+          >
+
+            <div class="event-datebox">
+              <div>
+                <strong>12</strong>
+                <span>SAT</span>
+              </div>
+            </div>
+
+            <div class="event-content">
+              <span class="event-type">
+                ETC
+              </span>
+
+              <h3>
+                VOM 회의
+              </h3>
+
+              <p>
+                15:00 - 17:00 · 온라인
+              </p>
+            </div>
+
+            <div class="event-go">
+              →
+            </div>
+
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <div class="calendar-note">
+        현재는 예시 일정으로 구성되어 있습니다.
+        이후 실제 일정 데이터와 연결하면 홈 화면과 CALENDAR가 자동으로 함께 변경되게 만들 수 있습니다.
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <nav class="bottom-nav">
+
+    <a href="/" class="bottom-item">
+      <span class="nav-icon">⌂</span>
+      HOME
+    </a>
+
+    <a href="/info/" class="bottom-item">
+      <span class="nav-icon">ⓘ</span>
+      INFO
+    </a>
+
+    <a href="/calendar/" class="bottom-item active">
+      <span class="nav-icon">▣</span>
+      CALENDAR
+    </a>
+
+    <a href="/live/" class="bottom-item">
+      <span class="nav-icon">〽</span>
+      LIVE
+    </a>
+
+    <button
+      class="bottom-item"
+      onclick="openMenu()"
+    >
+      <span class="nav-icon">☰</span>
+      MENU
+    </button>
+
+  </nav>
+
+
+  <div
+    class="menu-panel"
+    id="menuPanel"
+  >
+
+    <div class="menu-box">
+
+      <div class="menu-box-top">
+
+        <h3>
+          VOM Menu
+        </h3>
+
+        <button
+          class="menu-close"
+          onclick="closeMenu()"
+        >
+          ✕
+        </button>
+
+      </div>
+
+      <a href="/info/" class="menu-link">
+        INFO
+      </a>
+
+      <a href="/calendar/" class="menu-link">
+        CALENDAR
+      </a>
+
+      <a href="/live/" class="menu-link">
+        VOM LIVE
+      </a>
+
+      <a href="/busking/" class="menu-link">
+        BUSKING
+      </a>
+
+      <a href="/notice/" class="menu-link">
+        NOTICE
+      </a>
+
+      <a href="/qna/" class="menu-link">
+        Q&A
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+
+  <script src="/assets/js/common.js"></script>
+
+  <script>
+    function filterEvents(type, button) {
+
+      const buttons =
+        document.querySelectorAll(".filter-btn");
+
+      const events =
+        document.querySelectorAll(".calendar-event");
+
+      buttons.forEach(btn => {
+        btn.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+
+      events.forEach(event => {
+
+        if (
+          type === "all" ||
+          event.dataset.type === type
+        ) {
+          event.style.display = "grid";
+        } else {
+          event.style.display = "none";
+        }
+
+      });
+
+    }
+  </script>
+
+</body>
+</html>
