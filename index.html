@@ -3,586 +3,1413 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>THIS IS VOM</title>
+  <meta name="theme-color" content="#11182d" />
+  <title>VOM · Voice of Melody</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --navy: #0d1530;
+      --text: #13172a;
+      --muted: #71778b;
+      --line: rgba(21, 27, 52, .09);
+      --glass: rgba(255, 255, 255, .76);
+      --glass-strong: rgba(255, 255, 255, .9);
+      --violet: #7567ef;
+      --blue: #75b7ff;
+      --mint: #a6efd2;
+      --pink: #eeb8dc;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, "Noto Sans KR", sans-serif;
-      background: #fffaf2;
-      color: #161616;
+      font-family: "Noto Sans KR", sans-serif;
+      color: var(--text);
+      background: #f7f7fb;
+      overflow-x: hidden;
     }
 
-    .wrap {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 0 16px 100px;
+    button,
+    a {
+      font: inherit;
     }
 
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(255,250,242,.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #eee4d8;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    .header-inner {
-      max-width: 760px;
-      margin: 0 auto;
-      height: 64px;
-      padding: 0 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+    /* =========================
+       BACKGROUND
+    ========================= */
 
-    .logo {
-      font-size: 22px;
-      font-weight: 900;
-      letter-spacing: -1px;
-    }
-
-    .logo small {
-      display: block;
-      font-size: 9px;
-      letter-spacing: 1.4px;
-      margin-top: -2px;
-    }
-
-    .menu-btn {
-      border: 0;
-      background: #111;
-      color: white;
-      border-radius: 999px;
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-    }
-
-    .hero {
-      padding: 42px 0 26px;
-    }
-
-    .eyebrow {
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #d86d2c;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      font-size: clamp(44px, 12vw, 82px);
-      line-height: .92;
-      margin: 0;
-      letter-spacing: -4px;
-      font-weight: 900;
-    }
-
-    .script {
-      font-family: Georgia, serif;
-      font-style: italic;
-      font-weight: 400;
-      font-size: 25px;
-      margin-top: 12px;
-    }
-
-    .hero-copy {
-      margin-top: 20px;
-      color: #666;
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
-    .hero-card {
-      margin-top: 28px;
-      border-radius: 28px;
-      min-height: 300px;
-      padding: 28px;
-      background:
-        radial-gradient(circle at 20% 20%, #ffd4bc 0 18%, transparent 19%),
-        radial-gradient(circle at 85% 35%, #ffd95c 0 16%, transparent 17%),
-        linear-gradient(135deg, #111 0 50%, #2a2a2a 100%);
-      color: white;
-      position: relative;
+    .aurora-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0,0,0,.12);
+      background:
+        linear-gradient(
+          180deg,
+          #18254c 0%,
+          #283665 20%,
+          #ebeaf4 47%,
+          #f8f7fb 67%,
+          #f5f5f7 100%
+        );
     }
 
-    .hero-card::after {
-      content: "♪";
+    .aurora-bg::before,
+    .aurora-bg::after {
+      content: "";
       position: absolute;
-      right: 20px;
-      bottom: 4px;
-      font-size: 120px;
-      opacity: .12;
-      transform: rotate(-12deg);
+      width: 120%;
+      height: 52%;
+      left: -10%;
+      top: -4%;
+      filter: blur(36px);
+      opacity: .82;
+      transform: rotate(-5deg);
     }
 
-    .hero-card .tag {
-      display: inline-block;
-      background: #fff;
-      color: #111;
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
+    .aurora-bg::before {
+      background:
+        radial-gradient(
+          ellipse at 15% 40%,
+          rgba(141, 236, 209, .75),
+          transparent 35%
+        ),
+        radial-gradient(
+          ellipse at 48% 15%,
+          rgba(151, 130, 255, .75),
+          transparent 36%
+        ),
+        radial-gradient(
+          ellipse at 75% 45%,
+          rgba(230, 157, 221, .72),
+          transparent 34%
+        ),
+        radial-gradient(
+          ellipse at 90% 10%,
+          rgba(129, 198, 255, .78),
+          transparent 36%
+        );
+      animation: auroraOne 12s ease-in-out infinite alternate;
     }
 
-    .hero-card h2 {
-      font-size: 32px;
-      margin: 22px 0 10px;
+    .aurora-bg::after {
+      top: 8%;
+      opacity: .5;
+      background:
+        radial-gradient(
+          ellipse at 36% 18%,
+          rgba(255,255,255,.8),
+          transparent 24%
+        ),
+        radial-gradient(
+          ellipse at 68% 28%,
+          rgba(148, 230, 255, .7),
+          transparent 29%
+        ),
+        radial-gradient(
+          ellipse at 52% 55%,
+          rgba(189, 141, 255, .62),
+          transparent 31%
+        );
+      animation: auroraTwo 15s ease-in-out infinite alternate;
     }
 
-    .hero-card p {
-      color: #ddd;
-      line-height: 1.6;
-      margin: 0;
-      max-width: 420px;
+    @keyframes auroraOne {
+      from {
+        transform: translate3d(-2%, 0, 0) rotate(-6deg) scale(1);
+      }
+      to {
+        transform: translate3d(4%, 2%, 0) rotate(-1deg) scale(1.08);
+      }
+    }
+
+    @keyframes auroraTwo {
+      from {
+        transform: translate3d(3%, -1%, 0) rotate(4deg) scale(1.04);
+      }
+      to {
+        transform: translate3d(-3%, 4%, 0) rotate(-3deg) scale(1.12);
+      }
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: -9;
+      pointer-events: none;
+      opacity: .35;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.4px);
+      background-size: 58px 58px;
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 48%);
+    }
+
+    /* =========================
+       COMMON
+    ========================= */
+
+    .page {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+      padding: 0 24px 110px;
+    }
+
+    .glass {
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,.58);
+      box-shadow:
+        0 18px 50px rgba(19, 25, 55, .10),
+        inset 0 1px 0 rgba(255,255,255,.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
     .section {
-      margin-top: 24px;
+      margin-top: 42px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 15px;
     }
 
     .section-title {
       display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -.8px;
+    }
+
+    .section-script {
+      font-family: "Nanum Pen Script", cursive;
+      color: #7668e8;
+      font-size: 25px;
+      font-weight: 400;
+    }
+
+    .section-link {
+      border: 0;
+      background: transparent;
+      color: #4e5468;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    header {
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-inner {
+      width: min(1100px, 100%);
+      height: 88px;
+      padding: 0 24px;
+      margin: 0 auto;
+      display: flex;
       align-items: center;
       justify-content: space-between;
+      color: white;
+    }
+
+    .brand {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-main {
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 6px;
+    }
+
+    .brand-sub {
+      font-size: 10px;
+      letter-spacing: 3px;
+      opacity: .88;
+    }
+
+    .menu-button {
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 50%;
+      background: rgba(255,255,255,.13);
+      color: white;
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+
+    .menu-lines {
+      width: 18px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .menu-lines span {
+      display: block;
+      height: 1.5px;
+      border-radius: 3px;
+      background: currentColor;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero {
+      min-height: 600px;
+      padding: 84px 0 58px;
+      display: grid;
+      grid-template-columns: 1.4fr .8fr;
+      gap: 56px;
+      align-items: center;
+      color: white;
+    }
+
+    .hero-kicker {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 13px;
+      color: rgba(255,255,255,.8);
       margin-bottom: 14px;
     }
 
-    .section-title h3 {
+    .hero-kicker::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: rgba(255,255,255,.7);
+    }
+
+    .hero-logo {
       margin: 0;
-      font-size: 22px;
+      font-family: "Nanum Pen Script", cursive;
+      font-size: clamp(112px, 16vw, 190px);
+      line-height: .74;
+      font-weight: 400;
+      letter-spacing: -10px;
+      text-shadow: 0 0 32px rgba(255,255,255,.13);
     }
 
-    .section-title span {
-      font-size: 12px;
-      color: #777;
+    .hero-sublogo {
+      margin-top: 12px;
+      margin-left: 10px;
+      font-family: "Nanum Pen Script", cursive;
+      font-size: 35px;
+      background: linear-gradient(
+        90deg,
+        #d3c2ff,
+        #8fd8ff,
+        #bff1dc
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    .next-event {
-      background: #fff;
-      border-radius: 24px;
-      padding: 22px;
-      box-shadow: 0 8px 26px rgba(0,0,0,.06);
-      border: 1px solid #f0e7dc;
+    .hero-copy {
+      margin: 34px 0 0 8px;
+      line-height: 1.85;
+      color: rgba(255,255,255,.92);
+      font-size: 15px;
     }
 
-    .next-event .label {
-      color: #e66c2c;
-      font-weight: 900;
-      font-size: 12px;
+    .hero-tagline {
+      margin: 20px 0 0 8px;
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 18px;
+      color: rgba(255,255,255,.72);
+    }
+
+    .outline-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin: 27px 0 0 8px;
+      height: 46px;
+      padding: 0 22px;
+      color: white;
+      border: 1px solid rgba(255,255,255,.5);
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .outline-button:hover {
+      background: rgba(255,255,255,.14);
+      transform: translateY(-2px);
+    }
+
+    .next-live {
+      border-radius: 30px;
+      padding: 29px;
+      color: var(--text);
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.9),
+          rgba(238,234,255,.72)
+        );
+      border: 1px solid rgba(255,255,255,.7);
+      box-shadow:
+        0 26px 75px rgba(12,16,50,.22),
+        inset 0 1px 0 rgba(255,255,255,.8);
+      backdrop-filter: blur(24px);
+    }
+
+    .live-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #565c73;
+      font-size: 13px;
       letter-spacing: 1px;
     }
 
-    .event-main {
+    .dday {
+      padding: 6px 11px;
+      border-radius: 999px;
+      color: white;
+      font-size: 12px;
+      background:
+        linear-gradient(135deg, #7a64f2, #759cf1);
+    }
+
+    .live-date {
+      margin-top: 25px;
+      font-family: Georgia, serif;
+      font-size: 63px;
+      letter-spacing: -4px;
+    }
+
+    .live-date small {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 15px;
+      letter-spacing: 0;
+      margin-left: 5px;
+    }
+
+    .live-divider {
+      height: 1px;
+      background: rgba(26,31,60,.1);
+      margin: 12px 0 18px;
+    }
+
+    .live-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .live-info {
+      color: #555c70;
+      line-height: 1.75;
+      font-size: 14px;
+      margin-top: 7px;
+    }
+
+    .live-more {
+      width: 100%;
+      margin-top: 18px;
+      padding-top: 18px;
+      border: 0;
+      border-top: 1px solid rgba(26,31,60,.1);
       display: flex;
       justify-content: space-between;
-      gap: 16px;
-      align-items: end;
-      margin-top: 12px;
+      align-items: center;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
     }
 
-    .event-date {
-      font-size: 40px;
-      font-weight: 900;
-      letter-spacing: -2px;
-    }
+    /* =========================
+       QUICK MENU
+    ========================= */
 
-    .event-info {
-      color: #666;
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .dday {
-      background: #111;
-      color: #fff;
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .quick-grid {
+    .quick-menu {
+      margin-top: -16px;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .quick {
-      min-height: 150px;
-      padding: 20px;
-      border-radius: 22px;
-      background: #fff;
-      border: 1px solid #f0e7dc;
-      box-shadow: 0 7px 20px rgba(0,0,0,.04);
-      position: relative;
+      grid-template-columns: repeat(5, 1fr);
+      border-radius: 28px;
       overflow: hidden;
     }
 
-    .quick:nth-child(1) { background: #fff2c9; }
-    .quick:nth-child(2) { background: #e7f4eb; }
-    .quick:nth-child(3) { background: #ffe6d6; }
-    .quick:nth-child(4) { background: #efe5f5; }
-
-    .quick .icon {
-      font-size: 30px;
-      margin-bottom: 14px;
-    }
-
-    .quick h4 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .quick p {
-      font-size: 13px;
-      color: #666;
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    .news-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .news {
-      background: white;
-      border: 1px solid #f0e7dc;
-      border-radius: 20px;
-      padding: 18px;
-    }
-
-    .news small {
-      color: #999;
-      font-size: 11px;
-    }
-
-    .news strong {
-      display: block;
-      margin-top: 6px;
-      font-size: 16px;
-      line-height: 1.45;
-    }
-
-    .fun-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .fun-card {
-      background: #111;
-      color: white;
-      border-radius: 24px;
-      padding: 22px;
-    }
-
-    .fun-card.light {
-      background: #fff;
-      color: #111;
-      border: 1px solid #f0e7dc;
-    }
-
-    .fun-card h4 {
-      margin: 0 0 8px;
-      font-size: 19px;
-    }
-
-    .fun-card p {
-      color: #aaa;
-      font-size: 13px;
-      margin: 0 0 18px;
-      line-height: 1.6;
-    }
-
-    .fun-card.light p { color: #666; }
-
-    button.action {
+    .quick-item {
       border: 0;
-      border-radius: 999px;
-      padding: 11px 16px;
-      font-weight: 800;
+      border-right: 1px solid var(--line);
+      min-height: 125px;
+      padding: 20px 10px;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
-      background: #ffd353;
-      color: #111;
+      transition: .2s ease;
     }
 
-    .random-song {
-      margin-top: 12px;
-      font-size: 20px;
-      font-weight: 900;
+    .quick-item:last-child {
+      border-right: 0;
     }
 
-    .input-row {
-      display: flex;
-      gap: 8px;
+    .quick-item:hover {
+      background: rgba(255,255,255,.42);
     }
 
-    input {
-      flex: 1;
-      min-width: 0;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .attendance {
-      display: flex;
-      gap: 8px;
-      margin-top: 14px;
-    }
-
-    .day {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+    .quick-icon {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 10px;
       display: grid;
       place-items: center;
-      background: #eee;
-      font-size: 11px;
+      font-size: 27px;
+      filter: grayscale(.1);
     }
 
-    .day.on {
-      background: #ffd353;
-      font-weight: 900;
+    .quick-item strong {
+      font-size: 15px;
     }
+
+    .quick-item small {
+      margin-top: 3px;
+      color: #7b8093;
+      font-size: 10px;
+      letter-spacing: .6px;
+    }
+
+    /* =========================
+       NOTICE + ABOUT
+    ========================= */
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.07fr;
+      gap: 22px;
+    }
+
+    .notice-card {
+      border-radius: 24px;
+      padding: 8px 22px;
+    }
+
+    .notice-row {
+      min-height: 72px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 13px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+
+    .notice-row:last-child {
+      border-bottom: 0;
+    }
+
+    .badge {
+      padding: 5px 9px;
+      border-radius: 7px;
+      background: #eee8ff;
+      color: #6d59d9;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .badge.blue {
+      background: #e5f1ff;
+      color: #4286cf;
+    }
+
+    .notice-row strong {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .notice-row time {
+      font-size: 11px;
+      color: #9398a8;
+    }
+
+    .about-card {
+      min-height: 230px;
+      border-radius: 24px;
+      padding: 27px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(
+          circle at 70% 20%,
+          rgba(124,255,221,.42),
+          transparent 34%
+        ),
+        radial-gradient(
+          circle at 26% 88%,
+          rgba(197,130,255,.56),
+          transparent 40%
+        ),
+        linear-gradient(
+          135deg,
+          #15244d,
+          #292a61 50%,
+          #11162f
+        );
+    }
+
+    .about-card::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        linear-gradient(
+          115deg,
+          transparent 20%,
+          rgba(255,255,255,.22) 49%,
+          transparent 70%
+        );
+      transform: rotate(-10deg);
+    }
+
+    .about-script {
+      position: relative;
+      z-index: 2;
+      font-family: "Nanum Pen Script", cursive;
+      font-size: 42px;
+      line-height: .95;
+      color: #e6dcff;
+    }
+
+    .about-text {
+      position: relative;
+      z-index: 2;
+      margin-top: 38px;
+      line-height: 1.7;
+      font-size: 13px;
+      color: rgba(255,255,255,.83);
+    }
+
+    .about-link {
+      position: relative;
+      z-index: 2;
+      margin-top: 17px;
+      display: inline-flex;
+      gap: 15px;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    /* =========================
+       SCHEDULE
+    ========================= */
+
+    .schedule-scroll {
+      display: grid;
+      grid-template-columns: 1.15fr repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .event-card {
+      border-radius: 22px;
+      padding: 22px;
+      min-height: 205px;
+      background: var(--glass-strong);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 13px 35px rgba(30,37,75,.08);
+    }
+
+    .event-card.featured {
+      color: white;
+      background:
+        radial-gradient(
+          circle at 76% 20%,
+          rgba(114, 255, 220, .55),
+          transparent 38%
+        ),
+        radial-gradient(
+          circle at 30% 80%,
+          rgba(160, 111, 255, .72),
+          transparent 44%
+        ),
+        linear-gradient(
+          145deg,
+          #112249,
+          #273673
+        );
+    }
+
+    .event-dday {
+      font-size: 11px;
+      color: #747a8d;
+    }
+
+    .featured .event-dday {
+      color: rgba(255,255,255,.72);
+    }
+
+    .event-card h4 {
+      margin: 14px 0 8px;
+      font-family: Georgia, serif;
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .event-card h4 small {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .event-name {
+      margin-top: 7px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .event-meta {
+      margin-top: 8px;
+      line-height: 1.65;
+      font-size: 12px;
+      color: #707689;
+    }
+
+    .featured .event-meta {
+      color: rgba(255,255,255,.76);
+    }
+
+    .event-arrow {
+      margin-top: 17px;
+      font-size: 22px;
+    }
+
+    /* =========================
+       BOTTOM NAV
+    ========================= */
 
     .bottom-nav {
       position: fixed;
+      z-index: 50;
       left: 50%;
-      bottom: 0;
+      bottom: 14px;
       transform: translateX(-50%);
-      width: min(760px, 100%);
-      background: rgba(255,255,255,.96);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid #eee;
+      width: min(760px, calc(100% - 26px));
       height: 72px;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      z-index: 20;
+      border-radius: 24px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 16px 45px rgba(22,28,66,.15);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      overflow: hidden;
     }
 
-    .nav-item {
-      text-align: center;
-      font-size: 11px;
-      padding-top: 11px;
-      color: #555;
+    .bottom-item {
+      border: 0;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: center;
+      justify-content: center;
+      color: #74798a;
+      font-size: 9px;
+      cursor: pointer;
     }
 
-    .nav-item b {
-      display: block;
+    .bottom-item .nav-icon {
       font-size: 20px;
-      margin-bottom: 4px;
-      color: #111;
     }
 
-    @media (min-width: 680px) {
-      .quick-grid {
-        grid-template-columns: repeat(4, 1fr);
+    .bottom-item.active {
+      color: #7160ed;
+      font-weight: 700;
+    }
+
+    /* =========================
+       MENU MODAL
+    ========================= */
+
+    .menu-panel {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      padding: 30px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(12,16,40,.46);
+      backdrop-filter: blur(14px);
+    }
+
+    .menu-panel.open {
+      display: flex;
+    }
+
+    .menu-box {
+      width: min(390px, 100%);
+      padding: 24px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 24px 70px rgba(0,0,0,.18);
+    }
+
+    .menu-box-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .menu-box h3 {
+      margin: 0;
+      font-size: 23px;
+    }
+
+    .menu-close {
+      border: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #eeeef4;
+      cursor: pointer;
+    }
+
+    .menu-link {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 3px;
+      background: transparent;
+      text-align: left;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 105px;
+      z-index: 200;
+      transform: translate(-50%, 20px);
+      opacity: 0;
+      pointer-events: none;
+      padding: 11px 16px;
+      border-radius: 999px;
+      background: rgba(18,23,46,.9);
+      color: white;
+      font-size: 12px;
+      transition: .25s ease;
+      backdrop-filter: blur(15px);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 760px) {
+
+      .page {
+        padding: 0 16px 108px;
       }
 
-      .fun-grid {
-        grid-template-columns: repeat(3, 1fr);
+      .header-inner {
+        height: 70px;
+        padding: 0 16px;
+      }
+
+      .brand-main {
+        font-size: 22px;
+        letter-spacing: 4px;
+      }
+
+      .brand-sub {
+        font-size: 8px;
+        letter-spacing: 2px;
+      }
+
+      .menu-button {
+        width: 42px;
+        height: 42px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding: 60px 0 42px;
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .hero-kicker {
+        font-size: 11px;
+      }
+
+      .hero-logo {
+        font-size: clamp(110px, 34vw, 160px);
+        letter-spacing: -7px;
+      }
+
+      .hero-sublogo {
+        font-size: 29px;
+      }
+
+      .hero-copy {
+        font-size: 14px;
+      }
+
+      .next-live {
+        padding: 24px;
+        border-radius: 25px;
+      }
+
+      .live-date {
+        font-size: 54px;
+      }
+
+      .quick-menu {
+        margin-top: 0;
+        grid-template-columns: repeat(5, minmax(88px, 1fr));
+        overflow-x: auto;
+        border-radius: 22px;
+        scrollbar-width: none;
+      }
+
+      .quick-menu::-webkit-scrollbar {
+        display: none;
+      }
+
+      .quick-item {
+        min-width: 88px;
+        min-height: 105px;
+        padding: 15px 7px;
+      }
+
+      .quick-icon {
+        font-size: 23px;
+      }
+
+      .quick-item strong {
+        font-size: 12px;
+      }
+
+      .quick-item small {
+        font-size: 8px;
+      }
+
+      .section {
+        margin-top: 32px;
+      }
+
+      .section-title {
+        font-size: 21px;
+      }
+
+      .section-script {
+        font-size: 23px;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-card {
+        min-height: 210px;
+      }
+
+      .schedule-scroll {
+        grid-template-columns: repeat(4, minmax(195px, 1fr));
+        overflow-x: auto;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+      }
+
+      .schedule-scroll::-webkit-scrollbar {
+        display: none;
+      }
+
+      .event-card {
+        min-width: 195px;
+      }
+
+      .bottom-nav {
+        bottom: 8px;
+        height: 66px;
+        border-radius: 21px;
+      }
+
+      .bottom-item .nav-icon {
+        font-size: 18px;
       }
     }
   </style>
 </head>
+
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="logo">
-      VOM
-      <small>VOICE OF MELODY</small>
+  <div class="aurora-bg"></div>
+  <div class="stars"></div>
+
+  <header>
+    <div class="header-inner">
+      <a href="#" class="brand">
+        <span class="brand-main">VOM</span>
+        <span class="brand-sub">VOICE OF MELODY</span>
+      </a>
+
+      <button class="menu-button" onclick="openMenu()" aria-label="메뉴 열기">
+        <span class="menu-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
     </div>
-    <button class="menu-btn">♪</button>
-  </div>
-</header>
+  </header>
 
-<main class="wrap">
+  <main class="page">
 
-  <section class="hero">
-    <div class="eyebrow">VOICE OF MELODY</div>
-    <h1>THIS IS<br>VOM</h1>
-    <div class="script">Sing Together, Stay Together.</div>
-    <div class="hero-copy">
-      노래로 연결되는 우리만의 이야기.<br>
-      함께 부르고, 듣고, 기록하는 순간들.
-    </div>
+    <!-- HERO -->
+    <section class="hero">
 
-    <div class="hero-card">
-      <span class="tag">VOM COMMUNITY</span>
-      <h2>우리가 만드는<br>음악의 기록</h2>
-      <p>
-        공연, 버스킹, 연습모임, 셋리스트와 추억까지.
-        VOM의 모든 순간을 한곳에서 확인하세요.
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-title">
-      <h3>다음 일정</h3>
-      <span>전체 일정 보기 →</span>
-    </div>
-
-    <div class="next-event">
-      <div class="label">NEXT VOM LIVE</div>
-      <div class="event-main">
-        <div>
-          <div class="event-date">6.27</div>
-          <div class="event-info">
-            봄라이브 #02<br>
-            14:00 - 18:00 · 숨연습실 송내점
-          </div>
+      <div>
+        <div class="hero-kicker">
+          노래로 연결되는 우리들의 이야기
         </div>
-        <div class="dday">D-DAY</div>
-      </div>
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="section-title">
-      <h3>바로가기</h3>
-    </div>
+        <h1 class="hero-logo">Vom</h1>
 
-    <div class="quick-grid">
-      <div class="quick">
-        <div class="icon">🗓️</div>
-        <h4>일정</h4>
-        <p>VOM의 모든 일정을 한눈에 확인</p>
-      </div>
+        <div class="hero-sublogo">
+          Voice of Melody
+        </div>
 
-      <div class="quick">
-        <div class="icon">🎤</div>
-        <h4>VOM LIVE</h4>
-        <p>라이브 공연과 테마 기록</p>
-      </div>
+        <div class="hero-copy">
+          함께 부르고, 듣고, 기록하는 순간들.<br>
+          음악이 있는 곳에, 언제나 VOM이 있습니다.
+        </div>
 
-      <div class="quick">
-        <div class="icon">🎸</div>
-        <h4>버스킹</h4>
-        <p>버스킹 일정과 셋리스트 확인</p>
+        <div class="hero-tagline">
+          Sing Together, Stay Together.
+        </div>
+
+        <button
+          class="outline-button"
+          onclick="showToast('VOM 소개 페이지는 다음 단계에서 연결할게요.')">
+          VOM 소개
+          <span>→</span>
+        </button>
       </div>
 
-      <div class="quick">
-        <div class="icon">🎧</div>
-        <h4>연습모임</h4>
-        <p>연습실 예약과 모임 후기</p>
-      </div>
-    </div>
-  </section>
+      <article class="next-live">
+        <div class="live-top">
+          <span>NEXT LIVE</span>
+          <span class="dday">D-14</span>
+        </div>
 
-  <section class="section">
-    <div class="section-title">
-      <h3>최근 소식</h3>
-      <span>더보기 →</span>
-    </div>
+        <div class="live-date">
+          6.27
+          <small>FRI</small>
+        </div>
 
-    <div class="news-list">
-      <div class="news">
-        <small>VOM LIVE</small>
-        <strong>봄라이브 #02 참가 신청이 열렸습니다.</strong>
-      </div>
+        <div class="live-divider"></div>
 
-      <div class="news">
+        <div class="live-name">
+          VOM LIVE #02
+        </div>
+
+        <div class="live-info">
+          14:00 - 18:00<br>
+          📍 송연습실 송내점
+        </div>
+
+        <button
+          class="live-more"
+          onclick="showToast('LIVE 상세 페이지는 다음 단계에서 연결할게요.')">
+          <span>자세히 보기</span>
+          <span>→</span>
+        </button>
+      </article>
+
+    </section>
+
+    <!-- QUICK MENU -->
+    <section class="quick-menu glass">
+
+      <button
+        class="quick-item"
+        onclick="goSchedule()">
+        <div class="quick-icon">▣</div>
+        <strong>전체 일정</strong>
+        <small>SCHEDULE</small>
+      </button>
+
+      <button
+        class="quick-item"
+        onclick="showToast('VOM LIVE 페이지 준비 중')">
+        <div class="quick-icon">〽</div>
+        <strong>VOM LIVE</strong>
+        <small>LIVE</small>
+      </button>
+
+      <button
+        class="quick-item"
+        onclick="showToast('버스킹 페이지 준비 중')">
+        <div class="quick-icon">♬</div>
+        <strong>버스킹</strong>
         <small>BUSKING</small>
-        <strong>다음 버스킹 프로젝트 준비가 시작됐습니다.</strong>
+      </button>
+
+      <button
+        class="quick-item"
+        onclick="showToast('연습모임 페이지 준비 중')">
+        <div class="quick-icon">◉</div>
+        <strong>연습모임</strong>
+        <small>PRACTICE</small>
+      </button>
+
+      <button
+        class="quick-item"
+        onclick="showToast('Q&A 페이지 준비 중')">
+        <div class="quick-icon">◌</div>
+        <strong>Q&A</strong>
+        <small>QUESTION</small>
+      </button>
+
+    </section>
+
+    <!-- NOTICE -->
+    <section class="section" id="notice">
+
+      <div class="section-head">
+        <h2 class="section-title">
+          공지사항
+          <span class="section-script">Notice</span>
+        </h2>
+
+        <button
+          class="section-link"
+          onclick="showToast('전체 공지 페이지 준비 중')">
+          전체 보기 →
+        </button>
       </div>
 
-      <div class="news">
-        <small>NOTICE</small>
-        <strong>새로운 운영진 모집이 진행 중입니다.</strong>
-      </div>
-    </div>
-  </section>
+      <div class="info-grid">
 
-  <section class="section">
-    <div class="section-title">
-      <h3>오늘의 VOM</h3>
-    </div>
+        <div class="notice-card glass">
 
-    <div class="fun-grid">
+          <div
+            class="notice-row"
+            onclick="showToast('공지 상세 페이지 준비 중')">
+            <span class="badge">공지</span>
+            <strong>VOM LIVE #02 안내</strong>
+            <time>06.01</time>
+          </div>
 
-      <div class="fun-card">
-        <h4>🎲 오늘의 랜덤곡</h4>
-        <p>버튼을 눌러 오늘 한 곡 골라보세요.</p>
-        <button class="action" onclick="pickSong()">곡 뽑기</button>
-        <div class="random-song" id="song">?</div>
-      </div>
+          <div
+            class="notice-row"
+            onclick="showToast('공지 상세 페이지 준비 중')">
+            <span class="badge">공지</span>
+            <strong>6월 버스킹 일정 안내</strong>
+            <time>05.28</time>
+          </div>
 
-      <div class="fun-card light">
-        <h4>💬 VOM 한마디</h4>
-        <p>오늘의 한마디를 남겨보세요.</p>
-        <div class="input-row">
-          <input id="message" placeholder="한마디 입력">
-          <button class="action" onclick="saveMessage()">남기기</button>
+          <div
+            class="notice-row"
+            onclick="showToast('공지 상세 페이지 준비 중')">
+            <span class="badge blue">알림</span>
+            <strong>연습실 이용 규칙 안내</strong>
+            <time>05.25</time>
+          </div>
+
         </div>
-        <div class="random-song" id="savedMessage"></div>
+
+        <article class="about-card">
+          <div class="about-script">
+            Voice<br>
+            of Melody
+          </div>
+
+          <div class="about-text">
+            음악은 우리를 하나로 만든다.<br>
+            VOM과 함께, 더 멋진 순간들을.
+          </div>
+
+          <button
+            class="about-link"
+            style="border:0;background:none;color:white;padding:0;cursor:pointer;"
+            onclick="showToast('VOM 소개 페이지 준비 중')">
+            ABOUT VOM
+            <span>→</span>
+          </button>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="section" id="schedule">
+
+      <div class="section-head">
+        <h2 class="section-title">
+          다가오는 일정
+          <span class="section-script">Upcoming</span>
+        </h2>
+
+        <button
+          class="section-link"
+          onclick="goSchedule()">
+          전체 일정 보기 →
+        </button>
       </div>
 
-      <div class="fun-card light">
-        <h4>✅ 출석체크</h4>
-        <p>이번 주도 VOM 출석.</p>
-        <div class="attendance">
-          <div class="day on">월</div>
-          <div class="day on">화</div>
-          <div class="day on">수</div>
-          <div class="day">목</div>
-          <div class="day">금</div>
-          <div class="day">토</div>
-          <div class="day">일</div>
-        </div>
+      <div class="schedule-scroll">
+
+        <article class="event-card featured">
+          <div class="event-dday">D-14</div>
+
+          <h4>
+            6.27
+            <small>(금)</small>
+          </h4>
+
+          <div class="event-name">
+            VOM LIVE #02
+          </div>
+
+          <div class="event-meta">
+            14:00 - 18:00<br>
+            송연습실 송내점
+          </div>
+
+          <div class="event-arrow">→</div>
+        </article>
+
+        <article class="event-card">
+          <div class="event-dday">D-17</div>
+
+          <h4>
+            6.30
+            <small>(월)</small>
+          </h4>
+
+          <div class="event-name">
+            버스킹 @신촌
+          </div>
+
+          <div class="event-meta">
+            19:00 - 21:00<br>
+            신촌 스타광장
+          </div>
+
+          <div class="event-arrow">→</div>
+        </article>
+
+        <article class="event-card">
+          <div class="event-dday">D-22</div>
+
+          <h4>
+            7.5
+            <small>(토)</small>
+          </h4>
+
+          <div class="event-name">
+            연습모임
+          </div>
+
+          <div class="event-meta">
+            10:00 - 13:00<br>
+            송연습실 송내점
+          </div>
+
+          <div class="event-arrow">→</div>
+        </article>
+
+        <article class="event-card">
+          <div class="event-dday">D-29</div>
+
+          <h4>
+            7.12
+            <small>(토)</small>
+          </h4>
+
+          <div class="event-name">
+            VOM 회의
+          </div>
+
+          <div class="event-meta">
+            15:00 - 17:00<br>
+            온라인
+          </div>
+
+          <div class="event-arrow">→</div>
+        </article>
+
       </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+
+    <button
+      class="bottom-item active"
+      onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <span class="nav-icon">⌂</span>
+      HOME
+    </button>
+
+    <button
+      class="bottom-item"
+      onclick="goSchedule()">
+      <span class="nav-icon">▣</span>
+      SCHEDULE
+    </button>
+
+    <button
+      class="bottom-item"
+      onclick="showToast('LIVE 페이지 준비 중')">
+      <span class="nav-icon">〽</span>
+      LIVE
+    </button>
+
+    <button
+      class="bottom-item"
+      onclick="document.getElementById('notice').scrollIntoView({behavior:'smooth'})">
+      <span class="nav-icon">♢</span>
+      NOTICE
+    </button>
+
+    <button
+      class="bottom-item"
+      onclick="openMenu()">
+      <span class="nav-icon">☰</span>
+      MENU
+    </button>
+
+  </nav>
+
+  <!-- MENU -->
+  <div class="menu-panel" id="menuPanel">
+    <div class="menu-box">
+
+      <div class="menu-box-top">
+        <h3>VOM Menu</h3>
+
+        <button
+          class="menu-close"
+          onclick="closeMenu()">
+          ✕
+        </button>
+      </div>
+
+      <button class="menu-link" onclick="goSchedule();closeMenu()">
+        전체 일정
+      </button>
+
+      <button class="menu-link" onclick="showToast('VOM LIVE 페이지 준비 중');closeMenu()">
+        VOM LIVE
+      </button>
+
+      <button class="menu-link" onclick="showToast('버스킹 페이지 준비 중');closeMenu()">
+        버스킹
+      </button>
+
+      <button class="menu-link" onclick="showToast('연습모임 페이지 준비 중');closeMenu()">
+        연습모임
+      </button>
+
+      <button class="menu-link" onclick="showToast('Q&A 페이지 준비 중');closeMenu()">
+        Q&A
+      </button>
 
     </div>
-  </section>
+  </div>
 
-</main>
+  <div class="toast" id="toast"></div>
 
-<nav class="bottom-nav">
-  <div class="nav-item"><b>⌂</b>홈</div>
-  <div class="nav-item"><b>▣</b>일정</div>
-  <div class="nav-item"><b>🎤</b>LIVE</div>
-  <div class="nav-item"><b>●</b>소식</div>
-  <div class="nav-item"><b>☰</b>더보기</div>
-</nav>
+  <script>
+    function openMenu() {
+      document.getElementById("menuPanel").classList.add("open");
+    }
 
-<script>
-  const songs = [
-    "고백 - 델리스파이스",
-    "나였으면 - 나윤권",
-    "사랑했나봐 - 윤도현",
-    "좋니 - 윤종신",
-    "밤편지 - 아이유",
-    "너의 모든 순간 - 성시경",
-    "나는 반딧불 - 황가람"
-  ];
+    function closeMenu() {
+      document.getElementById("menuPanel").classList.remove("open");
+    }
 
-  function pickSong() {
-    const pick = songs[Math.floor(Math.random() * songs.length)];
-    document.getElementById("song").innerText = pick;
-  }
+    function goSchedule() {
+      document
+        .getElementById("schedule")
+        .scrollIntoView({
+          behavior: "smooth"
+        });
+    }
 
-  function saveMessage() {
-    const input = document.getElementById("message");
-    const value = input.value.trim();
+    let toastTimer;
 
-    if (!value) return;
+    function showToast(message) {
+      const toast = document.getElementById("toast");
 
-    document.getElementById("savedMessage").innerText = "“" + value + "”";
-    input.value = "";
-  }
-</script>
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      clearTimeout(toastTimer);
+
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1800);
+    }
+
+    document
+      .getElementById("menuPanel")
+      .addEventListener("click", function(event) {
+        if (event.target === this) {
+          closeMenu();
+        }
+      });
+  </script>
 
 </body>
 </html>
