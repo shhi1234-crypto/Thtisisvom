@@ -1,1588 +1,1664 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f6f4fa">
-
-  <title>VOM · Voice of Melody</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root{
-      --ink:#10162a;
-      --muted:#71778a;
-      --purple:#8069eb;
-      --line:rgba(28,35,65,.08);
-    }
-
-    *{
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html{
-      scroll-behavior:smooth;
-    }
-
-    body{
-      margin:0;
-      min-height:100vh;
-      overflow-x:hidden;
-
-      font-family:"Noto Sans KR",sans-serif;
-      color:var(--ink);
-
-      background:#f8f7fa;
-    }
-
-    a{
-      color:inherit;
-      text-decoration:none;
-    }
-
-    button{
-      font:inherit;
-      color:inherit;
-    }
-
-    /* =========================
-       AURORA
-    ========================= */
-
-    .aurora{
-      position:fixed;
-      inset:0;
-      z-index:-10;
-
-      overflow:hidden;
-
-      background:
-        linear-gradient(
-          180deg,
-          #f7f4fa 0%,
-          #f7f6fa 55%,
-          #faf9fb 100%
-        );
-    }
-
-    .aurora::before{
-      content:"";
-
-      position:absolute;
-
-      width:1200px;
-      height:700px;
-
-      top:-300px;
-      right:-260px;
-
-      border-radius:50%;
-
-      background:
-        radial-gradient(
-          ellipse at 28% 55%,
-          rgba(139,220,214,.76),
-          rgba(139,220,214,.33) 25%,
-          transparent 54%
-        ),
-        radial-gradient(
-          ellipse at 53% 38%,
-          rgba(151,173,248,.71),
-          rgba(151,173,248,.28) 27%,
-          transparent 57%
-        ),
-        radial-gradient(
-          ellipse at 73% 45%,
-          rgba(188,151,244,.66),
-          rgba(188,151,244,.27) 24%,
-          transparent 54%
-        ),
-        radial-gradient(
-          ellipse at 86% 63%,
-          rgba(239,180,221,.47),
-          transparent 47%
-        );
-
-      filter:blur(55px);
-
-      transform:rotate(-14deg);
-
-      animation:
-        auroraMove
-        15s
-        ease-in-out
-        infinite alternate;
-    }
-
-    .aurora::after{
-      content:"";
-
-      position:absolute;
-
-      width:650px;
-      height:650px;
-
-      left:-350px;
-      top:80px;
-
-      border-radius:50%;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f5fa">
+
+<title>VOM · Voice of Melody</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --ink:#11182c;
+  --muted:#73798b;
+  --purple:#7d68e8;
+  --purple2:#748bed;
+  --line:rgba(28,34,65,.08);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+
+  font-family:"Noto Sans KR",sans-serif;
+
+  color:var(--ink);
+
+  background:#f8f7fa;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
+.aurora{
+  position:fixed;
+  inset:0;
+  z-index:-10;
 
-      background:
-        radial-gradient(
-          circle,
-          rgba(215,198,244,.36),
-          rgba(229,219,245,.16) 35%,
-          transparent 70%
-        );
+  overflow:hidden;
 
-      filter:blur(35px);
-    }
+  background:
+    linear-gradient(
+      180deg,
+      #f7f4fa 0%,
+      #f8f7fb 55%,
+      #faf9fb 100%
+    );
+}
 
-    @keyframes auroraMove{
-      from{
-        transform:
-          translate3d(-2%,0,0)
-          rotate(-14deg)
-          scale(1);
-      }
+.aurora::before{
+  content:"";
 
-      to{
-        transform:
-          translate3d(4%,4%,0)
-          rotate(-9deg)
-          scale(1.08);
-      }
-    }
+  position:absolute;
 
-    /* =========================
-       HEADER
-    ========================= */
+  width:1200px;
+  height:700px;
 
-    .header-inner{
-      width:min(1100px,100%);
-      height:88px;
+  top:-320px;
+  right:-280px;
 
-      margin:auto;
-      padding:0 30px;
+  border-radius:50%;
 
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-    }
+  background:
+    radial-gradient(
+      ellipse at 24% 53%,
+      rgba(139,220,214,.68),
+      rgba(139,220,214,.24) 28%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 55% 37%,
+      rgba(151,173,248,.68),
+      rgba(151,173,248,.24) 27%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse at 76% 49%,
+      rgba(188,151,244,.62),
+      rgba(188,151,244,.22) 25%,
+      transparent 55%
+    );
 
-    .logo{
-      display:flex;
-      flex-direction:column;
-    }
+  filter:blur(55px);
 
-    .logo strong{
-      font-size:29px;
-      line-height:1;
-      font-weight:800;
-      letter-spacing:-1px;
-    }
+  transform:rotate(-13deg);
+}
 
-    .logo small{
-      margin-top:5px;
 
-      font-size:9px;
-      font-weight:700;
+/* =====================================================
+   HEADER
+===================================================== */
 
-      letter-spacing:3px;
-    }
+.header{
+  width:min(1080px,100%);
+  height:82px;
 
-    .header-right{
-      display:flex;
-      align-items:center;
-      gap:9px;
-    }
+  margin:auto;
+  padding:0 25px;
 
-    .admin-badge{
-      display:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
 
-      align-items:center;
-      gap:7px;
+.brand{
+  display:flex;
+  flex-direction:column;
+}
 
-      padding:9px 13px;
+.brand strong{
+  font-size:27px;
+  font-weight:800;
+  line-height:1;
+}
 
-      border-radius:999px;
+.brand small{
+  margin-top:5px;
 
-      color:#6955d2;
+  font-size:8px;
+  font-weight:700;
 
-      background:
-        rgba(126,102,232,.10);
+  letter-spacing:3px;
+}
 
-      border:
-        1px solid
-        rgba(126,102,232,.15);
+.header-right{
+  display:flex;
+  align-items:center;
 
-      font-size:9px;
-      font-weight:800;
+  gap:9px;
+}
 
-      letter-spacing:.8px;
-    }
+.admin-badge{
+  display:none;
 
-    .admin-badge.show{
-      display:flex;
-    }
+  align-items:center;
+  gap:7px;
 
-    .admin-dot{
-      width:7px;
-      height:7px;
+  padding:9px 13px;
 
-      border-radius:50%;
+  border-radius:999px;
 
-      background:#765fe6;
-    }
+  color:#6955d2;
 
-    .menu-button{
-      width:52px;
-      height:52px;
+  background:rgba(126,102,232,.10);
 
-      border:
-        1px solid
-        rgba(255,255,255,.9);
+  border:1px solid rgba(126,102,232,.15);
 
-      border-radius:50%;
+  font-size:9px;
+  font-weight:800;
+}
 
-      background:
-        rgba(255,255,255,.67);
+.admin-badge.show{
+  display:flex;
+}
 
-      box-shadow:
-        0 12px 30px
-        rgba(30,37,75,.08);
+.admin-dot{
+  width:7px;
+  height:7px;
 
-      display:grid;
-      place-items:center;
+  border-radius:50%;
 
-      cursor:pointer;
-    }
+  background:#765fe6;
+}
 
-    .menu-icon{
-      width:19px;
+.menu-btn{
+  width:46px;
+  height:46px;
 
-      display:grid;
+  border:1px solid rgba(255,255,255,.95);
 
-      gap:5px;
-    }
+  border-radius:50%;
 
-    .menu-icon span{
-      height:1.5px;
+  background:rgba(255,255,255,.68);
 
-      border-radius:10px;
+  box-shadow:0 10px 30px rgba(31,38,76,.08);
 
-      background:#151b31;
-    }
+  cursor:pointer;
+}
 
-    /* =========================
-       MAIN
-    ========================= */
 
-    .wrap{
-      width:min(1100px,100%);
+/* =====================================================
+   PAGE
+===================================================== */
 
-      margin:auto;
+.page{
+  width:min(1000px,100%);
 
-      padding:
-        0
-        30px
-        125px;
-    }
+  margin:auto;
 
-    /* =========================
-       HERO
-    ========================= */
+  padding:0 22px 115px;
+}
 
-    .hero{
-      min-height:540px;
 
-      display:grid;
+/* =====================================================
+   EAR SHARE
+===================================================== */
 
-      grid-template-columns:
-        1.25fr
-        .75fr;
+.ear-section{
+  padding:26px 0 8px;
+}
 
-      align-items:center;
+.ear-shell{
+  position:relative;
 
-      gap:62px;
+  overflow:hidden;
 
-      padding:
-        70px
-        0;
-    }
+  padding:25px 26px 26px;
 
-    .hero-eyebrow{
-      display:flex;
+  border-radius:29px;
 
-      align-items:center;
+  color:white;
 
-      gap:15px;
+  background:
+    radial-gradient(
+      circle at 92% 8%,
+      rgba(117,228,215,.52),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 4% 100%,
+      rgba(173,112,245,.62),
+      transparent 37%
+    ),
+    linear-gradient(
+      135deg,
+      #1b294f,
+      #303772 58%,
+      #443a83
+    );
 
-      margin-bottom:22px;
+  box-shadow:0 22px 60px rgba(31,37,80,.16);
+}
 
-      color:#42495e;
+.ear-shell::after{
+  content:"";
 
-      font-size:13px;
-    }
+  position:absolute;
 
-    .hero-eyebrow::before{
-      content:"";
+  width:250px;
+  height:500px;
 
-      width:42px;
-      height:1px;
+  right:12%;
+  top:-220px;
 
-      background:#444b61;
-    }
+  transform:rotate(27deg);
 
-    .hero-title{
-      margin:0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.15),
+      transparent
+    );
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  filter:blur(9px);
 
-      font-size:
-        clamp(
-          125px,
-          17vw,
-          195px
-        );
+  pointer-events:none;
+}
 
-      line-height:.69;
+.ear-head{
+  position:relative;
+  z-index:2;
 
-      font-weight:400;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
 
-      letter-spacing:-9px;
-    }
+  gap:20px;
 
-    .hero-brand{
-      margin:
-        18px
-        0
-        0
-        8px;
+  margin-bottom:20px;
+}
 
-      font-size:14px;
+.ear-kicker{
+  color:#dcd4ff;
 
-      font-weight:600;
+  font-family:"Nanum Pen Script",cursive;
 
-      letter-spacing:10px;
-    }
+  font-size:20px;
+}
 
-    .hero-script{
-      margin:
-        31px
-        0
-        0
-        7px;
+.ear-title{
+  margin:0 0 2px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  font-family:"Nanum Pen Script",cursive;
 
-      font-size:31px;
+  font-size:40px;
+  font-weight:400;
 
-      background:
-        linear-gradient(
-          90deg,
-          #906ce3,
-          #679fea,
-          #79b9b2
-        );
+  line-height:.9;
+}
 
-      -webkit-background-clip:text;
-      background-clip:text;
+.ear-copy{
+  margin-top:8px;
 
-      color:transparent;
-    }
+  color:rgba(255,255,255,.68);
 
-    .hero-copy{
-      margin:
-        25px
-        0
-        0
-        8px;
+  font-size:9px;
 
-      color:#535b70;
+  line-height:1.6;
+}
 
-      font-size:14px;
+.ear-mark{
+  color:rgba(255,255,255,.23);
 
-      line-height:1.8;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .info-button{
-      width:max-content;
+  font-size:57px;
 
-      margin:
-        27px
-        0
-        0
-        8px;
+  line-height:.7;
+}
 
-      padding:
-        13px
-        21px;
+.ear-list{
+  position:relative;
+  z-index:2;
 
-      display:flex;
+  display:grid;
 
-      align-items:center;
+  grid-template-columns:repeat(3,1fr);
 
-      gap:22px;
+  gap:10px;
+}
 
-      border:
-        1px solid
-        rgba(52,59,88,.22);
+.ear-card{
+  min-height:145px;
 
-      border-radius:999px;
+  position:relative;
 
-      background:
-        rgba(255,255,255,.40);
+  overflow:hidden;
 
-      font-size:13px;
-    }
+  padding:18px 17px;
 
-    /* =========================
-       NEXT LIVE
-    ========================= */
+  border:1px solid rgba(255,255,255,.13);
 
-    .next-live{
-      min-height:315px;
+  border-radius:20px;
 
-      padding:30px;
+  background:rgba(255,255,255,.09);
 
-      border-radius:29px;
+  backdrop-filter:blur(10px);
 
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.82),
-          rgba(244,240,252,.64)
-        );
+  transition:
+    transform .18s ease,
+    background .18s ease;
+}
 
-      border:
-        1px solid
-        rgba(255,255,255,.92);
+.ear-card:hover{
+  transform:translateY(-2px);
 
-      box-shadow:
-        0 25px 70px
-        rgba(41,45,91,.12);
+  background:rgba(255,255,255,.14);
+}
 
-      position:relative;
+.ear-rank{
+  color:#dcd4ff;
 
-      overflow:hidden;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .next-image{
-      position:absolute;
+  font-size:18px;
+}
 
-      inset:
-        auto
-        -35px
-        -50px
-        auto;
+.ear-card.rank-1 .ear-rank{
+  color:#fff0ad;
+}
 
-      width:190px;
-      height:190px;
+.ear-card.rank-2 .ear-rank{
+  color:#e6ebff;
+}
 
-      opacity:.16;
+.ear-card.rank-3 .ear-rank{
+  color:#f1c7a2;
+}
 
-      border-radius:50%;
+.ear-name{
+  margin-top:6px;
 
-      overflow:hidden;
+  overflow:hidden;
 
-      pointer-events:none;
-    }
+  text-overflow:ellipsis;
 
-    .next-image img{
-      width:100%;
-      height:100%;
+  white-space:nowrap;
 
-      object-fit:cover;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .next-content{
-      position:relative;
+  font-size:31px;
 
-      z-index:2;
-    }
+  line-height:.9;
+}
 
-    .next-top{
-      display:flex;
+.ear-percent{
+  margin-top:12px;
 
-      justify-content:space-between;
-      align-items:center;
+  font-family:"Nanum Pen Script",cursive;
 
-      color:#646a7d;
+  font-size:30px;
+}
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+.ear-percent small{
+  color:rgba(255,255,255,.62);
 
-      font-size:18px;
-    }
+  font-size:15px;
+}
 
-    .d-day{
-      padding:
-        6px
-        12px;
+.ear-record{
+  margin-top:6px;
 
-      border-radius:999px;
+  color:rgba(255,255,255,.62);
 
-      color:white;
+  font-size:8px;
 
-      background:
-        linear-gradient(
-          135deg,
-          #8d6dea,
-          #817cf1
-        );
+  line-height:1.55;
+}
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+.ear-empty{
+  grid-column:1 / -1;
 
-      font-size:18px;
-    }
+  min-height:130px;
 
-    .next-date{
-      margin-top:25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  text-align:center;
 
-      font-size:78px;
+  color:rgba(255,255,255,.62);
 
-      line-height:.9;
-    }
+  font-size:10px;
+}
 
-    .next-date small{
-      margin-left:7px;
 
-      font-size:23px;
-    }
+/* =====================================================
+   HERO
+===================================================== */
 
-    .divider{
-      height:1px;
+.hero{
+  min-height:525px;
 
-      margin:
-        20px
-        0;
+  display:grid;
 
-      background:var(--line);
-    }
+  grid-template-columns:1.1fr .9fr;
 
-    .next-live h3{
-      margin:0;
+  align-items:center;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  gap:50px;
 
-      font-size:28px;
+  padding:70px 0 60px;
+}
 
-      font-weight:400;
-    }
+.hero-eyebrow{
+  display:flex;
+  align-items:center;
 
-    .next-meta{
-      margin-top:8px;
+  gap:13px;
 
-      color:#596076;
+  color:#444b60;
 
-      font-size:13px;
+  font-size:12px;
+}
 
-      line-height:1.8;
-    }
+.hero-eyebrow::before{
+  content:"";
 
-    .next-link{
-      margin-top:22px;
-      padding-top:18px;
+  width:40px;
+  height:1px;
 
-      border-top:
-        1px solid
-        var(--line);
+  background:#4c5366;
+}
 
-      display:flex;
+.hero-title{
+  margin:18px 0 0;
 
-      justify-content:space-between;
+  font-family:"Nanum Pen Script",cursive;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  font-size:clamp(120px,17vw,190px);
 
-      font-size:18px;
-    }
+  font-weight:400;
 
-    .next-empty{
-      min-height:255px;
+  line-height:.68;
 
-      display:flex;
+  letter-spacing:-7px;
+}
 
-      align-items:center;
-      justify-content:center;
+.hero-brand{
+  margin:18px 0 0 7px;
 
-      text-align:center;
+  font-size:13px;
 
-      color:#878b9b;
+  font-weight:700;
 
-      font-size:12px;
+  letter-spacing:9px;
+}
 
-      line-height:1.8;
-    }
+.hero-script{
+  margin:31px 0 0 7px;
 
-    /* =========================
-       QUICK
-    ========================= */
+  font-family:"Nanum Pen Script",cursive;
 
-    .quick{
-      display:grid;
+  font-size:30px;
 
-      grid-template-columns:
-        repeat(5,1fr);
+  background:
+    linear-gradient(
+      90deg,
+      #906ce3,
+      #679fea,
+      #79b9b2
+    );
 
-      overflow:hidden;
+  -webkit-background-clip:text;
 
-      border-radius:27px;
+  background-clip:text;
 
-      background:
-        rgba(255,255,255,.67);
+  color:transparent;
+}
 
-      border:
-        1px solid
-        rgba(255,255,255,.94);
+.hero-copy{
+  margin:24px 0 0 7px;
 
-      box-shadow:
-        0 20px 55px
-        rgba(33,39,78,.08);
-    }
+  color:#535b70;
 
-    .quick a{
-      min-height:125px;
+  font-size:13px;
 
-      display:flex;
-      flex-direction:column;
+  line-height:1.8;
+}
 
-      align-items:center;
-      justify-content:center;
+.info-link{
+  width:max-content;
 
-      border-right:
-        1px solid
-        rgba(37,43,74,.07);
-    }
+  margin:27px 0 0 7px;
 
-    .quick a:last-child{
-      border-right:0;
-    }
+  padding:12px 19px;
 
-    .q-icon{
-      margin-bottom:7px;
+  display:flex;
+  align-items:center;
 
-      color:#8068ed;
+  gap:22px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  border:1px solid rgba(52,59,88,.18);
 
-      font-size:31px;
-    }
+  border-radius:999px;
 
-    .quick strong{
-      font-size:14px;
-    }
+  background:rgba(255,255,255,.43);
 
-    .quick small{
-      margin-top:4px;
+  font-size:12px;
+}
 
-      color:#9397a5;
 
-      font-size:8px;
+/* =====================================================
+   NEXT LIVE
+===================================================== */
 
-      letter-spacing:1.2px;
-    }
+.next-live{
+  min-height:315px;
 
-    /* =========================
-       SECTION
-    ========================= */
+  position:relative;
 
-    .section{
-      margin-top:48px;
-    }
+  overflow:hidden;
 
-    .section-head{
-      display:flex;
+  padding:29px;
 
-      align-items:end;
-      justify-content:space-between;
+  border-radius:29px;
 
-      margin-bottom:16px;
-    }
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.84),
+      rgba(244,240,252,.65)
+    );
 
-    .section-title{
-      margin:0;
+  border:1px solid rgba(255,255,255,.94);
 
-      font-size:24px;
-    }
+  box-shadow:0 25px 70px rgba(41,45,91,.12);
+}
 
-    .section-title em{
-      margin-left:8px;
+.next-bg{
+  position:absolute;
 
-      color:#7765df;
+  width:195px;
+  height:195px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  right:-45px;
+  bottom:-55px;
 
-      font-style:normal;
+  overflow:hidden;
 
-      font-size:27px;
+  border-radius:50%;
 
-      font-weight:400;
-    }
+  opacity:.17;
+}
 
-    .more{
-      color:#60667a;
+.next-bg img{
+  width:100%;
+  height:100%;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  object-fit:cover;
+}
 
-      font-size:17px;
-    }
+.next-content{
+  position:relative;
+  z-index:2;
+}
 
-    /* =========================
-       NOTICE
-    ========================= */
+.next-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-    .middle-grid{
-      display:grid;
+  color:#666b7e;
 
-      grid-template-columns:
-        1fr
-        1.15fr;
+  font-family:"Nanum Pen Script",cursive;
 
-      gap:20px;
-    }
+  font-size:18px;
+}
 
-    .notice{
-      padding:
-        7px
-        22px;
+.dday{
+  padding:6px 12px;
 
-      border-radius:23px;
+  border-radius:999px;
 
-      background:
-        rgba(255,255,255,.75);
+  color:white;
 
-      border:
-        1px solid
-        rgba(255,255,255,.9);
+  background:
+    linear-gradient(
+      135deg,
+      #8d6dea,
+      #817cf1
+    );
+}
 
-      box-shadow:
-        0 14px 38px
-        rgba(31,37,75,.07);
-    }
+.next-date{
+  margin-top:25px;
 
-    .notice-row{
-      min-height:70px;
+  font-family:"Nanum Pen Script",cursive;
 
-      display:grid;
+  font-size:76px;
 
-      grid-template-columns:
-        auto
-        1fr
-        auto;
+  line-height:.9;
+}
 
-      align-items:center;
+.next-date small{
+  margin-left:7px;
 
-      gap:14px;
+  font-size:21px;
+}
 
-      border-bottom:
-        1px solid
-        var(--line);
-    }
+.divider{
+  height:1px;
 
-    .notice-row:last-child{
-      border-bottom:0;
-    }
+  margin:20px 0;
 
-    .notice-badge{
-      padding:
-        5px
-        8px;
+  background:var(--line);
+}
 
-      border-radius:7px;
+.next-live h3{
+  margin:0;
 
-      color:#745cdc;
+  font-family:"Nanum Pen Script",cursive;
 
-      background:#eee9ff;
+  font-size:28px;
 
-      font-size:9px;
+  font-weight:400;
+}
 
-      font-weight:700;
-    }
+.next-meta{
+  margin-top:8px;
 
-    .notice-row strong{
-      font-size:13px;
-    }
+  color:#596076;
 
-    .notice-row time{
-      color:#9a9dab;
+  font-size:12px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  line-height:1.8;
+}
 
-      font-size:17px;
-    }
+.next-link{
+  margin-top:21px;
 
-    .about{
-      min-height:225px;
+  padding-top:17px;
 
-      position:relative;
+  display:flex;
+  justify-content:space-between;
 
-      padding:27px;
+  border-top:1px solid var(--line);
 
-      overflow:hidden;
+  font-family:"Nanum Pen Script",cursive;
 
-      border-radius:24px;
+  font-size:18px;
+}
 
-      color:white;
+.next-empty{
+  min-height:255px;
 
-      background:
-        radial-gradient(
-          circle at 82% 13%,
-          rgba(126,224,216,.50),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at 19% 88%,
-          rgba(173,116,244,.60),
-          transparent 42%
-        ),
-        linear-gradient(
-          135deg,
-          #1a274b,
-          #31346b
-        );
-    }
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
-    .about-script{
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  text-align:center;
 
-      font-size:44px;
+  color:#878b9b;
 
-      line-height:.9;
+  font-size:11px;
 
-      color:#ded4ff;
-    }
+  line-height:1.8;
+}
 
-    .about p{
-      margin-top:35px;
 
-      color:
-        rgba(255,255,255,.82);
+/* =====================================================
+   QUICK
+===================================================== */
 
-      font-size:12px;
+.quick{
+  display:grid;
 
-      line-height:1.75;
-    }
+  grid-template-columns:repeat(5,1fr);
 
-    .about-link{
-      position:absolute;
+  overflow:hidden;
 
-      left:27px;
-      bottom:24px;
+  border-radius:27px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  background:rgba(255,255,255,.68);
 
-      font-size:18px;
-    }
+  border:1px solid rgba(255,255,255,.94);
 
-    /* =========================
-       UPCOMING EVENTS
-    ========================= */
+  box-shadow:0 20px 55px rgba(33,39,78,.08);
+}
 
-    .events{
-      display:grid;
+.quick a{
+  min-height:122px;
 
-      grid-template-columns:
-        1.15fr
-        repeat(3,1fr);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 
-      gap:14px;
-    }
+  border-right:1px solid var(--line);
+}
 
-    .event-card{
-      min-height:215px;
+.quick a:last-child{
+  border-right:0;
+}
 
-      position:relative;
+.quick-icon{
+  margin-bottom:7px;
 
-      overflow:hidden;
+  color:#8068ed;
 
-      padding:22px;
+  font-family:"Nanum Pen Script",cursive;
 
-      border-radius:22px;
+  font-size:30px;
+}
 
-      background:
-        rgba(255,255,255,.78);
+.quick strong{
+  font-size:13px;
+}
 
-      border:
-        1px solid
-        rgba(255,255,255,.92);
+.quick small{
+  margin-top:4px;
 
-      box-shadow:
-        0 12px 35px
-        rgba(31,37,74,.07);
+  color:#9397a5;
 
-      transition:
-        transform .18s ease,
-        box-shadow .18s ease;
-    }
+  font-size:8px;
 
-    .event-card:hover{
-      transform:
-        translateY(-2px);
+  letter-spacing:1px;
+}
 
-      box-shadow:
-        0 18px 42px
-        rgba(31,37,74,.10);
-    }
 
-    .event-card.featured{
-      color:white;
+/* =====================================================
+   SECTION
+===================================================== */
 
-      background:
-        radial-gradient(
-          circle at 75% 15%,
-          rgba(118,235,214,.48),
-          transparent 38%
-        ),
-        radial-gradient(
-          circle at 20% 90%,
-          rgba(158,105,239,.68),
-          transparent 45%
-        ),
-        linear-gradient(
-          145deg,
-          #21325e,
-          #393c84
-        );
-    }
+.section{
+  margin-top:48px;
+}
 
-    .event-card-image{
-      position:absolute;
+.section-head{
+  display:flex;
 
-      right:-15px;
-      bottom:-15px;
+  align-items:flex-end;
+  justify-content:space-between;
 
-      width:100px;
-      height:100px;
+  margin-bottom:16px;
+}
 
-      border-radius:50%;
+.section-title{
+  margin:0;
 
-      overflow:hidden;
+  font-size:23px;
+}
 
-      opacity:.22;
-    }
+.section-title em{
+  margin-left:7px;
 
-    .event-card-image img{
-      width:100%;
-      height:100%;
+  color:#7765df;
 
-      object-fit:cover;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .event-dday{
-      position:relative;
+  font-size:27px;
 
-      z-index:2;
+  font-weight:400;
+  font-style:normal;
+}
 
-      color:#757b8d;
+.more{
+  color:#60667a;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  font-family:"Nanum Pen Script",cursive;
 
-      font-size:16px;
-    }
+  font-size:17px;
+}
 
-    .featured .event-dday{
-      color:
-        rgba(255,255,255,.74);
-    }
 
-    .event-date{
-      position:relative;
+/* =====================================================
+   NOTICE
+===================================================== */
 
-      z-index:2;
+.middle{
+  display:grid;
 
-      margin-top:16px;
+  grid-template-columns:1fr 1.15fr;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  gap:20px;
+}
 
-      font-size:43px;
+.notice{
+  padding:7px 22px;
 
-      line-height:.9;
-    }
+  border-radius:23px;
 
-    .event-date small{
-      font-size:18px;
-    }
+  background:rgba(255,255,255,.75);
 
-    .event-name{
-      position:relative;
+  border:1px solid rgba(255,255,255,.92);
 
-      z-index:2;
+  box-shadow:0 14px 38px rgba(31,37,75,.07);
+}
 
-      margin-top:12px;
+.notice-row{
+  min-height:70px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  display:grid;
 
-      font-size:22px;
-    }
+  grid-template-columns:auto 1fr auto;
 
-    .event-meta{
-      position:relative;
+  align-items:center;
 
-      z-index:2;
+  gap:14px;
 
-      margin-top:7px;
+  border-bottom:1px solid var(--line);
+}
 
-      color:#707689;
+.notice-row:last-child{
+  border-bottom:0;
+}
 
-      font-size:11px;
+.notice-badge{
+  padding:5px 8px;
 
-      line-height:1.65;
-    }
+  border-radius:7px;
 
-    .featured .event-meta{
-      color:
-        rgba(255,255,255,.76);
-    }
+  color:#745cdc;
 
-    .event-arrow{
-      position:absolute;
+  background:#eee9ff;
 
-      z-index:2;
+  font-size:9px;
+  font-weight:700;
+}
 
-      left:22px;
-      bottom:17px;
+.notice-row strong{
+  font-size:12px;
+}
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+.notice-row time{
+  color:#9a9dab;
 
-      font-size:22px;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .events-empty{
-      grid-column:1 / -1;
+  font-size:16px;
+}
 
-      padding:45px;
+.about{
+  min-height:225px;
 
-      text-align:center;
+  position:relative;
 
-      border-radius:23px;
+  overflow:hidden;
 
-      color:#9094a4;
+  padding:27px;
 
-      background:
-        rgba(255,255,255,.65);
+  border-radius:24px;
 
-      font-size:12px;
-    }
+  color:white;
 
-    /* =========================
-       MENU / LOGIN
-    ========================= */
+  background:
+    radial-gradient(
+      circle at 82% 13%,
+      rgba(126,224,216,.50),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 19% 88%,
+      rgba(173,116,244,.60),
+      transparent 42%
+    ),
+    linear-gradient(
+      135deg,
+      #1a274b,
+      #31346b
+    );
+}
 
-    .overlay{
-      position:fixed;
+.about-script{
+  color:#ded4ff;
 
-      inset:0;
+  font-family:"Nanum Pen Script",cursive;
 
-      z-index:200;
+  font-size:43px;
 
-      display:none;
+  line-height:.9;
+}
 
-      align-items:center;
-      justify-content:center;
+.about p{
+  margin-top:34px;
 
-      padding:22px;
+  color:rgba(255,255,255,.81);
 
-      background:
-        rgba(26,30,54,.36);
+  font-size:11px;
 
-      backdrop-filter:blur(15px);
-    }
+  line-height:1.75;
+}
 
-    .overlay.open{
-      display:flex;
-    }
+.about-link{
+  position:absolute;
 
-    .menu-card,
-    .login-card{
-      width:min(410px,100%);
+  left:27px;
+  bottom:23px;
 
-      padding:26px;
+  font-family:"Nanum Pen Script",cursive;
 
-      border-radius:28px;
+  font-size:18px;
+}
 
-      background:
-        rgba(255,255,255,.96);
 
-      box-shadow:
-        0 28px 80px
-        rgba(20,25,55,.22);
-    }
+/* =====================================================
+   UPCOMING
+===================================================== */
 
-    .menu-top,
-    .login-top{
-      display:flex;
+.events{
+  display:grid;
 
-      align-items:center;
-      justify-content:space-between;
+  grid-template-columns:1.15fr repeat(3,1fr);
 
-      margin-bottom:12px;
-    }
+  gap:14px;
+}
 
-    .menu-top h3,
-    .login-top h3{
-      margin:0;
+.event-card{
+  min-height:215px;
 
-      font-family:
-        "Nanum Pen Script",
-        cursive;
+  position:relative;
 
-      font-size:34px;
+  overflow:hidden;
 
-      font-weight:400;
-    }
+  padding:22px;
 
-    .close{
-      width:38px;
-      height:38px;
+  border-radius:22px;
 
-      border:0;
+  background:rgba(255,255,255,.78);
 
-      border-radius:50%;
+  border:1px solid rgba(255,255,255,.92);
 
-      background:#eeeef4;
+  box-shadow:0 12px 35px rgba(31,37,74,.07);
 
-      cursor:pointer;
-    }
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
 
-    .menu-card > a,
-    .admin-menu-button,
-    .logout-button{
-      width:100%;
+.event-card:hover{
+  transform:translateY(-2px);
 
-      min-height:57px;
+  box-shadow:0 18px 42px rgba(31,37,74,.10);
+}
 
-      display:flex;
+.event-card.featured{
+  color:white;
 
-      align-items:center;
-      justify-content:space-between;
+  background:
+    radial-gradient(
+      circle at 75% 15%,
+      rgba(118,235,214,.48),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 20% 90%,
+      rgba(158,105,239,.68),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      #21325e,
+      #393c84
+    );
+}
 
-      border:0;
+.event-image{
+  position:absolute;
 
-      border-bottom:
-        1px solid
-        var(--line);
+  width:100px;
+  height:100px;
 
-      background:none;
+  right:-15px;
+  bottom:-15px;
 
-      text-align:left;
+  overflow:hidden;
 
-      cursor:pointer;
+  border-radius:50%;
 
-      font-size:14px;
-    }
+  opacity:.22;
+}
 
-    .admin-menu-button{
-      color:#725de0;
+.event-image img{
+  width:100%;
+  height:100%;
 
-      font-weight:700;
-    }
+  object-fit:cover;
+}
 
-    .logout-button{
-      display:none;
+.event-type{
+  position:relative;
+  z-index:2;
 
-      color:#d15c70;
-    }
+  color:#767b8d;
 
-    .logout-button.show{
-      display:flex;
-    }
+  font-family:"Nanum Pen Script",cursive;
 
-    .login-copy{
-      margin-bottom:20px;
+  font-size:16px;
+}
 
-      color:#777d8f;
+.featured .event-type{
+  color:rgba(255,255,255,.75);
+}
 
-      font-size:12px;
+.event-date{
+  position:relative;
+  z-index:2;
 
-      line-height:1.7;
-    }
+  margin-top:15px;
 
-    .login-card label{
-      display:block;
+  font-family:"Nanum Pen Script",cursive;
 
-      margin:
-        15px
-        0
-        7px;
+  font-size:42px;
 
-      font-size:12px;
+  line-height:.9;
+}
 
-      font-weight:700;
-    }
+.event-date small{
+  font-size:17px;
+}
 
-    .login-card input{
-      width:100%;
+.event-name{
+  position:relative;
+  z-index:2;
 
-      padding:
-        14px
-        15px;
+  margin-top:12px;
 
-      border:
-        1px solid
-        #e1e2e9;
+  font-family:"Nanum Pen Script",cursive;
 
-      border-radius:14px;
+  font-size:21px;
+}
 
-      background:#fafafd;
+.event-meta{
+  position:relative;
+  z-index:2;
 
-      outline:none;
-    }
+  margin-top:7px;
 
-    .login-submit{
-      width:100%;
+  color:#707689;
 
-      margin-top:20px;
+  font-size:10px;
 
-      padding:15px;
+  line-height:1.65;
+}
 
-      border:0;
+.featured .event-meta{
+  color:rgba(255,255,255,.75);
+}
 
-      border-radius:15px;
+.event-arrow{
+  position:absolute;
 
-      color:white;
+  left:22px;
+  bottom:17px;
 
-      background:
-        linear-gradient(
-          135deg,
-          #8268eb,
-          #6f83ec
-        );
+  z-index:2;
 
-      font-weight:700;
+  font-family:"Nanum Pen Script",cursive;
 
-      cursor:pointer;
-    }
+  font-size:22px;
+}
 
-    .login-message{
-      min-height:18px;
+.events-empty{
+  grid-column:1 / -1;
 
-      margin-top:12px;
+  padding:45px;
 
-      color:#d24f68;
+  border-radius:23px;
 
-      font-size:12px;
+  background:rgba(255,255,255,.65);
 
-      text-align:center;
-    }
+  color:#9094a4;
 
-    /* =========================
-       BOTTOM NAV
-    ========================= */
+  text-align:center;
 
-    .bottom-nav{
-      position:fixed;
+  font-size:11px;
+}
 
-      z-index:80;
 
-      left:50%;
-      bottom:14px;
+/* =====================================================
+   MENU / LOGIN
+===================================================== */
 
-      transform:
-        translateX(-50%);
+.overlay{
+  position:fixed;
+  inset:0;
 
-      width:
-        min(
-          740px,
-          calc(100% - 26px)
-        );
+  z-index:200;
 
-      height:70px;
+  display:none;
 
-      display:grid;
+  align-items:center;
+  justify-content:center;
 
-      grid-template-columns:
-        repeat(5,1fr);
+  padding:20px;
 
-      overflow:hidden;
+  background:rgba(24,29,54,.36);
 
-      border-radius:24px;
+  backdrop-filter:blur(15px);
+}
 
-      background:
-        rgba(255,255,255,.79);
+.overlay.open{
+  display:flex;
+}
 
-      border:
-        1px solid
-        rgba(255,255,255,.95);
+.menu-card,
+.login-card{
+  width:min(410px,100%);
 
-      box-shadow:
-        0 15px 45px
-        rgba(30,37,75,.13);
+  padding:25px;
 
-      backdrop-filter:blur(25px);
-    }
+  border-radius:27px;
 
-    .nav-item{
-      border:0;
+  background:rgba(255,255,255,.97);
 
-      background:none;
+  box-shadow:0 28px 80px rgba(20,25,55,.22);
+}
 
-      display:flex;
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-      flex-direction:column;
+  margin-bottom:12px;
+}
 
-      align-items:center;
-      justify-content:center;
+.modal-head h3{
+  margin:0;
 
-      gap:4px;
+  font-family:"Nanum Pen Script",cursive;
 
-      color:#767b8e;
+  font-size:35px;
 
-      cursor:pointer;
+  font-weight:400;
+}
 
-      font-size:8px;
+.close{
+  width:38px;
+  height:38px;
 
-      font-weight:600;
-    }
+  border:0;
 
-    .nav-item.active{
-      color:#7864e6;
-    }
+  border-radius:50%;
 
-    .nav-icon{
-      font-size:19px;
-    }
+  background:#eeeef4;
 
-    /* =========================
-       MOBILE
-    ========================= */
+  cursor:pointer;
+}
 
-    @media(max-width:760px){
+.menu-card > a,
+.admin-menu,
+.logout{
+  width:100%;
 
-      .header-inner{
-        height:70px;
+  min-height:56px;
 
-        padding:
-          0
-          17px;
-      }
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-      .wrap{
-        padding:
-          0
-          16px
-          105px;
-      }
+  border:0;
 
-      .logo strong{
-        font-size:23px;
-      }
+  border-bottom:1px solid var(--line);
 
-      .logo small{
-        font-size:7px;
-      }
+  background:none;
 
-      .menu-button{
-        width:43px;
-        height:43px;
-      }
+  cursor:pointer;
 
-      .admin-badge{
-        padding:
-          7px
-          9px;
+  text-align:left;
 
-        font-size:7px;
-      }
+  font-size:13px;
+}
 
-      .hero{
-        min-height:auto;
+.admin-menu{
+  color:#725de0;
 
-        padding:
-          58px
-          0
-          45px;
+  font-weight:700;
+}
 
-        grid-template-columns:1fr;
+.logout{
+  display:none;
 
-        gap:35px;
-      }
+  color:#d15c70;
+}
 
-      .hero-title{
-        font-size:122px;
+.logout.show{
+  display:flex;
+}
 
-        letter-spacing:-6px;
-      }
+.login-copy{
+  margin-bottom:19px;
 
-      .hero-brand{
-        font-size:10px;
+  color:#777d8f;
 
-        letter-spacing:7px;
-      }
+  font-size:11px;
 
-      .hero-script{
-        font-size:27px;
-      }
+  line-height:1.7;
+}
 
-      .next-live{
-        min-height:295px;
+.login-card label{
+  display:block;
 
-        padding:24px;
+  margin:14px 0 7px;
 
-        border-radius:25px;
-      }
+  font-size:11px;
 
-      .next-date{
-        font-size:64px;
-      }
+  font-weight:700;
+}
 
-      .quick{
-        grid-template-columns:
-          repeat(
-            5,
-            minmax(92px,1fr)
-          );
+.login-card input{
+  width:100%;
 
-        overflow-x:auto;
+  min-height:48px;
 
-        scrollbar-width:none;
-      }
+  padding:0 14px;
 
-      .quick::-webkit-scrollbar{
-        display:none;
-      }
+  border:1px solid #e1e2e9;
 
-      .quick a{
-        min-width:92px;
-        min-height:105px;
-      }
+  border-radius:14px;
 
-      .quick strong{
-        font-size:11px;
-      }
+  background:#fafafd;
 
-      .middle-grid{
-        grid-template-columns:1fr;
-      }
+  outline:none;
+}
 
-      .events{
-        grid-template-columns:
-          repeat(
-            4,
-            minmax(190px,1fr)
-          );
+.login-submit{
+  width:100%;
 
-        overflow-x:auto;
+  min-height:49px;
 
-        padding-bottom:5px;
+  margin-top:19px;
 
-        scrollbar-width:none;
-      }
+  border:0;
 
-      .events::-webkit-scrollbar{
-        display:none;
-      }
+  border-radius:15px;
 
-      .event-card{
-        min-width:190px;
-      }
+  color:white;
 
-      .bottom-nav{
-        bottom:8px;
+  background:
+    linear-gradient(
+      135deg,
+      #8268eb,
+      #6f83ec
+    );
 
-        height:66px;
+  cursor:pointer;
 
-        border-radius:21px;
-      }
-    }
-  </style>
+  font-weight:700;
+}
+
+.login-message{
+  min-height:18px;
+
+  margin-top:11px;
+
+  color:#d24f68;
+
+  font-size:11px;
+
+  text-align:center;
+}
+
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.bottom{
+  position:fixed;
+
+  z-index:80;
+
+  left:50%;
+  bottom:10px;
+
+  transform:translateX(-50%);
+
+  width:min(720px,calc(100% - 24px));
+  height:67px;
+
+  display:grid;
+
+  grid-template-columns:repeat(5,1fr);
+
+  overflow:hidden;
+
+  border-radius:22px;
+
+  background:rgba(255,255,255,.82);
+
+  border:1px solid rgba(255,255,255,.95);
+
+  box-shadow:0 14px 42px rgba(30,37,75,.12);
+
+  backdrop-filter:blur(23px);
+}
+
+.bottom a,
+.bottom button{
+  border:0;
+
+  background:none;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:3px;
+
+  color:#777c8d;
+
+  cursor:pointer;
+
+  font-size:8px;
+}
+
+.bottom .active{
+  color:#755fe1;
+
+  font-weight:700;
+}
+
+.nav-icon{
+  font-size:18px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:760px){
+
+  .header{
+    height:70px;
+
+    padding:0 16px;
+  }
+
+  .brand strong{
+    font-size:23px;
+  }
+
+  .brand small{
+    font-size:7px;
+  }
+
+  .menu-btn{
+    width:42px;
+    height:42px;
+  }
+
+  .admin-badge{
+    padding:7px 9px;
+
+    font-size:7px;
+  }
+
+  .page{
+    padding:0 14px 105px;
+  }
+
+
+  .ear-section{
+    padding-top:18px;
+  }
+
+  .ear-shell{
+    padding:21px 17px 18px;
+
+    border-radius:25px;
+  }
+
+  .ear-head{
+    align-items:flex-start;
+  }
+
+  .ear-title{
+    font-size:34px;
+  }
+
+  .ear-mark{
+    font-size:43px;
+  }
+
+  .ear-list{
+    display:flex;
+
+    overflow-x:auto;
+
+    gap:9px;
+
+    padding-bottom:3px;
+
+    scrollbar-width:none;
+  }
+
+  .ear-list::-webkit-scrollbar{
+    display:none;
+  }
+
+  .ear-card{
+    flex:0 0 155px;
+
+    min-height:137px;
+  }
+
+  .ear-empty{
+    flex:0 0 100%;
+
+    min-width:100%;
+  }
+
+
+  .hero{
+    min-height:auto;
+
+    grid-template-columns:1fr;
+
+    gap:34px;
+
+    padding:55px 0 45px;
+  }
+
+  .hero-title{
+    font-size:120px;
+
+    letter-spacing:-5px;
+  }
+
+  .hero-brand{
+    font-size:10px;
+
+    letter-spacing:7px;
+  }
+
+  .hero-script{
+    font-size:27px;
+  }
+
+  .next-live{
+    min-height:295px;
+
+    padding:24px;
+
+    border-radius:25px;
+  }
+
+  .next-date{
+    font-size:64px;
+  }
+
+
+  .quick{
+    grid-template-columns:repeat(5,minmax(92px,1fr));
+
+    overflow-x:auto;
+
+    scrollbar-width:none;
+  }
+
+  .quick::-webkit-scrollbar{
+    display:none;
+  }
+
+  .quick a{
+    min-width:92px;
+
+    min-height:105px;
+  }
+
+  .quick strong{
+    font-size:11px;
+  }
+
+
+  .middle{
+    grid-template-columns:1fr;
+  }
+
+  .events{
+    grid-template-columns:repeat(4,minmax(190px,1fr));
+
+    overflow-x:auto;
+
+    padding-bottom:5px;
+
+    scrollbar-width:none;
+  }
+
+  .events::-webkit-scrollbar{
+    display:none;
+  }
+
+  .event-card{
+    min-width:190px;
+  }
+}
+</style>
 </head>
+
 
 <body>
 
 <div class="aurora"></div>
 
 
-<header>
+<header class="header">
 
-  <div class="header-inner">
+  <a href="/" class="brand">
 
-    <a href="/" class="logo">
+    <strong>VOM</strong>
 
-      <strong>VOM</strong>
+    <small>
+      VOICE OF MELODY
+    </small>
 
-      <small>
-        VOICE OF MELODY
-      </small>
-
-    </a>
+  </a>
 
 
-    <div class="header-right">
+  <div class="header-right">
 
-      <div
-        id="adminBadge"
-        class="admin-badge"
-      >
-        <span class="admin-dot"></span>
-        ADMIN MODE
-      </div>
+    <div
+      id="adminBadge"
+      class="admin-badge"
+    >
 
+      <span class="admin-dot"></span>
 
-      <button
-        class="menu-button"
-        onclick="openMenu()"
-        aria-label="메뉴"
-      >
-
-        <span class="menu-icon">
-          <span></span>
-          <span></span>
-          <span></span>
-        </span>
-
-      </button>
+      ADMIN MODE
 
     </div>
+
+
+    <button
+      class="menu-btn"
+      onclick="openMenu()"
+    >
+      ☰
+    </button>
 
   </div>
 
 </header>
 
 
-<main class="wrap">
+<main class="page">
+
+
+  <!-- EAR SHARE -->
+
+  <section class="ear-section">
+
+    <div class="ear-shell">
+
+      <div class="ear-head">
+
+        <div>
+
+          <div class="ear-kicker">
+            EAR SHARE · Hall of Fame
+          </div>
+
+          <h2 class="ear-title">
+            귀점유율
+          </h2>
+
+          <div class="ear-copy">
+            VOM LIVE에서 가장 많은 귀를 점유한 기록.<br>
+            개인별 역대 최고 귀점유율 기준입니다.
+          </div>
+
+        </div>
+
+        <div class="ear-mark">
+          Listen ♫
+        </div>
+
+      </div>
+
+
+      <div
+        id="earHall"
+        class="ear-list"
+      >
+
+        <div class="ear-empty">
+          귀점유율 기록을 불러오는 중...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
 
 
   <!-- HERO -->
@@ -1614,7 +1690,7 @@
 
       <a
         href="/info/"
-        class="info-button"
+        class="info-link"
       >
         INFO
         <span>→</span>
@@ -1622,8 +1698,6 @@
 
     </div>
 
-
-    <!-- NEXT LIVE 자동 -->
 
     <article
       id="nextLive"
@@ -1644,33 +1718,67 @@
   <section class="quick">
 
     <a href="/info/">
-      <div class="q-icon">ⓘ</div>
+
+      <div class="quick-icon">
+        ⓘ
+      </div>
+
       <strong>INFO</strong>
+
       <small>ABOUT VOM</small>
+
     </a>
+
 
     <a href="/calendar/">
-      <div class="q-icon">◫</div>
+
+      <div class="quick-icon">
+        ◫
+      </div>
+
       <strong>CALENDAR</strong>
+
       <small>SCHEDULE</small>
+
     </a>
+
 
     <a href="/live/">
-      <div class="q-icon">♬</div>
+
+      <div class="quick-icon">
+        ♬
+      </div>
+
       <strong>VOM LIVE</strong>
+
       <small>LIVE</small>
+
     </a>
+
 
     <a href="/busking/">
-      <div class="q-icon">♪</div>
+
+      <div class="quick-icon">
+        ♪
+      </div>
+
       <strong>BUSKING</strong>
+
       <small>BUSKING</small>
+
     </a>
 
+
     <a href="/qna/">
-      <div class="q-icon">?</div>
+
+      <div class="quick-icon">
+        ?
+      </div>
+
       <strong>Q&A</strong>
+
       <small>QUESTION</small>
+
     </a>
 
   </section>
@@ -1683,8 +1791,13 @@
     <div class="section-head">
 
       <h2 class="section-title">
+
         공지사항
-        <em>Notice</em>
+
+        <em>
+          Notice
+        </em>
+
       </h2>
 
       <a
@@ -1697,14 +1810,16 @@
     </div>
 
 
-    <div class="middle-grid">
+    <div class="middle">
 
       <div class="notice">
+
 
         <a
           href="/notice/"
           class="notice-row"
         >
+
           <span class="notice-badge">
             공지
           </span>
@@ -1716,6 +1831,7 @@
           <time>
             NEW
           </time>
+
         </a>
 
 
@@ -1723,6 +1839,7 @@
           href="/notice/"
           class="notice-row"
         >
+
           <span class="notice-badge">
             공지
           </span>
@@ -1734,6 +1851,7 @@
           <time>
             NEW
           </time>
+
         </a>
 
 
@@ -1741,6 +1859,7 @@
           href="/notice/"
           class="notice-row"
         >
+
           <span class="notice-badge">
             안내
           </span>
@@ -1752,6 +1871,7 @@
           <time>
             INFO
           </time>
+
         </a>
 
       </div>
@@ -1783,15 +1903,20 @@
   </section>
 
 
-  <!-- UPCOMING 자동 -->
+  <!-- UPCOMING -->
 
   <section class="section">
 
     <div class="section-head">
 
       <h2 class="section-title">
+
         다가오는 일정
-        <em>Upcoming</em>
+
+        <em>
+          Upcoming
+        </em>
+
       </h2>
 
       <a
@@ -1820,53 +1945,6 @@
 </main>
 
 
-<!-- BOTTOM -->
-
-<nav class="bottom-nav">
-
-  <a
-    href="/"
-    class="nav-item active"
-  >
-    <span class="nav-icon">⌂</span>
-    HOME
-  </a>
-
-  <a
-    href="/info/"
-    class="nav-item"
-  >
-    <span class="nav-icon">ⓘ</span>
-    INFO
-  </a>
-
-  <a
-    href="/calendar/"
-    class="nav-item"
-  >
-    <span class="nav-icon">◫</span>
-    CALENDAR
-  </a>
-
-  <a
-    href="/live/"
-    class="nav-item"
-  >
-    <span class="nav-icon">♬</span>
-    LIVE
-  </a>
-
-  <button
-    class="nav-item"
-    onclick="openMenu()"
-  >
-    <span class="nav-icon">☰</span>
-    MENU
-  </button>
-
-</nav>
-
-
 <!-- MENU -->
 
 <div
@@ -1876,7 +1954,7 @@
 
   <div class="menu-card">
 
-    <div class="menu-top">
+    <div class="modal-head">
 
       <h3>
         VOM Menu
@@ -1893,53 +1971,59 @@
 
 
     <a href="/info/">
-      <span>INFO</span>
+      INFO
       <span>→</span>
     </a>
 
     <a href="/calendar/">
-      <span>CALENDAR</span>
+      CALENDAR
       <span>→</span>
     </a>
 
     <a href="/live/">
-      <span>VOM LIVE</span>
+      VOM LIVE
       <span>→</span>
     </a>
 
     <a href="/busking/">
-      <span>BUSKING</span>
+      BUSKING
       <span>→</span>
     </a>
 
     <a href="/notice/">
-      <span>NOTICE</span>
+      NOTICE
       <span>→</span>
     </a>
 
     <a href="/qna/">
-      <span>Q&A</span>
+      Q&A
       <span>→</span>
     </a>
 
 
     <button
       id="adminLoginButton"
-      class="admin-menu-button"
+      class="admin-menu"
       onclick="openAdminLogin()"
     >
-      <span>관리자 모드</span>
+
+      관리자 모드
+
       <span>→</span>
+
     </button>
 
 
     <button
       id="logoutButton"
-      class="logout-button"
+      class="logout"
       onclick="adminLogout()"
     >
-      <span>관리자 모드 종료</span>
+
+      관리자 모드 종료
+
       <span>→</span>
+
     </button>
 
   </div>
@@ -1956,7 +2040,7 @@
 
   <div class="login-card">
 
-    <div class="login-top">
+    <div class="modal-head">
 
       <h3>
         Admin Mode
@@ -1998,7 +2082,11 @@
       type="password"
       autocomplete="current-password"
       placeholder="비밀번호"
-      onkeydown="if(event.key==='Enter') adminLogin()"
+      onkeydown="
+        if(event.key === 'Enter'){
+          adminLogin();
+        }
+      "
     >
 
 
@@ -2021,838 +2109,1166 @@
 </div>
 
 
+<!-- BOTTOM -->
+
+<nav class="bottom">
+
+  <a
+    href="/"
+    class="active"
+  >
+
+    <span class="nav-icon">
+      ⌂
+    </span>
+
+    HOME
+
+  </a>
+
+
+  <a href="/info/">
+
+    <span class="nav-icon">
+      ⓘ
+    </span>
+
+    INFO
+
+  </a>
+
+
+  <a href="/calendar/">
+
+    <span class="nav-icon">
+      ◫
+    </span>
+
+    CALENDAR
+
+  </a>
+
+
+  <a href="/live/">
+
+    <span class="nav-icon">
+      ♬
+    </span>
+
+    LIVE
+
+  </a>
+
+
+  <button onclick="openMenu()">
+
+    <span class="nav-icon">
+      ☰
+    </span>
+
+    MENU
+
+  </button>
+
+</nav>
+
+
 <script>
-  const SUPABASE_URL =
-    'https://aqfmhqultzpakfqwzulj.supabase.co';
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
 
-  const SUPABASE_KEY =
-    'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 
-  const db =
-    supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
-
-
-  let locations = [];
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-  /* =========================
-     ADMIN
-  ========================= */
-
-  async function isAdmin(userId){
-
-    const {data,error} =
-      await db
-        .from('admins')
-        .select('user_id')
-        .eq('user_id',userId)
-        .maybeSingle();
-
-    if(error){
-      return false;
-    }
-
-    return !!data;
-  }
+let locations = [];
 
 
-  function setAdminUI(active){
+/* =====================================================
+   START
+===================================================== */
 
-    document
-      .getElementById('adminBadge')
-      .classList
-      .toggle('show',active);
+async function start(){
 
-    document
-      .getElementById('adminLoginButton')
-      .style.display =
-      active
-      ? 'none'
-      : '';
+  await restoreAdmin();
 
-    document
-      .getElementById('logoutButton')
-      .classList
-      .toggle('show',active);
-  }
+  await Promise.all([
+    loadEarShare(),
+    loadHomeEvents()
+  ]);
+}
 
 
-  async function restoreAdminSession(){
+/* =====================================================
+   EAR SHARE
+===================================================== */
 
-    const {data} =
-      await db.auth.getSession();
+async function loadEarShare(){
 
-    const session =
-      data.session;
-
-    if(!session){
-
-      setAdminUI(false);
-
-      return;
-    }
-
-    const allowed =
-      await isAdmin(
-        session.user.id
-      );
-
-    if(allowed){
-
-      setAdminUI(true);
-
-    }else{
-
-      await db.auth.signOut();
-
-      setAdminUI(false);
-    }
-  }
-
-
-  async function adminLogin(){
-
-    const email =
-      document
-        .getElementById('adminEmail')
-        .value
-        .trim();
-
-    const password =
-      document
-        .getElementById('adminPassword')
-        .value;
-
-    const message =
-      document
-        .getElementById('loginMessage');
-
-    const button =
-      document
-        .getElementById('loginSubmit');
-
-
-    if(!email || !password){
-
-      message.textContent =
-        '이메일과 비밀번호를 입력해주세요.';
-
-      return;
-    }
-
-
-    button.disabled = true;
-
-    button.textContent =
-      '확인 중...';
-
-
-    const {data,error} =
-      await db.auth.signInWithPassword({
-        email,
-        password
-      });
-
-
-    if(error){
-
-      message.textContent =
-        '이메일 또는 비밀번호를 확인해주세요.';
-
-      button.disabled = false;
-
-      button.textContent =
-        '관리자 모드 시작';
-
-      return;
-    }
-
-
-    const allowed =
-      await isAdmin(
-        data.user.id
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        'ear_share_hall_of_fame'
+      )
+      .select('*')
+      .order(
+        'rank',
+        {
+          ascending:true
+        }
+      )
+      .order(
+        'ear_share_percent',
+        {
+          ascending:false
+        }
       );
 
 
-    if(!allowed){
-
-      await db.auth.signOut();
-
-      message.textContent =
-        '관리자 권한이 없는 계정입니다.';
-
-      button.disabled = false;
-
-      button.textContent =
-        '관리자 모드 시작';
-
-      return;
-    }
-
-
-    button.disabled = false;
-
-    button.textContent =
-      '관리자 모드 시작';
-
+  const box =
     document
-      .getElementById('adminPassword')
-      .value = '';
-
-    closeAdminLogin();
-
-    setAdminUI(true);
-  }
+      .getElementById(
+        'earHall'
+      );
 
 
-  async function adminLogout(){
+  if(error){
 
-    await db.auth.signOut();
-
-    setAdminUI(false);
-
-    closeMenu();
-  }
-
-
-  /* =========================
-     EVENTS
-  ========================= */
-
-  async function loadHomeData(){
-
-    const today =
-      getTodayString();
-
-
-    const {
-      data:locationData
-    } =
-      await db
-        .from('locations')
-        .select('*');
-
-
-    locations =
-      locationData || [];
-
-
-    const {
-      data:events,
+    console.error(
+      'EAR SHARE ERROR:',
       error
-    } =
-      await db
-        .from('events')
-        .select('*')
-        .gte(
-          'event_date',
-          today
-        )
-        .order(
-          'event_date',
-          {
-            ascending:true
-          }
-        )
-        .limit(12);
-
-
-    if(error){
-
-      console.error(error);
-
-      renderNextLive(null);
-
-      renderUpcoming([]);
-
-      return;
-    }
-
-
-    const list =
-      events || [];
-
-
-    const nextLive =
-      list.find(
-        item =>
-          item.event_type ===
-          'VOM LIVE'
-      );
-
-
-    renderNextLive(nextLive);
-
-    renderUpcoming(
-      list.slice(0,4)
     );
-  }
-
-
-  function renderNextLive(event){
-
-    const box =
-      document
-        .getElementById('nextLive');
-
-
-    if(!event){
-
-      box.innerHTML =
-      `
-        <div class="next-empty">
-          예정된 VOM LIVE가 없습니다.<br>
-          CALENDAR에서 새 일정을 등록해주세요.
-        </div>
-      `;
-
-      return;
-    }
-
-
-    const date =
-      parseLocalDate(
-        event.event_date
-      );
-
-
-    const month =
-      date.getMonth() + 1;
-
-    const day =
-      date.getDate();
-
-    const weekday =
-      weekEnglish(
-        date
-      );
-
-
-    const location =
-      getLocation(event);
-
-
-    const image =
-      event.image_url ||
-      location?.image_url ||
-      '';
-
-
-    const dday =
-      calculateDday(
-        event.event_date
-      );
 
 
     box.innerHTML =
     `
+      <div class="ear-empty">
+
+        아직 귀점유율 기록을 불러올 수 없습니다.<br>
+        VOM LIVE 결과가 등록되면 자동으로 표시됩니다.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const hall =
+    (data || [])
+      .filter(
+        item =>
+          Number(item.rank) <= 3
+      );
+
+
+  if(!hall.length){
+
+    box.innerHTML =
+    `
+      <div class="ear-empty">
+
+        아직 귀점유율 기록이 없습니다.<br>
+        첫 VOM LIVE 결과를 기다리고 있어요.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    hall
+      .map(
+        createEarCard
+      )
+      .join('');
+}
+
+
+function createEarCard(item){
+
+  const rank =
+    Number(
+      item.rank
+    );
+
+
+  const percent =
+    Number(
+      item.ear_share_percent || 0
+    )
+    .toFixed(1);
+
+
+  return `
+    <a
+      href="/live/?id=${item.event_id}"
+      class="ear-card rank-${rank}"
+    >
+
+      <div class="ear-rank">
+
+        ${
+          rank === 1
+          ? '🥇 '
+          : rank === 2
+          ? '🥈 '
+          : '🥉 '
+        }
+
+        ${rank}위
+
+      </div>
+
+
+      <div class="ear-name">
+
+        ${escapeHtml(
+          item.name
+        )}
+
+      </div>
+
+
+      <div class="ear-percent">
+
+        ${percent}
+
+        <small>
+          %
+        </small>
+
+      </div>
+
+
+      <div class="ear-record">
+
+        ${Number(item.votes || 0)}표
+
+        /
+
+        ${Number(item.participant_count || 0)}명
+
+        <br>
+
+        ${escapeHtml(
+          item.event_title ||
+          'VOM LIVE'
+        )}
+
+      </div>
+
+    </a>
+  `;
+}
+
+
+/* =====================================================
+   HOME EVENTS
+===================================================== */
+
+async function loadHomeEvents(){
+
+  const today =
+    todayString();
+
+
+  const {
+    data:locationData
+  } =
+    await db
+      .from('locations')
+      .select('*');
+
+
+  locations =
+    locationData || [];
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('events')
+      .select('*')
+      .gte(
+        'event_date',
+        today
+      )
+      .order(
+        'event_date',
+        {
+          ascending:true
+        }
+      )
+      .limit(12);
+
+
+  if(error){
+
+    console.error(
+      'EVENT ERROR:',
+      error
+    );
+
+
+    renderNextLive(
+      null
+    );
+
+
+    renderUpcoming(
+      []
+    );
+
+
+    return;
+  }
+
+
+  const list =
+    data || [];
+
+
+  const nextLive =
+    list.find(
+      item =>
+        item.event_type ===
+        'VOM LIVE'
+    );
+
+
+  renderNextLive(
+    nextLive
+  );
+
+
+  renderUpcoming(
+    list.slice(
+      0,
+      4
+    )
+  );
+}
+
+
+/* =====================================================
+   NEXT LIVE
+===================================================== */
+
+function renderNextLive(item){
+
+  const box =
+    document
+      .getElementById(
+        'nextLive'
+      );
+
+
+  if(!item){
+
+    box.innerHTML =
+    `
+      <div class="next-empty">
+
+        예정된 VOM LIVE가 없습니다.<br>
+        CALENDAR에서 새 일정을 등록해주세요.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const date =
+    parseDate(
+      item.event_date
+    );
+
+
+  const location =
+    getLocation(
+      item
+    );
+
+
+  const image =
+    item.image_url ||
+    location?.image_url ||
+    '';
+
+
+  box.innerHTML =
+  `
+    ${
+      image
+
+      ? `
+        <div class="next-bg">
+
+          <img
+            src="${escapeAttribute(image)}"
+            alt=""
+          >
+
+        </div>
+      `
+
+      : ''
+    }
+
+
+    <div class="next-content">
+
+      <div class="next-top">
+
+        <span>
+          NEXT LIVE
+        </span>
+
+        <span class="dday">
+
+          ${calculateDday(
+            item.event_date
+          )}
+
+        </span>
+
+      </div>
+
+
+      <div class="next-date">
+
+        ${date.getMonth() + 1}.${date.getDate()}
+
+        <small>
+
+          ${weekEnglish(date)}
+
+        </small>
+
+      </div>
+
+
+      <div class="divider"></div>
+
+
+      <h3>
+
+        ${escapeHtml(
+          item.title ||
+          'VOM LIVE'
+        )}
+
+      </h3>
+
+
+      <div class="next-meta">
+
+        ${makeTime(item) || '시간 미정'}
+
+        <br>
+
+        ${escapeHtml(
+          location?.name ||
+          item.location ||
+          '장소 미정'
+        )}
+
+      </div>
+
+
+      <a
+        href="/event/?id=${item.id}"
+        class="next-link"
+      >
+
+        <span>
+          자세히 보기
+        </span>
+
+        <span>
+          →
+        </span>
+
+      </a>
+
+    </div>
+  `;
+}
+
+
+/* =====================================================
+   UPCOMING
+===================================================== */
+
+function renderUpcoming(list){
+
+  const box =
+    document
+      .getElementById(
+        'upcomingEvents'
+      );
+
+
+  if(!list.length){
+
+    box.innerHTML =
+    `
+      <div class="events-empty">
+        예정된 일정이 없습니다.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(
+        (item,index) =>
+          createUpcomingCard(
+            item,
+            index === 0
+          )
+      )
+      .join('');
+}
+
+
+function createUpcomingCard(
+  item,
+  featured
+){
+
+  const date =
+    parseDate(
+      item.event_date
+    );
+
+
+  const location =
+    getLocation(
+      item
+    );
+
+
+  const image =
+    item.image_url ||
+    location?.image_url ||
+    '';
+
+
+  return `
+    <a
+      href="/event/?id=${item.id}"
+      class="event-card ${featured ? 'featured' : ''}"
+    >
+
       ${
         image
 
         ? `
-          <div class="next-image">
+          <div class="event-image">
+
             <img
               src="${escapeAttribute(image)}"
               alt=""
             >
+
           </div>
         `
 
         : ''
       }
 
-      <div class="next-content">
 
-        <div class="next-top">
-
-          <span>
-            NEXT LIVE
-          </span>
-
-          <span class="d-day">
-            ${dday}
-          </span>
-
-        </div>
-
-
-        <div class="next-date">
-
-          ${month}.${day}
-
-          <small>
-            ${weekday}
-          </small>
-
-        </div>
-
-
-        <div class="divider"></div>
-
-
-        <h3>
-          ${escapeHtml(event.title)}
-        </h3>
-
-
-        <div class="next-meta">
-
-          ${
-            makeTime(event) ||
-            '시간 미정'
-          }
-
-          <br>
-
-          ${
-            escapeHtml(
-              location?.name ||
-              event.location ||
-              '장소 미정'
-            )
-          }
-
-        </div>
-
-
-        <a
-          href="/event/?id=${event.id}"
-          class="next-link"
-        >
-
-          <span>
-            자세히 보기
-          </span>
-
-          <span>
-            →
-          </span>
-
-        </a>
-
-      </div>
-    `;
-  }
-
-
-  function renderUpcoming(list){
-
-    const box =
-      document
-        .getElementById(
-          'upcomingEvents'
-        );
-
-
-    if(!list.length){
-
-      box.innerHTML =
-      `
-        <div class="events-empty">
-          예정된 일정이 없습니다.
-        </div>
-      `;
-
-      return;
-    }
-
-
-    box.innerHTML =
-      list
-        .map(
-          (event,index) =>
-            upcomingCard(
-              event,
-              index === 0
-            )
-        )
-        .join('');
-  }
-
-
-  function upcomingCard(
-    event,
-    featured
-  ){
-
-    const date =
-      parseLocalDate(
-        event.event_date
-      );
-
-
-    const month =
-      date.getMonth() + 1;
-
-    const day =
-      String(
-        date.getDate()
-      ).padStart(2,'0');
-
-
-    const location =
-      getLocation(event);
-
-
-    const image =
-      event.image_url ||
-      location?.image_url ||
-      '';
-
-
-    return `
-      <a
-        href="/event/?id=${event.id}"
-        class="event-card ${featured ? 'featured' : ''}"
-      >
+      <div class="event-type">
 
         ${
-          image
+          featured
 
-          ? `
-            <div class="event-card-image">
+          ? 'NEXT'
 
-              <img
-                src="${escapeAttribute(image)}"
-                alt=""
-              >
-
-            </div>
-          `
-
-          : ''
+          : escapeHtml(
+              item.event_type ||
+              'OTHER'
+            )
         }
 
-
-        <div class="event-dday">
-          ${
-            featured
-            ? 'NEXT'
-            : escapeHtml(
-                event.event_type ||
-                'OTHER'
-              )
-          }
-        </div>
+      </div>
 
 
-        <div class="event-date">
+      <div class="event-date">
 
-          ${month}.${day}
+        ${date.getMonth() + 1}.${String(
+          date.getDate()
+        ).padStart(2,'0')}
 
-          <small>
-            (${weekKorean(date)})
-          </small>
+        <small>
 
-        </div>
+          (${weekKorean(date)})
 
+        </small>
 
-        <div class="event-name">
-          ${escapeHtml(event.title)}
-        </div>
-
-
-        <div class="event-meta">
-
-          ${
-            makeTime(event) ||
-            '시간 미정'
-          }
-
-          <br>
-
-          ${
-            escapeHtml(
-              location?.name ||
-              event.location ||
-              '장소 미정'
-            )
-          }
-
-        </div>
+      </div>
 
 
-        <div class="event-arrow">
-          →
-        </div>
+      <div class="event-name">
 
-      </a>
-    `;
+        ${escapeHtml(
+          item.title ||
+          ''
+        )}
+
+      </div>
+
+
+      <div class="event-meta">
+
+        ${makeTime(item) || '시간 미정'}
+
+        <br>
+
+        ${escapeHtml(
+          location?.name ||
+          item.location ||
+          '장소 미정'
+        )}
+
+      </div>
+
+
+      <div class="event-arrow">
+        →
+      </div>
+
+    </a>
+  `;
+}
+
+
+/* =====================================================
+   ADMIN
+===================================================== */
+
+async function restoreAdmin(){
+
+  const {
+    data
+  } =
+    await db.auth.getSession();
+
+
+  const session =
+    data.session;
+
+
+  if(!session){
+
+    setAdminUI(false);
+
+    return;
   }
 
 
-  /* =========================
-     HELPERS
-  ========================= */
+  const {
+    data:admin
+  } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq(
+        'user_id',
+        session.user.id
+      )
+      .maybeSingle();
 
-  function getLocation(event){
 
-    return locations.find(
-      item =>
-        String(item.id) ===
-        String(event.location_id)
-    );
+  if(admin){
+
+    setAdminUI(true);
+
+  }else{
+
+    await db.auth.signOut();
+
+    setAdminUI(false);
   }
+}
 
 
-  function makeTime(event){
+function setAdminUI(active){
 
-    const times = [];
-
-
-    if(event.start_time){
-
-      times.push(
-        event.start_time.slice(0,5)
-      );
-    }
-
-
-    if(event.end_time){
-
-      times.push(
-        event.end_time.slice(0,5)
-      );
-    }
-
-
-    return times.join(' - ');
-  }
-
-
-  function getTodayString(){
-
-    const now =
-      new Date();
-
-
-    const year =
-      now.getFullYear();
-
-
-    const month =
-      String(
-        now.getMonth() + 1
-      ).padStart(2,'0');
-
-
-    const day =
-      String(
-        now.getDate()
-      ).padStart(2,'0');
-
-
-    return `${year}-${month}-${day}`;
-  }
-
-
-  function parseLocalDate(value){
-
-    return new Date(
-      value +
-      'T00:00:00'
-    );
-  }
-
-
-  function calculateDday(value){
-
-    const today =
-      new Date();
-
-
-    today.setHours(
-      0,0,0,0
+  document
+    .getElementById(
+      'adminBadge'
+    )
+    .classList
+    .toggle(
+      'show',
+      active
     );
 
 
-    const target =
-      parseLocalDate(value);
+  document
+    .getElementById(
+      'adminLoginButton'
+    )
+    .style.display =
+      active
+      ? 'none'
+      : 'flex';
 
 
-    const diff =
-      Math.round(
-        (
-          target -
-          today
-        )
-        /
-        86400000
-      );
+  document
+    .getElementById(
+      'logoutButton'
+    )
+    .classList
+    .toggle(
+      'show',
+      active
+    );
+}
 
 
-    if(diff === 0){
-      return 'D-DAY';
-    }
+async function adminLogin(){
 
-
-    if(diff > 0){
-      return `D-${diff}`;
-    }
-
-
-    return `D+${Math.abs(diff)}`;
-  }
-
-
-  function weekEnglish(date){
-
-    return [
-      'SUN',
-      'MON',
-      'TUE',
-      'WED',
-      'THU',
-      'FRI',
-      'SAT'
-    ][date.getDay()];
-  }
-
-
-  function weekKorean(date){
-
-    return [
-      '일',
-      '월',
-      '화',
-      '수',
-      '목',
-      '금',
-      '토'
-    ][date.getDay()];
-  }
-
-
-  function escapeHtml(value){
-
-    const div =
-      document.createElement(
-        'div'
-      );
-
-
-    div.textContent =
-      String(value ?? '');
-
-
-    return div.innerHTML;
-  }
-
-
-  function escapeAttribute(value){
-
-    return String(value ?? '')
-      .replace(/&/g,'&amp;')
-      .replace(/"/g,'&quot;')
-      .replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;');
-  }
-
-
-  /* =========================
-     MENU
-  ========================= */
-
-  function openMenu(){
-
+  const email =
     document
       .getElementById(
-        'menuOverlay'
+        'adminEmail'
       )
-      .classList
-      .add('open');
-  }
+      .value
+      .trim();
 
 
-  function closeMenu(){
-
+  const password =
     document
       .getElementById(
-        'menuOverlay'
+        'adminPassword'
       )
-      .classList
-      .remove('open');
-  }
+      .value;
 
 
-  function openAdminLogin(){
-
-    closeMenu();
-
-    document
-      .getElementById(
-        'loginOverlay'
-      )
-      .classList
-      .add('open');
-  }
-
-
-  function closeAdminLogin(){
-
-    document
-      .getElementById(
-        'loginOverlay'
-      )
-      .classList
-      .remove('open');
-
+  const message =
     document
       .getElementById(
         'loginMessage'
-      )
-      .textContent = '';
+      );
+
+
+  const button =
+    document
+      .getElementById(
+        'loginSubmit'
+      );
+
+
+  if(!email || !password){
+
+    message.textContent =
+      '이메일과 비밀번호를 입력해주세요.';
+
+    return;
   }
 
+
+  button.disabled =
+    true;
+
+
+  button.textContent =
+    '확인 중...';
+
+
+  const {
+    data,
+    error
+  } =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+
+  if(error){
+
+    message.textContent =
+      '이메일 또는 비밀번호를 확인해주세요.';
+
+
+    button.disabled =
+      false;
+
+
+    button.textContent =
+      '관리자 모드 시작';
+
+
+    return;
+  }
+
+
+  const {
+    data:admin
+  } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq(
+        'user_id',
+        data.user.id
+      )
+      .maybeSingle();
+
+
+  if(!admin){
+
+    await db.auth.signOut();
+
+
+    message.textContent =
+      '관리자 권한이 없는 계정입니다.';
+
+
+    button.disabled =
+      false;
+
+
+    button.textContent =
+      '관리자 모드 시작';
+
+
+    return;
+  }
+
+
+  button.disabled =
+    false;
+
+
+  button.textContent =
+    '관리자 모드 시작';
+
+
+  document
+    .getElementById(
+      'adminPassword'
+    )
+    .value = '';
+
+
+  setAdminUI(true);
+
+
+  closeAdminLogin();
+}
+
+
+async function adminLogout(){
+
+  await db.auth.signOut();
+
+
+  setAdminUI(false);
+
+
+  closeMenu();
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function getLocation(item){
+
+  return locations.find(
+    location =>
+      String(location.id) ===
+      String(item.location_id)
+  );
+}
+
+
+function makeTime(item){
+
+  const values = [];
+
+
+  if(item.start_time){
+
+    values.push(
+      item.start_time
+        .slice(0,5)
+    );
+  }
+
+
+  if(item.end_time){
+
+    values.push(
+      item.end_time
+        .slice(0,5)
+    );
+  }
+
+
+  return values.join(
+    ' - '
+  );
+}
+
+
+function todayString(){
+
+  const now =
+    new Date();
+
+
+  const year =
+    now.getFullYear();
+
+
+  const month =
+    String(
+      now.getMonth() + 1
+    )
+    .padStart(
+      2,
+      '0'
+    );
+
+
+  const day =
+    String(
+      now.getDate()
+    )
+    .padStart(
+      2,
+      '0'
+    );
+
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function parseDate(value){
+
+  return new Date(
+    value +
+    'T00:00:00'
+  );
+}
+
+
+function calculateDday(value){
+
+  const today =
+    new Date();
+
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  const target =
+    parseDate(value);
+
+
+  const diff =
+    Math.round(
+      (
+        target -
+        today
+      )
+      /
+      86400000
+    );
+
+
+  if(diff === 0){
+    return 'D-DAY';
+  }
+
+
+  if(diff > 0){
+    return `D-${diff}`;
+  }
+
+
+  return `D+${Math.abs(diff)}`;
+}
+
+
+function weekEnglish(date){
+
+  return [
+    'SUN',
+    'MON',
+    'TUE',
+    'WED',
+    'THU',
+    'FRI',
+    'SAT'
+  ][date.getDay()];
+}
+
+
+function weekKorean(date){
+
+  return [
+    '일',
+    '월',
+    '화',
+    '수',
+    '목',
+    '금',
+    '토'
+  ][date.getDay()];
+}
+
+
+function escapeHtml(value){
+
+  const div =
+    document.createElement(
+      'div'
+    );
+
+
+  div.textContent =
+    String(
+      value ?? ''
+    );
+
+
+  return div.innerHTML;
+}
+
+
+function escapeAttribute(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function openMenu(){
 
   document
     .getElementById(
       'menuOverlay'
     )
-    .addEventListener(
-      'click',
-      function(event){
+    .classList
+    .add('open');
+}
 
-        if(event.target === this){
-          closeMenu();
-        }
 
-      }
-    );
+function closeMenu(){
+
+  document
+    .getElementById(
+      'menuOverlay'
+    )
+    .classList
+    .remove('open');
+}
+
+
+function openAdminLogin(){
+
+  closeMenu();
 
 
   document
     .getElementById(
       'loginOverlay'
     )
-    .addEventListener(
-      'click',
-      function(event){
+    .classList
+    .add('open');
+}
 
-        if(event.target === this){
-          closeAdminLogin();
-        }
 
+function closeAdminLogin(){
+
+  document
+    .getElementById(
+      'loginOverlay'
+    )
+    .classList
+    .remove('open');
+
+
+  document
+    .getElementById(
+      'loginMessage'
+    )
+    .textContent = '';
+}
+
+
+document
+  .getElementById(
+    'menuOverlay'
+  )
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeMenu();
       }
-    );
+
+    }
+  );
 
 
-  /* =========================
-     START
-  ========================= */
+document
+  .getElementById(
+    'loginOverlay'
+  )
+  .addEventListener(
+    'click',
+    function(event){
 
-  async function start(){
+      if(event.target === this){
+        closeAdminLogin();
+      }
 
-    await restoreAdminSession();
-
-    await loadHomeData();
-  }
+    }
+  );
 
 
-  start();
+start();
 </script>
 
 </body>
