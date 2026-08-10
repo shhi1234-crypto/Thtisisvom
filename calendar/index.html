@@ -1,413 +1,2154 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#18254c" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f5fa">
 
   <title>CALENDAR · VOM</title>
 
-  <link rel="stylesheet" href="/assets/css/style.css" />
-  <link rel="stylesheet" href="/assets/css/calendar.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --ink:#11182c;
+      --muted:#747a8d;
+      --purple:#7c68e9;
+      --line:rgba(25,31,58,.08);
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      overflow-x:hidden;
+      font-family:"Noto Sans KR",sans-serif;
+      color:var(--ink);
+      background:#f8f7fa;
+    }
+
+    a{
+      color:inherit;
+      text-decoration:none;
+    }
+
+    button,
+    input,
+    select,
+    textarea{
+      font:inherit;
+    }
+
+    button{
+      color:inherit;
+    }
+
+    /* =========================
+       AURORA
+    ========================= */
+
+    .aurora{
+      position:fixed;
+      inset:0;
+      z-index:-10;
+      overflow:hidden;
+
+      background:
+        linear-gradient(
+          180deg,
+          #f7f4fa 0%,
+          #f8f7fb 55%,
+          #faf9fb 100%
+        );
+    }
+
+    .aurora::before{
+      content:"";
+      position:absolute;
+
+      width:1150px;
+      height:680px;
+
+      top:-320px;
+      right:-250px;
+
+      border-radius:50%;
+
+      background:
+        radial-gradient(
+          ellipse at 25% 55%,
+          rgba(140,222,213,.70),
+          rgba(140,222,213,.27) 27%,
+          transparent 55%
+        ),
+        radial-gradient(
+          ellipse at 53% 36%,
+          rgba(146,171,248,.68),
+          rgba(146,171,248,.25) 27%,
+          transparent 56%
+        ),
+        radial-gradient(
+          ellipse at 76% 48%,
+          rgba(191,151,244,.62),
+          rgba(191,151,244,.23) 24%,
+          transparent 55%
+        );
+
+      filter:blur(52px);
+      transform:rotate(-13deg);
+    }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header{
+      width:min(1080px,100%);
+      height:82px;
+
+      padding:0 25px;
+      margin:auto;
+
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+    }
+
+    .brand strong{
+      font-size:27px;
+      line-height:1;
+      font-weight:800;
+    }
+
+    .brand small{
+      margin-top:5px;
+      font-size:8px;
+      font-weight:700;
+      letter-spacing:3px;
+    }
+
+    .header-right{
+      display:flex;
+      align-items:center;
+      gap:9px;
+    }
+
+    .admin-badge{
+      display:none;
+      align-items:center;
+      gap:7px;
+
+      padding:9px 13px;
+      border-radius:999px;
+
+      color:#6955d2;
+      background:rgba(126,102,232,.10);
+      border:1px solid rgba(126,102,232,.15);
+
+      font-size:9px;
+      font-weight:800;
+      letter-spacing:.8px;
+    }
+
+    .admin-badge.show{
+      display:flex;
+    }
+
+    .admin-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:#765fe6;
+    }
+
+    .menu-btn{
+      width:46px;
+      height:46px;
+
+      display:grid;
+      place-items:center;
+
+      border:1px solid rgba(255,255,255,.92);
+      border-radius:50%;
+
+      background:rgba(255,255,255,.66);
+
+      box-shadow:
+        0 10px 30px rgba(31,38,76,.08);
+
+      cursor:pointer;
+    }
+
+    /* =========================
+       PAGE
+    ========================= */
+
+    .page{
+      width:min(1000px,100%);
+      padding:0 22px 115px;
+      margin:auto;
+    }
+
+    /* =========================
+       HERO
+    ========================= */
+
+    .hero{
+      padding:60px 0 48px;
+    }
+
+    .hero-label{
+      color:#696f84;
+      font-size:10px;
+      font-weight:700;
+      letter-spacing:2.4px;
+    }
+
+    .hero h1{
+      margin:12px 0 0;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:clamp(82px,13vw,135px);
+      font-weight:400;
+      line-height:.75;
+    }
+
+    .hero p{
+      max-width:520px;
+
+      margin:28px 0 0;
+
+      color:#62697d;
+      font-size:13px;
+      line-height:1.8;
+    }
+
+    /* =========================
+       TOOLBAR
+    ========================= */
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+
+      margin-bottom:20px;
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+
+    .filters::-webkit-scrollbar{
+      display:none;
+    }
+
+    .filter{
+      flex:0 0 auto;
+
+      padding:10px 15px;
+
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:999px;
+
+      background:rgba(255,255,255,.7);
+      color:#74798b;
+
+      cursor:pointer;
+      font-size:11px;
+
+      box-shadow:
+        0 7px 22px rgba(31,38,76,.05);
+    }
+
+    .filter.active{
+      color:white;
+
+      background:
+        linear-gradient(
+          135deg,
+          #846be9,
+          #7586eb
+        );
+
+      border-color:transparent;
+    }
+
+    .admin-add{
+      display:none;
+      flex:0 0 auto;
+
+      padding:11px 16px;
+
+      border:0;
+      border-radius:999px;
+
+      color:white;
+      background:#151b30;
+
+      cursor:pointer;
+
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .admin-add.show{
+      display:block;
+    }
+
+    /* =========================
+       MONTH
+    ========================= */
+
+    .month{
+      margin-bottom:17px;
+      padding:25px;
+
+      border-radius:27px;
+
+      background:rgba(255,255,255,.76);
+      border:1px solid rgba(255,255,255,.92);
+
+      box-shadow:
+        0 17px 48px rgba(28,35,72,.07);
+
+      backdrop-filter:blur(20px);
+    }
+
+    .month-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      margin-bottom:17px;
+    }
+
+    .month-head h2{
+      margin:0;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:36px;
+      font-weight:400;
+    }
+
+    .month-head span{
+      color:#999dab;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:19px;
+    }
+
+    /* =========================
+       EVENTS
+    ========================= */
+
+    .event-list{
+      display:grid;
+      gap:11px;
+    }
+
+    .event{
+      position:relative;
+
+      display:grid;
+      grid-template-columns:68px 1fr auto;
+      align-items:center;
+      gap:15px;
+
+      min-height:100px;
+
+      padding:14px 16px;
+
+      border-radius:21px;
+
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(255,255,255,.95);
+
+      box-shadow:
+        0 9px 27px rgba(25,31,65,.05);
+    }
+
+    .date-box{
+      width:68px;
+      min-height:68px;
+
+      display:grid;
+      place-items:center;
+
+      text-align:center;
+
+      border-radius:17px;
+
+      background:
+        linear-gradient(
+          145deg,
+          #f0edff,
+          #e8f2ff
+        );
+    }
+
+    .event.live .date-box{
+      color:white;
+
+      background:
+        linear-gradient(
+          145deg,
+          #8169e8,
+          #7598eb
+        );
+    }
+
+    .event.busking .date-box{
+      background:
+        linear-gradient(
+          145deg,
+          #e9e1ff,
+          #dff2ff
+        );
+    }
+
+    .event.other .date-box{
+      background:
+        linear-gradient(
+          145deg,
+          #f7edf7,
+          #eef0fb
+        );
+    }
+
+    .date-box strong{
+      display:block;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:31px;
+      font-weight:400;
+      line-height:.85;
+    }
+
+    .date-box small{
+      display:block;
+
+      margin-top:5px;
+
+      color:#73798d;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:14px;
+    }
+
+    .event.live .date-box small{
+      color:rgba(255,255,255,.78);
+    }
+
+    .type{
+      color:#725fe0;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:17px;
+    }
+
+    .event h3{
+      margin:2px 0 5px;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:24px;
+      font-weight:400;
+    }
+
+    .event-meta{
+      color:#71778b;
+      font-size:11px;
+      line-height:1.7;
+    }
+
+    .event-description{
+      margin-top:5px;
+
+      color:#9498a7;
+      font-size:10px;
+      line-height:1.6;
+    }
+
+    .admin-actions{
+      display:none;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .event.admin .admin-actions{
+      display:flex;
+    }
+
+    .edit-btn,
+    .delete-btn{
+      padding:8px 11px;
+
+      border:0;
+      border-radius:10px;
+
+      cursor:pointer;
+      font-size:10px;
+    }
+
+    .edit-btn{
+      background:#efedf9;
+      color:#6555c6;
+    }
+
+    .delete-btn{
+      background:#fff0f2;
+      color:#cb5269;
+    }
+
+    .empty{
+      padding:35px 20px;
+
+      text-align:center;
+
+      color:#9397a6;
+      font-size:12px;
+    }
+
+    /* =========================
+       MODAL
+    ========================= */
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:200;
+
+      display:none;
+
+      align-items:center;
+      justify-content:center;
+
+      padding:20px;
+
+      background:rgba(24,29,54,.38);
+      backdrop-filter:blur(15px);
+    }
+
+    .overlay.open{
+      display:flex;
+    }
+
+    .modal{
+      width:min(470px,100%);
+      max-height:calc(100vh - 40px);
+
+      overflow-y:auto;
+
+      padding:25px;
+
+      border-radius:27px;
+
+      background:rgba(255,255,255,.97);
+
+      box-shadow:
+        0 28px 80px rgba(20,25,55,.22);
+    }
+
+    .modal-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      margin-bottom:16px;
+    }
+
+    .modal h2{
+      margin:0;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:35px;
+      font-weight:400;
+    }
+
+    .close{
+      width:38px;
+      height:38px;
+
+      border:0;
+      border-radius:50%;
+
+      background:#eeeef4;
+
+      cursor:pointer;
+    }
+
+    .modal label{
+      display:block;
+
+      margin:15px 0 6px;
+
+      font-size:11px;
+      font-weight:700;
+    }
+
+    .modal input,
+    .modal select,
+    .modal textarea{
+      width:100%;
+
+      padding:13px 14px;
+
+      border:1px solid #e2e3ea;
+      border-radius:13px;
+
+      background:#fafafd;
+
+      outline:none;
+
+      font-size:13px;
+    }
+
+    .modal textarea{
+      min-height:95px;
+      resize:vertical;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:0 11px;
+    }
+
+    .save{
+      width:100%;
+
+      margin-top:21px;
+      padding:14px;
+
+      border:0;
+      border-radius:14px;
+
+      color:white;
+
+      background:
+        linear-gradient(
+          135deg,
+          #8169e8,
+          #7189eb
+        );
+
+      cursor:pointer;
+
+      font-weight:700;
+    }
+
+    /* =========================
+       MENU
+    ========================= */
+
+    .menu-card{
+      width:min(400px,100%);
+
+      padding:24px;
+
+      border-radius:27px;
+
+      background:rgba(255,255,255,.96);
+    }
+
+    .menu-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+
+      margin-bottom:10px;
+    }
+
+    .menu-top h3{
+      margin:0;
+
+      font-family:"Nanum Pen Script",cursive;
+      font-size:34px;
+      font-weight:400;
+    }
+
+    .menu-card a,
+    .logout{
+      width:100%;
+      min-height:55px;
+
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+
+      border:0;
+      border-bottom:1px solid var(--line);
+
+      background:none;
+
+      text-align:left;
+      cursor:pointer;
+
+      font-size:13px;
+    }
+
+    .logout{
+      display:none;
+      color:#ca546a;
+    }
+
+    .logout.show{
+      display:flex;
+    }
+
+    /* =========================
+       BOTTOM NAV
+    ========================= */
+
+    .bottom{
+      position:fixed;
+
+      z-index:80;
+
+      left:50%;
+      bottom:10px;
+
+      transform:translateX(-50%);
+
+      width:min(720px,calc(100% - 24px));
+      height:67px;
+
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+
+      overflow:hidden;
+
+      border-radius:22px;
+
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.95);
+
+      box-shadow:
+        0 14px 42px rgba(30,37,75,.12);
+
+      backdrop-filter:blur(23px);
+    }
+
+    .bottom a,
+    .bottom button{
+      border:0;
+      background:none;
+
+      display:flex;
+      flex-direction:column;
+
+      align-items:center;
+      justify-content:center;
+
+      gap:3px;
+
+      color:#777c8d;
+
+      cursor:pointer;
+
+      font-size:8px;
+    }
+
+    .bottom .active{
+      color:#755fe1;
+      font-weight:700;
+    }
+
+    .nav-icon{
+      font-size:18px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media(max-width:650px){
+
+      .header{
+        height:70px;
+        padding:0 16px;
+      }
+
+      .brand strong{
+        font-size:23px;
+      }
+
+      .brand small{
+        font-size:7px;
+      }
+
+      .menu-btn{
+        width:42px;
+        height:42px;
+      }
+
+      .admin-badge{
+        padding:7px 9px;
+        font-size:7px;
+      }
+
+      .page{
+        padding:0 14px 105px;
+      }
+
+      .hero{
+        padding:45px 4px 38px;
+      }
+
+      .hero h1{
+        font-size:84px;
+      }
+
+      .toolbar{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .admin-add{
+        width:100%;
+      }
+
+      .month{
+        padding:18px;
+        border-radius:23px;
+      }
+
+      .event{
+        grid-template-columns:60px 1fr;
+
+        gap:12px;
+        padding:13px;
+      }
+
+      .date-box{
+        width:60px;
+        min-height:60px;
+
+        border-radius:15px;
+      }
+
+      .date-box strong{
+        font-size:27px;
+      }
+
+      .admin-actions{
+        grid-column:1 / -1;
+
+        flex-direction:row;
+        justify-content:flex-end;
+      }
+
+      .form-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
+
 
 <body>
 
-  <div class="aurora-bg"></div>
-  <div class="stars"></div>
+<div class="aurora"></div>
 
-  <header>
-    <div class="header-inner">
 
-      <a href="/" class="brand">
-        <span class="brand-main">VOM</span>
-        <span class="brand-sub">VOICE OF MELODY</span>
-      </a>
+<header class="header">
+
+  <a href="/" class="brand">
+    <strong>VOM</strong>
+    <small>VOICE OF MELODY</small>
+  </a>
+
+  <div class="header-right">
+
+    <div
+      id="adminBadge"
+      class="admin-badge"
+    >
+      <span class="admin-dot"></span>
+      ADMIN MODE
+    </div>
+
+    <button
+      class="menu-btn"
+      onclick="openMenu()"
+      aria-label="메뉴"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<main class="page">
+
+  <section class="hero">
+
+    <div class="hero-label">
+      VOM SCHEDULE
+    </div>
+
+    <h1>
+      Calendar
+    </h1>
+
+    <p>
+      VOM의 모든 일정을 한곳에서 확인하세요.<br>
+      VOM LIVE, BUSKING 그리고 다양한 일정이 함께 표시됩니다.
+    </p>
+
+  </section>
+
+
+  <section class="toolbar">
+
+    <div class="filters">
 
       <button
-        class="menu-button"
-        onclick="openMenu()"
-        aria-label="메뉴 열기"
+        class="filter active"
+        onclick="setFilter('ALL',this)"
       >
-        <span class="menu-lines">
-          <span></span>
-          <span></span>
-          <span></span>
-        </span>
+        ALL
+      </button>
+
+      <button
+        class="filter"
+        onclick="setFilter('VOM LIVE',this)"
+      >
+        VOM LIVE
+      </button>
+
+      <button
+        class="filter"
+        onclick="setFilter('BUSKING',this)"
+      >
+        BUSKING
+      </button>
+
+      <button
+        class="filter"
+        onclick="setFilter('OTHER',this)"
+      >
+        OTHER
       </button>
 
     </div>
-  </header>
 
-
-  <main class="page">
-
-    <section class="calendar-hero">
-
-      <div class="calendar-label">
-        VOM SCHEDULE
-      </div>
-
-      <h1 class="calendar-title">
-        Calendar
-      </h1>
-
-      <div class="calendar-sub">
-        VOM의 주요 일정과 모임을 한눈에 확인하세요.<br>
-        LIVE, BUSKING, 회의 등 필요한 일정만 빠르게 볼 수 있습니다.
-      </div>
-
-    </section>
-
-
-    <section>
-
-      <div class="calendar-filter">
-
-        <button
-          class="filter-btn active"
-          onclick="filterEvents('all', this)"
-        >
-          ALL
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterEvents('live', this)"
-        >
-          VOM LIVE
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterEvents('busking', this)"
-        >
-          BUSKING
-        </button>
-
-        <button
-          class="filter-btn"
-          onclick="filterEvents('etc', this)"
-        >
-          ETC
-        </button>
-
-      </div>
-
-
-      <div class="month-card">
-
-        <div class="month-head">
-
-          <h2>
-            June 2026
-          </h2>
-
-          <small>
-            06
-          </small>
-
-        </div>
-
-
-        <div class="calendar-list">
-
-          <a
-            href="/live/"
-            class="calendar-event live"
-            data-type="live"
-          >
-
-            <div class="event-datebox">
-              <div>
-                <strong>27</strong>
-                <span>FRI</span>
-              </div>
-            </div>
-
-            <div class="event-content">
-              <span class="event-type">
-                VOM LIVE
-              </span>
-
-              <h3>
-                VOM LIVE #02
-              </h3>
-
-              <p>
-                14:00 - 18:00 · 송연습실 송내점
-              </p>
-            </div>
-
-            <div class="event-go">
-              →
-            </div>
-
-          </a>
-
-
-          <a
-            href="/busking/"
-            class="calendar-event busking"
-            data-type="busking"
-          >
-
-            <div class="event-datebox">
-              <div>
-                <strong>30</strong>
-                <span>MON</span>
-              </div>
-            </div>
-
-            <div class="event-content">
-              <span class="event-type">
-                BUSKING
-              </span>
-
-              <h3>
-                BUSKING @신촌
-              </h3>
-
-              <p>
-                19:00 - 21:00 · 신촌 스타광장
-              </p>
-            </div>
-
-            <div class="event-go">
-              →
-            </div>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div class="month-card" style="margin-top:16px;">
-
-        <div class="month-head">
-
-          <h2>
-            July 2026
-          </h2>
-
-          <small>
-            07
-          </small>
-
-        </div>
-
-
-        <div class="calendar-list">
-
-          <a
-            href="#"
-            class="calendar-event"
-            data-type="etc"
-            onclick="showToast('상세 일정 페이지는 나중에 연결할게요.')"
-          >
-
-            <div class="event-datebox">
-              <div>
-                <strong>05</strong>
-                <span>SAT</span>
-              </div>
-            </div>
-
-            <div class="event-content">
-              <span class="event-type">
-                ETC
-              </span>
-
-              <h3>
-                VOM 일정
-              </h3>
-
-              <p>
-                10:00 - 13:00 · 송내
-              </p>
-            </div>
-
-            <div class="event-go">
-              →
-            </div>
-
-          </a>
-
-
-          <a
-            href="#"
-            class="calendar-event"
-            data-type="etc"
-            onclick="showToast('상세 일정 페이지는 나중에 연결할게요.')"
-          >
-
-            <div class="event-datebox">
-              <div>
-                <strong>12</strong>
-                <span>SAT</span>
-              </div>
-            </div>
-
-            <div class="event-content">
-              <span class="event-type">
-                ETC
-              </span>
-
-              <h3>
-                VOM 회의
-              </h3>
-
-              <p>
-                15:00 - 17:00 · 온라인
-              </p>
-            </div>
-
-            <div class="event-go">
-              →
-            </div>
-
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div class="calendar-note">
-        현재는 예시 일정으로 구성되어 있습니다.
-        이후 실제 일정 데이터와 연결하면 홈 화면과 CALENDAR가 자동으로 함께 변경되게 만들 수 있습니다.
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <nav class="bottom-nav">
-
-    <a href="/" class="bottom-item">
-      <span class="nav-icon">⌂</span>
-      HOME
-    </a>
-
-    <a href="/info/" class="bottom-item">
-      <span class="nav-icon">ⓘ</span>
-      INFO
-    </a>
-
-    <a href="/calendar/" class="bottom-item active">
-      <span class="nav-icon">▣</span>
-      CALENDAR
-    </a>
-
-    <a href="/live/" class="bottom-item">
-      <span class="nav-icon">〽</span>
-      LIVE
-    </a>
 
     <button
-      class="bottom-item"
-      onclick="openMenu()"
+      id="addButton"
+      class="admin-add"
+      onclick="openEventModal()"
     >
-      <span class="nav-icon">☰</span>
-      MENU
+      ＋ 일정 추가
     </button>
 
-  </nav>
+  </section>
 
 
-  <div
-    class="menu-panel"
-    id="menuPanel"
-  >
+  <div id="calendarContainer">
 
-    <div class="menu-box">
-
-      <div class="menu-box-top">
-
-        <h3>
-          VOM Menu
-        </h3>
-
-        <button
-          class="menu-close"
-          onclick="closeMenu()"
-        >
-          ✕
-        </button>
-
-      </div>
-
-      <a href="/info/" class="menu-link">
-        INFO
-      </a>
-
-      <a href="/calendar/" class="menu-link">
-        CALENDAR
-      </a>
-
-      <a href="/live/" class="menu-link">
-        VOM LIVE
-      </a>
-
-      <a href="/busking/" class="menu-link">
-        BUSKING
-      </a>
-
-      <a href="/notice/" class="menu-link">
-        NOTICE
-      </a>
-
-      <a href="/qna/" class="menu-link">
-        Q&A
-      </a>
-
+    <div class="empty">
+      일정을 불러오는 중...
     </div>
 
   </div>
 
-
-  <div
-    class="toast"
-    id="toast"
-  ></div>
+</main>
 
 
-  <script src="/assets/js/common.js"></script>
+<!-- 일정 추가 / 수정 -->
 
-  <script>
-    function filterEvents(type, button) {
+<div
+  id="eventOverlay"
+  class="overlay"
+>
 
-      const buttons =
-        document.querySelectorAll(".filter-btn");
+  <div class="modal">
 
-      const events =
-        document.querySelectorAll(".calendar-event");
+    <div class="modal-top">
 
-      buttons.forEach(btn => {
-        btn.classList.remove("active");
+      <h2 id="modalTitle">
+        일정 추가
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeEventModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <input
+      type="hidden"
+      id="editingId"
+    >
+
+
+    <label>
+      종류
+    </label>
+
+    <select id="eventType">
+
+      <option value="VOM LIVE">
+        VOM LIVE
+      </option>
+
+      <option value="BUSKING">
+        BUSKING
+      </option>
+
+      <option value="OTHER">
+        OTHER
+      </option>
+
+    </select>
+
+
+    <label>
+      제목
+    </label>
+
+    <input
+      id="eventTitle"
+      placeholder="예: VOM LIVE #03"
+    >
+
+
+    <div class="form-grid">
+
+      <div>
+
+        <label>
+          날짜
+        </label>
+
+        <input
+          id="eventDate"
+          type="date"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          장소
+        </label>
+
+        <input
+          id="eventLocation"
+          placeholder="예: 송연습실 송내점"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          시작 시간
+        </label>
+
+        <input
+          id="startTime"
+          type="time"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          종료 시간
+        </label>
+
+        <input
+          id="endTime"
+          type="time"
+        >
+
+      </div>
+
+    </div>
+
+
+    <label>
+      내용
+    </label>
+
+    <textarea
+      id="eventDescription"
+      placeholder="필요한 내용을 입력하세요."
+    ></textarea>
+
+
+    <button
+      class="save"
+      onclick="saveEvent()"
+    >
+      저장
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- 메뉴 -->
+
+<div
+  id="menuOverlay"
+  class="overlay"
+>
+
+  <div class="menu-card">
+
+    <div class="menu-top">
+
+      <h3>
+        VOM Menu
+      </h3>
+
+      <button
+        class="close"
+        onclick="closeMenu()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <a href="/">
+      HOME <span>→</span>
+    </a>
+
+    <a href="/info/">
+      INFO <span>→</span>
+    </a>
+
+    <a href="/calendar/">
+      CALENDAR <span>→</span>
+    </a>
+
+    <a href="/live/">
+      VOM LIVE <span>→</span>
+    </a>
+
+    <a href="/busking/">
+      BUSKING <span>→</span>
+    </a>
+
+    <a href="/notice/">
+      NOTICE <span>→</span>
+    </a>
+
+    <a href="/qna/">
+      Q&A <span>→</span>
+    </a>
+
+
+    <button
+      id="logoutButton"
+      class="logout"
+      onclick="adminLogout()"
+    >
+      관리자 모드 종료
+      <span>→</span>
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- 하단 메뉴 -->
+
+<nav class="bottom">
+
+  <a href="/">
+    <span class="nav-icon">⌂</span>
+    HOME
+  </a>
+
+  <a href="/info/">
+    <span class="nav-icon">ⓘ</span>
+    INFO
+  </a>
+
+  <a
+    href="/calendar/"
+    class="active"
+  >
+    <span class="nav-icon">◫</span>
+    CALENDAR
+  </a>
+
+  <a href="/live/">
+    <span class="nav-icon">♬</span>
+    LIVE
+  </a>
+
+  <button onclick="openMenu()">
+    <span class="nav-icon">☰</span>
+    MENU
+  </button>
+
+</nav>
+
+
+<script>
+  const SUPABASE_URL =
+    'https://aqfmhqultzpakfqwzulj.supabase.co';
+
+  const SUPABASE_KEY =
+    'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+  const db =
+    supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  let events = [];
+  let currentFilter = 'ALL';
+  let adminMode = false;
+
+
+  /* =========================
+     ADMIN CHECK
+  ========================= */
+
+  async function checkAdmin(){
+
+    const {data} =
+      await db.auth.getSession();
+
+    const session =
+      data.session;
+
+
+    if(!session){
+      setAdmin(false);
+      return;
+    }
+
+
+    const {data:admin} =
+      await db
+        .from('admins')
+        .select('user_id')
+        .eq(
+          'user_id',
+          session.user.id
+        )
+        .maybeSingle();
+
+
+    setAdmin(!!admin);
+  }
+
+
+  function setAdmin(active){
+
+    adminMode = active;
+
+    document
+      .getElementById('adminBadge')
+      .classList
+      .toggle('show',active);
+
+    document
+      .getElementById('addButton')
+      .classList
+      .toggle('show',active);
+
+    document
+      .getElementById('logoutButton')
+      .classList
+      .toggle('show',active);
+
+    renderCalendar();
+  }
+
+
+  async function adminLogout(){
+
+    await db.auth.signOut();
+
+    setAdmin(false);
+
+    closeMenu();
+  }
+
+
+  /* =========================
+     LOAD EVENTS
+  ========================= */
+
+  async function loadEvents(){
+
+    const {data,error} =
+      await db
+        .from('events')
+        .select('*')
+        .order(
+          'event_date',
+          {
+            ascending:true
+          }
+        );
+
+
+    if(error){
+
+      document
+        .getElementById('calendarContainer')
+        .innerHTML =
+        `
+          <div class="empty">
+            일정을 불러오지 못했습니다.<br>
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+
+      return;
+    }
+
+
+    events = data || [];
+
+    renderCalendar();
+  }
+
+
+  /* =========================
+     FILTER
+  ========================= */
+
+  function setFilter(
+    filter,
+    button
+  ){
+
+    currentFilter =
+      filter;
+
+
+    document
+      .querySelectorAll('.filter')
+      .forEach(btn => {
+
+        btn
+          .classList
+          .remove('active');
+
       });
 
-      button.classList.add("active");
+
+    button
+      .classList
+      .add('active');
 
 
-      events.forEach(event => {
+    renderCalendar();
+  }
 
-        if (
-          type === "all" ||
-          event.dataset.type === type
-        ) {
-          event.style.display = "grid";
-        } else {
-          event.style.display = "none";
-        }
 
+  /* =========================
+     RENDER
+  ========================= */
+
+  function renderCalendar(){
+
+    const container =
+      document
+        .getElementById(
+          'calendarContainer'
+        );
+
+
+    if(!events.length){
+
+      container.innerHTML =
+      `
+        <div class="month">
+          <div class="empty">
+            아직 등록된 일정이 없습니다.
+          </div>
+        </div>
+      `;
+
+      return;
+    }
+
+
+    const filtered =
+      currentFilter === 'ALL'
+
+      ? events
+
+      : events.filter(
+          event =>
+            event.event_type ===
+            currentFilter
+        );
+
+
+    if(!filtered.length){
+
+      container.innerHTML =
+      `
+        <div class="month">
+          <div class="empty">
+            해당 종류의 일정이 없습니다.
+          </div>
+        </div>
+      `;
+
+      return;
+    }
+
+
+    const groups = {};
+
+
+    filtered.forEach(event => {
+
+      if(!event.event_date){
+        return;
+      }
+
+
+      const key =
+        event.event_date
+          .slice(0,7);
+
+
+      if(!groups[key]){
+        groups[key] = [];
+      }
+
+
+      groups[key]
+        .push(event);
+    });
+
+
+    container.innerHTML = '';
+
+
+    Object
+      .keys(groups)
+      .sort()
+      .forEach(monthKey => {
+
+        const [year,month] =
+          monthKey.split('-');
+
+
+        const section =
+          document
+            .createElement('section');
+
+
+        section.className =
+          'month';
+
+
+        const eventHtml =
+          groups[monthKey]
+            .map(
+              event =>
+                createEventHtml(event)
+            )
+            .join('');
+
+
+        section.innerHTML =
+        `
+          <div class="month-head">
+
+            <h2>
+              ${monthName(month)}
+              ${year}
+            </h2>
+
+            <span>
+              ${month}
+            </span>
+
+          </div>
+
+          <div class="event-list">
+            ${eventHtml}
+          </div>
+        `;
+
+
+        container
+          .appendChild(section);
       });
+  }
+
+
+  function createEventHtml(event){
+
+    const date =
+      new Date(
+        event.event_date +
+        'T00:00:00'
+      );
+
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2,'0');
+
+
+    const week =
+      [
+        'SUN',
+        'MON',
+        'TUE',
+        'WED',
+        'THU',
+        'FRI',
+        'SAT'
+      ][date.getDay()];
+
+
+    let eventClass = '';
+
+
+    if(
+      event.event_type ===
+      'VOM LIVE'
+    ){
+      eventClass = 'live';
+    }
+
+
+    if(
+      event.event_type ===
+      'BUSKING'
+    ){
+      eventClass = 'busking';
+    }
+
+
+    if(
+      event.event_type ===
+      'OTHER'
+    ){
+      eventClass = 'other';
+    }
+
+
+    return `
+      <article
+        class="event ${eventClass} ${adminMode ? 'admin' : ''}"
+      >
+
+        <div class="date-box">
+
+          <div>
+
+            <strong>
+              ${day}
+            </strong>
+
+            <small>
+              ${week}
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <div class="type">
+            ${escapeHtml(
+              event.event_type ||
+              'OTHER'
+            )}
+          </div>
+
+
+          <h3>
+            ${escapeHtml(
+              event.title || ''
+            )}
+          </h3>
+
+
+          <div class="event-meta">
+            ${makeMeta(event)}
+          </div>
+
+
+          ${
+            event.description
+
+            ? `
+              <div class="event-description">
+                ${escapeHtml(
+                  event.description
+                )}
+              </div>
+            `
+
+            : ''
+          }
+
+        </div>
+
+
+        <div class="admin-actions">
+
+          <button
+            class="edit-btn"
+            onclick="editEvent(${event.id})"
+          >
+            수정
+          </button>
+
+          <button
+            class="delete-btn"
+            onclick="deleteEvent(${event.id})"
+          >
+            삭제
+          </button>
+
+        </div>
+
+      </article>
+    `;
+  }
+
+
+  function makeMeta(event){
+
+    const times = [];
+
+
+    if(event.start_time){
+
+      times.push(
+        formatTime(
+          event.start_time
+        )
+      );
 
     }
-  </script>
+
+
+    if(event.end_time){
+
+      times.push(
+        formatTime(
+          event.end_time
+        )
+      );
+
+    }
+
+
+    const pieces = [];
+
+
+    if(times.length){
+
+      pieces.push(
+        times.join(' - ')
+      );
+
+    }
+
+
+    if(event.location){
+
+      pieces.push(
+        escapeHtml(
+          event.location
+        )
+      );
+
+    }
+
+
+    return pieces.join(' · ');
+  }
+
+
+  /* =========================
+     ADD / EDIT
+  ========================= */
+
+  function openEventModal(){
+
+    if(!adminMode){
+      return;
+    }
+
+
+    clearForm();
+
+
+    document
+      .getElementById('modalTitle')
+      .textContent =
+      '일정 추가';
+
+
+    document
+      .getElementById('eventOverlay')
+      .classList
+      .add('open');
+  }
+
+
+  function closeEventModal(){
+
+    document
+      .getElementById('eventOverlay')
+      .classList
+      .remove('open');
+  }
+
+
+  function clearForm(){
+
+    document
+      .getElementById('editingId')
+      .value = '';
+
+
+    document
+      .getElementById('eventType')
+      .value =
+      'VOM LIVE';
+
+
+    document
+      .getElementById('eventTitle')
+      .value = '';
+
+
+    document
+      .getElementById('eventDate')
+      .value = '';
+
+
+    document
+      .getElementById('eventLocation')
+      .value = '';
+
+
+    document
+      .getElementById('startTime')
+      .value = '';
+
+
+    document
+      .getElementById('endTime')
+      .value = '';
+
+
+    document
+      .getElementById('eventDescription')
+      .value = '';
+  }
+
+
+  function editEvent(id){
+
+    if(!adminMode){
+      return;
+    }
+
+
+    const event =
+      events.find(
+        item =>
+          String(item.id) ===
+          String(id)
+      );
+
+
+    if(!event){
+      return;
+    }
+
+
+    document
+      .getElementById('editingId')
+      .value =
+      event.id;
+
+
+    document
+      .getElementById('eventType')
+      .value =
+      event.event_type ||
+      'OTHER';
+
+
+    document
+      .getElementById('eventTitle')
+      .value =
+      event.title || '';
+
+
+    document
+      .getElementById('eventDate')
+      .value =
+      event.event_date || '';
+
+
+    document
+      .getElementById('eventLocation')
+      .value =
+      event.location || '';
+
+
+    document
+      .getElementById('startTime')
+      .value =
+      formatTime(
+        event.start_time
+      );
+
+
+    document
+      .getElementById('endTime')
+      .value =
+      formatTime(
+        event.end_time
+      );
+
+
+    document
+      .getElementById('eventDescription')
+      .value =
+      event.description || '';
+
+
+    document
+      .getElementById('modalTitle')
+      .textContent =
+      '일정 수정';
+
+
+    document
+      .getElementById('eventOverlay')
+      .classList
+      .add('open');
+  }
+
+
+  async function saveEvent(){
+
+    if(!adminMode){
+      return;
+    }
+
+
+    const id =
+      document
+        .getElementById('editingId')
+        .value;
+
+
+    const payload = {
+
+      event_type:
+        document
+          .getElementById('eventType')
+          .value,
+
+      title:
+        document
+          .getElementById('eventTitle')
+          .value
+          .trim(),
+
+      event_date:
+        document
+          .getElementById('eventDate')
+          .value,
+
+      location:
+        document
+          .getElementById('eventLocation')
+          .value
+          .trim(),
+
+      start_time:
+        document
+          .getElementById('startTime')
+          .value || null,
+
+      end_time:
+        document
+          .getElementById('endTime')
+          .value || null,
+
+      description:
+        document
+          .getElementById('eventDescription')
+          .value
+          .trim()
+
+    };
+
+
+    if(
+      !payload.title ||
+      !payload.event_date
+    ){
+
+      alert(
+        '제목과 날짜는 꼭 입력해주세요.'
+      );
+
+      return;
+    }
+
+
+    let result;
+
+
+    if(id){
+
+      result =
+        await db
+          .from('events')
+          .update(payload)
+          .eq('id',id);
+
+    }else{
+
+      result =
+        await db
+          .from('events')
+          .insert(payload);
+
+    }
+
+
+    if(result.error){
+
+      alert(
+        '저장하지 못했습니다.\n' +
+        result.error.message
+      );
+
+      return;
+    }
+
+
+    closeEventModal();
+
+    await loadEvents();
+  }
+
+
+  /* =========================
+     DELETE
+  ========================= */
+
+  async function deleteEvent(id){
+
+    if(!adminMode){
+      return;
+    }
+
+
+    const ok =
+      confirm(
+        '이 일정을 삭제할까요?'
+      );
+
+
+    if(!ok){
+      return;
+    }
+
+
+    const {error} =
+      await db
+        .from('events')
+        .delete()
+        .eq('id',id);
+
+
+    if(error){
+
+      alert(
+        '삭제하지 못했습니다.\n' +
+        error.message
+      );
+
+      return;
+    }
+
+
+    await loadEvents();
+  }
+
+
+  /* =========================
+     HELPERS
+  ========================= */
+
+  function formatTime(value){
+
+    if(!value){
+      return '';
+    }
+
+    return value.slice(0,5);
+  }
+
+
+  function monthName(month){
+
+    const names = {
+      '01':'January',
+      '02':'February',
+      '03':'March',
+      '04':'April',
+      '05':'May',
+      '06':'June',
+      '07':'July',
+      '08':'August',
+      '09':'September',
+      '10':'October',
+      '11':'November',
+      '12':'December'
+    };
+
+
+    return names[month] || month;
+  }
+
+
+  function escapeHtml(value){
+
+    const div =
+      document.createElement('div');
+
+
+    div.textContent =
+      String(value ?? '');
+
+
+    return div.innerHTML;
+  }
+
+
+  /* =========================
+     MENU
+  ========================= */
+
+  function openMenu(){
+
+    document
+      .getElementById('menuOverlay')
+      .classList
+      .add('open');
+  }
+
+
+  function closeMenu(){
+
+    document
+      .getElementById('menuOverlay')
+      .classList
+      .remove('open');
+  }
+
+
+  document
+    .getElementById('eventOverlay')
+    .addEventListener(
+      'click',
+      function(event){
+
+        if(
+          event.target === this
+        ){
+          closeEventModal();
+        }
+
+      }
+    );
+
+
+  document
+    .getElementById('menuOverlay')
+    .addEventListener(
+      'click',
+      function(event){
+
+        if(
+          event.target === this
+        ){
+          closeMenu();
+        }
+
+      }
+    );
+
+
+  /* =========================
+     START
+  ========================= */
+
+  async function start(){
+
+    await checkAdmin();
+
+    await loadEvents();
+  }
+
+
+  start();
+</script>
 
 </body>
 </html>
