@@ -224,24 +224,42 @@ button{
 
 
 /* =====================================================
-   EAR SHARE
+   HALL OF FAME
 ===================================================== */
 
-.ear-section{
+.hall-section{
   padding:26px 0 8px;
 }
 
-.ear-shell{
+.hall-grid{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:14px;
+}
+
+
+/* EAR SHARE */
+
+.ear-shell,
+.point-shell{
   position:relative;
 
   overflow:hidden;
 
-  padding:25px 26px 26px;
+  min-height:330px;
+
+  padding:24px;
 
   border-radius:29px;
 
   color:white;
 
+  box-shadow:0 22px 60px rgba(31,37,80,.14);
+}
+
+.ear-shell{
   background:
     radial-gradient(
       circle at 92% 8%,
@@ -259,20 +277,39 @@ button{
       #303772 58%,
       #443a83
     );
-
-  box-shadow:0 22px 60px rgba(31,37,80,.16);
 }
 
-.ear-shell::after{
+.point-shell{
+  background:
+    radial-gradient(
+      circle at 88% 12%,
+      rgba(255,219,131,.30),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 10% 92%,
+      rgba(116,202,239,.26),
+      transparent 37%
+    ),
+    linear-gradient(
+      135deg,
+      #182135,
+      #27304b 58%,
+      #34354f
+    );
+}
+
+.ear-shell::after,
+.point-shell::after{
   content:"";
 
   position:absolute;
 
-  width:250px;
-  height:500px;
+  width:220px;
+  height:450px;
 
-  right:12%;
-  top:-220px;
+  right:10%;
+  top:-200px;
 
   transform:rotate(27deg);
 
@@ -280,7 +317,7 @@ button{
     linear-gradient(
       90deg,
       transparent,
-      rgba(255,255,255,.15),
+      rgba(255,255,255,.12),
       transparent
     );
 
@@ -289,120 +326,127 @@ button{
   pointer-events:none;
 }
 
-.ear-head{
+.hall-head{
   position:relative;
   z-index:2;
 
   display:flex;
-  align-items:flex-end;
+
+  align-items:flex-start;
   justify-content:space-between;
 
-  gap:20px;
+  gap:15px;
 
-  margin-bottom:20px;
+  margin-bottom:18px;
 }
 
-.ear-kicker{
-  color:#dcd4ff;
+.hall-kicker{
+  color:#ded7ff;
 
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:20px;
+  font-size:19px;
 }
 
-.ear-title{
-  margin:0 0 2px;
+.point-shell .hall-kicker{
+  color:#ffe6a6;
+}
+
+.hall-title{
+  margin:0;
 
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:40px;
+  font-size:37px;
+
   font-weight:400;
 
   line-height:.9;
 }
 
-.ear-copy{
-  margin-top:8px;
+.hall-copy{
+  margin-top:7px;
 
-  color:rgba(255,255,255,.68);
+  max-width:310px;
 
-  font-size:9px;
+  color:rgba(255,255,255,.61);
+
+  font-size:8px;
 
   line-height:1.6;
 }
 
-.ear-mark{
-  color:rgba(255,255,255,.23);
+.hall-symbol{
+  color:rgba(255,255,255,.20);
 
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:57px;
-
-  line-height:.7;
+  font-size:45px;
 }
 
-.ear-list{
+.hall-list{
   position:relative;
   z-index:2;
 
   display:grid;
 
-  grid-template-columns:repeat(3,1fr);
-
-  gap:10px;
+  gap:8px;
 }
 
-.ear-card{
-  min-height:145px;
+.hall-card{
+  min-height:65px;
 
-  position:relative;
+  display:grid;
 
-  overflow:hidden;
+  grid-template-columns:
+    50px
+    minmax(0,1fr)
+    auto;
 
-  padding:18px 17px;
+  align-items:center;
 
-  border:1px solid rgba(255,255,255,.13);
+  gap:10px;
 
-  border-radius:20px;
+  padding:10px 13px;
 
-  background:rgba(255,255,255,.09);
+  border-radius:17px;
+
+  border:1px solid rgba(255,255,255,.12);
+
+  background:rgba(255,255,255,.08);
 
   backdrop-filter:blur(10px);
 
-  transition:
-    transform .18s ease,
-    background .18s ease;
+  transition:.17s;
 }
 
-.ear-card:hover{
-  transform:translateY(-2px);
+.hall-card:hover{
+  transform:translateY(-1px);
 
-  background:rgba(255,255,255,.14);
+  background:rgba(255,255,255,.13);
 }
 
-.ear-rank{
-  color:#dcd4ff;
-
+.hall-rank{
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:18px;
+  font-size:19px;
+
+  color:#ddd5ff;
 }
 
-.ear-card.rank-1 .ear-rank{
-  color:#fff0ad;
+.hall-card.rank-1 .hall-rank{
+  color:#ffeb9a;
 }
 
-.ear-card.rank-2 .ear-rank{
-  color:#e6ebff;
+.hall-card.rank-2 .hall-rank{
+  color:#e5e9ff;
 }
 
-.ear-card.rank-3 .ear-rank{
-  color:#f1c7a2;
+.hall-card.rank-3 .hall-rank{
+  color:#f5c79f;
 }
 
-.ear-name{
-  margin-top:6px;
-
+.hall-name{
   overflow:hidden;
 
   text-overflow:ellipsis;
@@ -411,49 +455,46 @@ button{
 
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:31px;
-
-  line-height:.9;
+  font-size:26px;
 }
 
-.ear-percent{
-  margin-top:12px;
+.hall-sub{
+  margin-top:3px;
+
+  color:rgba(255,255,255,.52);
+
+  font-size:7px;
+}
+
+.hall-score{
+  text-align:right;
 
   font-family:"Nanum Pen Script",cursive;
 
-  font-size:30px;
+  font-size:26px;
 }
 
-.ear-percent small{
-  color:rgba(255,255,255,.62);
+.hall-score small{
+  color:rgba(255,255,255,.55);
 
-  font-size:15px;
+  font-size:13px;
 }
 
-.ear-record{
-  margin-top:6px;
-
-  color:rgba(255,255,255,.62);
-
-  font-size:8px;
-
-  line-height:1.55;
-}
-
-.ear-empty{
-  grid-column:1 / -1;
-
-  min-height:130px;
+.hall-empty{
+  min-height:200px;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
   text-align:center;
 
-  color:rgba(255,255,255,.62);
+  color:rgba(255,255,255,.60);
 
-  font-size:10px;
+  font-size:9px;
+
+  line-height:1.7;
 }
 
 
@@ -535,7 +576,6 @@ button{
     );
 
   -webkit-background-clip:text;
-
   background-clip:text;
 
   color:transparent;
@@ -625,11 +665,13 @@ button{
 
 .next-content{
   position:relative;
+
   z-index:2;
 }
 
 .next-top{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 
@@ -705,6 +747,7 @@ button{
   padding-top:17px;
 
   display:flex;
+
   justify-content:space-between;
 
   border-top:1px solid var(--line);
@@ -718,6 +761,7 @@ button{
   min-height:255px;
 
   display:flex;
+
   align-items:center;
   justify-content:center;
 
@@ -755,7 +799,9 @@ button{
   min-height:122px;
 
   display:flex;
+
   flex-direction:column;
+
   align-items:center;
   justify-content:center;
 
@@ -824,6 +870,7 @@ button{
   font-size:27px;
 
   font-weight:400;
+
   font-style:normal;
 }
 
@@ -888,6 +935,7 @@ button{
   background:#eee9ff;
 
   font-size:9px;
+
   font-weight:700;
 }
 
@@ -995,9 +1043,7 @@ button{
 
   box-shadow:0 12px 35px rgba(31,37,74,.07);
 
-  transition:
-    transform .18s ease,
-    box-shadow .18s ease;
+  transition:.18s;
 }
 
 .event-card:hover{
@@ -1052,6 +1098,7 @@ button{
 
 .event-type{
   position:relative;
+
   z-index:2;
 
   color:#767b8d;
@@ -1067,6 +1114,7 @@ button{
 
 .event-date{
   position:relative;
+
   z-index:2;
 
   margin-top:15px;
@@ -1084,6 +1132,7 @@ button{
 
 .event-name{
   position:relative;
+
   z-index:2;
 
   margin-top:12px;
@@ -1095,6 +1144,7 @@ button{
 
 .event-meta{
   position:relative;
+
   z-index:2;
 
   margin-top:7px;
@@ -1141,7 +1191,7 @@ button{
 
 
 /* =====================================================
-   MENU / LOGIN
+   MENU
 ===================================================== */
 
 .overlay{
@@ -1181,6 +1231,7 @@ button{
 
 .modal-head{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 
@@ -1218,6 +1269,7 @@ button{
   min-height:56px;
 
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 
@@ -1339,6 +1391,7 @@ button{
   transform:translateX(-50%);
 
   width:min(720px,calc(100% - 24px));
+
   height:67px;
 
   display:grid;
@@ -1427,54 +1480,46 @@ button{
   }
 
 
-  .ear-section{
+  .hall-section{
     padding-top:18px;
   }
 
-  .ear-shell{
+  .hall-grid{
+    grid-template-columns:1fr;
+  }
+
+  .ear-shell,
+  .point-shell{
+    min-height:auto;
+
     padding:21px 17px 18px;
 
     border-radius:25px;
   }
 
-  .ear-head{
-    align-items:flex-start;
-  }
-
-  .ear-title{
+  .hall-title{
     font-size:34px;
   }
 
-  .ear-mark{
-    font-size:43px;
+  .hall-symbol{
+    font-size:39px;
   }
 
-  .ear-list{
-    display:flex;
+  .hall-card{
+    min-height:61px;
 
-    overflow-x:auto;
-
-    gap:9px;
-
-    padding-bottom:3px;
-
-    scrollbar-width:none;
+    grid-template-columns:
+      45px
+      minmax(0,1fr)
+      auto;
   }
 
-  .ear-list::-webkit-scrollbar{
-    display:none;
+  .hall-name{
+    font-size:24px;
   }
 
-  .ear-card{
-    flex:0 0 155px;
-
-    min-height:137px;
-  }
-
-  .ear-empty{
-    flex:0 0 100%;
-
-    min-width:100%;
+  .hall-score{
+    font-size:24px;
   }
 
 
@@ -1518,7 +1563,11 @@ button{
 
 
   .quick{
-    grid-template-columns:repeat(5,minmax(92px,1fr));
+    grid-template-columns:
+      repeat(
+        5,
+        minmax(92px,1fr)
+      );
 
     overflow-x:auto;
 
@@ -1545,7 +1594,11 @@ button{
   }
 
   .events{
-    grid-template-columns:repeat(4,minmax(190px,1fr));
+    grid-template-columns:
+      repeat(
+        4,
+        minmax(190px,1fr)
+      );
 
     overflow-x:auto;
 
@@ -1565,7 +1618,6 @@ button{
 </style>
 </head>
 
-
 <body>
 
 <div class="aurora"></div>
@@ -1575,7 +1627,9 @@ button{
 
   <a href="/" class="brand">
 
-    <strong>VOM</strong>
+    <strong>
+      VOM
+    </strong>
 
     <small>
       VOICE OF MELODY
@@ -1613,45 +1667,98 @@ button{
 <main class="page">
 
 
-  <!-- EAR SHARE -->
+  <!-- =================================================
+       HALL OF FAME
+  ================================================== -->
 
-  <section class="ear-section">
+  <section class="hall-section">
 
-    <div class="ear-shell">
+    <div class="hall-grid">
 
-      <div class="ear-head">
 
-        <div>
+      <!-- EAR SHARE -->
 
-          <div class="ear-kicker">
-            EAR SHARE · Hall of Fame
+      <div class="ear-shell">
+
+        <div class="hall-head">
+
+          <div>
+
+            <div class="hall-kicker">
+              EAR SHARE · Hall of Fame
+            </div>
+
+            <h2 class="hall-title">
+              귀점유율
+            </h2>
+
+            <div class="hall-copy">
+              한 번의 VOM LIVE에서 가장 많은 귀를 점유한 기록.<br>
+              개인별 역대 최고 기록을 기준으로 합니다.
+            </div>
+
           </div>
 
-          <h2 class="ear-title">
-            귀점유율
-          </h2>
-
-          <div class="ear-copy">
-            VOM LIVE에서 가장 많은 귀를 점유한 기록.<br>
-            개인별 역대 최고 귀점유율 기준입니다.
+          <div class="hall-symbol">
+            👂
           </div>
 
         </div>
 
-        <div class="ear-mark">
-          Listen ♫
+
+        <div
+          id="earHall"
+          class="hall-list"
+        >
+
+          <div class="hall-empty">
+            귀점유율 기록을 불러오는 중...
+          </div>
+
         </div>
 
       </div>
 
 
-      <div
-        id="earHall"
-        class="ear-list"
-      >
+      <!-- POINT -->
 
-        <div class="ear-empty">
-          귀점유율 기록을 불러오는 중...
+      <div class="point-shell">
+
+        <div class="hall-head">
+
+          <div>
+
+            <div class="hall-kicker">
+              VOM POINT · Ranking
+            </div>
+
+            <h2 class="hall-title">
+              VOM Point
+            </h2>
+
+            <div class="hall-copy">
+              참석과 VOM LIVE 순위로 쌓이는 누적 활동 포인트.<br>
+              참석 +5P · 1위 +50P · 2위 +35P · 3위 +20P
+            </div>
+
+          </div>
+
+          <div class="hall-symbol">
+            ✦
+          </div>
+
+        </div>
+
+
+        <div
+          id="pointHall"
+          class="hall-list"
+        >
+
+          <div class="hall-empty">
+            VOM POINT를 불러오는 중...
+          </div>
+
         </div>
 
       </div>
@@ -1661,7 +1768,9 @@ button{
   </section>
 
 
-  <!-- HERO -->
+  <!-- =================================================
+       HERO
+  ================================================== -->
 
   <section class="hero">
 
@@ -1713,7 +1822,9 @@ button{
   </section>
 
 
-  <!-- QUICK -->
+  <!-- =================================================
+       QUICK
+  ================================================== -->
 
   <section class="quick">
 
@@ -1723,9 +1834,13 @@ button{
         ⓘ
       </div>
 
-      <strong>INFO</strong>
+      <strong>
+        INFO
+      </strong>
 
-      <small>ABOUT VOM</small>
+      <small>
+        ABOUT VOM
+      </small>
 
     </a>
 
@@ -1736,9 +1851,13 @@ button{
         ◫
       </div>
 
-      <strong>CALENDAR</strong>
+      <strong>
+        CALENDAR
+      </strong>
 
-      <small>SCHEDULE</small>
+      <small>
+        SCHEDULE
+      </small>
 
     </a>
 
@@ -1749,9 +1868,13 @@ button{
         ♬
       </div>
 
-      <strong>VOM LIVE</strong>
+      <strong>
+        VOM LIVE
+      </strong>
 
-      <small>LIVE</small>
+      <small>
+        LIVE
+      </small>
 
     </a>
 
@@ -1762,9 +1885,13 @@ button{
         ♪
       </div>
 
-      <strong>BUSKING</strong>
+      <strong>
+        BUSKING
+      </strong>
 
-      <small>BUSKING</small>
+      <small>
+        BUSKING
+      </small>
 
     </a>
 
@@ -1775,16 +1902,22 @@ button{
         ?
       </div>
 
-      <strong>Q&A</strong>
+      <strong>
+        Q&A
+      </strong>
 
-      <small>QUESTION</small>
+      <small>
+        QUESTION
+      </small>
 
     </a>
 
   </section>
 
 
-  <!-- NOTICE -->
+  <!-- =================================================
+       NOTICE
+  ================================================== -->
 
   <section class="section">
 
@@ -1813,7 +1946,6 @@ button{
     <div class="middle">
 
       <div class="notice">
-
 
         <a
           href="/notice/"
@@ -1903,7 +2035,9 @@ button{
   </section>
 
 
-  <!-- UPCOMING -->
+  <!-- =================================================
+       UPCOMING
+  ================================================== -->
 
   <section class="section">
 
@@ -1945,7 +2079,9 @@ button{
 </main>
 
 
-<!-- MENU -->
+<!-- =====================================================
+     MENU
+===================================================== -->
 
 <div
   id="menuOverlay"
@@ -2006,11 +2142,8 @@ button{
       class="admin-menu"
       onclick="openAdminLogin()"
     >
-
       관리자 모드
-
       <span>→</span>
-
     </button>
 
 
@@ -2019,11 +2152,8 @@ button{
       class="logout"
       onclick="adminLogout()"
     >
-
       관리자 모드 종료
-
       <span>→</span>
-
     </button>
 
   </div>
@@ -2031,7 +2161,9 @@ button{
 </div>
 
 
-<!-- LOGIN -->
+<!-- =====================================================
+     LOGIN
+===================================================== -->
 
 <div
   id="loginOverlay"
@@ -2109,7 +2241,9 @@ button{
 </div>
 
 
-<!-- BOTTOM -->
+<!-- =====================================================
+     BOTTOM
+===================================================== -->
 
 <nav class="bottom">
 
@@ -2117,57 +2251,28 @@ button{
     href="/"
     class="active"
   >
-
-    <span class="nav-icon">
-      ⌂
-    </span>
-
+    <span class="nav-icon">⌂</span>
     HOME
-
   </a>
-
 
   <a href="/info/">
-
-    <span class="nav-icon">
-      ⓘ
-    </span>
-
+    <span class="nav-icon">ⓘ</span>
     INFO
-
   </a>
-
 
   <a href="/calendar/">
-
-    <span class="nav-icon">
-      ◫
-    </span>
-
+    <span class="nav-icon">◫</span>
     CALENDAR
-
   </a>
-
 
   <a href="/live/">
-
-    <span class="nav-icon">
-      ♬
-    </span>
-
+    <span class="nav-icon">♬</span>
     LIVE
-
   </a>
 
-
   <button onclick="openMenu()">
-
-    <span class="nav-icon">
-      ☰
-    </span>
-
+    <span class="nav-icon">☰</span>
     MENU
-
   </button>
 
 </nav>
@@ -2200,6 +2305,7 @@ async function start(){
 
   await Promise.all([
     loadEarShare(),
+    loadPointRanking(),
     loadHomeEvents()
   ]);
 }
@@ -2210,6 +2316,13 @@ async function start(){
 ===================================================== */
 
 async function loadEarShare(){
+
+  const box =
+    document
+      .getElementById(
+        'earHall'
+      );
+
 
   const {
     data,
@@ -2234,24 +2347,17 @@ async function loadEarShare(){
       );
 
 
-  const box =
-    document
-      .getElementById(
-        'earHall'
-      );
-
-
   if(error){
 
     console.error(
-      'EAR SHARE ERROR:',
+      'EAR SHARE:',
       error
     );
 
 
     box.innerHTML =
     `
-      <div class="ear-empty">
+      <div class="hall-empty">
 
         아직 귀점유율 기록을 불러올 수 없습니다.<br>
         VOM LIVE 결과가 등록되면 자동으로 표시됩니다.
@@ -2263,19 +2369,19 @@ async function loadEarShare(){
   }
 
 
-  const hall =
+  const list =
     (data || [])
       .filter(
-        item =>
-          Number(item.rank) <= 3
+        row =>
+          Number(row.rank) <= 3
       );
 
 
-  if(!hall.length){
+  if(!list.length){
 
     box.innerHTML =
     `
-      <div class="ear-empty">
+      <div class="hall-empty">
 
         아직 귀점유율 기록이 없습니다.<br>
         첫 VOM LIVE 결과를 기다리고 있어요.
@@ -2288,7 +2394,7 @@ async function loadEarShare(){
 
 
   box.innerHTML =
-    hall
+    list
       .map(
         createEarCard
       )
@@ -2296,52 +2402,66 @@ async function loadEarShare(){
 }
 
 
-function createEarCard(item){
+function createEarCard(row){
 
   const rank =
     Number(
-      item.rank
+      row.rank
     );
 
 
   const percent =
     Number(
-      item.ear_share_percent || 0
+      row.ear_share_percent || 0
     )
     .toFixed(1);
 
 
   return `
     <a
-      href="/live/?id=${item.event_id}"
-      class="ear-card rank-${rank}"
+      href="/live/?id=${row.event_id}"
+      class="hall-card rank-${rank}"
     >
 
-      <div class="ear-rank">
+      <div class="hall-rank">
 
         ${
           rank === 1
-          ? '🥇 '
+          ? '🥇'
           : rank === 2
-          ? '🥈 '
-          : '🥉 '
+          ? '🥈'
+          : '🥉'
         }
 
-        ${rank}위
+        ${rank}
 
       </div>
 
 
-      <div class="ear-name">
+      <div>
 
-        ${escapeHtml(
-          item.name
-        )}
+        <div class="hall-name">
+
+          ${escapeHtml(
+            row.name
+          )}
+
+        </div>
+
+        <div class="hall-sub">
+
+          ${Number(row.votes || 0)}표
+
+          /
+
+          ${Number(row.participant_count || 0)}명
+
+        </div>
 
       </div>
 
 
-      <div class="ear-percent">
+      <div class="hall-score">
 
         ${percent}
 
@@ -2351,21 +2471,201 @@ function createEarCard(item){
 
       </div>
 
+    </a>
+  `;
+}
 
-      <div class="ear-record">
 
-        ${Number(item.votes || 0)}표
+/* =====================================================
+   POINT RANKING
+===================================================== */
 
-        /
+async function loadPointRanking(){
 
-        ${Number(item.participant_count || 0)}명
+  const box =
+    document
+      .getElementById(
+        'pointHall'
+      );
 
-        <br>
 
-        ${escapeHtml(
-          item.event_title ||
-          'VOM LIVE'
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(
+        'live_point_hall_of_fame'
+      )
+      .select('*')
+      .order(
+        'rank',
+        {
+          ascending:true
+        }
+      )
+      .order(
+        'total_points',
+        {
+          ascending:false
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      'POINT:',
+      error
+    );
+
+
+    box.innerHTML =
+    `
+      <div class="hall-empty">
+
+        아직 VOM POINT를 불러올 수 없습니다.<br>
+        VOM LIVE 참석 기록이 생기면 자동으로 계산됩니다.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const list =
+    (data || [])
+      .filter(
+        row =>
+          Number(row.rank) <= 3
+      );
+
+
+  if(!list.length){
+
+    box.innerHTML =
+    `
+      <div class="hall-empty">
+
+        아직 VOM POINT 기록이 없습니다.<br>
+        VOM LIVE 참석 기록을 기다리고 있어요.
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(
+        createPointCard
+      )
+      .join('');
+}
+
+
+function createPointCard(row){
+
+  const rank =
+    Number(
+      row.rank
+    );
+
+
+  const attendance =
+    Number(
+      row.attendance_count || 0
+    );
+
+
+  const first =
+    Number(
+      row.first_place_count || 0
+    );
+
+
+  const second =
+    Number(
+      row.second_place_count || 0
+    );
+
+
+  const third =
+    Number(
+      row.third_place_count || 0
+    );
+
+
+  let record = `참석 ${attendance}회`;
+
+
+  if(first){
+    record += ` · 1위 ${first}회`;
+  }
+
+
+  if(second){
+    record += ` · 2위 ${second}회`;
+  }
+
+
+  if(third){
+    record += ` · 3위 ${third}회`;
+  }
+
+
+  return `
+    <a
+      href="/live/"
+      class="hall-card rank-${rank}"
+    >
+
+      <div class="hall-rank">
+
+        ${
+          rank === 1
+          ? '🥇'
+          : rank === 2
+          ? '🥈'
+          : '🥉'
+        }
+
+        ${rank}
+
+      </div>
+
+
+      <div>
+
+        <div class="hall-name">
+
+          ${escapeHtml(
+            row.name
+          )}
+
+        </div>
+
+        <div class="hall-sub">
+
+          ${escapeHtml(record)}
+
+        </div>
+
+      </div>
+
+
+      <div class="hall-score">
+
+        ${Number(
+          row.total_points || 0
         )}
+
+        <small>
+          P
+        </small>
 
       </div>
 
@@ -2375,7 +2675,7 @@ function createEarCard(item){
 
 
 /* =====================================================
-   HOME EVENTS
+   EVENTS
 ===================================================== */
 
 async function loadHomeEvents(){
@@ -2419,7 +2719,7 @@ async function loadHomeEvents(){
   if(error){
 
     console.error(
-      'EVENT ERROR:',
+      'EVENT:',
       error
     );
 
@@ -2444,8 +2744,8 @@ async function loadHomeEvents(){
 
   const nextLive =
     list.find(
-      item =>
-        item.event_type ===
+      row =>
+        row.event_type ===
         'VOM LIVE'
     );
 
@@ -2468,7 +2768,7 @@ async function loadHomeEvents(){
    NEXT LIVE
 ===================================================== */
 
-function renderNextLive(item){
+function renderNextLive(row){
 
   const box =
     document
@@ -2477,7 +2777,7 @@ function renderNextLive(item){
       );
 
 
-  if(!item){
+  if(!row){
 
     box.innerHTML =
     `
@@ -2495,18 +2795,18 @@ function renderNextLive(item){
 
   const date =
     parseDate(
-      item.event_date
+      row.event_date
     );
 
 
   const location =
     getLocation(
-      item
+      row
     );
 
 
   const image =
-    item.image_url ||
+    row.image_url ||
     location?.image_url ||
     '';
 
@@ -2542,7 +2842,7 @@ function renderNextLive(item){
         <span class="dday">
 
           ${calculateDday(
-            item.event_date
+            row.event_date
           )}
 
         </span>
@@ -2555,9 +2855,7 @@ function renderNextLive(item){
         ${date.getMonth() + 1}.${date.getDate()}
 
         <small>
-
           ${weekEnglish(date)}
-
         </small>
 
       </div>
@@ -2569,7 +2867,7 @@ function renderNextLive(item){
       <h3>
 
         ${escapeHtml(
-          item.title ||
+          row.title ||
           'VOM LIVE'
         )}
 
@@ -2578,13 +2876,13 @@ function renderNextLive(item){
 
       <div class="next-meta">
 
-        ${makeTime(item) || '시간 미정'}
+        ${makeTime(row) || '시간 미정'}
 
         <br>
 
         ${escapeHtml(
           location?.name ||
-          item.location ||
+          row.location ||
           '장소 미정'
         )}
 
@@ -2592,7 +2890,7 @@ function renderNextLive(item){
 
 
       <a
-        href="/event/?id=${item.id}"
+        href="/event/?id=${row.id}"
         class="next-link"
       >
 
@@ -2640,9 +2938,9 @@ function renderUpcoming(list){
   box.innerHTML =
     list
       .map(
-        (item,index) =>
+        (row,index) =>
           createUpcomingCard(
-            item,
+            row,
             index === 0
           )
       )
@@ -2651,31 +2949,31 @@ function renderUpcoming(list){
 
 
 function createUpcomingCard(
-  item,
+  row,
   featured
 ){
 
   const date =
     parseDate(
-      item.event_date
+      row.event_date
     );
 
 
   const location =
     getLocation(
-      item
+      row
     );
 
 
   const image =
-    item.image_url ||
+    row.image_url ||
     location?.image_url ||
     '';
 
 
   return `
     <a
-      href="/event/?id=${item.id}"
+      href="/event/?id=${row.id}"
       class="event-card ${featured ? 'featured' : ''}"
     >
 
@@ -2705,7 +3003,7 @@ function createUpcomingCard(
           ? 'NEXT'
 
           : escapeHtml(
-              item.event_type ||
+              row.event_type ||
               'OTHER'
             )
         }
@@ -2731,7 +3029,7 @@ function createUpcomingCard(
       <div class="event-name">
 
         ${escapeHtml(
-          item.title ||
+          row.title ||
           ''
         )}
 
@@ -2740,13 +3038,13 @@ function createUpcomingCard(
 
       <div class="event-meta">
 
-        ${makeTime(item) || '시간 미정'}
+        ${makeTime(row) || '시간 미정'}
 
         <br>
 
         ${escapeHtml(
           location?.name ||
-          item.location ||
+          row.location ||
           '장소 미정'
         )}
 
@@ -2997,40 +3295,38 @@ async function adminLogout(){
    HELPERS
 ===================================================== */
 
-function getLocation(item){
+function getLocation(row){
 
   return locations.find(
     location =>
       String(location.id) ===
-      String(item.location_id)
+      String(row.location_id)
   );
 }
 
 
-function makeTime(item){
+function makeTime(row){
 
-  const values = [];
+  const times = [];
 
 
-  if(item.start_time){
+  if(row.start_time){
 
-    values.push(
-      item.start_time
-        .slice(0,5)
+    times.push(
+      row.start_time.slice(0,5)
     );
   }
 
 
-  if(item.end_time){
+  if(row.end_time){
 
-    values.push(
-      item.end_time
-        .slice(0,5)
+    times.push(
+      row.end_time.slice(0,5)
     );
   }
 
 
-  return values.join(
+  return times.join(
     ' - '
   );
 }
@@ -3042,31 +3338,18 @@ function todayString(){
     new Date();
 
 
-  const year =
-    now.getFullYear();
+  return [
+    now.getFullYear(),
 
-
-  const month =
     String(
       now.getMonth() + 1
-    )
-    .padStart(
-      2,
-      '0'
-    );
+    ).padStart(2,'0'),
 
-
-  const day =
     String(
       now.getDate()
-    )
-    .padStart(
-      2,
-      '0'
-    );
+    ).padStart(2,'0')
 
-
-  return `${year}-${month}-${day}`;
+  ].join('-');
 }
 
 
@@ -3094,7 +3377,9 @@ function calculateDday(value){
 
 
   const target =
-    parseDate(value);
+    parseDate(
+      value
+    );
 
 
   const diff =
