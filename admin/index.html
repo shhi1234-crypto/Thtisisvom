@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOM ADMIN</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(circle at 90% 5%, #dff7fa 0, transparent 32%),
+        radial-gradient(circle at 10% 80%, #eee7ff 0, transparent 35%),
+        #f8f7fb;
+      color: #11182c;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(920px, calc(100% - 32px));
+      margin: auto;
+      padding: 50px 0 100px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+
+    .sublogo {
+      font-size: 9px;
+      letter-spacing: 4px;
+      margin-top: 3px;
+    }
+
+    .card {
+      margin-top: 50px;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 30px;
+      padding: 34px;
+      box-shadow: 0 20px 60px rgba(33,40,80,.08);
+    }
+
+    h1 {
+      font-size: 35px;
+      margin: 0 0 8px;
+    }
+
+    .muted {
+      color: #7c8192;
+      margin-bottom: 30px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 15px 17px;
+      margin-top: 8px;
+      border: 1px solid #e2e3ea;
+      border-radius: 15px;
+      background: rgba(255,255,255,.9);
+      font-size: 15px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .primary {
+      width: 100%;
+      padding: 16px;
+      margin-top: 25px;
+      border-radius: 16px;
+      background: #11182c;
+      color: white;
+      font-size: 15px;
+    }
+
+    .primary:hover {
+      opacity: .88;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .admin-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .logout {
+      padding: 11px 17px;
+      border-radius: 100px;
+      background: white;
+      border: 1px solid #e0e1e8;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+
+    .tab {
+      white-space: nowrap;
+      padding: 11px 17px;
+      border-radius: 100px;
+      background: white;
+      color: #777d8d;
+      border: 1px solid #e5e5eb;
+    }
+
+    .tab.active {
+      background: #8269f5;
+      color: white;
+      border-color: #8269f5;
+    }
+
+    .section-title {
+      margin-top: 35px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .add {
+      padding: 12px 17px;
+      border-radius: 100px;
+      background: #11182c;
+      color: white;
+    }
+
+    .event {
+      background: white;
+      border: 1px solid #ececf1;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .event-type {
+      color: #8269f5;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .event h3 {
+      margin: 7px 0;
+    }
+
+    .event-info {
+      color: #777d8d;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .small {
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #f2f1f7;
+    }
+
+    .delete {
+      color: #d24c65;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 14px;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #d24c65;
+    }
+
+    @media (max-width: 650px) {
+      .wrap {
+        width: min(100% - 22px, 920px);
+        padding-top: 28px;
+      }
+
+      .card {
+        padding: 23px;
+        border-radius: 23px;
+        margin-top: 30px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .event {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <div class="logo">VOM</div>
+  <div class="sublogo">VOICE OF MELODY</div>
+
+  <!-- 로그인 -->
+  <section id="loginView" class="card">
+    <h1>Admin</h1>
+    <div class="muted">VOM 운영진 관리 페이지</div>
+
+    <label>이메일</label>
+    <input id="email" type="email" placeholder="운영진 이메일">
+
+    <label>비밀번호</label>
+    <input id="password" type="password" placeholder="비밀번호">
+
+    <button class="primary" onclick="login()">운영진 로그인</button>
+
+    <div id="message"></div>
+  </section>
+
+
+  <!-- 관리자 -->
+  <section id="adminView" class="card hidden">
+
+    <div class="admin-top">
+      <div>
+        <h1>VOM Manage</h1>
+        <div class="muted" style="margin:5px 0 0;">
+          운영진 전용
+        </div>
+      </div>
+
+      <button class="logout" onclick="logout()">로그아웃</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active">CALENDAR</button>
+      <button class="tab">NOTICE</button>
+      <button class="tab">VOM LIVE</button>
+      <button class="tab">BUSKING</button>
+      <button class="tab">Q&A</button>
+    </div>
+
+    <div class="section-title">
+      <h2>일정 관리</h2>
+      <button class="add" onclick="showForm()">＋ 일정 추가</button>
+    </div>
+
+    <!-- 일정 입력 -->
+    <div id="eventForm" class="hidden">
+
+      <input type="hidden" id="editingId">
+
+      <label>일정 종류</label>
+      <select id="eventType">
+        <option value="VOM LIVE">VOM LIVE</option>
+        <option value="BUSKING">BUSKING</option>
+        <option value="ETC">ETC</option>
+      </select>
+
+      <label>일정 제목</label>
+      <input id="title" placeholder="예: VOM LIVE #03">
+
+      <div class="grid">
+        <div>
+          <label>날짜</label>
+          <input id="eventDate" type="date">
+        </div>
+
+        <div>
+          <label>장소</label>
+          <input id="location" placeholder="예: 송연습실 송내점">
+        </div>
+
+        <div>
+          <label>시작 시간</label>
+          <input id="startTime" type="time">
+        </div>
+
+        <div>
+          <label>종료 시간</label>
+          <input id="endTime" type="time">
+        </div>
+      </div>
+
+      <label>상세 내용</label>
+      <textarea id="description"
+        placeholder="일정에 대한 내용을 입력하세요."></textarea>
+
+      <button class="primary" onclick="saveEvent()">
+        일정 저장
+      </button>
+
+    </div>
+
+    <div id="eventList"></div>
+
+  </section>
+
+</div>
+
+
+<script>
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+
+// 로그인
+async function login() {
+
+  const email =
+    document.getElementById('email').value.trim();
+
+  const password =
+    document.getElementById('password').value;
+
+  const message =
+    document.getElementById('message');
+
+  message.textContent = '로그인 중...';
+
+  const { data, error } =
+    await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if (error) {
+    message.textContent =
+      '로그인 실패: ' + error.message;
+    return;
+  }
+
+  const allowed =
+    await checkAdmin(data.user.id);
+
+  if (!allowed) {
+    await db.auth.signOut();
+    message.textContent =
+      '운영진 권한이 없는 계정입니다.';
+    return;
+  }
+
+  message.textContent = '';
+  openAdmin();
+}
+
+
+// 운영진 확인
+async function checkAdmin(userId) {
+
+  const { data, error } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+  if (error) return false;
+
+  return !!data;
+}
+
+
+// 로그아웃
+async function logout() {
+  await db.auth.signOut();
+
+  document
+    .getElementById('adminView')
+    .classList.add('hidden');
+
+  document
+    .getElementById('loginView')
+    .classList.remove('hidden');
+}
+
+
+// 관리자 화면
+async function openAdmin() {
+
+  document
+    .getElementById('loginView')
+    .classList.add('hidden');
+
+  document
+    .getElementById('adminView')
+    .classList.remove('hidden');
+
+  await loadEvents();
+}
+
+
+// 로그인 유지
+async function checkSession() {
+
+  const { data } =
+    await db.auth.getSession();
+
+  const session = data.session;
+
+  if (!session) return;
+
+  const allowed =
+    await checkAdmin(session.user.id);
+
+  if (allowed) {
+    openAdmin();
+  }
+}
+
+
+// 입력창 열기
+function showForm() {
+
+  clearForm();
+
+  document
+    .getElementById('eventForm')
+    .classList.remove('hidden');
+}
+
+
+// 입력창 초기화
+function clearForm() {
+
+  document.getElementById('editingId').value = '';
+  document.getElementById('title').value = '';
+  document.getElementById('eventDate').value = '';
+  document.getElementById('startTime').value = '';
+  document.getElementById('endTime').value = '';
+  document.getElementById('location').value = '';
+  document.getElementById('description').value = '';
+  document.getElementById('eventType').value = 'VOM LIVE';
+}
+
+
+// 일정 불러오기
+async function loadEvents() {
+
+  const { data, error } =
+    await db
+      .from('events')
+      .select('*')
+      .order('event_date', {
+        ascending: true
+      });
+
+  if (error) {
+    alert('일정을 불러오지 못했습니다: ' + error.message);
+    return;
+  }
+
+  const list =
+    document.getElementById('eventList');
+
+  list.innerHTML = '';
+
+  if (!data.length) {
+    list.innerHTML =
+      '<p class="muted">등록된 일정이 없습니다.</p>';
+    return;
+  }
+
+  data.forEach(event => {
+
+    const div =
+      document.createElement('div');
+
+    div.className = 'event';
+
+    const safeEvent =
+      JSON.stringify(event)
+        .replace(/'/g, "&#39;");
+
+    div.innerHTML = `
+      <div>
+        <div class="event-type">
+          ${escapeHtml(event.event_type || 'ETC')}
+        </div>
+
+        <h3>
+          ${escapeHtml(event.title || '')}
+        </h3>
+
+        <div class="event-info">
+          ${escapeHtml(event.event_date || '')}
+          ·
+          ${formatTime(event.start_time)}
+          -
+          ${formatTime(event.end_time)}
+          <br>
+          ${escapeHtml(event.location || '')}
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          class="small"
+          onclick='editEvent(${safeEvent})'>
+          수정
+        </button>
+
+        <button
+          class="small delete"
+          onclick="deleteEvent(${event.id})">
+          삭제
+        </button>
+      </div>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+
+// 일정 저장
+async function saveEvent() {
+
+  const id =
+    document.getElementById('editingId').value;
+
+  const event = {
+    title:
+      document.getElementById('title').value.trim(),
+
+    event_type:
+      document.getElementById('eventType').value,
+
+    event_date:
+      document.getElementById('eventDate').value,
+
+    start_time:
+      document.getElementById('startTime').value || null,
+
+    end_time:
+      document.getElementById('endTime').value || null,
+
+    location:
+      document.getElementById('location').value.trim(),
+
+    description:
+      document.getElementById('description').value.trim()
+  };
+
+  if (!event.title || !event.event_date) {
+    alert('일정 제목과 날짜는 꼭 입력해주세요.');
+    return;
+  }
+
+  let result;
+
+  if (id) {
+
+    result =
+      await db
+        .from('events')
+        .update(event)
+        .eq('id', id);
+
+  } else {
+
+    result =
+      await db
+        .from('events')
+        .insert(event);
+  }
+
+  if (result.error) {
+    alert(
+      '저장 실패: ' +
+      result.error.message
+    );
+    return;
+  }
+
+  document
+    .getElementById('eventForm')
+    .classList.add('hidden');
+
+  clearForm();
+
+  await loadEvents();
+
+  alert('저장되었습니다.');
+}
+
+
+// 일정 수정
+function editEvent(event) {
+
+  document.getElementById('editingId').value =
+    event.id;
+
+  document.getElementById('title').value =
+    event.title || '';
+
+  document.getElementById('eventType').value =
+    event.event_type || 'ETC';
+
+  document.getElementById('eventDate').value =
+    event.event_date || '';
+
+  document.getElementById('startTime').value =
+    formatTime(event.start_time);
+
+  document.getElementById('endTime').value =
+    formatTime(event.end_time);
+
+  document.getElementById('location').value =
+    event.location || '';
+
+  document.getElementById('description').value =
+    event.description || '';
+
+  document
+    .getElementById('eventForm')
+    .classList.remove('hidden');
+
+  window.scrollTo({
+    top: 350,
+    behavior: 'smooth'
+  });
+}
+
+
+// 일정 삭제
+async function deleteEvent(id) {
+
+  const ok =
+    confirm('이 일정을 삭제할까요?');
+
+  if (!ok) return;
+
+  const { error } =
+    await db
+      .from('events')
+      .delete()
+      .eq('id', id);
+
+  if (error) {
+    alert(
+      '삭제 실패: ' +
+      error.message
+    );
+    return;
+  }
+
+  await loadEvents();
+}
+
+
+// 시간 정리
+function formatTime(time) {
+  if (!time) return '';
+  return time.substring(0, 5);
+}
+
+
+// HTML 안전 처리
+function escapeHtml(value) {
+
+  const div =
+    document.createElement('div');
+
+  div.textContent =
+    String(value ?? '');
+
+  return div.innerHTML;
+}
+
+
+checkSession();
+</script>
+
+</body>
+</html>
