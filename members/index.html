@@ -1,0 +1,3015 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f5fa">
+
+<title>VOM MEMBERS · Voice of Melody</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --ink:#11182c;
+  --muted:#73798b;
+  --purple:#7d68e8;
+  --purple2:#748bed;
+  --line:rgba(28,34,65,.08);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+
+  font-family:"Noto Sans KR",sans-serif;
+  color:var(--ink);
+
+  background:#f8f7fa;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
+.aurora{
+  position:fixed;
+  inset:0;
+  z-index:-10;
+
+  overflow:hidden;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7f4fa 0%,
+      #f8f7fb 55%,
+      #faf9fb 100%
+    );
+}
+
+.aurora::before{
+  content:"";
+
+  position:absolute;
+
+  width:1200px;
+  height:700px;
+
+  top:-320px;
+  right:-280px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      ellipse at 24% 53%,
+      rgba(139,220,214,.68),
+      rgba(139,220,214,.24) 28%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 55% 37%,
+      rgba(151,173,248,.68),
+      rgba(151,173,248,.24) 27%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse at 76% 49%,
+      rgba(188,151,244,.62),
+      rgba(188,151,244,.22) 25%,
+      transparent 55%
+    );
+
+  filter:blur(55px);
+
+  transform:rotate(-13deg);
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+  width:min(1080px,100%);
+  height:82px;
+
+  margin:auto;
+  padding:0 25px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+}
+
+.brand strong{
+  font-size:27px;
+  font-weight:800;
+  line-height:1;
+}
+
+.brand small{
+  margin-top:5px;
+
+  font-size:8px;
+  font-weight:700;
+
+  letter-spacing:3px;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+
+  gap:9px;
+}
+
+.admin-badge{
+  display:none;
+
+  align-items:center;
+  gap:7px;
+
+  padding:9px 13px;
+
+  border-radius:999px;
+
+  color:#6955d2;
+
+  background:rgba(126,102,232,.10);
+
+  border:1px solid rgba(126,102,232,.15);
+
+  font-size:9px;
+  font-weight:800;
+}
+
+.admin-badge.show{
+  display:flex;
+}
+
+.admin-dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#765fe6;
+}
+
+.menu-btn{
+  width:46px;
+  height:46px;
+
+  border:1px solid rgba(255,255,255,.95);
+
+  border-radius:50%;
+
+  background:rgba(255,255,255,.68);
+
+  box-shadow:0 10px 30px rgba(31,38,76,.08);
+
+  cursor:pointer;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page{
+  width:min(1050px,100%);
+
+  margin:auto;
+
+  padding:
+    0
+    22px
+    115px;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+  padding:
+    58px
+    0
+    42px;
+}
+
+.hero-label{
+  color:#6d73a0;
+
+  font-size:10px;
+  font-weight:700;
+
+  letter-spacing:2.4px;
+}
+
+.hero-title{
+  margin:
+    10px
+    0
+    0;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:clamp(76px,12vw,120px);
+
+  font-weight:400;
+
+  line-height:.78;
+}
+
+.hero-copy{
+  max-width:570px;
+
+  margin-top:20px;
+
+  color:#656c7f;
+
+  font-size:12px;
+
+  line-height:1.8;
+}
+
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
+
+.toolbar{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  gap:15px;
+
+  margin-bottom:18px;
+}
+
+.stats{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:8px;
+}
+
+.stat{
+  padding:
+    9px
+    12px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.75);
+
+  border:1px solid rgba(255,255,255,.94);
+
+  color:#6d7283;
+
+  font-size:10px;
+}
+
+.stat strong{
+  color:#6f5ed6;
+}
+
+.admin-add{
+  display:none;
+
+  min-height:42px;
+
+  padding:
+    0
+    17px;
+
+  border:0;
+
+  border-radius:999px;
+
+  color:white;
+
+  background:#171d31;
+
+  cursor:pointer;
+
+  font-size:11px;
+  font-weight:700;
+}
+
+.admin-add.show{
+  display:block;
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:7px;
+
+  margin-bottom:15px;
+}
+
+.filter{
+  min-height:38px;
+
+  padding:
+    0
+    14px;
+
+  border:1px solid rgba(255,255,255,.95);
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.72);
+
+  color:#74798b;
+
+  cursor:pointer;
+
+  font-size:10px;
+}
+
+.filter.active{
+  color:white;
+
+  border-color:transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8168e9,
+      #7588ec
+    );
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-shell{
+  overflow:auto;
+
+  border-radius:25px;
+
+  background:rgba(255,255,255,.80);
+
+  border:1px solid rgba(255,255,255,.95);
+
+  box-shadow:0 16px 45px rgba(31,37,74,.07);
+}
+
+.member-table{
+  width:100%;
+
+  min-width:980px;
+
+  border-collapse:collapse;
+}
+
+.member-table th{
+  padding:
+    14px
+    12px;
+
+  text-align:left;
+
+  color:#8d91a0;
+
+  font-size:9px;
+  font-weight:700;
+
+  letter-spacing:.3px;
+
+  border-bottom:1px solid var(--line);
+}
+
+.member-table td{
+  padding:
+    13px
+    12px;
+
+  font-size:10px;
+
+  border-bottom:1px solid var(--line);
+}
+
+.member-table tr:last-child td{
+  border-bottom:0;
+}
+
+.member-name{
+  font-weight:700;
+}
+
+.member-nick{
+  margin-top:3px;
+
+  color:#999dab;
+
+  font-size:8px;
+}
+
+.role-badge,
+.status-badge{
+  display:inline-flex;
+
+  align-items:center;
+
+  min-height:26px;
+
+  padding:
+    0
+    9px;
+
+  border-radius:999px;
+
+  font-size:8px;
+
+  font-weight:700;
+}
+
+.role-badge{
+  color:#6a55cf;
+
+  background:#eee9ff;
+}
+
+.status-badge{
+  color:#327862;
+
+  background:#e7f6ef;
+}
+
+.status-badge.sleep{
+  color:#8b6e31;
+
+  background:#fbf2d7;
+}
+
+.status-badge.out{
+  color:#9f5160;
+
+  background:#fde9ed;
+}
+
+.action-wrap{
+  display:flex;
+  gap:5px;
+}
+
+.edit-btn,
+.disable-btn{
+  display:none;
+
+  min-height:29px;
+
+  padding:
+    0
+    9px;
+
+  border:0;
+
+  border-radius:9px;
+
+  cursor:pointer;
+
+  font-size:8px;
+}
+
+.admin-mode .edit-btn,
+.admin-mode .disable-btn{
+  display:inline-flex;
+
+  align-items:center;
+}
+
+.edit-btn{
+  color:#6653c7;
+
+  background:#efedf9;
+}
+
+.disable-btn{
+  color:#c14f65;
+
+  background:#fff0f2;
+}
+
+.empty{
+  padding:45px 20px;
+
+  text-align:center;
+
+  color:#9195a4;
+
+  font-size:11px;
+}
+
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+.overlay{
+  position:fixed;
+  inset:0;
+
+  z-index:200;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:18px;
+
+  background:rgba(24,29,54,.36);
+
+  backdrop-filter:blur(16px);
+}
+
+.overlay.open{
+  display:flex;
+}
+
+
+/* =====================================================
+   MEMBER MODAL
+===================================================== */
+
+.modal{
+  width:min(600px,100%);
+
+  max-height:calc(100vh - 30px);
+
+  overflow-y:auto;
+
+  padding:25px;
+
+  border-radius:29px;
+
+  background:rgba(255,255,255,.98);
+
+  box-shadow:0 28px 80px rgba(20,25,55,.22);
+}
+
+.modal-top{
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  margin-bottom:20px;
+}
+
+.modal-title{
+  margin:0;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:38px;
+  font-weight:400;
+}
+
+.close{
+  width:39px;
+  height:39px;
+
+  border:0;
+
+  border-radius:50%;
+
+  background:#eeeef4;
+
+  cursor:pointer;
+}
+
+.form-section{
+  margin-top:12px;
+
+  padding:
+    18px;
+
+  border:1px solid #ebeaf0;
+
+  border-radius:20px;
+
+  background:#f8f7fb;
+}
+
+.form-section:first-of-type{
+  margin-top:0;
+}
+
+.form-title{
+  font-size:12px;
+  font-weight:700;
+}
+
+.form-help{
+  margin-top:5px;
+  margin-bottom:15px;
+
+  color:#9699a8;
+
+  font-size:9px;
+
+  line-height:1.6;
+}
+
+.grid-2{
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:10px;
+}
+
+.grid-3{
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:10px;
+}
+
+.field{
+  margin-top:12px;
+}
+
+.field:first-child{
+  margin-top:0;
+}
+
+.field label{
+  display:block;
+
+  margin-bottom:7px;
+
+  color:#262b3e;
+
+  font-size:10px;
+  font-weight:700;
+}
+
+.text-input,
+.pretty-select,
+.text-area{
+  width:100%;
+
+  border:1px solid #dddce5;
+
+  border-radius:14px;
+
+  background:white;
+
+  color:#303548;
+
+  outline:none;
+
+  font-size:12px;
+}
+
+.text-input,
+.pretty-select{
+  min-height:48px;
+
+  padding:
+    0
+    13px;
+}
+
+.pretty-select{
+  appearance:none;
+  -webkit-appearance:none;
+
+  padding-right:38px;
+
+  cursor:pointer;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #6c7184 50%
+    ),
+    linear-gradient(
+      135deg,
+      #6c7184 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 18px) 21px,
+    calc(100% - 13px) 21px;
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat:no-repeat;
+}
+
+.text-area{
+  min-height:95px;
+
+  padding:
+    13px;
+
+  resize:vertical;
+
+  line-height:1.6;
+}
+
+.text-input:focus,
+.pretty-select:focus,
+.text-area:focus{
+  border-color:#8f7ce6;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(128,105,233,.09);
+}
+
+
+/* =====================================================
+   PRESET SELECT
+===================================================== */
+
+.preset-row{
+  display:grid;
+
+  grid-template-columns:
+    1fr
+    96px;
+
+  gap:7px;
+}
+
+.new-option-btn{
+  border:0;
+
+  border-radius:13px;
+
+  color:#6553c5;
+
+  background:#eceaf7;
+
+  cursor:pointer;
+
+  font-size:9px;
+  font-weight:700;
+}
+
+.new-option-box{
+  display:none;
+
+  margin-top:8px;
+
+  padding:10px;
+
+  border-radius:14px;
+
+  background:#efedf5;
+}
+
+.new-option-box.show{
+  display:block;
+}
+
+.new-option-save{
+  width:100%;
+
+  min-height:40px;
+
+  margin-top:7px;
+
+  border:0;
+
+  border-radius:11px;
+
+  color:white;
+
+  background:#171d31;
+
+  cursor:pointer;
+
+  font-size:9px;
+  font-weight:700;
+}
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+.save{
+  width:100%;
+
+  min-height:51px;
+
+  margin-top:16px;
+
+  border:0;
+
+  border-radius:15px;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8169e8,
+      #7189eb
+    );
+
+  cursor:pointer;
+
+  font-weight:700;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu-card{
+  width:min(400px,100%);
+
+  padding:24px;
+
+  border-radius:27px;
+
+  background:rgba(255,255,255,.97);
+}
+
+.menu-card a{
+  min-height:55px;
+
+  display:flex;
+
+  align-items:center;
+  justify-content:space-between;
+
+  border-bottom:1px solid var(--line);
+
+  font-size:13px;
+}
+
+
+/* =====================================================
+   BOTTOM
+===================================================== */
+
+.bottom{
+  position:fixed;
+
+  z-index:80;
+
+  left:50%;
+  bottom:10px;
+
+  transform:translateX(-50%);
+
+  width:min(720px,calc(100% - 24px));
+
+  height:67px;
+
+  display:grid;
+
+  grid-template-columns:repeat(5,1fr);
+
+  overflow:hidden;
+
+  border-radius:22px;
+
+  background:rgba(255,255,255,.82);
+
+  border:1px solid rgba(255,255,255,.95);
+
+  box-shadow:0 14px 42px rgba(30,37,75,.12);
+
+  backdrop-filter:blur(23px);
+}
+
+.bottom a,
+.bottom button{
+  border:0;
+
+  background:none;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:3px;
+
+  color:#777c8d;
+
+  cursor:pointer;
+
+  font-size:8px;
+}
+
+.nav-icon{
+  font-size:18px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px){
+
+  .header{
+    height:70px;
+
+    padding:0 16px;
+  }
+
+  .brand strong{
+    font-size:23px;
+  }
+
+  .page{
+    padding:0 14px 105px;
+  }
+
+  .hero{
+    padding:45px 0 35px;
+  }
+
+  .hero-title{
+    font-size:82px;
+  }
+
+  .toolbar{
+    align-items:flex-start;
+
+    flex-direction:column;
+  }
+
+  .admin-add{
+    width:100%;
+  }
+
+  .grid-2,
+  .grid-3{
+    grid-template-columns:1fr;
+  }
+
+  .preset-row{
+    grid-template-columns:1fr;
+  }
+
+  .new-option-btn{
+    min-height:42px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="aurora"></div>
+
+
+<header class="header">
+
+  <a href="/" class="brand">
+    <strong>VOM</strong>
+    <small>VOICE OF MELODY</small>
+  </a>
+
+
+  <div class="header-right">
+
+    <div
+      id="adminBadge"
+      class="admin-badge"
+    >
+      <span class="admin-dot"></span>
+      ADMIN MODE
+    </div>
+
+
+    <button
+      class="menu-btn"
+      onclick="openMenu()"
+    >
+      ☰
+    </button>
+
+  </div>
+
+</header>
+
+
+<main
+  id="page"
+  class="page"
+>
+
+  <section class="hero">
+
+    <div class="hero-label">
+      VOM PEOPLE
+    </div>
+
+    <h1 class="hero-title">
+      Members
+    </h1>
+
+    <div class="hero-copy">
+      VOM 멤버의 기본 정보를 한곳에서 관리합니다.<br>
+      반복되는 항목은 선택식으로 저장해 다음 등록 때 그대로 재사용할 수 있습니다.
+    </div>
+
+  </section>
+
+
+  <section class="toolbar">
+
+    <div class="stats">
+
+      <div class="stat">
+        전체 <strong id="totalCount">0</strong>명
+      </div>
+
+      <div class="stat">
+        활동중 <strong id="activeCount">0</strong>명
+      </div>
+
+      <div class="stat">
+        운영진 <strong id="staffCount">0</strong>명
+      </div>
+
+    </div>
+
+
+    <button
+      id="addMemberButton"
+      class="admin-add"
+      onclick="openMemberModal()"
+    >
+      ＋ 새 멤버
+    </button>
+
+  </section>
+
+
+  <div class="filters">
+
+    <button
+      class="filter active"
+      onclick="setFilter('ALL',this)"
+    >
+      전체
+    </button>
+
+    <button
+      class="filter"
+      onclick="setFilter('활동중',this)"
+    >
+      활동중
+    </button>
+
+    <button
+      class="filter"
+      onclick="setFilter('운영진',this)"
+    >
+      운영진
+    </button>
+
+    <button
+      class="filter"
+      onclick="setFilter('헬퍼',this)"
+    >
+      헬퍼
+    </button>
+
+    <button
+      class="filter"
+      onclick="setFilter('모임원',this)"
+    >
+      모임원
+    </button>
+
+  </div>
+
+
+  <section class="table-shell">
+
+    <table class="member-table">
+
+      <thead>
+
+        <tr>
+
+          <th>이름</th>
+          <th>구분</th>
+          <th>가입일</th>
+          <th>생년월일</th>
+          <th>지역</th>
+          <th>좋아하는 가수</th>
+          <th>성별</th>
+          <th>가입순서</th>
+          <th>상태</th>
+          <th>관리</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody id="memberRows">
+
+        <tr>
+          <td colspan="10" class="empty">
+            멤버 정보를 불러오는 중...
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</main>
+
+
+<!-- =====================================================
+     MEMBER EDITOR
+===================================================== -->
+
+<div
+  id="memberOverlay"
+  class="overlay"
+>
+
+  <div class="modal">
+
+    <div class="modal-top">
+
+      <h2
+        id="modalTitle"
+        class="modal-title"
+      >
+        새 멤버
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeMemberModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <input
+      id="editingMemberId"
+      type="hidden"
+    >
+
+
+    <section class="form-section">
+
+      <div class="form-title">
+        기본 정보
+      </div>
+
+      <div class="form-help">
+        자주 바뀌지 않는 멤버 기본 정보를 입력합니다.
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            이름
+          </label>
+
+          <input
+            id="memberName"
+            class="text-input"
+            placeholder="이름"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            닉네임
+          </label>
+
+          <input
+            id="memberNickname"
+            class="text-input"
+            placeholder="선택"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            구분
+          </label>
+
+          <select
+            id="memberRole"
+            class="pretty-select"
+          ></select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            활동 상태
+          </label>
+
+          <select
+            id="memberStatus"
+            class="pretty-select"
+          ></select>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="form-section">
+
+      <div class="form-title">
+        개인 정보
+      </div>
+
+      <div class="form-help">
+        운영에 필요한 범위에서만 입력해두면 됩니다.
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            가입일
+          </label>
+
+          <input
+            id="joinedAt"
+            class="text-input"
+            type="date"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            생년월일
+          </label>
+
+          <input
+            id="birthDate"
+            class="text-input"
+            type="date"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            지역
+          </label>
+
+          <div class="preset-row">
+
+            <select
+              id="memberRegion"
+              class="pretty-select"
+            ></select>
+
+            <button
+              class="new-option-btn"
+              onclick="toggleOptionBox('region')"
+              type="button"
+            >
+              ＋ 새 지역
+            </button>
+
+          </div>
+
+          <div
+            id="regionOptionBox"
+            class="new-option-box"
+          >
+
+            <input
+              id="newRegion"
+              class="text-input"
+              placeholder="새 지역"
+            >
+
+            <button
+              class="new-option-save"
+              onclick="saveOption('region')"
+              type="button"
+            >
+              지역 저장
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            성별
+          </label>
+
+          <select
+            id="memberGender"
+            class="pretty-select"
+          ></select>
+
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          좋아하는 가수
+        </label>
+
+        <div class="preset-row">
+
+          <select
+            id="favoriteSinger"
+            class="pretty-select"
+          ></select>
+
+          <button
+            class="new-option-btn"
+            onclick="toggleOptionBox('singer')"
+            type="button"
+          >
+            ＋ 새 가수
+          </button>
+
+        </div>
+
+        <div
+          id="singerOptionBox"
+          class="new-option-box"
+        >
+
+          <input
+            id="newSinger"
+            class="text-input"
+            placeholder="가수 이름"
+          >
+
+          <button
+            class="new-option-save"
+            onclick="saveOption('singer')"
+            type="button"
+          >
+            가수 저장
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            전화번호
+          </label>
+
+          <input
+            id="memberPhone"
+            class="text-input"
+            placeholder="선택"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            인스타그램
+          </label>
+
+          <input
+            id="memberInstagram"
+            class="text-input"
+            placeholder="@아이디 또는 링크"
+          >
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="form-section">
+
+      <div class="form-title">
+        관리 정보
+      </div>
+
+      <div class="form-help">
+        가입순서는 비워두면 자동으로 마지막 번호 다음 숫자가 들어갑니다.
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          가입순서
+        </label>
+
+        <input
+          id="joinOrder"
+          class="text-input"
+          type="number"
+          min="1"
+          placeholder="자동"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          메모
+        </label>
+
+        <textarea
+          id="memberMemo"
+          class="text-area"
+          placeholder="운영진 참고 메모"
+        ></textarea>
+
+      </div>
+
+    </section>
+
+
+    <button
+      class="save"
+      onclick="saveMember()"
+    >
+      멤버 저장
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MENU
+===================================================== -->
+
+<div
+  id="menuOverlay"
+  class="overlay"
+>
+
+  <div class="menu-card">
+
+    <div class="modal-top">
+
+      <h2 class="modal-title">
+        VOM Menu
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeMenu()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+
+    <a href="/">
+      HOME <span>→</span>
+    </a>
+
+    <a href="/info/">
+      INFO <span>→</span>
+    </a>
+
+    <a href="/calendar/">
+      CALENDAR <span>→</span>
+    </a>
+
+    <a href="/live/">
+      VOM LIVE <span>→</span>
+    </a>
+
+    <a href="/members/">
+      MEMBERS <span>→</span>
+    </a>
+
+  </div>
+
+</div>
+
+
+<nav class="bottom">
+
+  <a href="/">
+    <span class="nav-icon">⌂</span>
+    HOME
+  </a>
+
+  <a href="/info/">
+    <span class="nav-icon">ⓘ</span>
+    INFO
+  </a>
+
+  <a href="/calendar/">
+    <span class="nav-icon">◫</span>
+    CALENDAR
+  </a>
+
+  <a href="/live/">
+    <span class="nav-icon">♬</span>
+    LIVE
+  </a>
+
+  <button onclick="openMenu()">
+    <span class="nav-icon">☰</span>
+    MENU
+  </button>
+
+</nav>
+
+
+<script>
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+let members = [];
+let options = [];
+
+let adminMode = false;
+
+let currentFilter = 'ALL';
+
+
+/* =====================================================
+   START
+===================================================== */
+
+async function start(){
+
+  await checkAdmin();
+
+  await loadOptions();
+
+  await loadMembers();
+}
+
+
+/* =====================================================
+   ADMIN
+===================================================== */
+
+async function checkAdmin(){
+
+  const {
+    data
+  } =
+    await db.auth.getSession();
+
+
+  const session =
+    data.session;
+
+
+  if(!session){
+
+    setAdmin(false);
+
+    return;
+  }
+
+
+  const {
+    data:admin
+  } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq(
+        'user_id',
+        session.user.id
+      )
+      .maybeSingle();
+
+
+  setAdmin(
+    !!admin
+  );
+}
+
+
+function setAdmin(active){
+
+  adminMode =
+    active;
+
+
+  document
+    .getElementById('adminBadge')
+    .classList
+    .toggle(
+      'show',
+      active
+    );
+
+
+  document
+    .getElementById('addMemberButton')
+    .classList
+    .toggle(
+      'show',
+      active
+    );
+
+
+  document
+    .getElementById('page')
+    .classList
+    .toggle(
+      'admin-mode',
+      active
+    );
+
+
+  renderMembers();
+}
+
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
+async function loadOptions(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('member_options')
+      .select('*')
+      .order(
+        'label',
+        {
+          ascending:true
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      error
+    );
+
+    options = [];
+
+  }else{
+
+    options =
+      data || [];
+  }
+
+
+  populateOptionSelects();
+}
+
+
+function getOptions(type){
+
+  return options.filter(
+    item =>
+      item.option_type === type
+  );
+}
+
+
+function populateOptionSelects(){
+
+  fillSelect(
+    'memberRole',
+    getOptions('role'),
+    '구분 선택'
+  );
+
+
+  fillSelect(
+    'memberStatus',
+    getOptions('status'),
+    '상태 선택'
+  );
+
+
+  fillSelect(
+    'memberRegion',
+    getOptions('region'),
+    '지역 선택'
+  );
+
+
+  fillSelect(
+    'memberGender',
+    getOptions('gender'),
+    '성별 선택'
+  );
+
+
+  fillSelect(
+    'favoriteSinger',
+    getOptions('singer'),
+    '가수 선택'
+  );
+}
+
+
+function fillSelect(
+  id,
+  list,
+  placeholder
+){
+
+  const select =
+    document
+      .getElementById(id);
+
+
+  const current =
+    select.value;
+
+
+  select.innerHTML =
+  `
+    <option value="">
+      ${placeholder}
+    </option>
+  `;
+
+
+  list.forEach(
+    item => {
+
+      const option =
+        document
+          .createElement(
+            'option'
+          );
+
+
+      option.value =
+        item.label;
+
+
+      option.textContent =
+        item.label;
+
+
+      select
+        .appendChild(
+          option
+        );
+    }
+  );
+
+
+  if(
+    [...select.options]
+      .some(
+        option =>
+          option.value === current
+      )
+  ){
+
+    select.value =
+      current;
+  }
+}
+
+
+function toggleOptionBox(type){
+
+  const id =
+    type === 'region'
+    ? 'regionOptionBox'
+    : 'singerOptionBox';
+
+
+  document
+    .getElementById(id)
+    .classList
+    .toggle('show');
+}
+
+
+async function saveOption(type){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  const inputId =
+    type === 'region'
+    ? 'newRegion'
+    : 'newSinger';
+
+
+  const boxId =
+    type === 'region'
+    ? 'regionOptionBox'
+    : 'singerOptionBox';
+
+
+  const optionType =
+    type === 'region'
+    ? 'region'
+    : 'singer';
+
+
+  const value =
+    document
+      .getElementById(inputId)
+      .value
+      .trim();
+
+
+  if(!value){
+
+    alert(
+      '항목 이름을 입력해주세요.'
+    );
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('member_options')
+      .insert({
+        option_type:
+          optionType,
+        label:
+          value
+      })
+      .select()
+      .single();
+
+
+  if(error){
+
+    if(
+      error.code === '23505'
+    ){
+
+      alert(
+        '이미 등록된 항목입니다.'
+      );
+
+    }else{
+
+      alert(
+        '항목을 저장하지 못했습니다.\n' +
+        error.message
+      );
+    }
+
+    return;
+  }
+
+
+  options.push(data);
+
+
+  populateOptionSelects();
+
+
+  const selectId =
+    type === 'region'
+    ? 'memberRegion'
+    : 'favoriteSinger';
+
+
+  document
+    .getElementById(selectId)
+    .value =
+    value;
+
+
+  document
+    .getElementById(inputId)
+    .value =
+    '';
+
+
+  document
+    .getElementById(boxId)
+    .classList
+    .remove('show');
+}
+
+
+/* =====================================================
+   MEMBERS
+===================================================== */
+
+async function loadMembers(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('members')
+      .select('*')
+      .order(
+        'join_order',
+        {
+          ascending:true,
+          nullsFirst:false
+        }
+      )
+      .order(
+        'name',
+        {
+          ascending:true
+        }
+      );
+
+
+  if(error){
+
+    console.error(
+      error
+    );
+
+
+    document
+      .getElementById('memberRows')
+      .innerHTML =
+    `
+      <tr>
+        <td
+          colspan="10"
+          class="empty"
+        >
+          멤버 정보를 불러오지 못했습니다.<br>
+          ${escapeHtml(error.message)}
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+
+  members =
+    data || [];
+
+
+  updateStats();
+
+  renderMembers();
+}
+
+
+function updateStats(){
+
+  document
+    .getElementById('totalCount')
+    .textContent =
+    members.length;
+
+
+  document
+    .getElementById('activeCount')
+    .textContent =
+    members.filter(
+      item =>
+        item.is_active !== false
+    ).length;
+
+
+  document
+    .getElementById('staffCount')
+    .textContent =
+    members.filter(
+      item =>
+        item.role === '운영진'
+    ).length;
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function setFilter(
+  filter,
+  button
+){
+
+  currentFilter =
+    filter;
+
+
+  document
+    .querySelectorAll('.filter')
+    .forEach(
+      item =>
+        item.classList.remove(
+          'active'
+        )
+    );
+
+
+  button
+    .classList
+    .add('active');
+
+
+  renderMembers();
+}
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function renderMembers(){
+
+  const body =
+    document
+      .getElementById('memberRows');
+
+
+  let list =
+    members;
+
+
+  if(
+    currentFilter === '활동중'
+  ){
+
+    list =
+      members.filter(
+        item =>
+          item.is_active !== false
+      );
+
+  }else if(
+    currentFilter !== 'ALL'
+  ){
+
+    list =
+      members.filter(
+        item =>
+          item.role ===
+          currentFilter
+      );
+  }
+
+
+  if(!list.length){
+
+    body.innerHTML =
+    `
+      <tr>
+        <td
+          colspan="10"
+          class="empty"
+        >
+          표시할 멤버가 없습니다.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+
+  body.innerHTML =
+    list
+      .map(
+        createMemberRow
+      )
+      .join('');
+}
+
+
+function createMemberRow(item){
+
+  const status =
+    getStatus(item);
+
+
+  const statusClass =
+    status === '휴면'
+    ? 'sleep'
+    : status === '탈퇴'
+    ? 'out'
+    : '';
+
+
+  return `
+    <tr>
+
+      <td>
+
+        <div class="member-name">
+          ${escapeHtml(item.name)}
+        </div>
+
+        ${
+          item.nickname
+
+          ? `
+            <div class="member-nick">
+              ${escapeHtml(item.nickname)}
+            </div>
+          `
+
+          : ''
+        }
+
+      </td>
+
+
+      <td>
+
+        ${
+          item.role
+
+          ? `
+            <span class="role-badge">
+              ${escapeHtml(item.role)}
+            </span>
+          `
+
+          : '-'
+        }
+
+      </td>
+
+
+      <td>
+        ${formatDate(item.joined_at)}
+      </td>
+
+
+      <td>
+        ${formatDate(item.birth_date)}
+      </td>
+
+
+      <td>
+        ${escapeHtml(item.region || '-')}
+      </td>
+
+
+      <td>
+        ${escapeHtml(item.favorite_singers || '-')}
+      </td>
+
+
+      <td>
+        ${escapeHtml(item.gender || '-')}
+      </td>
+
+
+      <td>
+        ${item.join_order ?? '-'}
+      </td>
+
+
+      <td>
+
+        <span class="status-badge ${statusClass}">
+          ${escapeHtml(status)}
+        </span>
+
+      </td>
+
+
+      <td>
+
+        <div class="action-wrap">
+
+          <button
+            class="edit-btn"
+            onclick="editMember(${item.id})"
+          >
+            수정
+          </button>
+
+          <button
+            class="disable-btn"
+            onclick="toggleMemberActive(${item.id})"
+          >
+            ${
+              item.is_active === false
+              ? '활성'
+              : '비활성'
+            }
+          </button>
+
+        </div>
+
+      </td>
+
+    </tr>
+  `;
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openMemberModal(){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  clearForm();
+
+
+  document
+    .getElementById('modalTitle')
+    .textContent =
+    '새 멤버';
+
+
+  document
+    .getElementById('memberStatus')
+    .value =
+    '활동중';
+
+
+  document
+    .getElementById('memberOverlay')
+    .classList
+    .add('open');
+}
+
+
+function closeMemberModal(){
+
+  document
+    .getElementById('memberOverlay')
+    .classList
+    .remove('open');
+}
+
+
+function clearForm(){
+
+  document
+    .getElementById('editingMemberId')
+    .value = '';
+
+
+  document
+    .getElementById('memberName')
+    .value = '';
+
+
+  document
+    .getElementById('memberNickname')
+    .value = '';
+
+
+  document
+    .getElementById('memberRole')
+    .value = '';
+
+
+  document
+    .getElementById('memberStatus')
+    .value = '';
+
+
+  document
+    .getElementById('joinedAt')
+    .value = '';
+
+
+  document
+    .getElementById('birthDate')
+    .value = '';
+
+
+  document
+    .getElementById('memberRegion')
+    .value = '';
+
+
+  document
+    .getElementById('memberGender')
+    .value = '';
+
+
+  document
+    .getElementById('favoriteSinger')
+    .value = '';
+
+
+  document
+    .getElementById('memberPhone')
+    .value = '';
+
+
+  document
+    .getElementById('memberInstagram')
+    .value = '';
+
+
+  document
+    .getElementById('joinOrder')
+    .value = '';
+
+
+  document
+    .getElementById('memberMemo')
+    .value = '';
+
+
+  document
+    .getElementById('regionOptionBox')
+    .classList
+    .remove('show');
+
+
+  document
+    .getElementById('singerOptionBox')
+    .classList
+    .remove('show');
+}
+
+
+/* =====================================================
+   SAVE MEMBER
+===================================================== */
+
+async function saveMember(){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  const id =
+    document
+      .getElementById('editingMemberId')
+      .value;
+
+
+  const name =
+    document
+      .getElementById('memberName')
+      .value
+      .trim();
+
+
+  if(!name){
+
+    alert(
+      '이름을 입력해주세요.'
+    );
+
+    return;
+  }
+
+
+  const status =
+    document
+      .getElementById('memberStatus')
+      .value ||
+    '활동중';
+
+
+  let joinOrder =
+    document
+      .getElementById('joinOrder')
+      .value;
+
+
+  if(!joinOrder){
+
+    const maxOrder =
+      members.reduce(
+        (max,item) =>
+          Math.max(
+            max,
+            Number(
+              item.join_order || 0
+            )
+          ),
+        0
+      );
+
+
+    joinOrder =
+      maxOrder + 1;
+  }
+
+
+  const payload = {
+
+    name,
+
+    nickname:
+      nullValue(
+        'memberNickname'
+      ),
+
+    role:
+      nullValue(
+        'memberRole'
+      ),
+
+    joined_at:
+      nullValue(
+        'joinedAt'
+      ),
+
+    birth_date:
+      nullValue(
+        'birthDate'
+      ),
+
+    region:
+      nullValue(
+        'memberRegion'
+      ),
+
+    gender:
+      nullValue(
+        'memberGender'
+      ),
+
+    favorite_singers:
+      nullValue(
+        'favoriteSinger'
+      ),
+
+    join_order:
+      Number(joinOrder),
+
+    phone:
+      nullValue(
+        'memberPhone'
+      ),
+
+    instagram:
+      nullValue(
+        'memberInstagram'
+      ),
+
+    memo:
+      nullValue(
+        'memberMemo'
+      ),
+
+    is_active:
+      status !== '탈퇴'
+      &&
+      status !== '휴면',
+
+    note:
+      status
+
+  };
+
+
+  let result;
+
+
+  if(id){
+
+    result =
+      await db
+        .from('members')
+        .update(payload)
+        .eq(
+          'id',
+          id
+        );
+
+  }else{
+
+    result =
+      await db
+        .from('members')
+        .insert(payload);
+  }
+
+
+  if(result.error){
+
+    alert(
+      '멤버를 저장하지 못했습니다.\n' +
+      result.error.message
+    );
+
+    return;
+  }
+
+
+  closeMemberModal();
+
+
+  await loadMembers();
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editMember(id){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  const item =
+    members.find(
+      row =>
+        String(row.id) ===
+        String(id)
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  clearForm();
+
+
+  document
+    .getElementById('editingMemberId')
+    .value =
+    item.id;
+
+
+  document
+    .getElementById('modalTitle')
+    .textContent =
+    '멤버 수정';
+
+
+  document
+    .getElementById('memberName')
+    .value =
+    item.name || '';
+
+
+  document
+    .getElementById('memberNickname')
+    .value =
+    item.nickname || '';
+
+
+  setSelectValue(
+    'memberRole',
+    item.role
+  );
+
+
+  document
+    .getElementById('memberStatus')
+    .value =
+    getStatus(item);
+
+
+  document
+    .getElementById('joinedAt')
+    .value =
+    item.joined_at || '';
+
+
+  document
+    .getElementById('birthDate')
+    .value =
+    item.birth_date || '';
+
+
+  setSelectValue(
+    'memberRegion',
+    item.region
+  );
+
+
+  setSelectValue(
+    'memberGender',
+    item.gender
+  );
+
+
+  setSelectValue(
+    'favoriteSinger',
+    item.favorite_singers
+  );
+
+
+  document
+    .getElementById('memberPhone')
+    .value =
+    item.phone || '';
+
+
+  document
+    .getElementById('memberInstagram')
+    .value =
+    item.instagram || '';
+
+
+  document
+    .getElementById('joinOrder')
+    .value =
+    item.join_order || '';
+
+
+  document
+    .getElementById('memberMemo')
+    .value =
+    item.memo || '';
+
+
+  document
+    .getElementById('memberOverlay')
+    .classList
+    .add('open');
+}
+
+
+/* =====================================================
+   ACTIVE
+===================================================== */
+
+async function toggleMemberActive(id){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  const item =
+    members.find(
+      row =>
+        String(row.id) ===
+        String(id)
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  const next =
+    item.is_active === false;
+
+
+  const {
+    error
+  } =
+    await db
+      .from('members')
+      .update({
+        is_active:
+          next,
+        note:
+          next
+          ? '활동중'
+          : '휴면'
+      })
+      .eq(
+        'id',
+        id
+      );
+
+
+  if(error){
+
+    alert(
+      '상태를 변경하지 못했습니다.\n' +
+      error.message
+    );
+
+    return;
+  }
+
+
+  await loadMembers();
+}
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function nullValue(id){
+
+  const value =
+    document
+      .getElementById(id)
+      .value
+      .trim();
+
+
+  return value || null;
+}
+
+
+function getStatus(item){
+
+  if(item.note === '탈퇴'){
+    return '탈퇴';
+  }
+
+
+  if(
+    item.note === '휴면'
+    ||
+    item.is_active === false
+  ){
+    return '휴면';
+  }
+
+
+  return '활동중';
+}
+
+
+function setSelectValue(
+  id,
+  value
+){
+
+  if(!value){
+    return;
+  }
+
+
+  const select =
+    document
+      .getElementById(id);
+
+
+  const exists =
+    [...select.options]
+      .some(
+        option =>
+          option.value === value
+      );
+
+
+  if(!exists){
+
+    const option =
+      document
+        .createElement(
+          'option'
+        );
+
+
+    option.value =
+      value;
+
+
+    option.textContent =
+      value;
+
+
+    select
+      .appendChild(
+        option
+      );
+  }
+
+
+  select.value =
+    value;
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return '-';
+  }
+
+
+  return value
+    .replaceAll(
+      '-',
+      '.'
+    );
+}
+
+
+function escapeHtml(value){
+
+  const div =
+    document
+      .createElement(
+        'div'
+      );
+
+
+  div.textContent =
+    String(
+      value ?? ''
+    );
+
+
+  return div.innerHTML;
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function openMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .add('open');
+}
+
+
+function closeMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .remove('open');
+}
+
+
+document
+  .getElementById('menuOverlay')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeMenu();
+      }
+
+    }
+  );
+
+
+document
+  .getElementById('memberOverlay')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeMemberModal();
+      }
+
+    }
+  );
+
+
+start();
+</script>
+
+</body>
+</html>
