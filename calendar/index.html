@@ -17,10 +17,18 @@
 <style>
 :root{
   --ink:#11182c;
-  --muted:#73798c;
-  --purple:#8069e9;
-  --purple2:#7588ec;
-  --line:rgba(25,31,58,.08);
+  --muted:#777d90;
+  --purple:#7d68e8;
+  --purple2:#748bed;
+
+  --surface:rgba(255,255,255,.82);
+  --surface-solid:#ffffff;
+
+  --line:#e3e2ea;
+  --soft-line:#ecebf1;
+
+  --shadow:
+    0 16px 45px rgba(28,35,72,.07);
 }
 
 *{
@@ -28,14 +36,19 @@
   -webkit-tap-highlight-color:transparent;
 }
 
-html{scroll-behavior:smooth;}
+html{
+  scroll-behavior:smooth;
+}
 
 body{
   margin:0;
   min-height:100vh;
   overflow-x:hidden;
+
   font-family:"Noto Sans KR",sans-serif;
+
   color:var(--ink);
+
   background:#f8f7fa;
 }
 
@@ -51,28 +64,42 @@ textarea{
   font:inherit;
 }
 
-button{color:inherit;}
+button{
+  color:inherit;
+}
 
 
-/* =============================
+/* ======================================================
    AURORA
-============================= */
+====================================================== */
 
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
+
   overflow:hidden;
-  background:linear-gradient(180deg,#f7f4fa,#f8f7fb 55%,#faf9fb);
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7f4fa 0%,
+      #f8f7fb 55%,
+      #faf9fb 100%
+    );
 }
 
 .aurora::before{
   content:"";
+
   position:absolute;
+
   width:1150px;
   height:680px;
+
   top:-320px;
   right:-250px;
+
   border-radius:50%;
 
   background:
@@ -96,17 +123,19 @@ button{color:inherit;}
     );
 
   filter:blur(52px);
+
   transform:rotate(-13deg);
 }
 
 
-/* =============================
+/* ======================================================
    HEADER
-============================= */
+====================================================== */
 
 .header{
   width:min(1080px,100%);
   height:82px;
+
   padding:0 25px;
   margin:auto;
 
@@ -123,45 +152,58 @@ button{color:inherit;}
 .brand strong{
   font-size:27px;
   line-height:1;
+
   font-weight:800;
 }
 
 .brand small{
   margin-top:5px;
+
   font-size:8px;
   font-weight:700;
+
   letter-spacing:3px;
 }
 
 .header-right{
   display:flex;
   align-items:center;
+
   gap:9px;
 }
 
 .admin-badge{
   display:none;
+
   align-items:center;
   gap:7px;
 
   padding:9px 13px;
+
   border-radius:999px;
 
   color:#6955d2;
+
   background:rgba(126,102,232,.10);
+
   border:1px solid rgba(126,102,232,.15);
 
   font-size:9px;
   font-weight:800;
+
   letter-spacing:.8px;
 }
 
-.admin-badge.show{display:flex;}
+.admin-badge.show{
+  display:flex;
+}
 
 .admin-dot{
   width:7px;
   height:7px;
+
   border-radius:50%;
+
   background:#765fe6;
 }
 
@@ -169,181 +211,272 @@ button{color:inherit;}
   width:46px;
   height:46px;
 
+  display:grid;
+  place-items:center;
+
   border:1px solid rgba(255,255,255,.92);
+
   border-radius:50%;
 
   background:rgba(255,255,255,.66);
 
-  box-shadow:0 10px 30px rgba(31,38,76,.08);
+  box-shadow:
+    0 10px 30px rgba(31,38,76,.08);
 
   cursor:pointer;
 }
 
 
-/* =============================
-   MAIN
-============================= */
+/* ======================================================
+   PAGE
+====================================================== */
 
 .page{
   width:min(1000px,100%);
-  padding:0 22px 115px;
+
   margin:auto;
+
+  padding:
+    0
+    22px
+    115px;
 }
 
+
+/* ======================================================
+   HERO
+====================================================== */
+
 .hero{
-  padding:60px 0 48px;
+  padding:
+    60px
+    0
+    48px;
 }
 
 .hero-label{
   color:#696f84;
+
   font-size:10px;
   font-weight:700;
+
   letter-spacing:2.4px;
 }
 
 .hero h1{
-  margin:12px 0 0;
+  margin:
+    12px
+    0
+    0;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:clamp(82px,13vw,135px);
+
+  font-size:
+    clamp(
+      82px,
+      13vw,
+      135px
+    );
+
   font-weight:400;
+
   line-height:.75;
 }
 
 .hero p{
   max-width:520px;
-  margin:28px 0 0;
+
+  margin:
+    28px
+    0
+    0;
+
   color:#62697d;
+
   font-size:13px;
+
   line-height:1.8;
 }
 
 
-/* =============================
-   FILTER
-============================= */
+/* ======================================================
+   TOOLBAR
+====================================================== */
 
 .toolbar{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   gap:15px;
+
   margin-bottom:20px;
 }
 
 .filters{
   display:flex;
+
   gap:8px;
+
   overflow-x:auto;
+
   scrollbar-width:none;
 }
 
-.filters::-webkit-scrollbar{display:none;}
+.filters::-webkit-scrollbar{
+  display:none;
+}
 
 .filter{
   flex:0 0 auto;
+
   min-height:41px;
 
-  padding:0 16px;
+  padding:
+    0
+    16px;
 
   border:1px solid rgba(255,255,255,.9);
+
   border-radius:999px;
 
   background:rgba(255,255,255,.72);
+
   color:#74798b;
 
   cursor:pointer;
+
   font-size:11px;
 
-  box-shadow:0 7px 22px rgba(31,38,76,.05);
+  box-shadow:
+    0 7px 22px rgba(31,38,76,.05);
 }
 
 .filter.active{
-  color:white;
-  background:linear-gradient(135deg,#846be9,#7586eb);
+  color:#fff;
+
   border-color:transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      #846be9,
+      #7586eb
+    );
 }
 
 .admin-add{
   display:none;
+
   min-height:43px;
-  padding:0 18px;
+
+  padding:
+    0
+    18px;
 
   border:0;
+
   border-radius:999px;
 
-  color:white;
+  color:#fff;
+
   background:#151b30;
 
   cursor:pointer;
+
   font-size:12px;
   font-weight:700;
 }
 
-.admin-add.show{display:block;}
+.admin-add.show{
+  display:block;
+}
 
 
-/* =============================
+/* ======================================================
    MONTH
-============================= */
+====================================================== */
 
 .month{
   margin-bottom:17px;
+
   padding:25px;
 
   border-radius:27px;
 
   background:rgba(255,255,255,.76);
+
   border:1px solid rgba(255,255,255,.92);
 
-  box-shadow:0 17px 48px rgba(28,35,72,.07);
+  box-shadow:var(--shadow);
+
   backdrop-filter:blur(20px);
 }
 
 .month-head{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   margin-bottom:17px;
 }
 
 .month-head h2{
   margin:0;
+
   font-family:"Nanum Pen Script",cursive;
+
   font-size:36px;
   font-weight:400;
 }
 
 .month-head span{
   color:#999dab;
+
   font-family:"Nanum Pen Script",cursive;
+
   font-size:19px;
 }
 
 
-/* =============================
+/* ======================================================
    EVENT CARD
-============================= */
+====================================================== */
 
 .event-list{
   display:grid;
+
   gap:11px;
 }
 
 .event{
   display:grid;
-  grid-template-columns:70px 1fr 128px;
+
+  grid-template-columns:
+    70px
+    minmax(0,1fr)
+    128px;
+
   align-items:center;
+
   gap:17px;
 
   min-height:110px;
-  padding:14px 15px;
+
+  padding:
+    14px
+    15px;
 
   border-radius:22px;
 
   background:rgba(255,255,255,.90);
+
   border:1px solid rgba(255,255,255,.97);
 
-  box-shadow:0 9px 27px rgba(25,31,65,.05);
+  box-shadow:
+    0 9px 27px rgba(25,31,65,.05);
 
   cursor:pointer;
 
@@ -354,7 +487,9 @@ button{color:inherit;}
 
 .event:hover{
   transform:translateY(-2px);
-  box-shadow:0 16px 38px rgba(25,31,65,.09);
+
+  box-shadow:
+    0 16px 38px rgba(25,31,65,.09);
 }
 
 .date-box{
@@ -365,40 +500,66 @@ button{color:inherit;}
   place-items:center;
 
   text-align:center;
+
   border-radius:18px;
 
-  background:linear-gradient(145deg,#f0edff,#e8f2ff);
+  background:
+    linear-gradient(
+      145deg,
+      #f0edff,
+      #e8f2ff
+    );
 }
 
 .event.live .date-box{
   color:white;
-  background:linear-gradient(145deg,#8169e8,#7598eb);
+
+  background:
+    linear-gradient(
+      145deg,
+      #8169e8,
+      #7598eb
+    );
 }
 
 .event.busking .date-box{
-  background:linear-gradient(145deg,#e9e1ff,#dff2ff);
+  background:
+    linear-gradient(
+      145deg,
+      #e9e1ff,
+      #dff2ff
+    );
 }
 
 .event.other .date-box{
-  background:linear-gradient(145deg,#eeeafa,#e7ebf7);
+  background:
+    linear-gradient(
+      145deg,
+      #eeeafa,
+      #e7ebf7
+    );
 }
 
 .date-box strong{
   display:block;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:33px;
   font-weight:400;
+
   line-height:.84;
 }
 
 .date-box small{
   display:block;
+
   margin-top:6px;
 
   color:#73798d;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:14px;
 }
 
@@ -412,25 +573,35 @@ button{color:inherit;}
 
 .type{
   color:#725fe0;
+
   font-family:"Nanum Pen Script",cursive;
+
   font-size:17px;
 }
 
 .event h3{
-  margin:1px 0 5px;
+  margin:
+    1px
+    0
+    5px;
 
   overflow:hidden;
+
   text-overflow:ellipsis;
+
   white-space:nowrap;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:25px;
   font-weight:400;
 }
 
 .event-meta{
   color:#71778b;
+
   font-size:11px;
+
   line-height:1.7;
 }
 
@@ -438,10 +609,13 @@ button{color:inherit;}
   margin-top:4px;
 
   overflow:hidden;
+
   text-overflow:ellipsis;
+
   white-space:nowrap;
 
   color:#979baa;
+
   font-size:10px;
 }
 
@@ -451,13 +625,17 @@ button{color:inherit;}
   color:#7c6be0;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:15px;
 }
 
 .event-side{
   display:flex;
+
   flex-direction:column;
+
   align-items:flex-end;
+
   gap:7px;
 }
 
@@ -469,13 +647,20 @@ button{color:inherit;}
 
   border-radius:16px;
 
-  background:linear-gradient(145deg,#e9e4ff,#e1f0f5);
+  background:
+    linear-gradient(
+      145deg,
+      #e9e4ff,
+      #e1f0f5
+    );
 }
 
 .event-image img{
   width:100%;
   height:100%;
+
   display:block;
+
   object-fit:cover;
 }
 
@@ -489,11 +674,13 @@ button{color:inherit;}
   color:#9c94bc;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:20px;
 }
 
 .admin-actions{
   display:none;
+
   gap:5px;
 }
 
@@ -504,81 +691,112 @@ button{color:inherit;}
 .edit-btn,
 .delete-btn{
   min-height:29px;
-  padding:0 10px;
+
+  padding:
+    0
+    10px;
 
   border:0;
+
   border-radius:9px;
 
   cursor:pointer;
+
   font-size:9px;
 }
 
 .edit-btn{
   background:#efedf9;
+
   color:#6555c6;
 }
 
 .delete-btn{
   background:#fff0f2;
+
   color:#cb5269;
 }
 
 .empty{
-  padding:38px 20px;
+  padding:
+    38px
+    20px;
+
   text-align:center;
+
   color:#9397a6;
+
   font-size:12px;
 }
 
 
-/* =============================
+/* ======================================================
    OVERLAY
-============================= */
+====================================================== */
 
 .overlay{
   position:fixed;
   inset:0;
+
   z-index:200;
 
   display:none;
+
   align-items:center;
   justify-content:center;
 
   padding:18px;
 
-  background:rgba(24,29,54,.36);
+  background:rgba(24,29,54,.34);
+
   backdrop-filter:blur(16px);
 }
 
-.overlay.open{display:flex;}
+.overlay.open{
+  display:flex;
+}
+
+
+/* ======================================================
+   EVENT MODAL
+====================================================== */
 
 .modal{
-  width:min(520px,100%);
-  max-height:calc(100vh - 32px);
+  width:min(535px,100%);
+
+  max-height:
+    calc(100vh - 28px);
 
   overflow-y:auto;
 
-  padding:26px;
+  padding:27px;
 
-  border-radius:28px;
+  border-radius:30px;
 
-  background:rgba(255,255,255,.97);
+  background:
+    rgba(255,255,255,.97);
 
-  box-shadow:0 28px 80px rgba(20,25,55,.22);
+  box-shadow:
+    0 30px 90px rgba(20,25,55,.22);
+
+  scrollbar-width:thin;
 }
 
 .modal-top{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 
-  margin-bottom:23px;
+  margin-bottom:24px;
 }
 
 .modal-title{
   margin:0;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:37px;
+
+  font-size:38px;
   font-weight:400;
 }
 
@@ -587,26 +805,41 @@ button{color:inherit;}
   height:40px;
 
   border:0;
+
   border-radius:50%;
 
   background:#f0eff4;
+
   cursor:pointer;
+
+  transition:.15s;
+}
+
+.close:hover{
+  background:#e8e6ee;
 }
 
 
-/* =============================
-   FORM SECTION
-============================= */
+/* ======================================================
+   FORM CARD
+====================================================== */
 
 .form-section{
-  padding:18px;
+  margin-top:14px;
 
-  margin-top:13px;
+  padding:
+    19px
+    18px
+    20px;
 
-  border-radius:20px;
+  border:
+    1px solid
+    #ebeaf0;
 
-  background:#f8f7fb;
-  border:1px solid #eeedf3;
+  border-radius:21px;
+
+  background:
+    rgba(249,248,252,.88);
 }
 
 .form-section:first-of-type{
@@ -614,82 +847,107 @@ button{color:inherit;}
 }
 
 .form-label{
-  margin-bottom:5px;
+  color:#202537;
 
   font-size:12px;
   font-weight:700;
 }
 
 .form-help{
-  margin-bottom:13px;
+  margin-top:5px;
+  margin-bottom:16px;
 
-  color:#8b8f9e;
+  color:#9699a8;
 
   font-size:10px;
-  line-height:1.55;
+
+  line-height:1.6;
 }
 
 
-/* =============================
-   TYPE BUTTONS
-============================= */
+/* ======================================================
+   TYPE PICKER
+====================================================== */
 
 .type-picker{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:8px;
 }
 
 .type-option{
-  min-height:58px;
+  min-height:61px;
 
-  padding:7px;
+  padding:
+    7px
+    10px;
 
-  border:1px solid #e5e3ec;
-  border-radius:16px;
+  border:
+    1px solid
+    #e4e2eb;
 
-  background:white;
+  border-radius:17px;
+
+  background:#fff;
 
   cursor:pointer;
 
   font-size:11px;
   font-weight:700;
 
-  transition:.16s;
+  transition:
+    .16s ease;
 }
 
 .type-option span{
   display:block;
+
   margin-top:2px;
 
   color:#9b9eac;
 
   font-family:"Nanum Pen Script",cursive;
-  font-size:14px;
+
+  font-size:15px;
   font-weight:400;
 }
 
-.type-option.active{
-  color:white;
+.type-option:hover{
+  border-color:#cfc9ee;
+}
 
-  background:linear-gradient(135deg,#8168e9,#7688ec);
+.type-option.active{
+  color:#fff;
 
   border-color:transparent;
 
-  box-shadow:0 8px 20px rgba(121,104,224,.20);
+  background:
+    linear-gradient(
+      135deg,
+      #8168e9,
+      #7688ec
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(121,104,224,.20);
 }
 
 .type-option.active span{
-  color:rgba(255,255,255,.75);
+  color:
+    rgba(255,255,255,.76);
 }
 
 
-/* =============================
-   INPUTS
-============================= */
+/* ======================================================
+   FIELDS
+====================================================== */
 
 .field{
-  margin-top:13px;
+  margin-top:15px;
 }
 
 .field:first-child{
@@ -699,90 +957,197 @@ button{color:inherit;}
 .field label{
   display:block;
 
-  margin-bottom:6px;
+  margin:
+    0
+    0
+    7px;
+
+  color:#262b3e;
 
   font-size:11px;
   font-weight:700;
 }
 
+
+/* 입력창 통일 */
+
 .text-input,
 .pretty-select,
 .text-area{
   width:100%;
-  min-height:47px;
 
-  padding:0 14px;
+  border:
+    1px solid
+    #dddce5;
 
-  border:1px solid #dfdee7;
-  border-radius:14px;
+  border-radius:15px;
 
-  background:white;
+  background:#fff;
+
+  color:#303548;
 
   outline:none;
 
-  color:#242a3c;
-
   font-size:13px;
+
+  transition:
+    border-color .16s,
+    box-shadow .16s,
+    background .16s;
 }
+
+
+/* input */
+
+.text-input{
+  min-height:49px;
+
+  padding:
+    0
+    14px;
+}
+
+
+/* select */
 
 .pretty-select{
+  min-height:49px;
+
+  padding:
+    0
+    40px
+    0
+    14px;
+
   cursor:pointer;
+
+  appearance:none;
+  -webkit-appearance:none;
+
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #6c7184 50%
+    ),
+    linear-gradient(
+      135deg,
+      #6c7184 50%,
+      transparent 50%
+    );
+
+  background-position:
+    calc(100% - 18px) 21px,
+    calc(100% - 13px) 21px;
+
+  background-size:
+    5px 5px,
+    5px 5px;
+
+  background-repeat:no-repeat;
 }
 
+
+/* textarea */
+
 .text-area{
-  min-height:90px;
-  padding:13px 14px;
+  min-height:112px;
+
+  padding:
+    14px
+    15px;
+
   resize:vertical;
+
+  line-height:1.65;
 }
+
+
+/* hover */
+
+.text-input:hover,
+.pretty-select:hover,
+.text-area:hover{
+  border-color:#cfccd9;
+}
+
+
+/* focus */
 
 .text-input:focus,
 .pretty-select:focus,
 .text-area:focus{
-  border-color:#9889eb;
-  box-shadow:0 0 0 3px rgba(134,111,230,.09);
+  border-color:#8f7ce6;
+
+  background:#fff;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(128,105,233,.09);
 }
 
 
-/* =============================
+/* placeholder */
+
+.text-input::placeholder,
+.text-area::placeholder{
+  color:#a5a7b2;
+}
+
+
+/* ======================================================
    PRESET
-============================= */
+====================================================== */
 
 .preset-row{
   display:grid;
-  grid-template-columns:1fr auto;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    108px;
+
   gap:8px;
 }
 
 .add-preset{
-  min-width:102px;
-
   border:0;
+
   border-radius:14px;
 
   background:#eceaf7;
+
   color:#6454c4;
 
   cursor:pointer;
 
   font-size:11px;
   font-weight:700;
+
+  transition:.15s;
+}
+
+.add-preset:hover{
+  background:#e4e1f3;
 }
 
 .new-preset{
   display:none;
 
-  margin-top:9px;
-  padding:12px;
+  margin-top:10px;
 
-  border-radius:15px;
+  padding:13px;
+
+  border-radius:16px;
 
   background:#efedf5;
 }
 
-.new-preset.show{display:block;}
+.new-preset.show{
+  display:block;
+}
 
 .new-preset .text-input{
-  margin-top:7px;
+  margin-top:8px;
 }
 
 .new-preset .text-input:first-child{
@@ -791,15 +1156,17 @@ button{color:inherit;}
 
 .new-preset-save{
   width:100%;
-  min-height:42px;
+  min-height:43px;
 
-  margin-top:8px;
+  margin-top:9px;
 
   border:0;
+
   border-radius:12px;
 
   background:#171d31;
-  color:white;
+
+  color:#fff;
 
   cursor:pointer;
 
@@ -808,28 +1175,53 @@ button{color:inherit;}
 }
 
 
-/* =============================
+/* ======================================================
    DATE / TIME
-============================= */
+====================================================== */
 
 .date-time-grid{
   display:grid;
-  grid-template-columns:1.15fr 1fr 1fr;
-  gap:8px;
+
+  grid-template-columns:
+    1.28fr
+    .86fr
+    .86fr;
+
+  align-items:end;
+
+  gap:9px;
 }
 
 
-/* =============================
+/* 날짜가 시각적으로 조금 더 넓음 */
+
+.date-field .text-input{
+  font-variant-numeric:tabular-nums;
+}
+
+
+/* 시간 선택 */
+
+.time-field .pretty-select{
+  font-variant-numeric:tabular-nums;
+}
+
+
+/* ======================================================
    IMAGE LIBRARY
-============================= */
+====================================================== */
 
 .image-library{
   display:flex;
+
   gap:9px;
 
   overflow-x:auto;
 
-  padding:2px 1px 8px;
+  padding:
+    2px
+    1px
+    9px;
 
   scrollbar-width:none;
 }
@@ -839,21 +1231,30 @@ button{color:inherit;}
 }
 
 .image-choice{
-  flex:0 0 108px;
-
-  border:2px solid transparent;
-  border-radius:16px;
+  flex:
+    0
+    0
+    108px;
 
   padding:5px;
 
-  background:white;
+  border:
+    2px solid
+    transparent;
+
+  border-radius:16px;
+
+  background:#fff;
 
   cursor:pointer;
 }
 
 .image-choice.selected{
   border-color:#816bea;
-  box-shadow:0 7px 20px rgba(124,104,220,.12);
+
+  box-shadow:
+    0 7px 20px
+    rgba(124,104,220,.12);
 }
 
 .image-choice-preview{
@@ -863,12 +1264,18 @@ button{color:inherit;}
 
   border-radius:11px;
 
-  background:linear-gradient(145deg,#ebe6ff,#e1f1f4);
+  background:
+    linear-gradient(
+      145deg,
+      #ebe6ff,
+      #e1f1f4
+    );
 }
 
 .image-choice-preview img{
   width:100%;
   height:100%;
+
   object-fit:cover;
 }
 
@@ -882,6 +1289,7 @@ button{color:inherit;}
   color:#9f99b8;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:16px;
 }
 
@@ -889,26 +1297,35 @@ button{color:inherit;}
   margin-top:5px;
 
   overflow:hidden;
+
   text-overflow:ellipsis;
+
   white-space:nowrap;
 
   color:#777b8c;
+
   font-size:9px;
+
   text-align:center;
 }
 
 .upload-box{
   margin-top:11px;
+
   padding:13px;
 
-  border:1px dashed #d9d6e5;
+  border:
+    1px dashed
+    #d9d6e5;
+
   border-radius:15px;
 
-  background:white;
+  background:#fff;
 }
 
 .file-input{
   width:100%;
+
   font-size:11px;
 }
 
@@ -925,20 +1342,26 @@ button{color:inherit;}
   margin-top:10px;
 
   overflow:hidden;
+
   border-radius:14px;
 }
 
-.upload-preview.show{display:block;}
+.upload-preview.show{
+  display:block;
+}
 
 .upload-preview img{
   width:100%;
   height:100%;
+
   object-fit:cover;
 }
 
 .default-row{
   display:flex;
+
   align-items:center;
+
   gap:8px;
 
   margin-top:11px;
@@ -951,35 +1374,59 @@ button{color:inherit;}
 .default-row input{
   width:16px;
   height:16px;
+
+  accent-color:#7f69e7;
 }
 
 
-/* =============================
-   SAVE
-============================= */
+/* ======================================================
+   SAVE BUTTON
+====================================================== */
 
 .save{
   width:100%;
-  min-height:50px;
+  min-height:52px;
 
-  margin-top:17px;
+  margin-top:18px;
 
   border:0;
+
   border-radius:16px;
 
-  color:white;
+  color:#fff;
 
-  background:linear-gradient(135deg,#8169e8,#7189eb);
+  background:
+    linear-gradient(
+      135deg,
+      #8169e8,
+      #7189eb
+    );
+
+  box-shadow:
+    0 10px 25px
+    rgba(116,101,220,.17);
 
   cursor:pointer;
 
   font-weight:700;
+
+  transition:
+    transform .15s,
+    box-shadow .15s;
+}
+
+.save:hover{
+  transform:translateY(-1px);
+
+  box-shadow:
+    0 14px 30px
+    rgba(116,101,220,.22);
 }
 
 
-/* =============================
+/* ======================================================
    MENU
-============================= */
+====================================================== */
 
 .menu-card{
   width:min(400px,100%);
@@ -988,11 +1435,13 @@ button{color:inherit;}
 
   border-radius:27px;
 
-  background:rgba(255,255,255,.96);
+  background:
+    rgba(255,255,255,.96);
 }
 
 .menu-top{
   display:flex;
+
   justify-content:space-between;
   align-items:center;
 
@@ -1003,6 +1452,7 @@ button{color:inherit;}
   margin:0;
 
   font-family:"Nanum Pen Script",cursive;
+
   font-size:34px;
   font-weight:400;
 }
@@ -1013,15 +1463,20 @@ button{color:inherit;}
   min-height:55px;
 
   display:flex;
+
   align-items:center;
   justify-content:space-between;
 
   border:0;
-  border-bottom:1px solid var(--line);
+
+  border-bottom:
+    1px solid
+    rgba(25,31,58,.08);
 
   background:none;
 
   text-align:left;
+
   cursor:pointer;
 
   font-size:13px;
@@ -1029,18 +1484,22 @@ button{color:inherit;}
 
 .logout{
   display:none;
+
   color:#ca546a;
 }
 
-.logout.show{display:flex;}
+.logout.show{
+  display:flex;
+}
 
 
-/* =============================
-   BOTTOM
-============================= */
+/* ======================================================
+   BOTTOM NAV
+====================================================== */
 
 .bottom{
   position:fixed;
+
   z-index:80;
 
   left:50%;
@@ -1048,20 +1507,33 @@ button{color:inherit;}
 
   transform:translateX(-50%);
 
-  width:min(720px,calc(100% - 24px));
+  width:
+    min(
+      720px,
+      calc(100% - 24px)
+    );
+
   height:67px;
 
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+
+  grid-template-columns:
+    repeat(5,1fr);
 
   overflow:hidden;
 
   border-radius:22px;
 
-  background:rgba(255,255,255,.82);
-  border:1px solid rgba(255,255,255,.95);
+  background:
+    rgba(255,255,255,.82);
 
-  box-shadow:0 14px 42px rgba(30,37,75,.12);
+  border:
+    1px solid
+    rgba(255,255,255,.95);
+
+  box-shadow:
+    0 14px 42px
+    rgba(30,37,75,.12);
 
   backdrop-filter:blur(23px);
 }
@@ -1069,10 +1541,13 @@ button{color:inherit;}
 .bottom a,
 .bottom button{
   border:0;
+
   background:none;
 
   display:flex;
+
   flex-direction:column;
+
   align-items:center;
   justify-content:center;
 
@@ -1087,6 +1562,7 @@ button{color:inherit;}
 
 .bottom .active{
   color:#755fe1;
+
   font-weight:700;
 }
 
@@ -1095,15 +1571,18 @@ button{color:inherit;}
 }
 
 
-/* =============================
+/* ======================================================
    MOBILE
-============================= */
+====================================================== */
 
 @media(max-width:650px){
 
   .header{
     height:70px;
-    padding:0 16px;
+
+    padding:
+      0
+      16px;
   }
 
   .brand strong{
@@ -1120,16 +1599,25 @@ button{color:inherit;}
   }
 
   .admin-badge{
-    padding:7px 9px;
+    padding:
+      7px
+      9px;
+
     font-size:7px;
   }
 
   .page{
-    padding:0 14px 105px;
+    padding:
+      0
+      14px
+      105px;
   }
 
   .hero{
-    padding:45px 4px 38px;
+    padding:
+      45px
+      4px
+      38px;
   }
 
   .hero h1{
@@ -1138,6 +1626,7 @@ button{color:inherit;}
 
   .toolbar{
     align-items:flex-start;
+
     flex-direction:column;
   }
 
@@ -1147,18 +1636,25 @@ button{color:inherit;}
 
   .month{
     padding:16px;
+
     border-radius:23px;
   }
 
   .event{
-    grid-template-columns:58px minmax(0,1fr) 78px;
+    grid-template-columns:
+      58px
+      minmax(0,1fr)
+      78px;
+
     gap:9px;
+
     padding:11px;
   }
 
   .date-box{
     width:58px;
     min-height:61px;
+
     border-radius:14px;
   }
 
@@ -1169,6 +1665,7 @@ button{color:inherit;}
   .event-image{
     width:78px;
     height:62px;
+
     border-radius:13px;
   }
 
@@ -1189,28 +1686,43 @@ button{color:inherit;}
   }
 
   .detail-hint{
-    font-size:13px;
     margin-top:4px;
-  }
 
-  .event-side{
-    gap:5px;
+    font-size:13px;
   }
 
   .admin-actions{
     flex-wrap:wrap;
+
     justify-content:flex-end;
   }
 
   .edit-btn,
   .delete-btn{
-    padding:0 7px;
     min-height:25px;
+
+    padding:
+      0
+      7px;
   }
 
   .modal{
-    padding:19px;
-    border-radius:23px;
+    padding:20px;
+
+    border-radius:24px;
+  }
+
+  .modal-title{
+    font-size:35px;
+  }
+
+  .form-section{
+    padding:
+      17px
+      15px
+      18px;
+
+    border-radius:19px;
   }
 
   .type-picker{
@@ -1219,12 +1731,17 @@ button{color:inherit;}
 
   .type-option{
     min-height:49px;
+
+    padding:
+      0
+      15px;
+
     text-align:left;
-    padding:0 15px;
   }
 
   .type-option span{
     display:inline;
+
     margin-left:7px;
   }
 
@@ -1233,22 +1750,43 @@ button{color:inherit;}
   }
 
   .add-preset{
-    min-height:43px;
+    min-height:44px;
   }
 
+  /* 모바일에서는 날짜 한 줄 */
+
   .date-time-grid{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:
+      1fr
+      1fr;
+
+    gap:
+      0
+      9px;
   }
 
   .date-field{
-    grid-column:1 / -1;
+    grid-column:
+      1 / -1;
+  }
+
+  .text-input,
+  .pretty-select{
+    min-height:50px;
+  }
+
+  .text-area{
+    min-height:118px;
   }
 }
 
 @media(max-width:390px){
 
   .event{
-    grid-template-columns:54px minmax(0,1fr) 67px;
+    grid-template-columns:
+      54px
+      minmax(0,1fr)
+      67px;
   }
 
   .date-box{
@@ -1272,16 +1810,29 @@ button{color:inherit;}
 <header class="header">
 
   <a href="/" class="brand">
+
     <strong>VOM</strong>
-    <small>VOICE OF MELODY</small>
+
+    <small>
+      VOICE OF MELODY
+    </small>
+
   </a>
+
 
   <div class="header-right">
 
-    <div id="adminBadge" class="admin-badge">
+    <div
+      id="adminBadge"
+      class="admin-badge"
+    >
+
       <span class="admin-dot"></span>
+
       ADMIN MODE
+
     </div>
+
 
     <button
       class="menu-btn"
@@ -1298,13 +1849,16 @@ button{color:inherit;}
 
 <main class="page">
 
+
   <section class="hero">
 
     <div class="hero-label">
       VOM SCHEDULE
     </div>
 
-    <h1>Calendar</h1>
+    <h1>
+      Calendar
+    </h1>
 
     <p>
       VOM의 모든 일정을 한곳에서 확인하세요.<br>
@@ -1316,25 +1870,39 @@ button{color:inherit;}
 
   <section class="toolbar">
 
+
     <div class="filters">
 
-      <button class="filter active" onclick="setFilter('ALL',this)">
+      <button
+        class="filter active"
+        onclick="setFilter('ALL',this)"
+      >
         ALL
       </button>
 
-      <button class="filter" onclick="setFilter('VOM LIVE',this)">
+      <button
+        class="filter"
+        onclick="setFilter('VOM LIVE',this)"
+      >
         VOM LIVE
       </button>
 
-      <button class="filter" onclick="setFilter('BUSKING',this)">
+      <button
+        class="filter"
+        onclick="setFilter('BUSKING',this)"
+      >
         BUSKING
       </button>
 
-      <button class="filter" onclick="setFilter('OTHER',this)">
+      <button
+        class="filter"
+        onclick="setFilter('OTHER',this)"
+      >
         OTHER
       </button>
 
     </div>
+
 
     <button
       id="addButton"
@@ -1348,25 +1916,34 @@ button{color:inherit;}
 
 
   <div id="calendarContainer">
+
     <div class="empty">
       일정을 불러오는 중...
     </div>
+
   </div>
 
 </main>
 
 
-<!-- ==================================
+<!-- =====================================================
      EVENT EDITOR
-================================== -->
+===================================================== -->
 
-<div id="eventOverlay" class="overlay">
+<div
+  id="eventOverlay"
+  class="overlay"
+>
 
   <div class="modal">
 
+
     <div class="modal-top">
 
-      <h2 id="modalTitle" class="modal-title">
+      <h2
+        id="modalTitle"
+        class="modal-title"
+      >
         일정 추가
       </h2>
 
@@ -1380,8 +1957,16 @@ button{color:inherit;}
     </div>
 
 
-    <input type="hidden" id="editingId">
-    <input type="hidden" id="eventType" value="VOM LIVE">
+    <input
+      type="hidden"
+      id="editingId"
+    >
+
+    <input
+      type="hidden"
+      id="eventType"
+      value="VOM LIVE"
+    >
 
 
     <!-- 종류 -->
@@ -1396,6 +1981,7 @@ button{color:inherit;}
         종류를 고르면 자주 사용하는 장소와 항목이 자동으로 표시됩니다.
       </div>
 
+
       <div class="type-picker">
 
         <button
@@ -1405,8 +1991,13 @@ button{color:inherit;}
           type="button"
         >
           VOM LIVE
-          <span>Live</span>
+
+          <span>
+            Live
+          </span>
+
         </button>
+
 
         <button
           id="type-busking"
@@ -1415,8 +2006,13 @@ button{color:inherit;}
           type="button"
         >
           BUSKING
-          <span>Busking</span>
+
+          <span>
+            Busking
+          </span>
+
         </button>
+
 
         <button
           id="type-other"
@@ -1425,7 +2021,11 @@ button{color:inherit;}
           type="button"
         >
           OTHER
-          <span>Other</span>
+
+          <span>
+            Other
+          </span>
+
         </button>
 
       </div>
@@ -1433,9 +2033,10 @@ button{color:inherit;}
     </section>
 
 
-    <!-- 항목 / 장소 -->
+    <!-- 장소 / 항목 -->
 
     <section class="form-section">
+
 
       <div
         id="presetTitle"
@@ -1444,12 +2045,14 @@ button{color:inherit;}
         연습실
       </div>
 
+
       <div
         id="presetHelp"
         class="form-help"
       >
         자주 사용하는 연습실을 선택하세요.
       </div>
+
 
       <div class="preset-row">
 
@@ -1458,6 +2061,7 @@ button{color:inherit;}
           class="pretty-select"
           onchange="presetChanged()"
         ></select>
+
 
         <button
           class="add-preset"
@@ -1515,7 +2119,9 @@ button{color:inherit;}
 
       <div class="field">
 
-        <label>일정 제목</label>
+        <label>
+          일정 제목
+        </label>
 
         <input
           id="eventTitle"
@@ -1528,9 +2134,12 @@ button{color:inherit;}
 
       <div class="date-time-grid">
 
+
         <div class="field date-field">
 
-          <label>날짜</label>
+          <label>
+            날짜
+          </label>
 
           <input
             id="eventDate"
@@ -1541,9 +2150,11 @@ button{color:inherit;}
         </div>
 
 
-        <div class="field">
+        <div class="field time-field">
 
-          <label>시작</label>
+          <label>
+            시작
+          </label>
 
           <select
             id="startTime"
@@ -1553,9 +2164,11 @@ button{color:inherit;}
         </div>
 
 
-        <div class="field">
+        <div class="field time-field">
 
-          <label>종료</label>
+          <label>
+            종료
+          </label>
 
           <select
             id="endTime"
@@ -1569,7 +2182,9 @@ button{color:inherit;}
 
       <div class="field">
 
-        <label>상세 내용</label>
+        <label>
+          상세 내용
+        </label>
 
         <textarea
           id="eventDescription"
@@ -1591,7 +2206,7 @@ button{color:inherit;}
       </div>
 
       <div class="form-help">
-        이미 올린 사진을 다시 쓰거나 새 사진을 추가할 수 있습니다.
+        이미 올린 사진을 다시 사용하거나 새 이미지를 추가할 수 있습니다.
       </div>
 
 
@@ -1611,11 +2226,13 @@ button{color:inherit;}
           onchange="previewUpload()"
         >
 
+
         <input
           id="imageName"
           class="text-input image-name"
           placeholder="사진 이름 (예: VOM LIVE 기본)"
         >
+
 
         <div
           id="uploadPreview"
@@ -1651,49 +2268,69 @@ button{color:inherit;}
 </div>
 
 
-<!-- MENU -->
+<!-- =====================================================
+     MENU
+===================================================== -->
 
-<div id="menuOverlay" class="overlay">
+<div
+  id="menuOverlay"
+  class="overlay"
+>
 
   <div class="menu-card">
 
+
     <div class="menu-top">
 
-      <h3>VOM Menu</h3>
+      <h3>
+        VOM Menu
+      </h3>
 
-      <button class="close" onclick="closeMenu()">
+      <button
+        class="close"
+        onclick="closeMenu()"
+      >
         ✕
       </button>
 
     </div>
 
+
     <a href="/">
-      HOME <span>→</span>
+      HOME
+      <span>→</span>
     </a>
 
     <a href="/info/">
-      INFO <span>→</span>
+      INFO
+      <span>→</span>
     </a>
 
     <a href="/calendar/">
-      CALENDAR <span>→</span>
+      CALENDAR
+      <span>→</span>
     </a>
 
     <a href="/live/">
-      VOM LIVE <span>→</span>
+      VOM LIVE
+      <span>→</span>
     </a>
 
     <a href="/busking/">
-      BUSKING <span>→</span>
+      BUSKING
+      <span>→</span>
     </a>
 
     <a href="/notice/">
-      NOTICE <span>→</span>
+      NOTICE
+      <span>→</span>
     </a>
 
     <a href="/qna/">
-      Q&A <span>→</span>
+      Q&A
+      <span>→</span>
     </a>
+
 
     <button
       id="logoutButton"
@@ -1709,30 +2346,52 @@ button{color:inherit;}
 </div>
 
 
+<!-- =====================================================
+     BOTTOM
+===================================================== -->
+
 <nav class="bottom">
 
+
   <a href="/">
-    <span class="nav-icon">⌂</span>
+    <span class="nav-icon">
+      ⌂
+    </span>
     HOME
   </a>
 
+
   <a href="/info/">
-    <span class="nav-icon">ⓘ</span>
+    <span class="nav-icon">
+      ⓘ
+    </span>
     INFO
   </a>
 
-  <a href="/calendar/" class="active">
-    <span class="nav-icon">◫</span>
+
+  <a
+    href="/calendar/"
+    class="active"
+  >
+    <span class="nav-icon">
+      ◫
+    </span>
     CALENDAR
   </a>
 
+
   <a href="/live/">
-    <span class="nav-icon">♬</span>
+    <span class="nav-icon">
+      ♬
+    </span>
     LIVE
   </a>
 
+
   <button onclick="openMenu()">
-    <span class="nav-icon">☰</span>
+    <span class="nav-icon">
+      ☰
+    </span>
     MENU
   </button>
 
@@ -1758,36 +2417,48 @@ let presets = [];
 let mediaLibrary = [];
 
 let currentFilter = 'ALL';
-let currentEventType = 'VOM LIVE';
+
+let currentEventType =
+  'VOM LIVE';
 
 let adminMode = false;
 
 let selectedImageUrl = '';
+
 let uploadPreviewUrl = '';
 
 
-/* =====================================
+/* ======================================================
    ADMIN
-===================================== */
+====================================================== */
 
 async function checkAdmin(){
 
   const { data } =
     await db.auth.getSession();
 
-  const session = data.session;
+  const session =
+    data.session;
+
 
   if(!session){
+
     setAdmin(false);
+
     return;
   }
+
 
   const { data:admin } =
     await db
       .from('admins')
       .select('user_id')
-      .eq('user_id',session.user.id)
+      .eq(
+        'user_id',
+        session.user.id
+      )
       .maybeSingle();
+
 
   setAdmin(!!admin);
 }
@@ -1797,20 +2468,24 @@ function setAdmin(active){
 
   adminMode = active;
 
+
   document
     .getElementById('adminBadge')
     .classList
     .toggle('show',active);
+
 
   document
     .getElementById('addButton')
     .classList
     .toggle('show',active);
 
+
   document
     .getElementById('logoutButton')
     .classList
     .toggle('show',active);
+
 
   renderCalendar();
 }
@@ -1826,9 +2501,9 @@ async function adminLogout(){
 }
 
 
-/* =====================================
+/* ======================================================
    LOAD
-===================================== */
+====================================================== */
 
 async function loadPresets(){
 
@@ -1836,17 +2511,26 @@ async function loadPresets(){
     await db
       .from('locations')
       .select('*')
-      .order('created_at',{
-        ascending:true
-      });
+      .order(
+        'created_at',
+        {
+          ascending:true
+        }
+      );
+
 
   if(error){
+
     console.error(error);
+
     presets = [];
+
     return;
   }
 
-  presets = data || [];
+
+  presets =
+    data || [];
 }
 
 
@@ -1856,17 +2540,26 @@ async function loadMedia(){
     await db
       .from('media_library')
       .select('*')
-      .order('created_at',{
-        ascending:false
-      });
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
+
 
   if(error){
+
     console.error(error);
+
     mediaLibrary = [];
+
     return;
   }
 
-  mediaLibrary = data || [];
+
+  mediaLibrary =
+    data || [];
 }
 
 
@@ -1876,105 +2569,168 @@ async function loadEvents(){
     await db
       .from('events')
       .select('*')
-      .order('event_date',{
-        ascending:true
-      });
+      .order(
+        'event_date',
+        {
+          ascending:true
+        }
+      );
+
 
   if(error){
 
     document
-      .getElementById('calendarContainer')
+      .getElementById(
+        'calendarContainer'
+      )
       .innerHTML =
       `
         <section class="month">
+
           <div class="empty">
+
             일정을 불러오지 못했습니다.<br>
+
             ${escapeHtml(error.message)}
+
           </div>
+
         </section>
       `;
 
     return;
   }
 
-  events = data || [];
+
+  events =
+    data || [];
+
 
   renderCalendar();
 }
 
 
-/* =====================================
-   TIME - 10 MINUTES
-===================================== */
+/* ======================================================
+   TIME - 10 MINUTE
+====================================================== */
 
 function buildTimeSelects(){
 
   const selects = [
-    document.getElementById('startTime'),
-    document.getElementById('endTime')
+
+    document
+      .getElementById('startTime'),
+
+    document
+      .getElementById('endTime')
+
   ];
+
 
   selects.forEach(select => {
 
     select.innerHTML =
-      `<option value="">시간 미정</option>`;
+      `
+        <option value="">
+          미정
+        </option>
+      `;
 
-    for(let hour=0; hour<24; hour++){
 
-      for(let minute=0; minute<60; minute+=10){
+    for(
+      let hour = 0;
+      hour < 24;
+      hour++
+    ){
+
+      for(
+        let minute = 0;
+        minute < 60;
+        minute += 10
+      ){
 
         const h =
-          String(hour).padStart(2,'0');
+          String(hour)
+            .padStart(2,'0');
+
 
         const m =
-          String(minute).padStart(2,'0');
+          String(minute)
+            .padStart(2,'0');
+
 
         const value =
           `${h}:${m}`;
 
+
         const option =
-          document.createElement('option');
+          document
+            .createElement(
+              'option'
+            );
 
-        option.value = value;
-        option.textContent = value;
 
-        select.appendChild(option);
+        option.value =
+          value;
+
+
+        option.textContent =
+          value;
+
+
+        select
+          .appendChild(option);
       }
     }
   });
 }
 
 
-/* =====================================
+/* ======================================================
    FILTER
-===================================== */
+====================================================== */
 
-function setFilter(filter,button){
+function setFilter(
+  filter,
+  button
+){
 
-  currentFilter = filter;
+  currentFilter =
+    filter;
+
 
   document
     .querySelectorAll('.filter')
     .forEach(btn => {
-      btn.classList.remove('active');
+
+      btn
+        .classList
+        .remove('active');
+
     });
 
-  button.classList.add('active');
+
+  button
+    .classList
+    .add('active');
+
 
   renderCalendar();
 }
 
 
-/* =====================================
-   RENDER CALENDAR
-===================================== */
+/* ======================================================
+   CALENDAR RENDER
+====================================================== */
 
 function renderCalendar(){
 
   const container =
-    document.getElementById(
-      'calendarContainer'
-    );
+    document
+      .getElementById(
+        'calendarContainer'
+      );
+
 
   const filtered =
     currentFilter === 'ALL'
@@ -1982,10 +2738,11 @@ function renderCalendar(){
     ? events
 
     : events.filter(
-        event =>
-          event.event_type ===
+        item =>
+          item.event_type ===
           currentFilter
       );
+
 
   if(!filtered.length){
 
@@ -2003,44 +2760,68 @@ function renderCalendar(){
     return;
   }
 
+
   const groups = {};
 
-  filtered.forEach(event => {
 
-    if(!event.event_date) return;
+  filtered.forEach(item => {
+
+    if(!item.event_date){
+      return;
+    }
+
 
     const key =
-      event.event_date.slice(0,7);
+      item.event_date
+        .slice(0,7);
+
 
     if(!groups[key]){
       groups[key] = [];
     }
 
-    groups[key].push(event);
+
+    groups[key]
+      .push(item);
   });
 
+
   container.innerHTML = '';
+
 
   Object
     .keys(groups)
     .sort()
     .forEach(monthKey => {
 
-      const [year,month] =
+
+      const [
+        year,
+        month
+      ] =
         monthKey.split('-');
 
-      const section =
-        document.createElement('section');
 
-      section.className = 'month';
+      const section =
+        document
+          .createElement(
+            'section'
+          );
+
+
+      section.className =
+        'month';
+
 
       section.innerHTML =
       `
         <div class="month-head">
 
           <h2>
+
             ${monthName(month)}
             ${year}
+
           </h2>
 
           <span>
@@ -2049,34 +2830,42 @@ function renderCalendar(){
 
         </div>
 
+
         <div class="event-list">
 
           ${
             groups[monthKey]
-              .map(createEventHtml)
+              .map(
+                createEventHtml
+              )
               .join('')
           }
 
         </div>
       `;
 
-      container.appendChild(section);
+
+      container
+        .appendChild(section);
     });
 }
 
 
-function createEventHtml(event){
+function createEventHtml(item){
 
   const date =
     new Date(
-      event.event_date +
+      item.event_date +
       'T00:00:00'
     );
+
 
   const day =
     String(
       date.getDate()
-    ).padStart(2,'0');
+    )
+    .padStart(2,'0');
+
 
   const week =
     [
@@ -2089,39 +2878,53 @@ function createEventHtml(event){
       'SAT'
     ][date.getDay()];
 
+
   const preset =
     presets.find(
-      item =>
-        String(item.id) ===
-        String(event.location_id)
+      p =>
+        String(p.id) ===
+        String(item.location_id)
     );
+
 
   const locationName =
     preset?.name ||
-    event.location ||
+    item.location ||
     '';
 
+
   const imageUrl =
-    event.image_url ||
+    item.image_url ||
     preset?.image_url ||
     '';
 
-  let cls = 'other';
 
-  if(event.event_type === 'VOM LIVE'){
+  let cls =
+    'other';
+
+
+  if(
+    item.event_type ===
+    'VOM LIVE'
+  ){
     cls = 'live';
   }
 
-  if(event.event_type === 'BUSKING'){
+
+  if(
+    item.event_type ===
+    'BUSKING'
+  ){
     cls = 'busking';
   }
+
 
   return `
     <article
       class="event ${cls} ${adminMode ? 'admin' : ''}"
-      onclick="openEventDetail(${event.id})"
+      onclick="openEventDetail(${item.id})"
       tabindex="0"
-      onkeydown="if(event.key==='Enter') openEventDetail(${event.id})"
+      onkeydown="if(event.key==='Enter') openEventDetail(${item.id})"
     >
 
       <div class="date-box">
@@ -2144,16 +2947,27 @@ function createEventHtml(event){
       <div class="event-main">
 
         <div class="type">
-          ${escapeHtml(event.event_type || 'OTHER')}
+
+          ${escapeHtml(
+            item.event_type ||
+            'OTHER'
+          )}
+
         </div>
 
+
         <h3>
-          ${escapeHtml(event.title || '')}
+
+          ${escapeHtml(
+            item.title || ''
+          )}
+
         </h3>
+
 
         <div class="event-meta">
 
-          ${makeTime(event)}
+          ${makeTime(item)}
 
           ${
             locationName
@@ -2165,17 +2979,23 @@ function createEventHtml(event){
 
         </div>
 
+
         ${
-          event.description
+          item.description
 
           ? `
             <div class="event-description">
-              ${escapeHtml(event.description)}
+
+              ${escapeHtml(
+                item.description
+              )}
+
             </div>
           `
 
           : ''
         }
+
 
         <div class="detail-hint">
           자세히 보기 →
@@ -2212,14 +3032,15 @@ function createEventHtml(event){
 
           <button
             class="edit-btn"
-            onclick="event.stopPropagation(); editEvent(${event.id})"
+            onclick="event.stopPropagation(); editEvent(${item.id})"
           >
             수정
           </button>
 
+
           <button
             class="delete-btn"
-            onclick="event.stopPropagation(); deleteEvent(${event.id})"
+            onclick="event.stopPropagation(); deleteEvent(${item.id})"
           >
             삭제
           </button>
@@ -2240,69 +3061,105 @@ function openEventDetail(id){
 }
 
 
-function makeTime(event){
+function makeTime(item){
 
   const times = [];
 
-  if(event.start_time){
-    times.push(formatTime(event.start_time));
+
+  if(item.start_time){
+
+    times.push(
+      formatTime(
+        item.start_time
+      )
+    );
   }
 
-  if(event.end_time){
-    times.push(formatTime(event.end_time));
+
+  if(item.end_time){
+
+    times.push(
+      formatTime(
+        item.end_time
+      )
+    );
   }
+
 
   return times.join(' - ');
 }
 
 
-/* =====================================
-   TYPE PICKER
-===================================== */
+/* ======================================================
+   EVENT TYPE
+====================================================== */
 
 function setEventType(type){
 
-  currentEventType = type;
+  currentEventType =
+    type;
+
 
   document
     .getElementById('eventType')
-    .value = type;
+    .value =
+    type;
+
 
   document
-    .querySelectorAll('.type-option')
+    .querySelectorAll(
+      '.type-option'
+    )
     .forEach(btn => {
-      btn.classList.remove('active');
+
+      btn
+        .classList
+        .remove('active');
+
     });
 
+
   if(type === 'VOM LIVE'){
+
     document
       .getElementById('type-live')
-      .classList.add('active');
+      .classList
+      .add('active');
   }
+
 
   if(type === 'BUSKING'){
+
     document
       .getElementById('type-busking')
-      .classList.add('active');
+      .classList
+      .add('active');
   }
 
+
   if(type === 'OTHER'){
+
     document
       .getElementById('type-other')
-      .classList.add('active');
+      .classList
+      .add('active');
   }
+
 
   updatePresetCopy();
 
   populatePresets();
 
+  updateTitlePlaceholder();
+
+
   const preset =
     getSelectedPreset();
+
 
   selectedImageUrl =
     preset?.image_url || '';
 
-  updateTitlePlaceholder();
 
   renderImageLibrary();
 }
@@ -2311,24 +3168,40 @@ function setEventType(type){
 function updatePresetCopy(){
 
   const title =
-    document.getElementById('presetTitle');
+    document
+      .getElementById(
+        'presetTitle'
+      );
+
 
   const help =
-    document.getElementById('presetHelp');
+    document
+      .getElementById(
+        'presetHelp'
+      );
 
-  if(currentEventType === 'VOM LIVE'){
+
+  if(
+    currentEventType ===
+    'VOM LIVE'
+  ){
 
     title.textContent =
       '연습실';
+
 
     help.textContent =
       '자주 사용하는 연습실을 선택하세요.';
   }
 
-  else if(currentEventType === 'BUSKING'){
+  else if(
+    currentEventType ===
+    'BUSKING'
+  ){
 
     title.textContent =
       '버스킹 장소';
+
 
     help.textContent =
       '등록해둔 버스킹 장소를 선택하세요.';
@@ -2339,8 +3212,9 @@ function updatePresetCopy(){
     title.textContent =
       '세부 항목';
 
+
     help.textContent =
-      '운영진 회의 등 자주 쓰는 항목을 선택하세요.';
+      '운영진 회의 등 자주 사용하는 항목을 선택하세요.';
   }
 }
 
@@ -2348,37 +3222,52 @@ function updatePresetCopy(){
 function updateTitlePlaceholder(){
 
   const input =
-    document.getElementById('eventTitle');
+    document
+      .getElementById(
+        'eventTitle'
+      );
 
-  if(currentEventType === 'VOM LIVE'){
+
+  if(
+    currentEventType ===
+    'VOM LIVE'
+  ){
+
     input.placeholder =
       '예: VOM LIVE #05';
   }
 
-  else if(currentEventType === 'BUSKING'){
+  else if(
+    currentEventType ===
+    'BUSKING'
+  ){
+
     input.placeholder =
       '예: BUSKING @한강';
   }
 
   else{
+
     input.placeholder =
       '예: 운영진 회의';
   }
 }
 
 
-/* =====================================
+/* ======================================================
    PRESETS
-===================================== */
+====================================================== */
 
 function populatePresets(
   preferredId = null
 ){
 
   const select =
-    document.getElementById(
-      'presetSelect'
-    );
+    document
+      .getElementById(
+        'presetSelect'
+      );
+
 
   const list =
     presets.filter(
@@ -2387,33 +3276,55 @@ function populatePresets(
         currentEventType
     );
 
+
   select.innerHTML = '';
+
 
   if(!list.length){
 
     const option =
-      document.createElement('option');
+      document
+        .createElement(
+          'option'
+        );
+
 
     option.value = '';
+
 
     option.textContent =
       '등록된 항목 없음';
 
-    select.appendChild(option);
+
+    select
+      .appendChild(option);
+
 
     return;
   }
 
+
   list.forEach(item => {
 
     const option =
-      document.createElement('option');
+      document
+        .createElement(
+          'option'
+        );
 
-    option.value = item.id;
-    option.textContent = item.name;
 
-    select.appendChild(option);
+    option.value =
+      item.id;
+
+
+    option.textContent =
+      item.name;
+
+
+    select
+      .appendChild(option);
   });
+
 
   if(
     preferredId &&
@@ -2435,8 +3346,10 @@ function presetChanged(){
   const preset =
     getSelectedPreset();
 
+
   selectedImageUrl =
     preset?.image_url || '';
+
 
   renderImageLibrary();
 }
@@ -2446,8 +3359,11 @@ function getSelectedPreset(){
 
   const id =
     document
-      .getElementById('presetSelect')
+      .getElementById(
+        'presetSelect'
+      )
       .value;
+
 
   return presets.find(
     item =>
@@ -2460,7 +3376,9 @@ function getSelectedPreset(){
 function toggleNewPreset(){
 
   document
-    .getElementById('newPreset')
+    .getElementById(
+      'newPreset'
+    )
     .classList
     .toggle('show');
 }
@@ -2468,19 +3386,28 @@ function toggleNewPreset(){
 
 async function saveNewPreset(){
 
-  if(!adminMode) return;
+  if(!adminMode){
+    return;
+  }
+
 
   const name =
     document
-      .getElementById('newPresetName')
+      .getElementById(
+        'newPresetName'
+      )
       .value
       .trim();
 
+
   const address =
     document
-      .getElementById('newPresetAddress')
+      .getElementById(
+        'newPresetAddress'
+      )
       .value
       .trim();
+
 
   if(!name){
 
@@ -2491,18 +3418,24 @@ async function saveNewPreset(){
     return;
   }
 
+
   const { data,error } =
     await db
       .from('locations')
       .insert({
+
         name,
+
         location_type:
           currentEventType,
+
         address:
           address || null
+
       })
       .select()
       .single();
+
 
   if(error){
 
@@ -2514,40 +3447,57 @@ async function saveNewPreset(){
     return;
   }
 
+
   presets.push(data);
 
-  document
-    .getElementById('newPresetName')
-    .value = '';
 
   document
-    .getElementById('newPresetAddress')
+    .getElementById(
+      'newPresetName'
+    )
     .value = '';
 
+
   document
-    .getElementById('newPreset')
+    .getElementById(
+      'newPresetAddress'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'newPreset'
+    )
     .classList
     .remove('show');
 
-  populatePresets(data.id);
+
+  populatePresets(
+    data.id
+  );
+
 
   presetChanged();
 }
 
 
-/* =====================================
-   IMAGE LIBRARY
-===================================== */
+/* ======================================================
+   IMAGES
+====================================================== */
 
 function renderImageLibrary(){
 
   const box =
-    document.getElementById(
-      'imageLibrary'
-    );
+    document
+      .getElementById(
+        'imageLibrary'
+      );
+
 
   const preset =
     getSelectedPreset();
+
 
   const items =
     mediaLibrary.filter(
@@ -2555,6 +3505,7 @@ function renderImageLibrary(){
         item.media_type ===
         currentEventType
     );
+
 
   let html = `
     <button
@@ -2625,7 +3576,9 @@ function renderImageLibrary(){
         </div>
 
         <div class="image-choice-name">
+
           ${escapeHtml(item.name)}
+
         </div>
 
       </button>
@@ -2633,19 +3586,24 @@ function renderImageLibrary(){
   });
 
 
-  box.innerHTML = html;
+  box.innerHTML =
+    html;
 }
 
 
 function selectImage(url){
 
-  selectedImageUrl = url;
+  selectedImageUrl =
+    url;
+
 
   document
     .getElementById('imageFile')
     .value = '';
 
+
   clearUploadPreview();
+
 
   renderImageLibrary();
 }
@@ -2658,6 +3616,7 @@ function previewUpload(){
       .getElementById('imageFile')
       .files[0];
 
+
   if(!file){
 
     clearUploadPreview();
@@ -2665,21 +3624,30 @@ function previewUpload(){
     return;
   }
 
+
   if(uploadPreviewUrl){
+
     URL.revokeObjectURL(
       uploadPreviewUrl
     );
   }
 
+
   uploadPreviewUrl =
     URL.createObjectURL(file);
 
-  const preview =
-    document.getElementById(
-      'uploadPreview'
-    );
 
-  preview.classList.add('show');
+  const preview =
+    document
+      .getElementById(
+        'uploadPreview'
+      );
+
+
+  preview
+    .classList
+    .add('show');
+
 
   preview.innerHTML =
   `
@@ -2699,15 +3667,22 @@ function clearUploadPreview(){
       uploadPreviewUrl
     );
 
+
     uploadPreviewUrl = '';
   }
 
-  const preview =
-    document.getElementById(
-      'uploadPreview'
-    );
 
-  preview.classList.remove('show');
+  const preview =
+    document
+      .getElementById(
+        'uploadPreview'
+      );
+
+
+  preview
+    .classList
+    .remove('show');
+
 
   preview.innerHTML = '';
 }
@@ -2720,9 +3695,11 @@ async function uploadNewImage(){
       .getElementById('imageFile')
       .files[0];
 
+
   if(!file){
     return null;
   }
+
 
   const ext =
     file.name
@@ -2730,8 +3707,10 @@ async function uploadNewImage(){
       .pop()
       .toLowerCase();
 
+
   const path =
     `events/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+
 
   const { error } =
     await db
@@ -2746,9 +3725,11 @@ async function uploadNewImage(){
         }
       );
 
+
   if(error){
     throw error;
   }
+
 
   const { data } =
     db
@@ -2756,58 +3737,87 @@ async function uploadNewImage(){
       .from('event-images')
       .getPublicUrl(path);
 
+
   const url =
     data.publicUrl;
 
+
   const name =
     document
-      .getElementById('imageName')
+      .getElementById(
+        'imageName'
+      )
       .value
       .trim()
     ||
     file.name;
 
-  const { data:media,error:mediaError } =
+
+  const {
+    data:media,
+    error:mediaError
+  } =
     await db
       .from('media_library')
       .insert({
+
         name,
+
         media_type:
           currentEventType,
+
         image_url:url
+
       })
       .select()
       .single();
+
 
   if(mediaError){
     throw mediaError;
   }
 
-  mediaLibrary.unshift(media);
+
+  mediaLibrary.unshift(
+    media
+  );
+
 
   return url;
 }
 
 
-/* =====================================
+/* ======================================================
    EVENT MODAL
-===================================== */
+====================================================== */
 
 function openEventModal(){
 
-  if(!adminMode) return;
+  if(!adminMode){
+    return;
+  }
+
 
   clearForm();
 
+
   document
-    .getElementById('modalTitle')
+    .getElementById(
+      'modalTitle'
+    )
     .textContent =
     '일정 추가';
 
-  setEventType('VOM LIVE');
+
+  setEventType(
+    'VOM LIVE'
+  );
+
 
   document
-    .getElementById('eventOverlay')
+    .getElementById(
+      'eventOverlay'
+    )
     .classList
     .add('open');
 }
@@ -2816,9 +3826,12 @@ function openEventModal(){
 function closeEventModal(){
 
   document
-    .getElementById('eventOverlay')
+    .getElementById(
+      'eventOverlay'
+    )
     .classList
     .remove('open');
+
 
   clearUploadPreview();
 }
@@ -2827,67 +3840,105 @@ function closeEventModal(){
 function clearForm(){
 
   document
-    .getElementById('editingId')
+    .getElementById(
+      'editingId'
+    )
     .value = '';
 
-  document
-    .getElementById('eventTitle')
-    .value = '';
 
   document
-    .getElementById('eventDate')
+    .getElementById(
+      'eventTitle'
+    )
     .value = '';
 
-  document
-    .getElementById('startTime')
-    .value = '';
 
   document
-    .getElementById('endTime')
+    .getElementById(
+      'eventDate'
+    )
     .value = '';
 
-  document
-    .getElementById('eventDescription')
-    .value = '';
 
   document
-    .getElementById('imageFile')
+    .getElementById(
+      'startTime'
+    )
     .value = '';
 
-  document
-    .getElementById('imageName')
-    .value = '';
 
   document
-    .getElementById('saveAsDefault')
+    .getElementById(
+      'endTime'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'eventDescription'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'imageFile'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'imageName'
+    )
+    .value = '';
+
+
+  document
+    .getElementById(
+      'saveAsDefault'
+    )
     .checked = false;
 
+
   document
-    .getElementById('newPreset')
+    .getElementById(
+      'newPreset'
+    )
     .classList
     .remove('show');
 
+
   selectedImageUrl = '';
+
 
   clearUploadPreview();
 }
 
 
-/* =====================================
+/* ======================================================
    SAVE
-===================================== */
+====================================================== */
 
 async function saveEvent(){
 
-  if(!adminMode) return;
+  if(!adminMode){
+    return;
+  }
+
 
   const id =
     document
-      .getElementById('editingId')
+      .getElementById(
+        'editingId'
+      )
       .value;
+
 
   const preset =
     getSelectedPreset();
+
 
   if(!preset){
 
@@ -2898,18 +3949,28 @@ async function saveEvent(){
     return;
   }
 
+
   const title =
     document
-      .getElementById('eventTitle')
+      .getElementById(
+        'eventTitle'
+      )
       .value
       .trim();
 
+
   const eventDate =
     document
-      .getElementById('eventDate')
+      .getElementById(
+        'eventDate'
+      )
       .value;
 
-  if(!title || !eventDate){
+
+  if(
+    !title ||
+    !eventDate
+  ){
 
     alert(
       '일정 제목과 날짜를 입력해주세요.'
@@ -2918,20 +3979,26 @@ async function saveEvent(){
     return;
   }
 
+
   try{
 
     const uploaded =
       await uploadNewImage();
 
+
     if(uploaded){
-      selectedImageUrl = uploaded;
+
+      selectedImageUrl =
+        uploaded;
     }
 
 
     if(
       selectedImageUrl &&
       document
-        .getElementById('saveAsDefault')
+        .getElementById(
+          'saveAsDefault'
+        )
         .checked
     ){
 
@@ -2939,13 +4006,19 @@ async function saveEvent(){
         await db
           .from('locations')
           .update({
-            image_url:selectedImageUrl
+            image_url:
+              selectedImageUrl
           })
-          .eq('id',preset.id);
+          .eq(
+            'id',
+            preset.id
+          );
+
 
       if(error){
         throw error;
       }
+
 
       preset.image_url =
         selectedImageUrl;
@@ -2959,21 +4032,28 @@ async function saveEvent(){
 
       title,
 
-      event_date:eventDate,
+      event_date:
+        eventDate,
 
       start_time:
         document
-          .getElementById('startTime')
+          .getElementById(
+            'startTime'
+          )
           .value || null,
 
       end_time:
         document
-          .getElementById('endTime')
+          .getElementById(
+            'endTime'
+          )
           .value || null,
 
       description:
         document
-          .getElementById('eventDescription')
+          .getElementById(
+            'eventDescription'
+          )
           .value
           .trim(),
 
@@ -2985,6 +4065,7 @@ async function saveEvent(){
 
       image_url:
         selectedImageUrl || null
+
     };
 
 
@@ -3015,6 +4096,7 @@ async function saveEvent(){
 
     closeEventModal();
 
+
     await loadEvents();
 
 
@@ -3028,32 +4110,42 @@ async function saveEvent(){
 }
 
 
-/* =====================================
+/* ======================================================
    EDIT
-===================================== */
+====================================================== */
 
 function editEvent(id){
 
-  if(!adminMode) return;
+  if(!adminMode){
+    return;
+  }
+
 
   const item =
     events.find(
-      event =>
-        String(event.id) ===
+      row =>
+        String(row.id) ===
         String(id)
     );
 
-  if(!item) return;
+
+  if(!item){
+    return;
+  }
 
 
   document
-    .getElementById('editingId')
+    .getElementById(
+      'editingId'
+    )
     .value =
     item.id;
 
 
   document
-    .getElementById('modalTitle')
+    .getElementById(
+      'modalTitle'
+    )
     .textContent =
     '일정 수정';
 
@@ -3064,34 +4156,62 @@ function editEvent(id){
 
 
   document
-    .getElementById('eventType')
+    .getElementById(
+      'eventType'
+    )
     .value =
     currentEventType;
 
 
   document
-    .querySelectorAll('.type-option')
-    .forEach(btn =>
-      btn.classList.remove('active')
-    );
+    .querySelectorAll(
+      '.type-option'
+    )
+    .forEach(btn => {
+
+      btn
+        .classList
+        .remove('active');
+
+    });
 
 
-  if(currentEventType === 'VOM LIVE'){
+  if(
+    currentEventType ===
+    'VOM LIVE'
+  ){
+
     document
-      .getElementById('type-live')
-      .classList.add('active');
+      .getElementById(
+        'type-live'
+      )
+      .classList
+      .add('active');
   }
 
-  else if(currentEventType === 'BUSKING'){
+
+  else if(
+    currentEventType ===
+    'BUSKING'
+  ){
+
     document
-      .getElementById('type-busking')
-      .classList.add('active');
+      .getElementById(
+        'type-busking'
+      )
+      .classList
+      .add('active');
   }
+
 
   else{
+
     document
-      .getElementById('type-other')
-      .classList.add('active');
+      .getElementById(
+        'type-other'
+      )
+      .classList
+      .add('active');
   }
 
 
@@ -3099,25 +4219,32 @@ function editEvent(id){
 
   updateTitlePlaceholder();
 
+
   populatePresets(
     item.location_id
   );
 
 
   document
-    .getElementById('eventTitle')
+    .getElementById(
+      'eventTitle'
+    )
     .value =
     item.title || '';
 
 
   document
-    .getElementById('eventDate')
+    .getElementById(
+      'eventDate'
+    )
     .value =
     item.event_date || '';
 
 
   document
-    .getElementById('startTime')
+    .getElementById(
+      'startTime'
+    )
     .value =
     formatTime(
       item.start_time
@@ -3125,7 +4252,9 @@ function editEvent(id){
 
 
   document
-    .getElementById('endTime')
+    .getElementById(
+      'endTime'
+    )
     .value =
     formatTime(
       item.end_time
@@ -3133,23 +4262,31 @@ function editEvent(id){
 
 
   document
-    .getElementById('eventDescription')
+    .getElementById(
+      'eventDescription'
+    )
     .value =
     item.description || '';
 
 
   document
-    .getElementById('imageFile')
+    .getElementById(
+      'imageFile'
+    )
     .value = '';
 
 
   document
-    .getElementById('imageName')
+    .getElementById(
+      'imageName'
+    )
     .value = '';
 
 
   document
-    .getElementById('saveAsDefault')
+    .getElementById(
+      'saveAsDefault'
+    )
     .checked = false;
 
 
@@ -3161,19 +4298,24 @@ function editEvent(id){
 
 
   document
-    .getElementById('eventOverlay')
+    .getElementById(
+      'eventOverlay'
+    )
     .classList
     .add('open');
 }
 
 
-/* =====================================
+/* ======================================================
    DELETE
-===================================== */
+====================================================== */
 
 async function deleteEvent(id){
 
-  if(!adminMode) return;
+  if(!adminMode){
+    return;
+  }
+
 
   if(
     !confirm(
@@ -3183,11 +4325,16 @@ async function deleteEvent(id){
     return;
   }
 
+
   const { error } =
     await db
       .from('events')
       .delete()
-      .eq('id',id);
+      .eq(
+        'id',
+        id
+      );
+
 
   if(error){
 
@@ -3199,25 +4346,33 @@ async function deleteEvent(id){
     return;
   }
 
+
   await loadEvents();
 }
 
 
-/* =====================================
+/* ======================================================
    HELPERS
-===================================== */
+====================================================== */
 
 function formatTime(value){
 
-  if(!value) return '';
+  if(!value){
+    return '';
+  }
 
-  return value.slice(0,5);
+
+  return value.slice(
+    0,
+    5
+  );
 }
 
 
 function monthName(month){
 
   const names = {
+
     '01':'January',
     '02':'February',
     '03':'March',
@@ -3230,7 +4385,9 @@ function monthName(month){
     '10':'October',
     '11':'November',
     '12':'December'
+
   };
+
 
   return names[month] || month;
 }
@@ -3239,10 +4396,17 @@ function monthName(month){
 function escapeHtml(value){
 
   const div =
-    document.createElement('div');
+    document
+      .createElement(
+        'div'
+      );
+
 
   div.textContent =
-    String(value ?? '');
+    String(
+      value ?? ''
+    );
+
 
   return div.innerHTML;
 }
@@ -3251,29 +4415,55 @@ function escapeHtml(value){
 function escapeAttribute(value){
 
   return String(value ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/"/g,'&quot;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;');
+
+    .replace(
+      /&/g,
+      '&amp;'
+    )
+
+    .replace(
+      /"/g,
+      '&quot;'
+    )
+
+    .replace(
+      /</g,
+      '&lt;'
+    )
+
+    .replace(
+      />/g,
+      '&gt;'
+    );
 }
 
 
 function escapeJs(value){
 
   return String(value ?? '')
-    .replace(/\\/g,'\\\\')
-    .replace(/'/g,"\\'");
+
+    .replace(
+      /\\/g,
+      '\\\\'
+    )
+
+    .replace(
+      /'/g,
+      "\\'"
+    );
 }
 
 
-/* =====================================
+/* ======================================================
    MENU
-===================================== */
+====================================================== */
 
 function openMenu(){
 
   document
-    .getElementById('menuOverlay')
+    .getElementById(
+      'menuOverlay'
+    )
     .classList
     .add('open');
 }
@@ -3282,41 +4472,57 @@ function openMenu(){
 function closeMenu(){
 
   document
-    .getElementById('menuOverlay')
+    .getElementById(
+      'menuOverlay'
+    )
     .classList
     .remove('open');
 }
 
 
 document
-  .getElementById('eventOverlay')
+  .getElementById(
+    'eventOverlay'
+  )
   .addEventListener(
     'click',
     function(event){
 
-      if(event.target === this){
+      if(
+        event.target ===
+        this
+      ){
+
         closeEventModal();
       }
+
     }
   );
 
 
 document
-  .getElementById('menuOverlay')
+  .getElementById(
+    'menuOverlay'
+  )
   .addEventListener(
     'click',
     function(event){
 
-      if(event.target === this){
+      if(
+        event.target ===
+        this
+      ){
+
         closeMenu();
       }
+
     }
   );
 
 
-/* =====================================
+/* ======================================================
    START
-===================================== */
+====================================================== */
 
 async function start(){
 
