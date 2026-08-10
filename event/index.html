@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VOM EVENT</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+
+  font-family:"Noto Sans KR",sans-serif;
+
+  color:#11182c;
+
+  background:#f8f7fa;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.aurora{
+  position:fixed;
+  inset:0;
+  z-index:-10;
+
+  background:
+    radial-gradient(
+      circle at 85% 0%,
+      rgba(140,220,211,.48),
+      transparent 33%
+    ),
+    radial-gradient(
+      circle at 70% 15%,
+      rgba(164,151,244,.42),
+      transparent 38%
+    ),
+    #f8f7fa;
+}
+
+.header{
+  width:min(900px,100%);
+  height:78px;
+
+  margin:auto;
+  padding:0 22px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-weight:800;
+  font-size:26px;
+}
+
+.back{
+  padding:10px 15px;
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.65);
+  border:1px solid rgba(255,255,255,.9);
+
+  font-size:11px;
+}
+
+.page{
+  width:min(820px,100%);
+
+  margin:auto;
+
+  padding:
+    45px
+    20px
+    100px;
+}
+
+.type{
+  color:#7661df;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:23px;
+}
+
+.title{
+  margin:7px 0 0;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:clamp(54px,10vw,88px);
+  font-weight:400;
+
+  line-height:.9;
+}
+
+.hero-image{
+  width:100%;
+  aspect-ratio:16/8;
+
+  margin-top:30px;
+
+  overflow:hidden;
+
+  border-radius:28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e9e4ff,
+      #dff0f4
+    );
+
+  box-shadow:
+    0 20px 55px
+    rgba(28,35,72,.08);
+}
+
+.hero-image img{
+  width:100%;
+  height:100%;
+
+  display:block;
+
+  object-fit:cover;
+}
+
+.image-empty{
+  width:100%;
+  height:100%;
+
+  display:grid;
+  place-items:center;
+
+  color:#9189b1;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:34px;
+}
+
+.info-card{
+  margin-top:18px;
+
+  padding:25px;
+
+  border-radius:25px;
+
+  background:rgba(255,255,255,.83);
+  border:1px solid rgba(255,255,255,.94);
+
+  box-shadow:
+    0 15px 40px
+    rgba(28,35,72,.06);
+}
+
+.info-grid{
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:13px;
+}
+
+.info-item{
+  padding:14px;
+
+  border-radius:16px;
+
+  background:#f7f6fa;
+}
+
+.info-item small{
+  display:block;
+
+  margin-bottom:6px;
+
+  color:#9497a5;
+
+  font-size:9px;
+  font-weight:700;
+
+  letter-spacing:1px;
+}
+
+.info-item strong{
+  font-size:13px;
+}
+
+.description{
+  margin-top:18px;
+
+  padding:26px;
+
+  border-radius:25px;
+
+  background:rgba(255,255,255,.83);
+  border:1px solid rgba(255,255,255,.94);
+
+  color:#555d71;
+
+  font-size:13px;
+
+  line-height:1.9;
+
+  white-space:pre-wrap;
+}
+
+.description h2{
+  margin:0 0 15px;
+
+  color:#11182c;
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:32px;
+  font-weight:400;
+}
+
+.category-link{
+  display:none;
+
+  margin-top:18px;
+
+  min-height:64px;
+
+  padding:0 22px;
+
+  border-radius:20px;
+
+  align-items:center;
+  justify-content:space-between;
+
+  color:white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #273562,
+      #414287
+    );
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:23px;
+}
+
+.category-link.show{
+  display:flex;
+}
+
+.loading{
+  padding:80px 20px;
+
+  text-align:center;
+
+  color:#858999;
+}
+
+@media(max-width:600px){
+
+  .page{
+    padding-top:30px;
+  }
+
+  .title{
+    font-size:58px;
+  }
+
+  .hero-image{
+    border-radius:22px;
+    aspect-ratio:16/10;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .info-card,
+  .description{
+    padding:20px;
+    border-radius:21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="aurora"></div>
+
+
+<header class="header">
+
+  <a href="/" class="logo">
+    VOM
+  </a>
+
+  <a href="/calendar/" class="back">
+    ← CALENDAR
+  </a>
+
+</header>
+
+
+<main
+  id="page"
+  class="page"
+>
+
+  <div class="loading">
+    일정을 불러오는 중...
+  </div>
+
+</main>
+
+
+<script>
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+async function loadEvent(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const id =
+    params.get('id');
+
+
+  if(!id){
+
+    showError(
+      '일정 정보가 없습니다.'
+    );
+
+    return;
+  }
+
+
+  const { data:event,error } =
+    await db
+      .from('events')
+      .select('*')
+      .eq('id',id)
+      .maybeSingle();
+
+
+  if(error || !event){
+
+    showError(
+      '일정을 찾을 수 없습니다.'
+    );
+
+    return;
+  }
+
+
+  let location = null;
+
+
+  if(event.location_id){
+
+    const { data } =
+      await db
+        .from('locations')
+        .select('*')
+        .eq(
+          'id',
+          event.location_id
+        )
+        .maybeSingle();
+
+    location = data;
+  }
+
+
+  renderEvent(
+    event,
+    location
+  );
+}
+
+
+function renderEvent(
+  event,
+  location
+){
+
+  document.title =
+    `${event.title} · VOM`;
+
+
+  const page =
+    document.getElementById('page');
+
+
+  const locationName =
+    location?.name ||
+    event.location ||
+    '-';
+
+
+  const imageUrl =
+    event.image_url ||
+    location?.image_url ||
+    '';
+
+
+  const time =
+    makeTime(event) ||
+    '시간 미정';
+
+
+  let categoryLink = '';
+
+
+  if(event.event_type === 'VOM LIVE'){
+
+    categoryLink =
+    `
+      <a
+        href="/live/"
+        class="category-link show"
+      >
+
+        <span>
+          VOM LIVE 자세히 보기
+        </span>
+
+        <span>→</span>
+
+      </a>
+    `;
+  }
+
+
+  if(event.event_type === 'BUSKING'){
+
+    categoryLink =
+    `
+      <a
+        href="/busking/"
+        class="category-link show"
+      >
+
+        <span>
+          BUSKING 자세히 보기
+        </span>
+
+        <span>→</span>
+
+      </a>
+    `;
+  }
+
+
+  page.innerHTML =
+  `
+    <div class="type">
+      ${escapeHtml(
+        event.event_type ||
+        'OTHER'
+      )}
+    </div>
+
+
+    <h1 class="title">
+      ${escapeHtml(
+        event.title || ''
+      )}
+    </h1>
+
+
+    <div class="hero-image">
+
+      ${
+        imageUrl
+
+        ? `
+          <img
+            src="${escapeAttribute(imageUrl)}"
+            alt=""
+          >
+        `
+
+        : `
+          <div class="image-empty">
+            Voice of Melody
+          </div>
+        `
+      }
+
+    </div>
+
+
+    <section class="info-card">
+
+      <div class="info-grid">
+
+
+        <div class="info-item">
+
+          <small>
+            DATE
+          </small>
+
+          <strong>
+            ${formatDate(
+              event.event_date
+            )}
+          </strong>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <small>
+            TIME
+          </small>
+
+          <strong>
+            ${escapeHtml(time)}
+          </strong>
+
+        </div>
+
+
+        <div class="info-item">
+
+          <small>
+            PLACE
+          </small>
+
+          <strong>
+            ${escapeHtml(
+              locationName
+            )}
+          </strong>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+    <section class="description">
+
+      <h2>
+        Details
+      </h2>
+
+      ${
+        event.description
+
+        ? escapeHtml(
+            event.description
+          )
+
+        : '등록된 상세 내용이 없습니다.'
+      }
+
+    </section>
+
+
+    ${categoryLink}
+  `;
+}
+
+
+function makeTime(event){
+
+  const array = [];
+
+  if(event.start_time){
+    array.push(
+      event.start_time.slice(0,5)
+    );
+  }
+
+  if(event.end_time){
+    array.push(
+      event.end_time.slice(0,5)
+    );
+  }
+
+  return array.join(' - ');
+}
+
+
+function formatDate(value){
+
+  if(!value) return '-';
+
+  const date =
+    new Date(
+      value +
+      'T00:00:00'
+    );
+
+  return new Intl.DateTimeFormat(
+    'ko-KR',
+    {
+      year:'numeric',
+      month:'long',
+      day:'numeric',
+      weekday:'short'
+    }
+  ).format(date);
+}
+
+
+function showError(message){
+
+  document
+    .getElementById('page')
+    .innerHTML =
+    `
+      <div class="loading">
+        ${escapeHtml(message)}
+        <br><br>
+        <a href="/calendar/">
+          CALENDAR로 돌아가기 →
+        </a>
+      </div>
+    `;
+}
+
+
+function escapeHtml(value){
+
+  const div =
+    document.createElement('div');
+
+  div.textContent =
+    String(value ?? '');
+
+  return div.innerHTML;
+}
+
+
+function escapeAttribute(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+
+loadEvent();
+</script>
+
+</body>
+</html>
