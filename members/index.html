@@ -17,10 +17,11 @@
 <style>
 :root{
   --ink:#11182c;
-  --muted:#73798b;
-  --purple:#7d68e8;
+  --muted:#74798b;
+  --purple:#7c67e8;
   --purple2:#748bed;
   --line:rgba(28,34,65,.08);
+  --white:rgba(255,255,255,.82);
 }
 
 *{
@@ -36,10 +37,8 @@ body{
   margin:0;
   min-height:100vh;
   overflow-x:hidden;
-
   font-family:"Noto Sans KR",sans-serif;
   color:var(--ink);
-
   background:#f8f7fa;
 }
 
@@ -59,38 +58,21 @@ button{
   color:inherit;
 }
 
-
-/* =====================================================
-   BACKGROUND
-===================================================== */
-
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
-
   overflow:hidden;
-
-  background:
-    linear-gradient(
-      180deg,
-      #f7f4fa 0%,
-      #f8f7fb 55%,
-      #faf9fb 100%
-    );
+  background:linear-gradient(180deg,#f7f4fa 0%,#f8f7fb 55%,#faf9fb 100%);
 }
 
 .aurora::before{
   content:"";
-
   position:absolute;
-
   width:1200px;
   height:700px;
-
   top:-320px;
   right:-280px;
-
   border-radius:50%;
 
   background:
@@ -114,19 +96,14 @@ button{
     );
 
   filter:blur(55px);
-
   transform:rotate(-13deg);
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
+/* HEADER */
 
 .header{
   width:min(1080px,100%);
   height:82px;
-
   margin:auto;
   padding:0 25px;
 
@@ -148,36 +125,26 @@ button{
 
 .brand small{
   margin-top:5px;
-
   font-size:8px;
   font-weight:700;
-
   letter-spacing:3px;
 }
 
 .header-right{
   display:flex;
   align-items:center;
-
   gap:9px;
 }
 
 .admin-badge{
   display:none;
-
   align-items:center;
   gap:7px;
-
   padding:9px 13px;
-
   border-radius:999px;
-
   color:#6955d2;
-
   background:rgba(126,102,232,.10);
-
   border:1px solid rgba(126,102,232,.15);
-
   font-size:9px;
   font-weight:800;
 }
@@ -189,128 +156,80 @@ button{
 .admin-dot{
   width:7px;
   height:7px;
-
   border-radius:50%;
-
   background:#765fe6;
 }
 
 .menu-btn{
   width:46px;
   height:46px;
-
   border:1px solid rgba(255,255,255,.95);
-
   border-radius:50%;
-
   background:rgba(255,255,255,.68);
-
   box-shadow:0 10px 30px rgba(31,38,76,.08);
-
   cursor:pointer;
 }
 
-
-/* =====================================================
-   PAGE
-===================================================== */
+/* PAGE */
 
 .page{
   width:min(1050px,100%);
-
   margin:auto;
-
-  padding:
-    0
-    22px
-    115px;
+  padding:0 22px 115px;
 }
 
-
-/* =====================================================
-   HERO
-===================================================== */
+/* HERO */
 
 .hero{
-  padding:
-    58px
-    0
-    42px;
+  padding:52px 0 30px;
 }
 
 .hero-label{
   color:#6d73a0;
-
   font-size:10px;
   font-weight:700;
-
   letter-spacing:2.4px;
 }
 
 .hero-title{
-  margin:
-    10px
-    0
-    0;
-
+  margin:8px 0 0;
   font-family:"Nanum Pen Script",cursive;
-
-  font-size:clamp(76px,12vw,120px);
-
+  font-size:clamp(72px,11vw,112px);
   font-weight:400;
-
-  line-height:.78;
+  line-height:.8;
 }
 
 .hero-copy{
-  max-width:570px;
-
-  margin-top:20px;
-
+  max-width:610px;
+  margin-top:16px;
   color:#656c7f;
-
-  font-size:12px;
-
-  line-height:1.8;
+  font-size:11px;
+  line-height:1.75;
 }
 
-
-/* =====================================================
-   TOOLBAR
-===================================================== */
+/* STATS */
 
 .toolbar{
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
-  gap:15px;
-
-  margin-bottom:18px;
+  gap:12px;
+  margin-bottom:12px;
 }
 
 .stats{
   display:flex;
   flex-wrap:wrap;
-
-  gap:8px;
+  gap:7px;
 }
 
 .stat{
-  padding:
-    9px
-    12px;
-
+  padding:8px 11px;
   border-radius:999px;
-
-  background:rgba(255,255,255,.75);
-
-  border:1px solid rgba(255,255,255,.94);
-
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(255,255,255,.95);
   color:#6d7283;
-
-  font-size:10px;
+  font-size:9px;
 }
 
 .stat strong{
@@ -319,24 +238,14 @@ button{
 
 .admin-add{
   display:none;
-
-  min-height:42px;
-
-  padding:
-    0
-    17px;
-
+  min-height:40px;
+  padding:0 16px;
   border:0;
-
   border-radius:999px;
-
   color:white;
-
   background:#171d31;
-
   cursor:pointer;
-
-  font-size:11px;
+  font-size:10px;
   font-weight:700;
 }
 
@@ -344,237 +253,582 @@ button{
   display:block;
 }
 
+/* VIEW MODE */
 
-/* =====================================================
-   FILTER
-===================================================== */
+.view-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-bottom:12px;
+}
+
+.view-tab{
+  min-height:39px;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.96);
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  color:#74798b;
+  cursor:pointer;
+  font-size:10px;
+}
+
+.view-tab.active{
+  color:white;
+  border-color:transparent;
+  background:linear-gradient(135deg,#8168e9,#7588ec);
+}
+
+/* FILTER */
 
 .filters{
   display:flex;
   flex-wrap:wrap;
-
-  gap:7px;
-
-  margin-bottom:15px;
+  gap:6px;
+  margin-bottom:12px;
 }
 
 .filter{
-  min-height:38px;
-
-  padding:
-    0
-    14px;
-
+  min-height:34px;
+  padding:0 12px;
   border:1px solid rgba(255,255,255,.95);
-
   border-radius:999px;
-
-  background:rgba(255,255,255,.72);
-
+  background:rgba(255,255,255,.64);
   color:#74798b;
-
   cursor:pointer;
-
-  font-size:10px;
+  font-size:9px;
 }
 
 .filter.active{
-  color:white;
-
-  border-color:transparent;
-
-  background:
-    linear-gradient(
-      135deg,
-      #8168e9,
-      #7588ec
-    );
+  color:#6755c7;
+  background:#eeebfb;
 }
 
+/* VIEW */
 
-/* =====================================================
-   TABLE
-===================================================== */
+.view-panel{
+  display:none;
+}
+
+.view-panel.active{
+  display:block;
+}
+
+/* TABLE */
 
 .table-shell{
   overflow:auto;
-
-  border-radius:25px;
-
-  background:rgba(255,255,255,.80);
-
-  border:1px solid rgba(255,255,255,.95);
-
-  box-shadow:0 16px 45px rgba(31,37,74,.07);
+  border-radius:22px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 14px 38px rgba(31,37,74,.06);
 }
 
 .member-table{
   width:100%;
-
-  min-width:980px;
-
+  min-width:820px;
+  table-layout:fixed;
   border-collapse:collapse;
 }
 
 .member-table th{
-  padding:
-    14px
-    12px;
-
+  height:39px;
+  padding:7px 8px;
   text-align:left;
-
   color:#8d91a0;
-
-  font-size:9px;
+  font-size:8px;
   font-weight:700;
-
-  letter-spacing:.3px;
-
   border-bottom:1px solid var(--line);
+  white-space:nowrap;
 }
 
 .member-table td{
-  padding:
-    13px
-    12px;
-
-  font-size:10px;
-
+  height:50px;
+  padding:7px 8px;
   border-bottom:1px solid var(--line);
+  font-size:9px;
+  vertical-align:middle;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .member-table tr:last-child td{
   border-bottom:0;
 }
 
-.member-name{
-  font-weight:700;
+.member-table th:nth-child(1),
+.member-table td:nth-child(1){
+  width:90px;
 }
 
-.member-nick{
-  margin-top:3px;
+.member-table th:nth-child(2),
+.member-table td:nth-child(2){
+  width:78px;
+}
 
-  color:#999dab;
+.member-table th:nth-child(3),
+.member-table td:nth-child(3){
+  width:95px;
+}
 
-  font-size:8px;
+.member-table th:nth-child(4),
+.member-table td:nth-child(4){
+  width:70px;
+}
+
+.member-table th:nth-child(5),
+.member-table td:nth-child(5){
+  width:145px;
+}
+
+.member-table th:nth-child(6),
+.member-table td:nth-child(6){
+  width:58px;
+}
+
+.member-table th:nth-child(7),
+.member-table td:nth-child(7){
+  width:62px;
+}
+
+.member-table th:nth-child(8),
+.member-table td:nth-child(8){
+  width:75px;
+}
+
+.member-table th:nth-child(9),
+.member-table td:nth-child(9){
+  width:105px;
+}
+
+.member-name{
+  font-weight:800;
+  font-size:10px;
 }
 
 .role-badge,
 .status-badge{
   display:inline-flex;
-
   align-items:center;
-
-  min-height:26px;
-
-  padding:
-    0
-    9px;
-
+  justify-content:center;
+  min-height:25px;
+  padding:0 8px;
   border-radius:999px;
-
   font-size:8px;
-
   font-weight:700;
 }
 
 .role-badge{
-  color:#6a55cf;
-
+  color:#6955cc;
   background:#eee9ff;
 }
 
 .status-badge{
   color:#327862;
-
   background:#e7f6ef;
 }
 
 .status-badge.sleep{
   color:#8b6e31;
-
   background:#fbf2d7;
 }
 
 .status-badge.out{
   color:#9f5160;
-
   background:#fde9ed;
 }
 
 .action-wrap{
   display:flex;
-  gap:5px;
+  gap:4px;
 }
 
 .edit-btn,
 .disable-btn{
   display:none;
-
-  min-height:29px;
-
-  padding:
-    0
-    9px;
-
+  min-height:27px;
+  padding:0 8px;
   border:0;
-
-  border-radius:9px;
-
+  border-radius:8px;
   cursor:pointer;
-
-  font-size:8px;
+  font-size:7px;
 }
 
 .admin-mode .edit-btn,
 .admin-mode .disable-btn{
   display:inline-flex;
-
   align-items:center;
 }
 
 .edit-btn{
   color:#6653c7;
-
   background:#efedf9;
 }
 
 .disable-btn{
   color:#c14f65;
-
   background:#fff0f2;
 }
 
 .empty{
-  padding:45px 20px;
-
+  padding:38px 20px;
   text-align:center;
-
   color:#9195a4;
+  font-size:10px;
+}
 
+/* BIRTHDAY */
+
+.birthday-shell,
+.age-shell,
+.region-shell{
+  border-radius:24px;
+  background:rgba(255,255,255,.80);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 14px 38px rgba(31,37,74,.06);
+  padding:19px;
+}
+
+.sub-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:15px;
+}
+
+.sub-kicker{
+  color:#7562df;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:19px;
+}
+
+.sub-title{
+  margin:0;
+  font-size:20px;
+}
+
+.sub-copy{
+  margin-top:4px;
+  color:#888c9b;
+  font-size:9px;
+}
+
+.month-tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-bottom:7px;
+  margin-bottom:13px;
+  scrollbar-width:none;
+}
+
+.month-tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.month-btn{
+  flex:0 0 auto;
+  min-width:48px;
+  min-height:34px;
+  border:0;
+  border-radius:999px;
+  color:#777c8e;
+  background:#f1eff7;
+  cursor:pointer;
+  font-size:9px;
+}
+
+.month-btn.active{
+  color:white;
+  background:linear-gradient(135deg,#8068e8,#748bed);
+}
+
+.birthday-list{
+  display:grid;
+  gap:7px;
+}
+
+.birthday-row{
+  min-height:55px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) auto;
+  align-items:center;
+  gap:11px;
+  padding:8px 11px;
+  border-radius:15px;
+  background:#f8f7fb;
+}
+
+.birthday-day{
+  color:#7560db;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:27px;
+  text-align:center;
+}
+
+.birthday-name{
+  font-weight:700;
   font-size:11px;
 }
 
+.birthday-meta{
+  margin-top:2px;
+  color:#9296a5;
+  font-size:8px;
+}
 
-/* =====================================================
-   OVERLAY
-===================================================== */
+.birthday-age{
+  color:#727789;
+  font-size:9px;
+}
+
+/* AGE */
+
+.age-filter{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:13px;
+}
+
+.age-btn{
+  min-height:34px;
+  padding:0 12px;
+  border:0;
+  border-radius:999px;
+  color:#777c8d;
+  background:#f1eff7;
+  cursor:pointer;
+  font-size:9px;
+}
+
+.age-btn.active{
+  color:white;
+  background:linear-gradient(135deg,#8068e8,#748bed);
+}
+
+.age-list{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:7px;
+}
+
+.age-card{
+  min-height:72px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:#f8f7fb;
+}
+
+.age-card strong{
+  font-size:11px;
+}
+
+.age-number{
+  margin-top:6px;
+  color:#765fdd;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:26px;
+}
+
+.age-detail{
+  margin-top:2px;
+  color:#8c90a0;
+  font-size:8px;
+}
+
+/* REGION */
+
+.region-layout{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:14px;
+}
+
+.map-card{
+  position:relative;
+  min-height:470px;
+  overflow:hidden;
+  border-radius:23px;
+  color:white;
+
+  background:
+    radial-gradient(circle at 80% 10%,rgba(122,224,216,.38),transparent 30%),
+    radial-gradient(circle at 12% 90%,rgba(169,115,243,.50),transparent 38%),
+    linear-gradient(145deg,#202c53,#353b7d);
+
+  box-shadow:0 18px 50px rgba(25,31,65,.14);
+}
+
+.map-card::before{
+  content:"KOREA";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%) rotate(-4deg);
+  font-family:"Nanum Pen Script",cursive;
+  font-size:130px;
+  color:rgba(255,255,255,.045);
+  pointer-events:none;
+}
+
+.map-label{
+  position:absolute;
+  left:18px;
+  top:17px;
+  z-index:2;
+}
+
+.map-label span{
+  color:#ddd5ff;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:18px;
+}
+
+.map-label strong{
+  display:block;
+  margin-top:2px;
+  font-size:15px;
+}
+
+.map-stage{
+  position:absolute;
+  inset:72px 22px 22px;
+}
+
+.map-dot{
+  position:absolute;
+  transform:translate(-50%,-50%);
+  border:0;
+  padding:0;
+  background:none;
+  cursor:pointer;
+}
+
+.map-dot-core{
+  width:var(--dot-size);
+  height:var(--dot-size);
+  min-width:24px;
+  min-height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:white;
+  background:linear-gradient(135deg,#9b7cf6,#6ca9ec);
+  border:2px solid rgba(255,255,255,.80);
+  box-shadow:
+    0 0 0 7px rgba(133,111,239,.14),
+    0 8px 20px rgba(0,0,0,.18);
+  font-size:8px;
+  font-weight:800;
+}
+
+.map-dot-name{
+  margin-top:7px;
+  color:white;
+  font-size:8px;
+  font-weight:700;
+  white-space:nowrap;
+  text-shadow:0 2px 10px rgba(0,0,0,.28);
+}
+
+.region-side{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.region-summary{
+  padding:17px;
+  border-radius:19px;
+  background:#f8f7fb;
+}
+
+.region-summary-label{
+  color:#898d9c;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.region-summary-name{
+  margin-top:4px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:32px;
+  color:#705adb;
+}
+
+.region-summary-count{
+  margin-top:2px;
+  color:#707587;
+  font-size:9px;
+}
+
+.region-member-list{
+  display:grid;
+  gap:6px;
+  margin-top:12px;
+}
+
+.region-member{
+  min-height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:7px 10px;
+  border-radius:12px;
+  background:white;
+}
+
+.region-member strong{
+  font-size:9px;
+}
+
+.region-member span{
+  color:#8b8f9e;
+  font-size:7px;
+}
+
+.region-bars{
+  display:grid;
+  gap:7px;
+}
+
+.region-bar-row{
+  display:grid;
+  grid-template-columns:60px 1fr 32px;
+  align-items:center;
+  gap:7px;
+  font-size:8px;
+}
+
+.region-bar-track{
+  height:7px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#eceaf4;
+}
+
+.region-bar-fill{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#8068e8,#72a2ea);
+}
+
+/* OVERLAY */
 
 .overlay{
   position:fixed;
   inset:0;
-
   z-index:200;
-
   display:none;
-
   align-items:center;
   justify-content:center;
-
-  padding:18px;
-
+  padding:14px;
   background:rgba(24,29,54,.36);
-
   backdrop-filter:blur(16px);
 }
 
@@ -582,68 +836,46 @@ button{
   display:flex;
 }
 
-
-/* =====================================================
-   MEMBER MODAL
-===================================================== */
+/* MEMBER MODAL */
 
 .modal{
-  width:min(600px,100%);
-
-  max-height:calc(100vh - 30px);
-
+  width:min(650px,100%);
+  max-height:calc(100vh - 28px);
   overflow-y:auto;
-
-  padding:25px;
-
-  border-radius:29px;
-
+  padding:22px;
+  border-radius:27px;
   background:rgba(255,255,255,.98);
-
   box-shadow:0 28px 80px rgba(20,25,55,.22);
 }
 
 .modal-top{
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
-  margin-bottom:20px;
+  margin-bottom:14px;
 }
 
 .modal-title{
   margin:0;
-
   font-family:"Nanum Pen Script",cursive;
-
-  font-size:38px;
+  font-size:35px;
   font-weight:400;
 }
 
 .close{
-  width:39px;
-  height:39px;
-
+  width:37px;
+  height:37px;
   border:0;
-
   border-radius:50%;
-
   background:#eeeef4;
-
   cursor:pointer;
 }
 
 .form-section{
-  margin-top:12px;
-
-  padding:
-    18px;
-
+  margin-top:10px;
+  padding:15px;
   border:1px solid #ebeaf0;
-
-  border-radius:20px;
-
+  border-radius:18px;
   background:#f8f7fb;
 }
 
@@ -652,39 +884,26 @@ button{
 }
 
 .form-title{
-  font-size:12px;
+  font-size:11px;
   font-weight:700;
 }
 
 .form-help{
-  margin-top:5px;
-  margin-bottom:15px;
-
+  margin-top:3px;
+  margin-bottom:11px;
   color:#9699a8;
-
-  font-size:9px;
-
-  line-height:1.6;
+  font-size:8px;
+  line-height:1.5;
 }
 
 .grid-2{
   display:grid;
-
   grid-template-columns:1fr 1fr;
-
-  gap:10px;
-}
-
-.grid-3{
-  display:grid;
-
-  grid-template-columns:repeat(3,1fr);
-
-  gap:10px;
+  gap:9px;
 }
 
 .field{
-  margin-top:12px;
+  margin-top:9px;
 }
 
 .field:first-child{
@@ -693,12 +912,9 @@ button{
 
 .field label{
   display:block;
-
-  margin-bottom:7px;
-
+  margin-bottom:5px;
   color:#262b3e;
-
-  font-size:10px;
+  font-size:9px;
   font-weight:700;
 }
 
@@ -706,68 +922,42 @@ button{
 .pretty-select,
 .text-area{
   width:100%;
-
   border:1px solid #dddce5;
-
-  border-radius:14px;
-
+  border-radius:13px;
   background:white;
-
   color:#303548;
-
   outline:none;
-
-  font-size:12px;
+  font-size:11px;
 }
 
 .text-input,
 .pretty-select{
-  min-height:48px;
-
-  padding:
-    0
-    13px;
+  min-height:43px;
+  padding:0 12px;
 }
 
 .pretty-select{
   appearance:none;
   -webkit-appearance:none;
-
-  padding-right:38px;
-
+  padding-right:36px;
   cursor:pointer;
 
   background-image:
-    linear-gradient(
-      45deg,
-      transparent 50%,
-      #6c7184 50%
-    ),
-    linear-gradient(
-      135deg,
-      #6c7184 50%,
-      transparent 50%
-    );
+    linear-gradient(45deg,transparent 50%,#6c7184 50%),
+    linear-gradient(135deg,#6c7184 50%,transparent 50%);
 
   background-position:
-    calc(100% - 18px) 21px,
-    calc(100% - 13px) 21px;
+    calc(100% - 17px) 19px,
+    calc(100% - 12px) 19px;
 
-  background-size:
-    5px 5px,
-    5px 5px;
-
+  background-size:5px 5px,5px 5px;
   background-repeat:no-repeat;
 }
 
 .text-area{
-  min-height:95px;
-
-  padding:
-    13px;
-
+  min-height:72px;
+  padding:11px;
   resize:vertical;
-
   line-height:1.6;
 }
 
@@ -775,51 +965,38 @@ button{
 .pretty-select:focus,
 .text-area:focus{
   border-color:#8f7ce6;
-
-  box-shadow:
-    0 0 0 4px
-    rgba(128,105,233,.09);
+  box-shadow:0 0 0 4px rgba(128,105,233,.09);
 }
 
+.birth-hint{
+  margin-top:5px;
+  color:#9699a7;
+  font-size:7px;
+}
 
-/* =====================================================
-   PRESET SELECT
-===================================================== */
+/* PRESET */
 
 .preset-row{
   display:grid;
-
-  grid-template-columns:
-    1fr
-    96px;
-
-  gap:7px;
+  grid-template-columns:1fr 88px;
+  gap:6px;
 }
 
 .new-option-btn{
   border:0;
-
-  border-radius:13px;
-
+  border-radius:12px;
   color:#6553c5;
-
   background:#eceaf7;
-
   cursor:pointer;
-
-  font-size:9px;
+  font-size:8px;
   font-weight:700;
 }
 
 .new-option-box{
   display:none;
-
-  margin-top:8px;
-
-  padding:10px;
-
-  border-radius:14px;
-
+  margin-top:7px;
+  padding:9px;
+  border-radius:13px;
   background:#efedf5;
 }
 
@@ -829,138 +1006,83 @@ button{
 
 .new-option-save{
   width:100%;
-
-  min-height:40px;
-
-  margin-top:7px;
-
+  min-height:37px;
+  margin-top:6px;
   border:0;
-
-  border-radius:11px;
-
+  border-radius:10px;
   color:white;
-
   background:#171d31;
-
   cursor:pointer;
-
-  font-size:9px;
+  font-size:8px;
   font-weight:700;
 }
-
-
-/* =====================================================
-   SAVE
-===================================================== */
 
 .save{
   width:100%;
-
-  min-height:51px;
-
-  margin-top:16px;
-
+  min-height:47px;
+  margin-top:12px;
   border:0;
-
-  border-radius:15px;
-
+  border-radius:14px;
   color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #8169e8,
-      #7189eb
-    );
-
+  background:linear-gradient(135deg,#8169e8,#7189eb);
   cursor:pointer;
-
   font-weight:700;
+  font-size:12px;
 }
 
-
-/* =====================================================
-   MENU
-===================================================== */
+/* MENU */
 
 .menu-card{
   width:min(400px,100%);
-
-  padding:24px;
-
+  padding:22px;
   border-radius:27px;
-
   background:rgba(255,255,255,.97);
 }
 
 .menu-card a{
-  min-height:55px;
-
+  min-height:52px;
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
   border-bottom:1px solid var(--line);
-
-  font-size:13px;
+  font-size:12px;
 }
 
-
-/* =====================================================
-   BOTTOM
-===================================================== */
+/* BOTTOM */
 
 .bottom{
   position:fixed;
-
   z-index:80;
-
   left:50%;
   bottom:10px;
-
   transform:translateX(-50%);
 
   width:min(720px,calc(100% - 24px));
-
   height:67px;
 
   display:grid;
-
   grid-template-columns:repeat(5,1fr);
 
   overflow:hidden;
-
   border-radius:22px;
-
   background:rgba(255,255,255,.82);
-
   border:1px solid rgba(255,255,255,.95);
 
   box-shadow:0 14px 42px rgba(30,37,75,.12);
-
   backdrop-filter:blur(23px);
 }
 
 .bottom a,
 .bottom button{
   border:0;
-
   background:none;
-
   display:flex;
-
   flex-direction:column;
-
   align-items:center;
   justify-content:center;
-
   gap:3px;
-
   color:#777c8d;
-
   cursor:pointer;
-
   font-size:8px;
 }
 
@@ -968,16 +1090,12 @@ button{
   font-size:18px;
 }
 
+/* MOBILE */
 
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media(max-width:700px){
+@media(max-width:720px){
 
   .header{
     height:70px;
-
     padding:0 16px;
   }
 
@@ -990,16 +1108,19 @@ button{
   }
 
   .hero{
-    padding:45px 0 35px;
+    padding:38px 0 26px;
   }
 
   .hero-title{
-    font-size:82px;
+    font-size:78px;
+  }
+
+  .hero-copy{
+    font-size:10px;
   }
 
   .toolbar{
     align-items:flex-start;
-
     flex-direction:column;
   }
 
@@ -1007,27 +1128,85 @@ button{
     width:100%;
   }
 
-  .grid-2,
-  .grid-3{
+  .view-tabs{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    scrollbar-width:none;
+  }
+
+  .view-tabs::-webkit-scrollbar{
+    display:none;
+  }
+
+  .view-tab{
+    flex:0 0 auto;
+  }
+
+  .member-table{
+    min-width:800px;
+  }
+
+  .birthday-shell,
+  .age-shell,
+  .region-shell{
+    padding:14px;
+    border-radius:20px;
+  }
+
+  .age-list{
     grid-template-columns:1fr;
+  }
+
+  .region-layout{
+    grid-template-columns:1fr;
+  }
+
+  .map-card{
+    min-height:390px;
+  }
+
+  .map-card::before{
+    font-size:90px;
+  }
+
+  .modal{
+    width:calc(100vw - 18px);
+    max-height:calc(100dvh - 18px);
+    padding:17px;
+    border-radius:23px;
+  }
+
+  .grid-2{
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+  }
+
+  .text-input,
+  .pretty-select{
+    min-height:42px;
   }
 
   .preset-row{
+    grid-template-columns:1fr 76px;
+  }
+}
+
+@media(max-width:470px){
+
+  .grid-2{
     grid-template-columns:1fr;
   }
 
-  .new-option-btn{
-    min-height:42px;
+  .region-bar-row{
+    grid-template-columns:52px 1fr 28px;
   }
 }
 </style>
 </head>
 
-
 <body>
 
 <div class="aurora"></div>
-
 
 <header class="header">
 
@@ -1036,17 +1215,12 @@ button{
     <small>VOICE OF MELODY</small>
   </a>
 
-
   <div class="header-right">
 
-    <div
-      id="adminBadge"
-      class="admin-badge"
-    >
+    <div id="adminBadge" class="admin-badge">
       <span class="admin-dot"></span>
       ADMIN MODE
     </div>
-
 
     <button
       class="menu-btn"
@@ -1076,8 +1250,8 @@ button{
     </h1>
 
     <div class="hero-copy">
-      VOM 멤버의 기본 정보를 한곳에서 관리합니다.<br>
-      반복되는 항목은 선택식으로 저장해 다음 등록 때 그대로 재사용할 수 있습니다.
+      VOM 멤버 정보를 한곳에서 관리하고,
+      생일 · 나이 · 지역별 현황을 자동으로 확인할 수 있습니다.
     </div>
 
   </section>
@@ -1099,8 +1273,11 @@ button{
         운영진 <strong id="staffCount">0</strong>명
       </div>
 
-    </div>
+      <div class="stat">
+        이번 달 생일 <strong id="birthdayCount">0</strong>명
+      </div>
 
+    </div>
 
     <button
       id="addMemberButton"
@@ -1113,90 +1290,319 @@ button{
   </section>
 
 
-  <div class="filters">
+  <div class="view-tabs">
 
     <button
-      class="filter active"
-      onclick="setFilter('ALL',this)"
+      class="view-tab active"
+      onclick="setView('list',this)"
     >
-      전체
+      전체 명단
     </button>
 
     <button
-      class="filter"
-      onclick="setFilter('활동중',this)"
+      class="view-tab"
+      onclick="setView('birthday',this)"
     >
-      활동중
+      🎂 생일
     </button>
 
     <button
-      class="filter"
-      onclick="setFilter('운영진',this)"
+      class="view-tab"
+      onclick="setView('age',this)"
     >
-      운영진
+      나이별
     </button>
 
     <button
-      class="filter"
-      onclick="setFilter('헬퍼',this)"
+      class="view-tab"
+      onclick="setView('region',this)"
     >
-      헬퍼
-    </button>
-
-    <button
-      class="filter"
-      onclick="setFilter('모임원',this)"
-    >
-      모임원
+      📍 지역별
     </button>
 
   </div>
 
 
-  <section class="table-shell">
+  <!-- LIST -->
 
-    <table class="member-table">
+  <section
+    id="listView"
+    class="view-panel active"
+  >
 
-      <thead>
+    <div class="filters">
 
-        <tr>
+      <button
+        class="filter active"
+        onclick="setFilter('ALL',this)"
+      >
+        전체
+      </button>
 
-          <th>이름</th>
-          <th>구분</th>
-          <th>가입일</th>
-          <th>생년월일</th>
-          <th>지역</th>
-          <th>좋아하는 가수</th>
-          <th>성별</th>
-          <th>가입순서</th>
-          <th>상태</th>
-          <th>관리</th>
+      <button
+        class="filter"
+        onclick="setFilter('활동중',this)"
+      >
+        활동중
+      </button>
 
-        </tr>
+      <button
+        class="filter"
+        onclick="setFilter('운영진',this)"
+      >
+        운영진
+      </button>
 
-      </thead>
+      <button
+        class="filter"
+        onclick="setFilter('헬퍼',this)"
+      >
+        헬퍼
+      </button>
+
+      <button
+        class="filter"
+        onclick="setFilter('모임원',this)"
+      >
+        모임원
+      </button>
+
+    </div>
 
 
-      <tbody id="memberRows">
+    <section class="table-shell">
 
-        <tr>
-          <td colspan="10" class="empty">
-            멤버 정보를 불러오는 중...
-          </td>
-        </tr>
+      <table class="member-table">
 
-      </tbody>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>구분</th>
+            <th>가입일</th>
+            <th>지역</th>
+            <th>좋아하는 가수</th>
+            <th>성별</th>
+            <th>가입순서</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+        </thead>
 
-    </table>
+        <tbody id="memberRows">
+
+          <tr>
+            <td
+              colspan="9"
+              class="empty"
+            >
+              멤버 정보를 불러오는 중...
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </section>
+
+  </section>
+
+
+  <!-- BIRTHDAY -->
+
+  <section
+    id="birthdayView"
+    class="view-panel"
+  >
+
+    <div class="birthday-shell">
+
+      <div class="sub-head">
+
+        <div>
+
+          <div class="sub-kicker">
+            Birthday Calendar
+          </div>
+
+          <h2 class="sub-title">
+            월별 생일
+          </h2>
+
+          <div class="sub-copy">
+            생년월일을 기준으로 자동 분류됩니다.
+          </div>
+
+        </div>
+
+      </div>
+
+      <div
+        id="monthTabs"
+        class="month-tabs"
+      ></div>
+
+      <div
+        id="birthdayList"
+        class="birthday-list"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- AGE -->
+
+  <section
+    id="ageView"
+    class="view-panel"
+  >
+
+    <div class="age-shell">
+
+      <div class="sub-head">
+
+        <div>
+
+          <div class="sub-kicker">
+            Age Groups
+          </div>
+
+          <h2 class="sub-title">
+            나이별 보기
+          </h2>
+
+          <div class="sub-copy">
+            오늘 날짜 기준 만 나이로 자동 계산됩니다.
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="age-filter">
+
+        <button
+          class="age-btn active"
+          onclick="setAgeFilter('ALL',this)"
+        >
+          전체
+        </button>
+
+        <button
+          class="age-btn"
+          onclick="setAgeFilter('20-24',this)"
+        >
+          20~24
+        </button>
+
+        <button
+          class="age-btn"
+          onclick="setAgeFilter('25-29',this)"
+        >
+          25~29
+        </button>
+
+        <button
+          class="age-btn"
+          onclick="setAgeFilter('30-34',this)"
+        >
+          30~34
+        </button>
+
+        <button
+          class="age-btn"
+          onclick="setAgeFilter('35+',this)"
+        >
+          35+
+        </button>
+
+      </div>
+
+      <div
+        id="ageList"
+        class="age-list"
+      ></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- REGION -->
+
+  <section
+    id="regionView"
+    class="view-panel"
+  >
+
+    <div class="region-shell">
+
+      <div class="sub-head">
+
+        <div>
+
+          <div class="sub-kicker">
+            Regional Map
+          </div>
+
+          <h2 class="sub-title">
+            VOM 지역 지도
+          </h2>
+
+          <div class="sub-copy">
+            개인 위치가 아닌 등록된 지역 단위 인원만 표시합니다.
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="region-layout">
+
+        <div class="map-card">
+
+          <div class="map-label">
+            <span>Where VOM Sings</span>
+            <strong>Member Map</strong>
+          </div>
+
+          <div
+            id="mapStage"
+            class="map-stage"
+          ></div>
+
+        </div>
+
+
+        <div class="region-side">
+
+          <div
+            id="regionSummary"
+            class="region-summary"
+          >
+            지역을 선택해주세요.
+          </div>
+
+          <div
+            id="regionBars"
+            class="region-bars"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </section>
 
 </main>
 
 
-<!-- =====================================================
-     MEMBER EDITOR
-===================================================== -->
+<!-- MEMBER MODAL -->
 
 <div
   id="memberOverlay"
@@ -1237,7 +1643,7 @@ button{
       </div>
 
       <div class="form-help">
-        자주 바뀌지 않는 멤버 기본 정보를 입력합니다.
+        반복 입력이 많은 항목은 선택식으로 구성했습니다.
       </div>
 
 
@@ -1261,14 +1667,13 @@ button{
         <div class="field">
 
           <label>
-            닉네임
+            구분
           </label>
 
-          <input
-            id="memberNickname"
-            class="text-input"
-            placeholder="선택"
-          >
+          <select
+            id="memberRole"
+            class="pretty-select"
+          ></select>
 
         </div>
 
@@ -1280,11 +1685,11 @@ button{
         <div class="field">
 
           <label>
-            구분
+            활동 상태
           </label>
 
           <select
-            id="memberRole"
+            id="memberStatus"
             class="pretty-select"
           ></select>
 
@@ -1294,13 +1699,16 @@ button{
         <div class="field">
 
           <label>
-            활동 상태
+            가입순서
           </label>
 
-          <select
-            id="memberStatus"
-            class="pretty-select"
-          ></select>
+          <input
+            id="joinOrder"
+            class="text-input"
+            type="number"
+            min="1"
+            placeholder="비우면 자동"
+          >
 
         </div>
 
@@ -1316,7 +1724,7 @@ button{
       </div>
 
       <div class="form-help">
-        운영에 필요한 범위에서만 입력해두면 됩니다.
+        생년월일은 숫자 8자리로 입력하면 자동 변환됩니다.
       </div>
 
 
@@ -1346,8 +1754,15 @@ button{
           <input
             id="birthDate"
             class="text-input"
-            type="date"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="예: 19970704"
+            onblur="formatBirthInput()"
           >
+
+          <div class="birth-hint">
+            19970704 / 1997.07.04 / 1997-07-04 모두 가능
+          </div>
 
         </div>
 
@@ -1466,36 +1881,17 @@ button{
       </div>
 
 
-      <div class="grid-2">
+      <div class="field">
 
-        <div class="field">
+        <label>
+          전화번호
+        </label>
 
-          <label>
-            전화번호
-          </label>
-
-          <input
-            id="memberPhone"
-            class="text-input"
-            placeholder="선택"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            인스타그램
-          </label>
-
-          <input
-            id="memberInstagram"
-            class="text-input"
-            placeholder="@아이디 또는 링크"
-          >
-
-        </div>
+        <input
+          id="memberPhone"
+          class="text-input"
+          placeholder="선택"
+        >
 
       </div>
 
@@ -1509,26 +1905,8 @@ button{
       </div>
 
       <div class="form-help">
-        가입순서는 비워두면 자동으로 마지막 번호 다음 숫자가 들어갑니다.
+        운영진이 참고할 내용만 간단히 적어두면 됩니다.
       </div>
-
-
-      <div class="field">
-
-        <label>
-          가입순서
-        </label>
-
-        <input
-          id="joinOrder"
-          class="text-input"
-          type="number"
-          min="1"
-          placeholder="자동"
-        >
-
-      </div>
-
 
       <div class="field">
 
@@ -1559,9 +1937,7 @@ button{
 </div>
 
 
-<!-- =====================================================
-     MENU
-===================================================== -->
+<!-- MENU -->
 
 <div
   id="menuOverlay"
@@ -1584,7 +1960,6 @@ button{
       </button>
 
     </div>
-
 
     <a href="/">
       HOME <span>→</span>
@@ -1661,6 +2036,75 @@ let options = [];
 let adminMode = false;
 
 let currentFilter = 'ALL';
+let currentView = 'list';
+let currentMonth = new Date().getMonth() + 1;
+let currentAgeFilter = 'ALL';
+let selectedRegion = null;
+
+
+/* =====================================================
+   REGION POSITIONS
+===================================================== */
+
+const REGION_POSITIONS = {
+
+  '서울': {x:52,y:24},
+
+  '인천': {x:38,y:29},
+
+  '부천': {x:45,y:28},
+
+  '김포': {x:42,y:21},
+
+  '시흥': {x:43,y:35},
+
+  '수원': {x:52,y:38},
+
+  '성남': {x:58,y:34},
+
+  '고양': {x:47,y:19},
+
+  '의정부': {x:56,y:16},
+
+  '안양': {x:49,y:34},
+
+  '안산': {x:44,y:40},
+
+  '용인': {x:58,y:42},
+
+  '화성': {x:48,y:46},
+
+  '파주': {x:43,y:12},
+
+  '대전': {x:53,y:58},
+
+  '세종': {x:50,y:53},
+
+  '청주': {x:57,y:51},
+
+  '천안': {x:50,y:48},
+
+  '대구': {x:69,y:66},
+
+  '부산': {x:76,y:78},
+
+  '울산': {x:79,y:70},
+
+  '광주': {x:43,y:76},
+
+  '전주': {x:46,y:66},
+
+  '목포': {x:35,y:82},
+
+  '춘천': {x:68,y:21},
+
+  '강릉': {x:82,y:27},
+
+  '원주': {x:67,y:37},
+
+  '제주': {x:48,y:94}
+
+};
 
 
 /* =====================================================
@@ -1674,6 +2118,9 @@ async function start(){
   await loadOptions();
 
   await loadMembers();
+
+  renderMonthTabs();
+
 }
 
 
@@ -1780,9 +2227,7 @@ async function loadOptions(){
 
   if(error){
 
-    console.error(
-      error
-    );
+    console.error(error);
 
     options = [];
 
@@ -1871,10 +2316,9 @@ function fillSelect(
     item => {
 
       const option =
-        document
-          .createElement(
-            'option'
-          );
+        document.createElement(
+          'option'
+        );
 
 
       option.value =
@@ -1885,10 +2329,9 @@ function fillSelect(
         item.label;
 
 
-      select
-        .appendChild(
-          option
-        );
+      select.appendChild(
+        option
+      );
     }
   );
 
@@ -1982,9 +2425,7 @@ async function saveOption(type){
 
   if(error){
 
-    if(
-      error.code === '23505'
-    ){
+    if(error.code === '23505'){
 
       alert(
         '이미 등록된 항목입니다.'
@@ -2022,8 +2463,7 @@ async function saveOption(type){
 
   document
     .getElementById(inputId)
-    .value =
-    '';
+    .value = '';
 
 
   document
@@ -2063,9 +2503,7 @@ async function loadMembers(){
 
   if(error){
 
-    console.error(
-      error
-    );
+    console.error(error);
 
 
     document
@@ -2074,7 +2512,7 @@ async function loadMembers(){
     `
       <tr>
         <td
-          colspan="10"
+          colspan="9"
           class="empty"
         >
           멤버 정보를 불러오지 못했습니다.<br>
@@ -2093,7 +2531,7 @@ async function loadMembers(){
 
   updateStats();
 
-  renderMembers();
+  renderAllViews();
 }
 
 
@@ -2121,6 +2559,95 @@ function updateStats(){
       item =>
         item.role === '운영진'
     ).length;
+
+
+  const now =
+    new Date();
+
+
+  const month =
+    now.getMonth() + 1;
+
+
+  const birthdays =
+    members.filter(
+      item =>
+        getBirthMonth(
+          item.birth_date
+        ) === month
+    );
+
+
+  document
+    .getElementById('birthdayCount')
+    .textContent =
+    birthdays.length;
+}
+
+
+/* =====================================================
+   VIEW
+===================================================== */
+
+function setView(
+  view,
+  button
+){
+
+  currentView =
+    view;
+
+
+  document
+    .querySelectorAll(
+      '.view-tab'
+    )
+    .forEach(
+      item =>
+        item.classList.remove(
+          'active'
+        )
+    );
+
+
+  button
+    .classList
+    .add('active');
+
+
+  document
+    .querySelectorAll(
+      '.view-panel'
+    )
+    .forEach(
+      item =>
+        item.classList.remove(
+          'active'
+        )
+    );
+
+
+  document
+    .getElementById(
+      `${view}View`
+    )
+    .classList
+    .add('active');
+
+
+  if(view === 'birthday'){
+    renderBirthday();
+  }
+
+
+  if(view === 'age'){
+    renderAge();
+  }
+
+
+  if(view === 'region'){
+    renderRegion();
+  }
 }
 
 
@@ -2157,7 +2684,23 @@ function setFilter(
 
 
 /* =====================================================
-   RENDER
+   RENDER ALL
+===================================================== */
+
+function renderAllViews(){
+
+  renderMembers();
+
+  renderBirthday();
+
+  renderAge();
+
+  renderRegion();
+}
+
+
+/* =====================================================
+   LIST
 ===================================================== */
 
 function renderMembers(){
@@ -2171,9 +2714,7 @@ function renderMembers(){
     members;
 
 
-  if(
-    currentFilter === '활동중'
-  ){
+  if(currentFilter === '활동중'){
 
     list =
       members.filter(
@@ -2200,7 +2741,7 @@ function renderMembers(){
     `
       <tr>
         <td
-          colspan="10"
+          colspan="9"
           class="empty"
         >
           표시할 멤버가 없습니다.
@@ -2239,23 +2780,9 @@ function createMemberRow(item){
     <tr>
 
       <td>
-
         <div class="member-name">
           ${escapeHtml(item.name)}
         </div>
-
-        ${
-          item.nickname
-
-          ? `
-            <div class="member-nick">
-              ${escapeHtml(item.nickname)}
-            </div>
-          `
-
-          : ''
-        }
-
       </td>
 
 
@@ -2282,16 +2809,11 @@ function createMemberRow(item){
 
 
       <td>
-        ${formatDate(item.birth_date)}
-      </td>
-
-
-      <td>
         ${escapeHtml(item.region || '-')}
       </td>
 
 
-      <td>
+      <td title="${escapeAttribute(item.favorite_singers || '')}">
         ${escapeHtml(item.favorite_singers || '-')}
       </td>
 
@@ -2347,6 +2869,714 @@ function createMemberRow(item){
 
 
 /* =====================================================
+   BIRTHDAY
+===================================================== */
+
+function renderMonthTabs(){
+
+  const box =
+    document
+      .getElementById(
+        'monthTabs'
+      );
+
+
+  box.innerHTML =
+    Array
+      .from(
+        {length:12},
+        (_,index) => {
+
+          const month =
+            index + 1;
+
+
+          return `
+            <button
+              class="month-btn ${month === currentMonth ? 'active' : ''}"
+              onclick="setMonth(${month},this)"
+            >
+              ${month}월
+            </button>
+          `;
+        }
+      )
+      .join('');
+}
+
+
+function setMonth(
+  month,
+  button
+){
+
+  currentMonth =
+    month;
+
+
+  document
+    .querySelectorAll(
+      '.month-btn'
+    )
+    .forEach(
+      item =>
+        item.classList.remove(
+          'active'
+        )
+    );
+
+
+  button
+    .classList
+    .add('active');
+
+
+  renderBirthday();
+}
+
+
+function renderBirthday(){
+
+  const box =
+    document
+      .getElementById(
+        'birthdayList'
+      );
+
+
+  const list =
+    members
+      .filter(
+        item =>
+          getBirthMonth(
+            item.birth_date
+          ) ===
+          currentMonth
+      )
+      .sort(
+        (a,b) =>
+          getBirthDay(a.birth_date) -
+          getBirthDay(b.birth_date)
+      );
+
+
+  if(!list.length){
+
+    box.innerHTML =
+    `
+      <div class="empty">
+        ${currentMonth}월 생일자가 없습니다.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(
+        item => {
+
+          const age =
+            calculateAge(
+              item.birth_date
+            );
+
+
+          return `
+            <div class="birthday-row">
+
+              <div class="birthday-day">
+                ${String(
+                  getBirthDay(
+                    item.birth_date
+                  )
+                ).padStart(2,'0')}
+              </div>
+
+              <div>
+
+                <div class="birthday-name">
+                  ${escapeHtml(item.name)}
+                </div>
+
+                <div class="birthday-meta">
+
+                  ${escapeHtml(
+                    item.role || '멤버'
+                  )}
+
+                  ·
+
+                  ${escapeHtml(
+                    item.region || '지역 미정'
+                  )}
+
+                </div>
+
+              </div>
+
+              <div class="birthday-age">
+
+                ${
+                  age !== null
+                  ? `만 ${age}세`
+                  : ''
+                }
+
+              </div>
+
+            </div>
+          `;
+        }
+      )
+      .join('');
+}
+
+
+/* =====================================================
+   AGE
+===================================================== */
+
+function setAgeFilter(
+  filter,
+  button
+){
+
+  currentAgeFilter =
+    filter;
+
+
+  document
+    .querySelectorAll(
+      '.age-btn'
+    )
+    .forEach(
+      item =>
+        item.classList.remove(
+          'active'
+        )
+    );
+
+
+  button
+    .classList
+    .add('active');
+
+
+  renderAge();
+}
+
+
+function renderAge(){
+
+  const box =
+    document
+      .getElementById(
+        'ageList'
+      );
+
+
+  let list =
+    members
+      .map(
+        item => ({
+          ...item,
+          age:
+            calculateAge(
+              item.birth_date
+            )
+        })
+      )
+      .filter(
+        item =>
+          item.age !== null
+      );
+
+
+  if(
+    currentAgeFilter !== 'ALL'
+  ){
+
+    list =
+      list.filter(
+        item =>
+          ageMatches(
+            item.age,
+            currentAgeFilter
+          )
+      );
+  }
+
+
+  list.sort(
+    (a,b) =>
+      a.age - b.age
+  );
+
+
+  if(!list.length){
+
+    box.innerHTML =
+    `
+      <div class="empty">
+        해당 연령대 멤버가 없습니다.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(
+        item =>
+        `
+          <div class="age-card">
+
+            <strong>
+              ${escapeHtml(item.name)}
+            </strong>
+
+            <div class="age-number">
+              ${item.age}
+              <span style="font-size:13px;">
+                세
+              </span>
+            </div>
+
+            <div class="age-detail">
+
+              ${formatDate(item.birth_date)}
+
+              ·
+
+              ${escapeHtml(
+                item.region || '지역 미정'
+              )}
+
+            </div>
+
+          </div>
+        `
+      )
+      .join('');
+}
+
+
+function ageMatches(
+  age,
+  filter
+){
+
+  if(filter === '20-24'){
+    return age >= 20 && age <= 24;
+  }
+
+
+  if(filter === '25-29'){
+    return age >= 25 && age <= 29;
+  }
+
+
+  if(filter === '30-34'){
+    return age >= 30 && age <= 34;
+  }
+
+
+  if(filter === '35+'){
+    return age >= 35;
+  }
+
+
+  return true;
+}
+
+
+/* =====================================================
+   REGION
+===================================================== */
+
+function renderRegion(){
+
+  const counts =
+    getRegionCounts();
+
+
+  const regions =
+    Object.keys(counts)
+      .sort(
+        (a,b) =>
+          counts[b] -
+          counts[a]
+      );
+
+
+  if(
+    !selectedRegion &&
+    regions.length
+  ){
+
+    selectedRegion =
+      regions[0];
+  }
+
+
+  renderMapDots(
+    counts
+  );
+
+
+  renderRegionBars(
+    counts
+  );
+
+
+  renderRegionSummary();
+}
+
+
+function getRegionCounts(){
+
+  const counts = {};
+
+
+  members
+    .filter(
+      item =>
+        item.region
+        &&
+        item.is_active !== false
+    )
+    .forEach(
+      item => {
+
+        const region =
+          item.region.trim();
+
+
+        counts[region] =
+          (counts[region] || 0) + 1;
+      }
+    );
+
+
+  return counts;
+}
+
+
+function renderMapDots(
+  counts
+){
+
+  const box =
+    document
+      .getElementById(
+        'mapStage'
+      );
+
+
+  const regions =
+    Object.keys(
+      counts
+    );
+
+
+  if(!regions.length){
+
+    box.innerHTML =
+    `
+      <div
+        style="
+          position:absolute;
+          inset:0;
+          display:grid;
+          place-items:center;
+          color:rgba(255,255,255,.58);
+          font-size:10px;
+        "
+      >
+        지역 정보가 등록되면 지도에 표시됩니다.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    regions
+      .map(
+        (region,index) => {
+
+          const count =
+            counts[region];
+
+
+          const position =
+            getRegionPosition(
+              region,
+              index
+            );
+
+
+          const size =
+            Math.min(
+              48,
+              24 +
+              count * 4
+            );
+
+
+          return `
+            <button
+              class="map-dot"
+              onclick="selectRegion('${escapeJs(region)}')"
+              style="
+                left:${position.x}%;
+                top:${position.y}%;
+                --dot-size:${size}px;
+              "
+            >
+
+              <div class="map-dot-core">
+                ${count}
+              </div>
+
+              <div class="map-dot-name">
+                ${escapeHtml(region)}
+              </div>
+
+            </button>
+          `;
+        }
+      )
+      .join('');
+}
+
+
+function getRegionPosition(
+  region,
+  index
+){
+
+  if(
+    REGION_POSITIONS[
+      region
+    ]
+  ){
+
+    return REGION_POSITIONS[
+      region
+    ];
+  }
+
+
+  const fallback = [
+    {x:32,y:45},
+    {x:69,y:46},
+    {x:37,y:61},
+    {x:65,y:60},
+    {x:48,y:72},
+    {x:78,y:50},
+    {x:25,y:68}
+  ];
+
+
+  return fallback[
+    index %
+    fallback.length
+  ];
+}
+
+
+function selectRegion(region){
+
+  selectedRegion =
+    region;
+
+
+  renderRegionSummary();
+}
+
+
+function renderRegionSummary(){
+
+  const box =
+    document
+      .getElementById(
+        'regionSummary'
+      );
+
+
+  if(!selectedRegion){
+
+    box.innerHTML =
+      '지역을 선택해주세요.';
+
+    return;
+  }
+
+
+  const list =
+    members.filter(
+      item =>
+        item.region ===
+        selectedRegion
+        &&
+        item.is_active !== false
+    );
+
+
+  box.innerHTML =
+  `
+    <div class="region-summary-label">
+      SELECTED REGION
+    </div>
+
+    <div class="region-summary-name">
+      ${escapeHtml(selectedRegion)}
+    </div>
+
+    <div class="region-summary-count">
+      ${list.length} MEMBERS
+    </div>
+
+    <div class="region-member-list">
+
+      ${
+        list.length
+
+        ? list
+            .map(
+              item =>
+              `
+                <div class="region-member">
+
+                  <strong>
+                    ${escapeHtml(item.name)}
+                  </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      item.role ||
+                      '멤버'
+                    )}
+                  </span>
+
+                </div>
+              `
+            )
+            .join('')
+
+        : `
+          <div class="empty">
+            멤버가 없습니다.
+          </div>
+        `
+      }
+
+    </div>
+  `;
+}
+
+
+function renderRegionBars(
+  counts
+){
+
+  const box =
+    document
+      .getElementById(
+        'regionBars'
+      );
+
+
+  const regions =
+    Object.keys(
+      counts
+    )
+    .sort(
+      (a,b) =>
+        counts[b] -
+        counts[a]
+    );
+
+
+  if(!regions.length){
+
+    box.innerHTML = '';
+
+    return;
+  }
+
+
+  const max =
+    Math.max(
+      ...regions.map(
+        region =>
+          counts[region]
+      )
+    );
+
+
+  box.innerHTML =
+    regions
+      .map(
+        region => {
+
+          const count =
+            counts[region];
+
+
+          const width =
+            max > 0
+            ? count / max * 100
+            : 0;
+
+
+          return `
+            <div class="region-bar-row">
+
+              <button
+                onclick="selectRegion('${escapeJs(region)}')"
+                style="
+                  border:0;
+                  background:none;
+                  padding:0;
+                  text-align:left;
+                  cursor:pointer;
+                  color:#62687a;
+                  font-size:8px;
+                "
+              >
+                ${escapeHtml(region)}
+              </button>
+
+              <div class="region-bar-track">
+
+                <div
+                  class="region-bar-fill"
+                  style="width:${width}%"
+                ></div>
+
+              </div>
+
+              <strong>
+                ${count}
+              </strong>
+
+            </div>
+          `;
+        }
+      )
+      .join('');
+}
+
+
+/* =====================================================
    MODAL
 ===================================================== */
 
@@ -2361,19 +3591,25 @@ function openMemberModal(){
 
 
   document
-    .getElementById('modalTitle')
+    .getElementById(
+      'modalTitle'
+    )
     .textContent =
     '새 멤버';
 
 
   document
-    .getElementById('memberStatus')
+    .getElementById(
+      'memberStatus'
+    )
     .value =
     '활동중';
 
 
   document
-    .getElementById('memberOverlay')
+    .getElementById(
+      'memberOverlay'
+    )
     .classList
     .add('open');
 }
@@ -2382,7 +3618,9 @@ function openMemberModal(){
 function closeMemberModal(){
 
   document
-    .getElementById('memberOverlay')
+    .getElementById(
+      'memberOverlay'
+    )
     .classList
     .remove('open');
 }
@@ -2390,86 +3628,164 @@ function closeMemberModal(){
 
 function clearForm(){
 
-  document
-    .getElementById('editingMemberId')
-    .value = '';
+  const values = [
+    'editingMemberId',
+    'memberName',
+    'joinedAt',
+    'birthDate',
+    'memberPhone',
+    'joinOrder',
+    'memberMemo',
+    'newRegion',
+    'newSinger'
+  ];
+
+
+  values.forEach(
+    id => {
+
+      const element =
+        document
+          .getElementById(id);
+
+
+      if(element){
+        element.value = '';
+      }
+    }
+  );
+
+
+  [
+    'memberRole',
+    'memberStatus',
+    'memberRegion',
+    'memberGender',
+    'favoriteSinger'
+  ]
+  .forEach(
+    id => {
+
+      document
+        .getElementById(id)
+        .value = '';
+    }
+  );
 
 
   document
-    .getElementById('memberName')
-    .value = '';
-
-
-  document
-    .getElementById('memberNickname')
-    .value = '';
-
-
-  document
-    .getElementById('memberRole')
-    .value = '';
-
-
-  document
-    .getElementById('memberStatus')
-    .value = '';
-
-
-  document
-    .getElementById('joinedAt')
-    .value = '';
-
-
-  document
-    .getElementById('birthDate')
-    .value = '';
-
-
-  document
-    .getElementById('memberRegion')
-    .value = '';
-
-
-  document
-    .getElementById('memberGender')
-    .value = '';
-
-
-  document
-    .getElementById('favoriteSinger')
-    .value = '';
-
-
-  document
-    .getElementById('memberPhone')
-    .value = '';
-
-
-  document
-    .getElementById('memberInstagram')
-    .value = '';
-
-
-  document
-    .getElementById('joinOrder')
-    .value = '';
-
-
-  document
-    .getElementById('memberMemo')
-    .value = '';
-
-
-  document
-    .getElementById('regionOptionBox')
+    .getElementById(
+      'regionOptionBox'
+    )
     .classList
     .remove('show');
 
 
   document
-    .getElementById('singerOptionBox')
+    .getElementById(
+      'singerOptionBox'
+    )
     .classList
     .remove('show');
+}
+
+
+/* =====================================================
+   BIRTH INPUT
+===================================================== */
+
+function normalizeBirthDate(value){
+
+  if(!value){
+    return null;
+  }
+
+
+  const digits =
+    String(value)
+      .replace(/\D/g,'');
+
+
+  if(digits.length !== 8){
+    return null;
+  }
+
+
+  const year =
+    Number(
+      digits.slice(0,4)
+    );
+
+
+  const month =
+    Number(
+      digits.slice(4,6)
+    );
+
+
+  const day =
+    Number(
+      digits.slice(6,8)
+    );
+
+
+  const date =
+    new Date(
+      year,
+      month - 1,
+      day
+    );
+
+
+  if(
+    date.getFullYear() !== year
+    ||
+    date.getMonth() !== month - 1
+    ||
+    date.getDate() !== day
+  ){
+
+    return null;
+  }
+
+
+  return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+}
+
+
+function formatBirthInput(){
+
+  const input =
+    document
+      .getElementById(
+        'birthDate'
+      );
+
+
+  const normalized =
+    normalizeBirthDate(
+      input.value
+    );
+
+
+  if(
+    input.value.trim()
+    &&
+    !normalized
+  ){
+
+    return;
+  }
+
+
+  if(normalized){
+
+    input.value =
+      normalized.replaceAll(
+        '-',
+        '.'
+      );
+  }
 }
 
 
@@ -2486,13 +3802,17 @@ async function saveMember(){
 
   const id =
     document
-      .getElementById('editingMemberId')
+      .getElementById(
+        'editingMemberId'
+      )
       .value;
 
 
   const name =
     document
-      .getElementById('memberName')
+      .getElementById(
+        'memberName'
+      )
       .value
       .trim();
 
@@ -2507,16 +3827,51 @@ async function saveMember(){
   }
 
 
+  const birthRaw =
+    document
+      .getElementById(
+        'birthDate'
+      )
+      .value
+      .trim();
+
+
+  let birthDate = null;
+
+
+  if(birthRaw){
+
+    birthDate =
+      normalizeBirthDate(
+        birthRaw
+      );
+
+
+    if(!birthDate){
+
+      alert(
+        '생년월일을 확인해주세요.\n예: 19970704'
+      );
+
+      return;
+    }
+  }
+
+
   const status =
     document
-      .getElementById('memberStatus')
+      .getElementById(
+        'memberStatus'
+      )
       .value ||
     '활동중';
 
 
   let joinOrder =
     document
-      .getElementById('joinOrder')
+      .getElementById(
+        'joinOrder'
+      )
       .value;
 
 
@@ -2544,11 +3899,6 @@ async function saveMember(){
 
     name,
 
-    nickname:
-      nullValue(
-        'memberNickname'
-      ),
-
     role:
       nullValue(
         'memberRole'
@@ -2560,9 +3910,7 @@ async function saveMember(){
       ),
 
     birth_date:
-      nullValue(
-        'birthDate'
-      ),
+      birthDate,
 
     region:
       nullValue(
@@ -2587,11 +3935,6 @@ async function saveMember(){
         'memberPhone'
       ),
 
-    instagram:
-      nullValue(
-        'memberInstagram'
-      ),
-
     memo:
       nullValue(
         'memberMemo'
@@ -2604,7 +3947,6 @@ async function saveMember(){
 
     note:
       status
-
   };
 
 
@@ -2677,27 +4019,27 @@ function editMember(id){
 
 
   document
-    .getElementById('editingMemberId')
+    .getElementById(
+      'editingMemberId'
+    )
     .value =
     item.id;
 
 
   document
-    .getElementById('modalTitle')
+    .getElementById(
+      'modalTitle'
+    )
     .textContent =
     '멤버 수정';
 
 
   document
-    .getElementById('memberName')
+    .getElementById(
+      'memberName'
+    )
     .value =
     item.name || '';
-
-
-  document
-    .getElementById('memberNickname')
-    .value =
-    item.nickname || '';
 
 
   setSelectValue(
@@ -2707,21 +4049,29 @@ function editMember(id){
 
 
   document
-    .getElementById('memberStatus')
+    .getElementById(
+      'memberStatus'
+    )
     .value =
     getStatus(item);
 
 
   document
-    .getElementById('joinedAt')
+    .getElementById(
+      'joinedAt'
+    )
     .value =
     item.joined_at || '';
 
 
   document
-    .getElementById('birthDate')
+    .getElementById(
+      'birthDate'
+    )
     .value =
-    item.birth_date || '';
+    item.birth_date
+    ? item.birth_date.replaceAll('-','.')
+    : '';
 
 
   setSelectValue(
@@ -2743,31 +4093,33 @@ function editMember(id){
 
 
   document
-    .getElementById('memberPhone')
+    .getElementById(
+      'memberPhone'
+    )
     .value =
     item.phone || '';
 
 
   document
-    .getElementById('memberInstagram')
-    .value =
-    item.instagram || '';
-
-
-  document
-    .getElementById('joinOrder')
+    .getElementById(
+      'joinOrder'
+    )
     .value =
     item.join_order || '';
 
 
   document
-    .getElementById('memberMemo')
+    .getElementById(
+      'memberMemo'
+    )
     .value =
     item.memo || '';
 
 
   document
-    .getElementById('memberOverlay')
+    .getElementById(
+      'memberOverlay'
+    )
     .classList
     .add('open');
 }
@@ -2836,6 +4188,93 @@ async function toggleMemberActive(id){
 
 
 /* =====================================================
+   DATE HELPERS
+===================================================== */
+
+function calculateAge(value){
+
+  if(!value){
+    return null;
+  }
+
+
+  const birth =
+    new Date(
+      value +
+      'T00:00:00'
+    );
+
+
+  if(
+    Number.isNaN(
+      birth.getTime()
+    )
+  ){
+
+    return null;
+  }
+
+
+  const today =
+    new Date();
+
+
+  let age =
+    today.getFullYear() -
+    birth.getFullYear();
+
+
+  const monthDiff =
+    today.getMonth() -
+    birth.getMonth();
+
+
+  if(
+    monthDiff < 0
+    ||
+    (
+      monthDiff === 0
+      &&
+      today.getDate() <
+      birth.getDate()
+    )
+  ){
+
+    age--;
+  }
+
+
+  return age;
+}
+
+
+function getBirthMonth(value){
+
+  if(!value){
+    return null;
+  }
+
+
+  return Number(
+    value.slice(5,7)
+  );
+}
+
+
+function getBirthDay(value){
+
+  if(!value){
+    return null;
+  }
+
+
+  return Number(
+    value.slice(8,10)
+  );
+}
+
+
+/* =====================================================
    HELPERS
 ===================================================== */
 
@@ -2864,6 +4303,7 @@ function getStatus(item){
     ||
     item.is_active === false
   ){
+
     return '휴면';
   }
 
@@ -2898,10 +4338,9 @@ function setSelectValue(
   if(!exists){
 
     const option =
-      document
-        .createElement(
-          'option'
-        );
+      document.createElement(
+        'option'
+      );
 
 
     option.value =
@@ -2912,10 +4351,9 @@ function setSelectValue(
       value;
 
 
-    select
-      .appendChild(
-        option
-      );
+    select.appendChild(
+      option
+    );
   }
 
 
@@ -2942,10 +4380,9 @@ function formatDate(value){
 function escapeHtml(value){
 
   const div =
-    document
-      .createElement(
-        'div'
-      );
+    document.createElement(
+      'div'
+    );
 
 
   div.textContent =
@@ -2958,6 +4395,29 @@ function escapeHtml(value){
 }
 
 
+function escapeAttribute(value){
+
+  return String(
+    value ?? ''
+  )
+  .replace(/&/g,'&amp;')
+  .replace(/"/g,'&quot;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;');
+}
+
+
+function escapeJs(value){
+
+  return String(
+    value ?? ''
+  )
+  .replace(/\\/g,'\\\\')
+  .replace(/'/g,"\\'")
+  .replace(/\n/g,' ');
+}
+
+
 /* =====================================================
    MENU
 ===================================================== */
@@ -2965,7 +4425,9 @@ function escapeHtml(value){
 function openMenu(){
 
   document
-    .getElementById('menuOverlay')
+    .getElementById(
+      'menuOverlay'
+    )
     .classList
     .add('open');
 }
@@ -2974,14 +4436,18 @@ function openMenu(){
 function closeMenu(){
 
   document
-    .getElementById('menuOverlay')
+    .getElementById(
+      'menuOverlay'
+    )
     .classList
     .remove('open');
 }
 
 
 document
-  .getElementById('menuOverlay')
+  .getElementById(
+    'menuOverlay'
+  )
   .addEventListener(
     'click',
     function(event){
@@ -2995,7 +4461,9 @@ document
 
 
 document
-  .getElementById('memberOverlay')
+  .getElementById(
+    'memberOverlay'
+  )
   .addEventListener(
     'click',
     function(event){
