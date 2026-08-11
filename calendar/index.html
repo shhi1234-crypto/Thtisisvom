@@ -2047,6 +2047,47 @@ button{
   }
 }
 
+
+/* ======================================================
+   GENERIC CALENDAR DETAIL
+====================================================== */
+.schedule-detail-card{
+  padding:3px 1px 2px;
+}
+.schedule-detail-type{
+  color:#7561dc;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:19px;
+}
+.schedule-detail-title{
+  margin:3px 0 8px;
+  font-size:22px;
+  letter-spacing:-.5px;
+}
+.schedule-detail-meta{
+  color:#70768a;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.8;
+}
+.schedule-detail-description{
+  margin-top:16px;
+  padding:15px;
+  border-radius:15px;
+  background:#f7f6fb;
+  color:#656b7d;
+  font-size:11px;
+  line-height:1.85;
+}
+.schedule-detail-admin{
+  display:none;
+  gap:7px;
+  margin-top:14px;
+}
+.admin-mode .schedule-detail-admin{
+  display:flex;
+}
+
 </style>
 </head>
 
@@ -2549,6 +2590,37 @@ button{
     >
       일정 저장
     </button>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     GENERIC SCHEDULE DETAIL
+===================================================== -->
+
+<div id="scheduleDetailOverlay" class="overlay">
+
+  <div class="modal">
+
+    <div class="modal-top">
+
+      <h2 class="modal-title">
+        Schedule
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeScheduleDetail()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <div id="scheduleDetailBody"></div>
 
   </div>
 
@@ -3726,8 +3798,138 @@ function createEventHtml(item){
 
 function openEventDetail(id){
 
-  window.location.href =
-    `/event/?id=${encodeURIComponent(id)}`;
+  const item =
+    events.find(
+      row =>
+        String(row.id) ===
+        String(id)
+    );
+
+
+  if(!item){
+    return;
+  }
+
+
+  if(item.event_type === 'VOM LIVE'){
+
+    window.location.href =
+      `/live/?id=${encodeURIComponent(id)}`;
+
+    return;
+  }
+
+
+  if(item.event_type === 'BUSKING'){
+
+    window.location.href =
+      `/busking/?id=${encodeURIComponent(id)}`;
+
+    return;
+  }
+
+
+  openScheduleDetail(item);
+}
+
+
+function openScheduleDetail(item){
+
+  const preset =
+    presets.find(
+      row =>
+        String(row.id) ===
+        String(item.location_id)
+    );
+
+
+  const locationName =
+    preset?.name ||
+    item.location ||
+    '장소 미정';
+
+
+  document
+    .getElementById('scheduleDetailBody')
+    .innerHTML =
+  `
+    <div class="schedule-detail-card">
+
+      <div class="schedule-detail-type">
+        ${escapeHtml(item.event_type || 'OTHER')}
+      </div>
+
+      <h3 class="schedule-detail-title">
+        ${escapeHtml(item.title || '')}
+      </h3>
+
+      <div class="schedule-detail-meta">
+
+        ${formatKoreanDate(item.event_date)}
+
+        <br>
+
+        ${escapeHtml(makeTime(item) || '시간 미정')}
+
+        ·
+
+        ${escapeHtml(locationName)}
+
+      </div>
+
+      ${
+        item.description
+
+        ? `
+          <div class="schedule-detail-description">
+            ${escapeHtml(item.description).replace(/\n/g,'<br>')}
+          </div>
+        `
+
+        : ''
+      }
+
+      <div class="schedule-detail-admin">
+
+        <button
+          class="edit-btn"
+          onclick="
+            closeScheduleDetail();
+            editEvent(${item.id});
+          "
+        >
+          수정
+        </button>
+
+        <button
+          class="delete-btn"
+          onclick="
+            closeScheduleDetail();
+            deleteEvent(${item.id});
+          "
+        >
+          삭제
+        </button>
+
+      </div>
+
+    </div>
+  `;
+
+
+  document
+    .getElementById('scheduleDetailOverlay')
+    .classList
+    .add('open');
+}
+
+
+function closeScheduleDetail(){
+
+  document
+    .getElementById('scheduleDetailOverlay')
+    .classList
+    .remove('open');
 }
 
 
@@ -5206,6 +5408,19 @@ async function start(){
 
   await loadEvents();
 }
+
+document
+  .getElementById('scheduleDetailOverlay')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeScheduleDetail();
+      }
+    }
+  );
+
 
 
 start();
