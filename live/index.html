@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f7f5fa">
-<title>EVENT · Voice of Melody</title>
+
+<title>VOM LIVE · Voice of Melody</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,16 +15,20 @@
 
 <style>
 :root{
-  --ink:#14182b;
+  --ink:#11182c;
   --muted:#73798b;
-  --purple:#7762df;
-  --purple2:#7990eb;
-  --line:rgba(31,36,66,.08);
-  --card:rgba(255,255,255,.82);
+  --purple:#7d68e8;
+  --purple2:#748deb;
+  --line:rgba(28,34,65,.08);
 }
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html{scroll-behavior:smooth;}
+
 body{
   margin:0;
   min-height:100vh;
@@ -32,520 +37,925 @@ body{
   color:var(--ink);
   background:#f8f7fa;
 }
-a{color:inherit;text-decoration:none}
-button,input,select,textarea{font:inherit}
-button{color:inherit}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+/* =========================================
+   BACKGROUND
+========================================= */
 
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
   overflow:hidden;
-  background:linear-gradient(180deg,#f8f5fa,#f8f7fb 55%,#faf9fb);
+  background:linear-gradient(180deg,#f7f4fa,#f8f7fb 55%,#faf9fb);
 }
+
 .aurora::before{
   content:"";
   position:absolute;
   width:1200px;
   height:700px;
-  top:-330px;
-  right:-260px;
+  top:-320px;
+  right:-280px;
   border-radius:50%;
+
   background:
-    radial-gradient(ellipse at 22% 54%,rgba(139,221,214,.62),rgba(139,221,214,.22) 27%,transparent 55%),
-    radial-gradient(ellipse at 55% 36%,rgba(151,174,248,.66),rgba(151,174,248,.23) 27%,transparent 56%),
-    radial-gradient(ellipse at 76% 48%,rgba(189,151,244,.60),rgba(189,151,244,.22) 24%,transparent 55%);
+    radial-gradient(
+      ellipse at 24% 53%,
+      rgba(139,220,214,.68),
+      rgba(139,220,214,.24) 28%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 55% 37%,
+      rgba(151,173,248,.68),
+      rgba(151,173,248,.24) 27%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse at 76% 49%,
+      rgba(188,151,244,.62),
+      rgba(188,151,244,.22) 25%,
+      transparent 55%
+    );
+
   filter:blur(55px);
   transform:rotate(-13deg);
 }
 
+/* =========================================
+   HEADER
+========================================= */
+
 .header{
   width:min(1080px,100%);
-  height:80px;
+  height:82px;
   margin:auto;
-  padding:0 24px;
+  padding:0 25px;
+
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
-.brand{display:flex;flex-direction:column}
-.brand strong{font-size:27px;font-weight:800;line-height:1}
-.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}
-.header-right{display:flex;align-items:center;gap:9px}
+
+.brand{
+  display:flex;
+  flex-direction:column;
+}
+
+.brand strong{
+  font-size:27px;
+  font-weight:800;
+  line-height:1;
+}
+
+.brand small{
+  margin-top:5px;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:3px;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
 .admin-badge{
   display:none;
   align-items:center;
   gap:7px;
-  padding:8px 12px;
+  padding:9px 13px;
   border-radius:999px;
-  color:#6652cb;
-  background:#eeeaff;
+  color:#6955d2;
+  background:rgba(126,102,232,.10);
+  border:1px solid rgba(126,102,232,.15);
   font-size:9px;
   font-weight:800;
 }
-.admin-badge.show{display:flex}
+
+.admin-badge.show{
+  display:flex;
+}
+
+.admin-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#765fe6;
+}
+
 .menu-btn{
-  width:45px;
-  height:45px;
+  width:46px;
+  height:46px;
   border:1px solid rgba(255,255,255,.95);
   border-radius:50%;
-  background:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.68);
   box-shadow:0 10px 30px rgba(31,38,76,.08);
   cursor:pointer;
 }
 
+/* =========================================
+   PAGE
+========================================= */
+
 .page{
-  width:min(1040px,100%);
+  width:min(1000px,100%);
   margin:auto;
-  padding:0 20px 115px;
+  padding:0 22px 115px;
 }
+
+/* =========================================
+   HERO
+========================================= */
 
 .hero{
   display:grid;
   grid-template-columns:1.05fr .95fr;
-  gap:35px;
+  gap:45px;
   align-items:center;
-  padding:62px 0 44px;
+  padding:72px 0 70px;
 }
+
 .hero-label{
-  color:#7662dd;
+  color:#7461dc;
   font-family:"Nanum Pen Script",cursive;
   font-size:22px;
 }
-.hero h1{
-  margin:4px 0 0;
+
+.hero-title{
+  margin:8px 0 0;
   font-family:"Nanum Pen Script",cursive;
-  font-size:clamp(84px,12vw,130px);
+  font-size:clamp(86px,13vw,145px);
   font-weight:400;
-  line-height:.76;
+  line-height:.72;
 }
-.hero p{
-  max-width:560px;
-  margin:25px 0 0;
-  color:#62697c;
+
+.hero-subtitle{
+  margin-top:22px;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:-.7px;
+}
+
+.hero-copy{
+  max-width:530px;
+  margin-top:20px;
+  color:#62697d;
   font-size:13px;
   line-height:1.9;
 }
-.hero-card{
-  min-height:270px;
-  padding:27px;
-  border-radius:28px;
-  color:#fff;
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:25px;
+}
+
+.tags span{
+  padding:9px 13px;
+  border-radius:999px;
+  background:rgba(255,255,255,.73);
+  border:1px solid rgba(255,255,255,.96);
+  color:#666c7d;
+  font-size:10px;
+}
+
+.hero-visual{
+  min-height:360px;
+  position:relative;
+  overflow:hidden;
+  padding:32px;
+  border-radius:31px;
+  color:white;
+
   background:
-    radial-gradient(circle at 82% 18%,rgba(118,226,218,.48),transparent 34%),
-    radial-gradient(circle at 12% 90%,rgba(169,116,246,.68),transparent 43%),
-    linear-gradient(145deg,#1d2c53,#393e7e);
-  box-shadow:0 24px 62px rgba(28,35,75,.15);
+    radial-gradient(circle at 80% 15%,rgba(124,225,218,.52),transparent 34%),
+    radial-gradient(circle at 12% 90%,rgba(171,112,245,.70),transparent 42%),
+    linear-gradient(145deg,#1d2b51,#363b7c);
+
+  box-shadow:0 25px 65px rgba(28,35,75,.15);
 }
-.hero-card small{
-  color:rgba(255,255,255,.65);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:1.8px;
-}
-.hero-card strong{
-  display:block;
-  margin-top:13px;
+
+.hero-script{
+  position:relative;
+  z-index:2;
   font-family:"Nanum Pen Script",cursive;
-  font-size:43px;
-  font-weight:400;
-  line-height:.95;
+  font-size:50px;
+  line-height:.88;
+  color:#e2d9ff;
 }
-.hero-card p{
-  margin-top:20px;
-  color:rgba(255,255,255,.8);
-  font-size:11px;
+
+.hero-visual p{
+  position:absolute;
+  left:32px;
+  bottom:31px;
+  z-index:2;
+  max-width:300px;
+  margin:0;
+  color:rgba(255,255,255,.81);
+  font-size:12px;
   line-height:1.8;
 }
 
-.section{margin-top:42px}
+/* =========================================
+   SECTION
+========================================= */
+
+.section{
+  margin-top:52px;
+}
+
 .section-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:15px;
-  margin-bottom:15px;
+  margin-bottom:18px;
 }
+
 .kicker{
-  color:#7762df;
+  color:#7562df;
   font-family:"Nanum Pen Script",cursive;
-  font-size:20px;
+  font-size:21px;
 }
+
 .section-title{
   margin:2px 0 0;
-  font-size:24px;
-  letter-spacing:-.8px;
+  font-size:25px;
+  letter-spacing:-1px;
 }
+
 .section-copy{
-  margin-top:6px;
-  color:#818696;
+  max-width:620px;
+  margin-top:7px;
+  color:#7b8090;
   font-size:11px;
   line-height:1.7;
 }
-.admin-add{
-  display:none;
-  min-height:41px;
-  padding:0 16px;
-  border:0;
-  border-radius:999px;
-  color:#fff;
-  background:#171d31;
-  cursor:pointer;
-  font-size:11px;
-  font-weight:800;
-}
-.admin-mode .admin-add{display:block}
 
-.idea-grid{
+/* =========================================
+   PROCESS
+========================================= */
+
+.process{
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-.idea-card{
-  min-height:160px;
-  padding:19px;
-  border-radius:20px;
-  background:var(--card);
-  border:1px solid rgba(255,255,255,.95);
-  box-shadow:0 10px 28px rgba(31,37,74,.05);
-}
-.idea-icon{
-  width:38px;
-  height:38px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:#efebff;
-  font-size:18px;
-}
-.idea-card h3{margin:13px 0 6px;font-size:13px}
-.idea-card p{margin:0;color:#7a8090;font-size:10px;line-height:1.75}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:18px;
-}
-.stat{
-  padding:17px 18px;
-  border-radius:18px;
-  background:rgba(255,255,255,.76);
-  border:1px solid rgba(255,255,255,.95);
-}
-.stat span{display:block;color:#888d9d;font-size:9px;font-weight:800;letter-spacing:.6px}
-.stat strong{
-  display:block;
-  margin-top:5px;
-  color:#6e5bd4;
-  font-family:"Nanum Pen Script",cursive;
-  font-size:31px;
-  font-weight:400;
+  gap:12px;
 }
 
-.toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:14px;
-}
-.filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
-.filters::-webkit-scrollbar{display:none}
-.filter{
-  flex:0 0 auto;
-  min-height:38px;
-  padding:0 14px;
-  border:1px solid rgba(255,255,255,.95);
-  border-radius:999px;
-  background:rgba(255,255,255,.72);
-  color:#74798b;
-  cursor:pointer;
-  font-size:10px;
-  font-weight:700;
-}
-.filter.active{
-  color:#fff;
-  border-color:transparent;
-  background:linear-gradient(135deg,#8269e9,#748bed);
-}
-
-.campaign-list{display:grid;gap:11px}
-.campaign{
-  position:relative;
-  display:grid;
-  grid-template-columns:125px minmax(0,1fr) auto;
-  gap:18px;
-  align-items:center;
-  min-height:140px;
-  padding:16px;
+.process-card{
+  min-height:185px;
+  padding:22px;
   border-radius:22px;
-  background:rgba(255,255,255,.86);
-  border:1px solid rgba(255,255,255,.96);
-  box-shadow:0 10px 30px rgba(31,37,74,.055);
-  cursor:pointer;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 13px 35px rgba(31,37,74,.06);
 }
-.campaign-image{
-  width:125px;
-  height:105px;
+
+.process-num{
+  color:#8069e8;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:35px;
+}
+
+.process-card h3{
+  margin:12px 0 6px;
+  font-size:14px;
+}
+
+.process-card p{
+  margin:0;
+  color:#777d8e;
+  font-size:10px;
+  line-height:1.75;
+}
+
+/* =========================================
+   INFO
+========================================= */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.info-card{
+  padding:25px;
+  border-radius:24px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 15px 40px rgba(31,37,74,.06);
+}
+
+.info-card h3{
+  margin:0;
+  font-size:16px;
+}
+
+.info-card ul{
+  margin:18px 0 0;
+  padding-left:19px;
+  color:#656b7d;
+  font-size:11px;
+  line-height:2;
+}
+
+/* =========================================
+   GEAR
+========================================= */
+
+.gear-card{
   overflow:hidden;
-  border-radius:16px;
-  background:linear-gradient(145deg,#eee9ff,#e3f2f6);
+  border-radius:28px;
+  background:#151515;
+  box-shadow:0 22px 58px rgba(20,23,40,.16);
 }
-.campaign-image img{width:100%;height:100%;object-fit:cover}
-.campaign-image.empty{
+
+.gear-image{
+  width:100%;
+  display:block;
+}
+
+.gear-fallback{
+  display:none;
+  min-height:300px;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#c7b1a4;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:36px;
+}
+
+/* =========================================
+   LIVE LIST
+========================================= */
+
+.live-list{
+  display:grid;
+  gap:12px;
+}
+
+.live-card{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr) 130px;
+  align-items:center;
+  gap:17px;
+
+  min-height:115px;
+  padding:15px 16px;
+
+  border-radius:23px;
+  background:rgba(255,255,255,.83);
+  border:1px solid rgba(255,255,255,.96);
+
+  box-shadow:0 10px 30px rgba(31,37,74,.05);
+
+  cursor:pointer;
+  transition:.18s;
+}
+
+.live-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 17px 38px rgba(31,37,74,.09);
+}
+
+.live-date{
+  min-height:76px;
   display:grid;
   place-items:center;
-  color:#8f86b5;
-  font-family:"Nanum Pen Script",cursive;
-  font-size:23px;
+  text-align:center;
+  border-radius:18px;
+  color:white;
+  background:linear-gradient(145deg,#8068e8,#7598eb);
 }
-.campaign-type{
-  color:#7562dd;
+
+.live-date strong{
+  display:block;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:33px;
+  font-weight:400;
+  line-height:.8;
+}
+
+.live-date small{
+  display:block;
+  margin-top:7px;
+  color:rgba(255,255,255,.78);
+  font-family:"Nanum Pen Script",cursive;
+  font-size:14px;
+}
+
+.live-type{
+  color:#7762de;
   font-family:"Nanum Pen Script",cursive;
   font-size:17px;
 }
-.campaign h3{
+
+.live-card h3{
   margin:1px 0 5px;
-  font-size:16px;
-  letter-spacing:-.4px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:25px;
+  font-weight:400;
 }
-.campaign-date{
-  color:#696f81;
+
+.live-meta{
+  color:#73798c;
   font-size:10px;
-  font-weight:700;
+  line-height:1.7;
 }
-.campaign-desc{
+
+.live-result-mini{
   margin-top:7px;
-  overflow:hidden;
-  display:-webkit-box;
-  -webkit-line-clamp:2;
-  -webkit-box-orient:vertical;
-  color:#8b8f9e;
-  font-size:10px;
-  line-height:1.65;
-}
-.campaign-tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:9px;
-}
-.tag{
-  padding:6px 9px;
-  border-radius:999px;
-  background:#f2f0f8;
   color:#686e80;
-  font-size:9px;
-  font-weight:700;
+  font-size:10px;
 }
-.status{
-  align-self:flex-start;
-  min-width:64px;
-  padding:7px 9px;
-  border-radius:999px;
-  text-align:center;
-  font-size:9px;
-  font-weight:800;
+
+.live-result-mini strong{
+  color:#725bdd;
 }
-.status.live{color:#327c66;background:#e8f7f0}
-.status.upcoming{color:#6e5bd3;background:#eeeaff}
-.status.done{color:#777c8c;background:#eef0f3}
-.admin-row{
-  display:none;
+
+.live-more{
+  margin-top:6px;
+  color:#7562db;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:15px;
+}
+
+.live-side{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
   gap:6px;
-  margin-top:10px;
-  justify-content:flex-end;
 }
-.admin-mode .admin-row{display:flex}
-.mini-btn{
-  min-height:29px;
+
+.live-image{
+  width:130px;
+  height:78px;
+  overflow:hidden;
+  border-radius:16px;
+  background:linear-gradient(145deg,#e9e4ff,#e1eff5);
+}
+
+.live-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.live-image-empty{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  color:#9b94b7;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:19px;
+}
+
+.result-button{
+  display:none;
+  min-height:28px;
   padding:0 10px;
   border:0;
   border-radius:9px;
+  color:#6352c4;
+  background:#efedf9;
   cursor:pointer;
   font-size:9px;
   font-weight:700;
 }
-.edit-btn{color:#6654c6;background:#efedf9}
-.end-btn{color:#716526;background:#fff6d9}
-.delete-btn{color:#ca536a;background:#fff0f2}
-.empty-state{
-  padding:42px 18px;
-  border-radius:20px;
+
+.admin-mode .result-button{
+  display:block;
+}
+
+.empty{
+  padding:38px 20px;
+  border-radius:22px;
+  background:rgba(255,255,255,.65);
   text-align:center;
-  color:#9296a5;
-  background:rgba(255,255,255,.66);
+  color:#9195a4;
   font-size:11px;
 }
 
-/* OVERLAY */
+/* =========================================
+   DETAIL VIEW
+========================================= */
+
+.detail-page{
+  padding-top:55px;
+}
+
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:28px;
+  color:#686e81;
+  font-size:11px;
+}
+
+.detail-kicker{
+  color:#7560dc;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:23px;
+}
+
+.detail-title{
+  margin:4px 0 0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:clamp(58px,9vw,90px);
+  font-weight:400;
+  line-height:.9;
+}
+
+.detail-image{
+  width:100%;
+  aspect-ratio:16/7;
+  margin-top:27px;
+  overflow:hidden;
+  border-radius:27px;
+  background:linear-gradient(145deg,#e6e1ff,#def0f4);
+  box-shadow:0 17px 45px rgba(31,37,74,.08);
+}
+
+.detail-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.detail-image-empty{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  color:#9187b4;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:35px;
+}
+
+.detail-info{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+.detail-info-card{
+  padding:17px;
+  border-radius:18px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.95);
+}
+
+.detail-info-card small{
+  display:block;
+  margin-bottom:6px;
+  color:#989baa;
+  font-size:8px;
+  font-weight:700;
+  letter-spacing:1.2px;
+}
+
+.detail-info-card strong{
+  font-size:12px;
+}
+
+.result-area{
+  margin-top:18px;
+}
+
+.result-summary{
+  display:grid;
+  grid-template-columns:1fr 1.5fr;
+  gap:12px;
+}
+
+.summary-card{
+  min-height:180px;
+  padding:23px;
+  border-radius:23px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 13px 36px rgba(31,37,74,.06);
+}
+
+.summary-label{
+  color:#999dab;
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:1.2px;
+}
+
+.people-number{
+  margin-top:15px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:55px;
+  line-height:.8;
+}
+
+.people-number small{
+  font-size:21px;
+}
+
+.winner-card{
+  color:white;
+
+  background:
+    radial-gradient(circle at 85% 10%,rgba(112,224,214,.42),transparent 36%),
+    radial-gradient(circle at 10% 90%,rgba(172,112,245,.60),transparent 45%),
+    linear-gradient(145deg,#202e59,#373b7d);
+}
+
+.winner-card .summary-label{
+  color:rgba(255,255,255,.65);
+}
+
+.winner-rank{
+  margin-top:10px;
+  color:#ded5ff;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:20px;
+}
+
+.winner-name{
+  margin-top:2px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:47px;
+  line-height:.9;
+}
+
+.winner-votes{
+  margin-top:10px;
+  color:rgba(255,255,255,.78);
+  font-size:11px;
+}
+
+.ranking-box{
+  margin-top:12px;
+  padding:23px;
+  border-radius:23px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(255,255,255,.96);
+}
+
+.ranking-title{
+  margin:0 0 15px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:32px;
+  font-weight:400;
+}
+
+.rank-list{
+  display:grid;
+  gap:7px;
+}
+
+.rank-row{
+  display:grid;
+  grid-template-columns:70px 1fr auto auto;
+  align-items:center;
+  gap:10px;
+  min-height:57px;
+  padding:10px 13px;
+  border-radius:15px;
+  background:#f7f6fa;
+}
+
+.rank-position{
+  color:#7863dd;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:22px;
+}
+
+.rank-name{
+  font-size:12px;
+  font-weight:700;
+}
+
+.rank-ear{
+  color:#787d8f;
+  font-size:10px;
+}
+
+.rank-points{
+  min-width:53px;
+  text-align:right;
+  color:#725bdd;
+  font-weight:700;
+  font-size:10px;
+}
+
+.other-participants{
+  margin-top:12px;
+  padding:20px;
+  border-radius:21px;
+  background:rgba(255,255,255,.72);
+}
+
+.other-participants h3{
+  margin:0 0 12px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:26px;
+  font-weight:400;
+}
+
+.participant-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.participant-chip{
+  padding:8px 11px;
+  border-radius:999px;
+  background:#f0eef7;
+  color:#6e7284;
+  font-size:9px;
+}
+
+/* =========================================
+   RESULT EDITOR
+========================================= */
+
 .overlay{
   position:fixed;
   inset:0;
   z-index:200;
+
   display:none;
   align-items:center;
   justify-content:center;
+
   padding:18px;
+
   background:rgba(24,29,54,.36);
-  backdrop-filter:blur(15px);
+  backdrop-filter:blur(16px);
 }
-.overlay.open{display:flex}
-.modal{
-  width:min(610px,100%);
-  max-height:calc(100vh - 28px);
+
+.overlay.open{
+  display:flex;
+}
+
+.result-modal{
+  width:min(560px,100%);
+  max-height:calc(100vh - 30px);
   overflow-y:auto;
   padding:24px;
-  border-radius:27px;
+  border-radius:28px;
   background:rgba(255,255,255,.98);
-  box-shadow:0 30px 90px rgba(20,25,55,.22);
+  box-shadow:0 28px 80px rgba(20,25,55,.22);
 }
+
 .modal-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:18px;
+  margin-bottom:19px;
 }
-.modal-title{
+
+.modal-top h2{
   margin:0;
   font-family:"Nanum Pen Script",cursive;
-  font-size:38px;
+  font-size:37px;
   font-weight:400;
 }
+
 .close{
   width:39px;
   height:39px;
   border:0;
   border-radius:50%;
-  background:#efeff4;
+  background:#eeeef4;
   cursor:pointer;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.field-wrap label{
-  display:block;
-  margin:0 0 6px;
-  color:#74798a;
-  font-size:10px;
-  font-weight:800;
-}
-.field{
-  width:100%;
-  min-height:46px;
-  padding:0 13px;
-  border:1px solid #dddce6;
-  border-radius:13px;
-  background:#fff;
-  outline:none;
-  font-size:12px;
-}
-.field:focus{
-  border-color:#8e7ae6;
-  box-shadow:0 0 0 4px rgba(128,105,233,.08);
-}
-textarea.field{
-  min-height:105px;
-  padding-top:12px;
-  resize:vertical;
-  line-height:1.65;
-}
-.full{grid-column:1/-1}
-.type-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-}
-.type-choice{
-  min-height:58px;
-  border:1px solid #e4e2eb;
-  border-radius:15px;
-  background:#fff;
-  cursor:pointer;
-  font-size:11px;
-  font-weight:800;
-}
-.type-choice.active{
-  color:#fff;
-  border-color:transparent;
-  background:linear-gradient(135deg,#8168e9,#7689ec);
-}
-.save{
-  width:100%;
-  min-height:50px;
-  margin-top:15px;
-  border:0;
-  border-radius:14px;
-  color:#fff;
-  background:linear-gradient(135deg,#8068e8,#738bed);
-  cursor:pointer;
-  font-weight:800;
 }
 
-/* DETAIL */
-.detail-card{
-  padding:23px;
-  border-radius:22px;
-  background:#fff;
-}
-.detail-type{color:#7562dd;font-family:"Nanum Pen Script",cursive;font-size:20px}
-.detail-card h2{margin:3px 0 7px;font-size:23px}
-.detail-date{color:#73798a;font-size:11px;font-weight:700}
-.detail-desc{margin-top:16px;color:#656b7d;font-size:12px;line-height:1.9}
-.detail-metrics{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
-.detail-note{
-  margin-top:15px;
-  padding:13px;
-  border-radius:13px;
-  background:#f5f3fb;
-  color:#74798b;
+.editor-help{
+  margin-bottom:15px;
+  color:#858998;
   font-size:10px;
   line-height:1.7;
 }
 
-.period-result{margin-top:20px;padding:18px;border-radius:18px;background:#f8f7fc;border:1px solid #efedf6}
-.period-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}
-.period-result-head h3{margin:0;font-size:15px}
-.period-result-head span{color:#8a8e9d;font-size:9px;font-weight:700}
-.period-rank-list{display:grid;gap:7px}
-.period-rank-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:9px 11px;border-radius:13px;background:#fff}
-.period-rank-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}
-.period-rank-name{font-size:12px;font-weight:800}
-.period-rank-sub{margin-top:2px;color:#858999;font-size:9px}
-.period-rank-score{text-align:right;color:#6d58d5;font-size:15px;font-weight:800}
-.period-rank-score small{margin-left:2px;font-size:9px}
-.period-empty{padding:20px 10px;text-align:center;color:#9296a5;font-size:10px;line-height:1.7}
+.people-editor{
+  display:grid;
+  gap:8px;
+}
+
+.person-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 90px 37px;
+  gap:7px;
+}
+
+.field{
+  width:100%;
+  min-height:47px;
+  padding:0 13px;
+  border:1px solid #dddce5;
+  border-radius:14px;
+  background:white;
+  outline:none;
+  font-size:12px;
+}
+
+.person-member{
+  cursor:pointer;
+}
+
+.field:focus{
+  border-color:#8f7ce6;
+  box-shadow:0 0 0 4px rgba(128,105,233,.09);
+}
+
+.remove-person{
+  border:0;
+  border-radius:11px;
+  color:#ca526a;
+  background:#fff0f2;
+  cursor:pointer;
+}
+
+.add-person{
+  width:100%;
+  min-height:43px;
+  margin-top:10px;
+  border:1px dashed #cec9e6;
+  border-radius:13px;
+  color:#6655c9;
+  background:white;
+  cursor:pointer;
+}
+
+.preview-box{
+  margin-top:15px;
+  padding:16px;
+  border-radius:17px;
+  background:#f6f5fa;
+}
+
+.preview-box strong{
+  display:block;
+  margin-bottom:8px;
+  font-size:11px;
+}
+
+.preview-text{
+  color:#74798b;
+  font-size:10px;
+  line-height:1.9;
+}
+
+.save-result{
+  width:100%;
+  min-height:51px;
+  margin-top:15px;
+  border:0;
+  border-radius:15px;
+  color:white;
+  background:linear-gradient(135deg,#8169e8,#7189eb);
+  cursor:pointer;
+  font-weight:700;
+}
+
+/* =========================================
+   MENU
+========================================= */
 
 .menu-card{
   width:min(400px,100%);
   padding:24px;
   border-radius:27px;
-  background:#fff;
+  background:rgba(255,255,255,.97);
 }
+
 .menu-card a{
-  min-height:54px;
+  min-height:55px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   border-bottom:1px solid var(--line);
   font-size:13px;
 }
-.logout{
-  display:none;
-  width:100%;
-  min-height:54px;
-  border:0;
-  border-bottom:1px solid var(--line);
-  background:none;
-  color:#c95369;
-  text-align:left;
-  cursor:pointer;
-  font-size:13px;
-}
-.logout.show{display:block}
+
+/* =========================================
+   BOTTOM
+========================================= */
 
 .bottom{
   position:fixed;
@@ -553,1051 +963,2932 @@ textarea.field{
   left:50%;
   bottom:10px;
   transform:translateX(-50%);
+
   width:min(720px,calc(100% - 24px));
   height:67px;
+
   display:grid;
   grid-template-columns:repeat(5,1fr);
+
   overflow:hidden;
   border-radius:22px;
-  background:rgba(255,255,255,.84);
+
+  background:rgba(255,255,255,.82);
   border:1px solid rgba(255,255,255,.95);
+
   box-shadow:0 14px 42px rgba(30,37,75,.12);
   backdrop-filter:blur(23px);
 }
-.bottom a,.bottom button{
+
+.bottom a,
+.bottom button{
   border:0;
   background:none;
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:3px;
+
   color:#777c8d;
   cursor:pointer;
   font-size:8px;
 }
-.bottom .active{color:#755fe1;font-weight:800}
-.nav-icon{font-size:18px}
 
-@media(max-width:760px){
-  .header{height:70px;padding:0 15px}
-  .brand strong{font-size:23px}
-  .page{padding:0 13px 105px}
-  .hero{grid-template-columns:1fr;gap:25px;padding:45px 2px 32px}
-  .hero h1{font-size:92px}
-  .hero-card{min-height:220px}
-  .idea-grid{grid-template-columns:1fr 1fr}
-  .stats{grid-template-columns:1fr 1fr 1fr}
-  .campaign{grid-template-columns:88px minmax(0,1fr);gap:11px;padding:12px}
-  .campaign-image{width:88px;height:82px}
-  .status{position:absolute;right:12px;top:12px}
-  .campaign-main{padding-right:60px}
-  .form-grid{grid-template-columns:1fr}
-  .full{grid-column:auto}
+.bottom .active{
+  color:#755fe1;
+  font-weight:700;
 }
-@media(max-width:440px){
-  .idea-grid{grid-template-columns:1fr}
-  .stats{grid-template-columns:1fr}
-  .type-grid{grid-template-columns:1fr}
+
+.nav-icon{
+  font-size:18px;
 }
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:700px){
+
+  .header{
+    height:70px;
+    padding:0 16px;
+  }
+
+  .brand strong{
+    font-size:23px;
+  }
+
+  .page{
+    padding:0 14px 105px;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    gap:30px;
+    padding:50px 0 45px;
+  }
+
+  .hero-title{
+    font-size:95px;
+  }
+
+  .hero-visual{
+    min-height:280px;
+    padding:25px;
+    border-radius:25px;
+  }
+
+  .hero-script{
+    font-size:40px;
+  }
+
+  .process{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+  }
+
+  .live-card{
+    grid-template-columns:60px minmax(0,1fr) 78px;
+    gap:10px;
+    padding:11px;
+  }
+
+  .live-date{
+    min-height:62px;
+    border-radius:14px;
+  }
+
+  .live-date strong{
+    font-size:28px;
+  }
+
+  .live-image{
+    width:78px;
+    height:62px;
+    border-radius:13px;
+  }
+
+  .live-card h3{
+    font-size:20px;
+  }
+
+  .live-result-mini{
+    font-size:8px;
+  }
+
+  .detail-info{
+    grid-template-columns:1fr;
+  }
+
+  .result-summary{
+    grid-template-columns:1fr;
+  }
+
+  .summary-card{
+    min-height:145px;
+  }
+
+  .rank-row{
+    grid-template-columns:55px minmax(0,1fr) auto;
+  }
+
+  .rank-ear{
+    grid-column:2;
+  }
+
+  .rank-points{
+    grid-column:3;
+    grid-row:1 / span 2;
+  }
+}
+
+@media(max-width:430px){
+
+  .process{
+    grid-template-columns:1fr;
+  }
+
+  .live-card{
+    grid-template-columns:56px minmax(0,1fr) 68px;
+  }
+
+  .live-image{
+    width:68px;
+    height:56px;
+  }
+}
+
+/* =========================================
+   FULL RANKING VIEW
+========================================= */
+.full-ranking-page{
+  max-width:820px;
+  margin:auto;
+  padding:48px 0 30px;
+}
+.ranking-back{
+  color:#7561dc;
+  font-size:11px;
+  font-weight:800;
+}
+.ranking-hero{
+  margin-top:28px;
+  padding:27px;
+  border-radius:26px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 14px 38px rgba(31,37,74,.06);
+}
+.ranking-hero .kicker{
+  font-size:22px;
+}
+.ranking-hero h1{
+  margin:2px 0 5px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:58px;
+  font-weight:400;
+}
+.ranking-hero p{
+  margin:0;
+  color:#777d8e;
+  font-size:11px;
+  line-height:1.7;
+}
+.full-rank-list{
+  display:grid;
+  gap:8px;
+  margin-top:14px;
+}
+.full-rank-row{
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  min-height:65px;
+  padding:10px 14px;
+  border-radius:17px;
+  background:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.96);
+}
+.full-rank-number{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:#6654c8;
+  background:#eeeaff;
+  font-weight:800;
+}
+.full-rank-row:first-child .full-rank-number{
+  color:#805f15;
+  background:#fff1c6;
+}
+.full-rank-name{
+  font-size:14px;
+  font-weight:800;
+}
+.full-rank-detail{
+  margin-top:2px;
+  color:#84899a;
+  font-size:9px;
+}
+.full-rank-score{
+  color:#6956ce;
+  font-size:18px;
+  font-weight:800;
+  text-align:right;
+}
+.full-rank-score small{
+  margin-left:2px;
+  font-size:9px;
+}
+
 </style>
 </head>
 
 <body>
+
 <div class="aurora"></div>
 
 <header class="header">
+
   <a href="/" class="brand">
     <strong>VOM</strong>
     <small>VOICE OF MELODY</small>
   </a>
 
   <div class="header-right">
-    <div id="adminBadge" class="admin-badge">ADMIN MODE</div>
-    <button class="menu-btn" onclick="openMenu()">☰</button>
+
+    <div id="adminBadge" class="admin-badge">
+      <span class="admin-dot"></span>
+      ADMIN MODE
+    </div>
+
+    <button class="menu-btn" onclick="openMenu()">
+      ☰
+    </button>
+
   </div>
+
 </header>
 
 <main id="page" class="page">
-
-  <section class="hero">
-    <div>
-      <div class="hero-label">VOM Playground</div>
-      <h1>Event</h1>
-      <p>
-        귀점유율과 VOM POINT를 실제 활동으로 이어가는 공간입니다.<br>
-        기간제 경쟁, 포인트 사용, 참여 미션 등 VOM만의 이벤트를 만들 수 있습니다.
-      </p>
-    </div>
-
-    <div class="hero-card">
-      <small>HOW TO USE</small>
-      <strong>
-        Earn.<br>
-        Use.<br>
-        Play.
-      </strong>
-      <p>
-        LIVE에서 쌓인 기록이 단순 랭킹으로 끝나지 않도록,
-        이벤트에서 다시 참여와 보상으로 연결합니다.
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <div class="kicker">Ideas</div>
-        <h2 class="section-title">활용할 수 있는 방식</h2>
-        <div class="section-copy">
-          이벤트 생성 시 아래 기준을 선택해서 자유롭게 운영할 수 있습니다.
-        </div>
-      </div>
-    </div>
-
-    <div class="idea-grid">
-      <article class="idea-card">
-        <div class="idea-icon">👂</div>
-        <h3>귀점유율 챌린지</h3>
-        <p>특정 기간의 귀점유율 기록을 기준으로 TOP 멤버를 선정하는 이벤트.</p>
-      </article>
-
-      <article class="idea-card">
-        <div class="idea-icon">P</div>
-        <h3>VOM POINT 사용</h3>
-        <p>포인트 상점, 응모권, 참가권처럼 보유 포인트를 실제 혜택에 사용하는 이벤트.</p>
-      </article>
-
-      <article class="idea-card">
-        <div class="idea-icon">✓</div>
-        <h3>참여 미션</h3>
-        <p>LIVE, 버스킹, 모임 참석 횟수 등 참여 자체를 목표로 설정하는 기간제 미션.</p>
-      </article>
-
-      <article class="idea-card">
-        <div class="idea-icon">✦</div>
-        <h3>시즌 이벤트</h3>
-        <p>여름, 연말, 창립기념 등 운영진이 직접 기간과 보상을 정하는 자유형 이벤트.</p>
-      </article>
-    </div>
-
-    <div id="stats" class="stats">
-      <div class="stat"><span>진행 중</span><strong>0</strong></div>
-      <div class="stat"><span>예정</span><strong>0</strong></div>
-      <div class="stat"><span>종료</span><strong>0</strong></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="section-head">
-      <div>
-        <div class="kicker">Campaigns</div>
-        <h2 class="section-title">기간제 이벤트</h2>
-      </div>
-
-      <button class="admin-add" onclick="openEditor()">
-        ＋ 새 이벤트 만들기
-      </button>
-    </div>
-
-    <div class="toolbar">
-      <div class="filters">
-        <button class="filter active" data-filter="ALL" onclick="setFilter('ALL',this)">전체</button>
-        <button class="filter" data-filter="LIVE" onclick="setFilter('LIVE',this)">진행 중</button>
-        <button class="filter" data-filter="UPCOMING" onclick="setFilter('UPCOMING',this)">예정</button>
-        <button class="filter" data-filter="DONE" onclick="setFilter('DONE',this)">종료</button>
-      </div>
-    </div>
-
-    <div id="campaignList" class="campaign-list">
-      <div class="empty-state">이벤트를 불러오는 중...</div>
-    </div>
-  </section>
-
+  <div class="empty" style="margin-top:60px;">
+    VOM LIVE를 불러오는 중...
+  </div>
 </main>
 
 
-<!-- EDITOR -->
-<div id="editorOverlay" class="overlay">
-  <div class="modal">
+<!-- RESULT EDITOR -->
+
+<div id="resultOverlay" class="overlay">
+
+  <div class="result-modal">
+
     <div class="modal-top">
-      <h2 id="editorTitle" class="modal-title">New Event</h2>
-      <button class="close" onclick="closeEditor()">✕</button>
+
+      <h2>
+        Live Result
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeResultEditor()"
+      >
+        ✕
+      </button>
+
     </div>
 
-    <input id="editingId" type="hidden">
-    <input id="campaignType" type="hidden" value="POINT">
+    <input
+      type="hidden"
+      id="resultEventId"
+    >
 
-    <div class="field-wrap full">
-      <label>이벤트 방식</label>
-      <div class="type-grid">
-        <button id="type-point" class="type-choice active" type="button" onclick="setCampaignType('POINT')">VOM POINT</button>
-        <button id="type-ear" class="type-choice" type="button" onclick="setCampaignType('EAR')">귀점유율</button>
-        <button id="type-mission" class="type-choice" type="button" onclick="setCampaignType('MISSION')">참여 미션</button>
-      </div>
+    <div class="editor-help">
+      MEMBERS에 등록된 실제 참석자를 선택하고 받은 표를 입력하세요.
+      참석자 수는 자동으로 계산되고,
+      공동 순위 · TOP 3 · 포인트 · 귀점유율도 자동 계산됩니다.
     </div>
 
-    <div class="form-grid" style="margin-top:12px">
-      <div class="field-wrap full">
-        <label>이벤트명</label>
-        <input id="title" class="field" placeholder="예: 9월 귀점유율 챌린지">
+    <div
+      id="peopleEditor"
+      class="people-editor"
+    ></div>
+
+    <button
+      class="add-person"
+      onclick="addPersonRow()"
+      type="button"
+    >
+      ＋ 참석자 추가
+    </button>
+
+    <div class="preview-box">
+
+      <strong>
+        자동 계산 미리보기
+      </strong>
+
+      <div
+        id="resultPreview"
+        class="preview-text"
+      >
+        참석자를 입력해주세요.
       </div>
 
-      <div class="field-wrap">
-        <label>시작일</label>
-        <input id="startDate" class="field" type="date">
-      </div>
-
-      <div class="field-wrap">
-        <label>종료일</label>
-        <input id="endDate" class="field" type="date">
-      </div>
-
-      <div class="field-wrap">
-        <label>POINT 사용량</label>
-        <input id="pointCost" class="field" type="number" min="0" placeholder="사용하지 않으면 0">
-      </div>
-
-      <div class="field-wrap">
-        <label>보상 POINT</label>
-        <input id="rewardPoints" class="field" type="number" min="0" placeholder="없으면 0">
-      </div>
-
-      <div class="field-wrap full">
-        <label>대표 이미지 URL</label>
-        <input id="imageUrl" class="field" placeholder="선택">
-      </div>
-
-      <div class="field-wrap full">
-        <label>설명</label>
-        <textarea id="description" class="field" placeholder="참여 방법, 집계 기준, 보상 등을 적어주세요."></textarea>
-      </div>
     </div>
 
-    <button class="save" onclick="saveCampaign()">저장</button>
+    <button
+      class="save-result"
+      onclick="saveResults()"
+    >
+      결과 저장
+    </button>
+
   </div>
-</div>
 
-
-<!-- DETAIL -->
-<div id="detailOverlay" class="overlay">
-  <div class="modal">
-    <div class="modal-top">
-      <h2 class="modal-title">Event</h2>
-      <button class="close" onclick="closeDetail()">✕</button>
-    </div>
-    <div id="detailBody"></div>
-  </div>
 </div>
 
 
 <!-- MENU -->
+
 <div id="menuOverlay" class="overlay">
+
   <div class="menu-card">
+
     <div class="modal-top">
-      <h2 class="modal-title">VOM Menu</h2>
-      <button class="close" onclick="closeMenu()">✕</button>
+
+      <h2>
+        VOM Menu
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeMenu()"
+      >
+        ✕
+      </button>
+
     </div>
 
-    <a href="/">HOME <span>→</span></a>
-    <a href="/calendar/">CALENDAR <span>→</span></a>
-    <a href="/members/">MEMBERS <span>→</span></a>
-    <a href="/event/">EVENT <span>→</span></a>
-    <a href="/live/">VOM LIVE <span>→</span></a>
+    <a href="/">
+      HOME <span>→</span>
+    </a>
 
-    <button id="logoutButton" class="logout" onclick="adminLogout()">
-      관리자 모드 종료 <span style="float:right">→</span>
-    </button>
+    <a href="/info/">
+      INFO <span>→</span>
+    </a>
+
+    <a href="/calendar/">
+      CALENDAR <span>→</span>
+    </a>
+
+    <a href="/live/">
+      VOM LIVE <span>→</span>
+    </a>
+
+    <a href="/busking/">
+      BUSKING <span>→</span>
+    </a>
+
+    <a href="/notice/">
+      NOTICE <span>→</span>
+    </a>
+
+    <a href="/qna/">
+      Q&A <span>→</span>
+    </a>
+
   </div>
+
 </div>
 
 
 <nav class="bottom">
-  <a href="/">
-    <span class="nav-icon">⌂</span>
-    HOME
-  </a>
-
-  <a href="/calendar/">
-    <span class="nav-icon">◫</span>
-    CALENDAR
-  </a>
-
-  <a href="/members/">
-    <span class="nav-icon">♙</span>
-    MEMBERS
-  </a>
-
-  <a href="/event/" class="active">
-    <span class="nav-icon">✦</span>
-    EVENT
-  </a>
-
-  <button onclick="openMenu()">
-    <span class="nav-icon">☰</span>
-    MENU
-  </button>
+  <a href="/" ><span class="nav-icon">⌂</span>HOME</a>
+  <a href="/calendar/" ><span class="nav-icon">◫</span>CALENDAR</a>
+  <a href="/members/" ><span class="nav-icon">♙</span>MEMBERS</a>
+  <a href="/event/" ><span class="nav-icon">✦</span>EVENT</a>
+  <button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button>
 </nav>
 
 
 <script>
-const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
-const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
-const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
 
-let adminMode=false;
-let campaigns=[];
-let currentFilter='ALL';
-let currentCampaignType='POINT';
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* START */
+let adminMode = false;
+
+let events = [];
+let locations = [];
+let results = [];
+let participants = [];
+let members = [];
+
+
+/* =========================================
+   START
+========================================= */
+
 async function start(){
+
   await checkAdmin();
-  await loadCampaigns();
+
+  await loadAllData();
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  const id =
+    params.get('id');
+
+  const ranking =
+    params.get('ranking');
+
+
+  if(ranking === 'ear' || ranking === 'point'){
+
+    await renderFullRanking(ranking);
+
+  }else if(id){
+
+    renderDetail(id);
+
+  }else{
+
+    renderMain();
+  }
 }
 
 
-/* ADMIN */
+/* =========================================
+   ADMIN
+========================================= */
+
 async function checkAdmin(){
-  const {data}=await db.auth.getSession();
-  const session=data.session;
+
+  const { data } =
+    await db.auth.getSession();
+
+  const session =
+    data.session;
+
 
   if(!session){
     setAdmin(false);
     return;
   }
 
-  const {data:admin}=await db
-    .from('admins')
-    .select('user_id')
-    .eq('user_id',session.user.id)
-    .maybeSingle();
+
+  const { data:admin } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq(
+        'user_id',
+        session.user.id
+      )
+      .maybeSingle();
+
 
   setAdmin(!!admin);
 }
 
+
 function setAdmin(active){
-  adminMode=active;
+
+  adminMode =
+    active;
 
   document
     .getElementById('adminBadge')
     .classList
-    .toggle('show',active);
-
-  document
-    .getElementById('page')
-    .classList
-    .toggle('admin-mode',active);
-
-  document
-    .getElementById('logoutButton')
-    .classList
-    .toggle('show',active);
-}
-
-async function adminLogout(){
-  await db.auth.signOut();
-  setAdmin(false);
-  closeMenu();
-  renderCampaigns();
+    .toggle(
+      'show',
+      active
+    );
 }
 
 
-/* LOAD */
-async function loadCampaigns(){
-  const {data,error}=await db
-    .from('vom_campaigns')
-    .select('*')
-    .order('start_date',{ascending:false})
-    .order('created_at',{ascending:false});
+/* =========================================
+   LOAD
+========================================= */
+
+async function loadAllData(){
+
+  const locationRequest =
+    db
+      .from('locations')
+      .select('*');
+
+
+  const eventRequest =
+    db
+      .from('events')
+      .select('*')
+      .eq(
+        'event_type',
+        'VOM LIVE'
+      )
+      .order(
+        'event_date',
+        {
+          ascending:true
+        }
+      );
+
+
+  const resultRequest =
+    db
+      .from('live_results')
+      .select('*');
+
+
+  const participantRequest =
+    db
+      .from('live_participants')
+      .select('*');
+
+
+  const memberRequest =
+    db
+      .from('members')
+      .select('*');
+
+
+  const [
+    locationResponse,
+    eventResponse,
+    resultResponse,
+    participantResponse,
+    memberResponse
+  ] =
+    await Promise.all([
+      locationRequest,
+      eventRequest,
+      resultRequest,
+      participantRequest,
+      memberRequest
+    ]);
+
+
+  locations =
+    locationResponse.data || [];
+
+
+  events =
+    eventResponse.data || [];
+
+
+  results =
+    resultResponse.data || [];
+
+
+  participants =
+    participantResponse.data || [];
+
+
+  members =
+    (memberResponse.data || [])
+      .sort(compareMembers);
+
+
+  if(eventResponse.error){
+
+    console.error(
+      eventResponse.error
+    );
+  }
+
+
+  if(resultResponse.error){
+
+    console.error(
+      resultResponse.error
+    );
+  }
+
+
+  if(participantResponse.error){
+
+    console.error(
+      participantResponse.error
+    );
+  }
+
+
+  if(memberResponse.error){
+
+    console.error(
+      memberResponse.error
+    );
+  }
+}
+
+
+
+/* =========================================
+   FULL RANKING PAGE
+========================================= */
+
+async function renderFullRanking(type){
+
+  const isEar =
+    type === 'ear';
+
+
+  document.title =
+    isEar
+    ? '귀점유율 · VOM LIVE'
+    : 'VOM POINT · VOM LIVE';
+
+
+  const page =
+    document.getElementById('page');
+
+
+  page.classList.toggle(
+    'admin-mode',
+    adminMode
+  );
+
+
+  const viewName =
+    isEar
+    ? 'ear_share_hall_of_fame'
+    : 'live_point_hall_of_fame';
+
+
+  const {data,error} =
+    await db
+      .from(viewName)
+      .select('*')
+      .order('rank',{ascending:true});
+
 
   if(error){
+
     console.error(error);
 
-    document.getElementById('campaignList').innerHTML=
-      `<div class="empty-state">
-        이벤트 DB를 불러오지 못했습니다.<br>
-        Supabase에 vom_campaigns 테이블을 먼저 생성해주세요.
-      </div>`;
+    page.innerHTML = `
+      <div class="full-ranking-page">
+        <a href="/live/" class="ranking-back">← VOM LIVE</a>
+        <div class="empty" style="margin-top:25px;">
+          랭킹을 불러오지 못했습니다.
+        </div>
+      </div>
+    `;
 
-    renderStats([]);
     return;
   }
 
-  campaigns=data||[];
 
-  renderCampaigns();
-  renderStats(campaigns);
-}
+  const list =
+    data || [];
 
-function renderStats(list){
-  const counts={LIVE:0,UPCOMING:0,DONE:0};
 
-  list.forEach(item=>{
-    counts[getStatus(item)]++;
-  });
+  page.innerHTML = `
+    <div class="full-ranking-page">
 
-  document.getElementById('stats').innerHTML=`
-    <div class="stat"><span>진행 중</span><strong>${counts.LIVE}</strong></div>
-    <div class="stat"><span>예정</span><strong>${counts.UPCOMING}</strong></div>
-    <div class="stat"><span>종료</span><strong>${counts.DONE}</strong></div>
+      <a href="/" class="ranking-back">
+        ← HOME
+      </a>
+
+      <section class="ranking-hero">
+
+        <div class="kicker">
+          ${
+            isEar
+            ? 'EAR SHARE · HALL OF FAME'
+            : 'VOM POINT · RANKING'
+          }
+        </div>
+
+        <h1>
+          ${
+            isEar
+            ? '귀점유율'
+            : 'VOM Point'
+          }
+        </h1>
+
+        <p>
+          ${
+            isEar
+            ? 'VOM LIVE 기록을 기준으로 누적 귀점유율 순위를 확인합니다.'
+            : 'VOM LIVE 참석과 순위 기록을 기준으로 누적 VOM POINT를 확인합니다.'
+          }
+        </p>
+
+      </section>
+
+      <div class="full-rank-list">
+
+        ${
+          list.length
+
+          ? list.map(row => {
+
+              const rank =
+                Number(row.rank || 0);
+
+              const score =
+                isEar
+                ? Number(
+                    row.ear_share_percent ??
+                    row.ear_share ??
+                    row.share_percent ??
+                    row.percent ??
+                    0
+                  )
+                : Number(
+                    row.total_points || 0
+                  );
+
+              const detail =
+                isEar
+                ? `${Number(row.votes || 0)}표 · ${Number(row.participant_count || 0)}명`
+                : `참석 ${Number(row.attendance_count || 0)}회 · 1위 ${Number(row.first_place_count || 0)}회`;
+
+              return `
+                <div class="full-rank-row">
+
+                  <div class="full-rank-number">
+                    ${rank}
+                  </div>
+
+                  <div>
+
+                    <div class="full-rank-name">
+                      ${escapeHtml(row.name || '')}
+                    </div>
+
+                    <div class="full-rank-detail">
+                      ${escapeHtml(detail)}
+                    </div>
+
+                  </div>
+
+                  <div class="full-rank-score">
+                    ${
+                      isEar
+                      ? score.toFixed(1)
+                      : score
+                    }
+                    <small>
+                      ${isEar ? '%' : 'P'}
+                    </small>
+                  </div>
+
+                </div>
+              `;
+            }).join('')
+
+          : `
+            <div class="empty">
+              아직 기록이 없습니다.
+            </div>
+          `
+        }
+
+      </div>
+
+    </div>
   `;
 }
 
 
-/* FILTER */
-function setFilter(filter,button){
-  currentFilter=filter;
+/* =========================================
+   MAIN PAGE
+========================================= */
 
-  document
-    .querySelectorAll('.filter')
-    .forEach(btn=>btn.classList.remove('active'));
+function renderMain(){
 
-  button.classList.add('active');
-
-  renderCampaigns();
-}
+  document.title =
+    'VOM LIVE · Voice of Melody';
 
 
-/* RENDER */
-function renderCampaigns(){
-  const box=document.getElementById('campaignList');
+  const page =
+    document.getElementById('page');
 
-  const list=currentFilter==='ALL'
-    ? campaigns
-    : campaigns.filter(item=>getStatus(item)===currentFilter);
 
-  if(!list.length){
-    box.innerHTML=`<div class="empty-state">해당 이벤트가 없습니다.</div>`;
-    return;
-  }
+  const today =
+    todayString();
 
-  box.innerHTML=list.map(createCampaignHtml).join('');
-}
 
-function createCampaignHtml(item){
-  const status=getStatus(item);
-  const statusLabel=
-    status==='LIVE'?'진행 중':
-    status==='UPCOMING'?'예정':
-    '종료';
+  const upcoming =
+    events.filter(
+      event =>
+        event.event_date >= today
+    );
 
-  const typeLabel=
-    item.campaign_type==='EAR'?'귀점유율':
-    item.campaign_type==='MISSION'?'참여 미션':
-    'VOM POINT';
 
-  const tags=[];
+  const past =
+    events
+      .filter(
+        event =>
+          event.event_date < today
+      )
+      .reverse();
 
-  if(Number(item.point_cost||0)>0){
-    tags.push(`사용 ${Number(item.point_cost)}P`);
-  }
 
-  if(Number(item.reward_points||0)>0){
-    tags.push(`보상 +${Number(item.reward_points)}P`);
-  }
+  page.classList.toggle(
+    'admin-mode',
+    adminMode
+  );
 
-  if(item.campaign_type==='EAR'){
-    tags.push('귀점유율 기준');
-  }
 
-  if(item.campaign_type==='MISSION'){
-    tags.push('참여형');
-  }
+  page.innerHTML =
+  `
+    <section class="hero">
 
-  return `
-    <article class="campaign" onclick="openDetail('${escapeAttribute(item.id)}')">
+      <div>
 
-      ${
-        item.image_url
-        ? `
-          <div class="campaign-image">
-            <img src="${escapeAttribute(item.image_url)}" alt="">
-          </div>
-        `
-        : `
-          <div class="campaign-image empty">
-            VOM EVENT
-          </div>
-        `
-      }
-
-      <div class="campaign-main">
-        <div class="campaign-type">${typeLabel}</div>
-
-        <h3>${escapeHtml(item.title||'')}</h3>
-
-        <div class="campaign-date">
-          ${formatDate(item.start_date)} ~ ${formatDate(item.end_date)}
+        <div class="hero-label">
+          Voice on Stage
         </div>
 
-        ${
-          item.description
-          ? `<div class="campaign-desc">${escapeHtml(item.description)}</div>`
-          : ''
-        }
+        <h1 class="hero-title">
+          VOM LIVE
+        </h1>
+
+        <div class="hero-subtitle">
+          직접 준비한 한 곡을,<br>
+          서로에게 들려주는 작은 무대.
+        </div>
+
+        <div class="hero-copy">
+
+          VOM LIVE(봄라이브)는 VOM에서 진행하는 라이브형 정기모임입니다.
+
+          단순한 친목 모임보다는 각자가 직접 준비한 한 곡을
+          작은 무대처럼 서로에게 들려주는 방식으로 진행됩니다.
+
+          <br><br>
+
+          매 회차마다 하나의 주제가 정해지며,
+          참가자들은 해당 주제에 맞는 곡을 자유롭게 선정해 참여할 수 있습니다.
+
+        </div>
+
+        <div class="tags">
+
+          <span>최대 12명</span>
+          <span>MR / 악기 자유</span>
+          <span>개인 자유곡</span>
+          <span>TOP 3</span>
+          <span>단체곡</span>
+
+        </div>
+
+      </div>
+
+
+      <div class="hero-visual">
+
+        <div class="hero-script">
+
+          Sing it.<br>
+          Hear it.<br>
+          Remember it.
+
+        </div>
+
+        <p>
+
+          완벽한 실력보다,<br>
+          직접 준비하고 직접 들려주는 경험에 의미를 둡니다.
+
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <div class="kicker">
+          How it works
+        </div>
+
+        <h2 class="section-title">
+          진행 방식
+        </h2>
+
+      </div>
+
+
+      <div class="process">
+
+        <article class="process-card">
+
+          <div class="process-num">
+            01
+          </div>
+
+          <h3>
+            개인 자유곡
+          </h3>
+
+          <p>
+            참가자별로 직접 준비한 자유곡 한 곡을 진행합니다.
+          </p>
+
+        </article>
+
+
+        <article class="process-card">
+
+          <div class="process-num">
+            02
+          </div>
+
+          <h3>
+            회차별 공통 주제
+          </h3>
+
+          <p>
+            매 회차 하나의 주제에 맞춰 각자의 방식으로 곡을 준비합니다.
+          </p>
+
+        </article>
+
+
+        <article class="process-card">
+
+          <div class="process-num">
+            03
+          </div>
+
+          <h3>
+            TOP 3
+          </h3>
+
+          <p>
+            참가자 투표를 통해 회차별 TOP 3를 선정합니다.
+          </p>
+
+        </article>
+
+
+        <article class="process-card">
+
+          <div class="process-num">
+            04
+          </div>
+
+          <h3>
+            경연 & 단체곡
+          </h3>
+
+          <p>
+            2부 소규모 경연 이후 함께 만드는 무대를 진행합니다.
+          </p>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="info-grid">
+
+        <article class="info-card">
+
+          <h3>
+            📌 참가 관련
+          </h3>
+
+          <ul>
+
+            <li>모집은 선착순으로 진행됩니다.</li>
+
+            <li>회차별 최대 인원은 변동될 수 있습니다.</li>
+
+            <li>최종 참여 인원은 일정 일주일 전 확정됩니다.</li>
+
+            <li>
+              개인곡 순서 및 듀엣 / 단체곡 팀은 랜덤으로 배정됩니다.
+            </li>
+
+            <li>
+              순서와 팀 편성은 일정 3일 전 안내됩니다.
+            </li>
+
+            <li>
+              참가비 및 장소는 회차 공지를 통해 안내됩니다.
+            </li>
+
+          </ul>
+
+        </article>
+
+
+        <article class="info-card">
+
+          <h3>
+            🎵 이런 분들에게 추천
+          </h3>
+
+          <ul>
+
+            <li>
+              버스킹이나 대관공연에서 꼭 불러보고 싶은 한 곡이 있는 분
+            </li>
+
+            <li>
+              한 곡을 제대로 준비해보고 싶은 분
+            </li>
+
+            <li>
+              사람들 앞에서 노래해보고 싶은 분
+            </li>
+
+            <li>
+              부담 없이 무대 경험을 쌓고 싶은 분
+            </li>
+
+            <li>
+              다양한 음악 이야기를 나누고 싶은 분
+            </li>
+
+            <li>
+              정기적으로 음악 활동을 이어가고 싶은 분
+            </li>
+
+          </ul>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <div class="kicker">
+          Sound System
+        </div>
+
+        <h2 class="section-title">
+          VOM LIVE 장비
+        </h2>
+
+        <div class="section-copy">
+          봄라이브에서 사용하는 장비 구성입니다.
+        </div>
+
+      </div>
+
+
+      <div class="gear-card">
+
+        <img
+          class="gear-image"
+          src="/assets/images/vom-live-gear.png"
+          alt="VOM LIVE 장비 스펙"
+
+          onerror="
+            this.style.display='none';
+            document.getElementById('gearFallback').style.display='flex';
+          "
+        >
+
+        <div
+          id="gearFallback"
+          class="gear-fallback"
+        >
+          VOM LIVE<br>
+          Sound System
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <div class="kicker">
+          Upcoming
+        </div>
+
+        <h2 class="section-title">
+          다가오는 VOM LIVE
+        </h2>
+
+      </div>
+
+
+      <div class="live-list">
 
         ${
-          tags.length
-          ? `
-            <div class="campaign-tags">
-              ${tags.map(tag=>`<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+          upcoming.length
+
+          ? upcoming
+              .map(
+                event =>
+                  createLiveCard(
+                    event,
+                    false
+                  )
+              )
+              .join('')
+
+          : `
+            <div class="empty">
+              예정된 VOM LIVE가 없습니다.
             </div>
           `
+        }
+
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-head">
+
+        <div class="kicker">
+          Archive
+        </div>
+
+        <h2 class="section-title">
+          지난 VOM LIVE
+        </h2>
+
+        <div class="section-copy">
+          지난 회차의 TOP 3와 귀점유율 기록을 확인할 수 있습니다.
+        </div>
+
+      </div>
+
+
+      <div class="live-list">
+
+        ${
+          past.length
+
+          ? past
+              .map(
+                event =>
+                  createLiveCard(
+                    event,
+                    true
+                  )
+              )
+              .join('')
+
+          : `
+            <div class="empty">
+              아직 지난 VOM LIVE가 없습니다.
+            </div>
+          `
+        }
+
+      </div>
+
+    </section>
+  `;
+}
+
+
+/* =========================================
+   LIVE CARD
+========================================= */
+
+function createLiveCard(
+  event,
+  past
+){
+
+  const date =
+    parseDate(
+      event.event_date
+    );
+
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2,'0');
+
+
+  const week =
+    weekEnglish(
+      date
+    );
+
+
+  const location =
+    getLocation(
+      event
+    );
+
+
+  const image =
+    event.image_url ||
+    location?.image_url ||
+    '';
+
+
+  const result =
+    getResult(
+      event.id
+    );
+
+
+  const people =
+    getParticipants(
+      event.id
+    );
+
+
+  const ranked =
+    calculateRanking(
+      result,
+      people
+    );
+
+
+  const winner =
+    ranked.find(
+      row =>
+        row.rank === 1
+    );
+
+
+  let mini = '';
+
+
+  if(
+    past &&
+    people.length
+  ){
+
+    mini =
+    `
+      <div class="live-result-mini">
+
+        참여 ${people.length}명
+
+        ${
+          winner
+
+          ? `
+            ·
+            <strong>
+              1위 ${escapeHtml(winner.name)}
+              ${winner.votes}표
+            </strong>
+          `
+
           : ''
         }
 
-        <div class="admin-row">
-          <button
-            class="mini-btn edit-btn"
-            onclick="event.stopPropagation();openEditor('${escapeAttribute(item.id)}')"
-          >
-            수정
-          </button>
+      </div>
+    `;
+  }
+
+
+  return `
+    <article
+      class="live-card"
+      onclick="
+        window.location.href='/live/?id=${event.id}'
+      "
+    >
+
+      <div class="live-date">
+
+        <div>
+
+          <strong>
+            ${day}
+          </strong>
+
+          <small>
+            ${week}
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div>
+
+        <div class="live-type">
+          VOM LIVE
+        </div>
+
+        <h3>
+          ${escapeHtml(event.title || '')}
+        </h3>
+
+        <div class="live-meta">
+
+          ${makeTime(event) || '시간 미정'}
+
+          ·
+
+          ${escapeHtml(
+            location?.name ||
+            event.location ||
+            '장소 미정'
+          )}
+
+        </div>
+
+
+        ${mini}
+
+
+        <div class="live-more">
 
           ${
-            status!=='DONE'
-            ? `
-              <button
-                class="mini-btn end-btn"
-                onclick="event.stopPropagation();endCampaign('${escapeAttribute(item.id)}')"
-              >
-                종료
-              </button>
-            `
-            : ''
+            past
+
+            ? '결과 & 기록 보기 →'
+
+            : '자세히 보기 →'
           }
 
-          <button
-            class="mini-btn delete-btn"
-            onclick="event.stopPropagation();deleteCampaign('${escapeAttribute(item.id)}')"
-          >
-            삭제
-          </button>
         </div>
+
       </div>
 
-      <div class="status ${status==='LIVE'?'live':status==='UPCOMING'?'upcoming':'done'}">
-        ${statusLabel}
+
+      <div class="live-side">
+
+        <div class="live-image">
+
+          ${
+            image
+
+            ? `
+              <img
+                src="${escapeAttribute(image)}"
+                alt=""
+              >
+            `
+
+            : `
+              <div class="live-image-empty">
+                LIVE
+              </div>
+            `
+          }
+
+        </div>
+
+
+        ${
+          past
+
+          ? `
+            <button
+              class="result-button"
+              onclick="
+                event.stopPropagation();
+                openResultEditor(${event.id});
+              "
+            >
+              결과 입력
+            </button>
+          `
+
+          : ''
+        }
+
       </div>
+
     </article>
   `;
 }
 
 
-/* STATUS */
-function getStatus(item){
-  if(item.force_closed){
-    return 'DONE';
-  }
+/* =========================================
+   DETAIL
+========================================= */
 
-  const today=todayString();
+function renderDetail(id){
 
-  if(item.start_date>today){
-    return 'UPCOMING';
-  }
-
-  if(item.end_date<today){
-    return 'DONE';
-  }
-
-  return 'LIVE';
-}
+  const event =
+    events.find(
+      item =>
+        String(item.id) ===
+        String(id)
+    );
 
 
-/* EDITOR */
-function setCampaignType(type){
-  currentCampaignType=type;
+  if(!event){
 
-  document.getElementById('campaignType').value=type;
-
-  ['POINT','EAR','MISSION'].forEach(key=>{
     document
-      .getElementById('type-'+key.toLowerCase())
-      .classList
-      .toggle('active',key===type);
-  });
-}
-
-function openEditor(id=''){
-  if(!adminMode){
-    return;
-  }
-
-  const item=campaigns.find(row=>String(row.id)===String(id));
-
-  document.getElementById('editingId').value=item?.id||'';
-  document.getElementById('editorTitle').textContent=item?'Edit Event':'New Event';
-
-  setCampaignType(item?.campaign_type||'POINT');
-
-  document.getElementById('title').value=item?.title||'';
-  document.getElementById('startDate').value=item?.start_date||todayString();
-  document.getElementById('endDate').value=item?.end_date||todayString();
-  document.getElementById('pointCost').value=Number(item?.point_cost||0);
-  document.getElementById('rewardPoints').value=Number(item?.reward_points||0);
-  document.getElementById('imageUrl').value=item?.image_url||'';
-  document.getElementById('description').value=item?.description||'';
-
-  document.getElementById('editorOverlay').classList.add('open');
-}
-
-function closeEditor(){
-  document.getElementById('editorOverlay').classList.remove('open');
-}
-
-async function saveCampaign(){
-  if(!adminMode){
-    return;
-  }
-
-  const id=document.getElementById('editingId').value;
-  const title=document.getElementById('title').value.trim();
-  const startDate=document.getElementById('startDate').value;
-  const endDate=document.getElementById('endDate').value;
-
-  if(!title){
-    alert('이벤트명을 입력해주세요.');
-    return;
-  }
-
-  if(!startDate||!endDate){
-    alert('시작일과 종료일을 입력해주세요.');
-    return;
-  }
-
-  if(endDate<startDate){
-    alert('종료일은 시작일보다 빠를 수 없습니다.');
-    return;
-  }
-
-  const payload={
-    title,
-    campaign_type:currentCampaignType,
-    start_date:startDate,
-    end_date:endDate,
-    point_cost:Number(document.getElementById('pointCost').value||0),
-    reward_points:Number(document.getElementById('rewardPoints').value||0),
-    image_url:document.getElementById('imageUrl').value.trim()||null,
-    description:document.getElementById('description').value.trim(),
-    force_closed:false
-  };
-
-  let response;
-
-  if(id){
-    response=await db
-      .from('vom_campaigns')
-      .update(payload)
-      .eq('id',id);
-  }else{
-    response=await db
-      .from('vom_campaigns')
-      .insert(payload);
-  }
-
-  if(response.error){
-    alert('저장 실패\n'+response.error.message);
-    return;
-  }
-
-  closeEditor();
-  await loadCampaigns();
-}
-
-
-/* END / DELETE */
-async function endCampaign(id){
-  if(!adminMode){
-    return;
-  }
-
-  if(!confirm('이 이벤트를 종료 처리할까요?')){
-    return;
-  }
-
-  const {error}=await db
-    .from('vom_campaigns')
-    .update({force_closed:true})
-    .eq('id',id);
-
-  if(error){
-    alert('종료 처리 실패\n'+error.message);
-    return;
-  }
-
-  await loadCampaigns();
-}
-
-async function deleteCampaign(id){
-  if(!adminMode){
-    return;
-  }
-
-  if(!confirm('이 이벤트를 완전히 삭제할까요?\n종료 처리보다 삭제는 복구가 어렵습니다.')){
-    return;
-  }
-
-  const {error}=await db
-    .from('vom_campaigns')
-    .delete()
-    .eq('id',id);
-
-  if(error){
-    alert('삭제 실패\n'+error.message);
-    return;
-  }
-
-  await loadCampaigns();
-}
-
-
-/* DETAIL */
-async function openDetail(id){
-  const item=campaigns.find(row=>String(row.id)===String(id));
-
-  if(!item){
-    return;
-  }
-
-  const typeLabel=
-    item.campaign_type==='EAR'?'귀점유율':
-    item.campaign_type==='MISSION'?'참여 미션':
-    'VOM POINT';
-
-  document.getElementById('detailBody').innerHTML=`
-    <div class="detail-card">
-      <div class="detail-type">${typeLabel}</div>
-
-      <h2>${escapeHtml(item.title||'')}</h2>
-
-      <div class="detail-date">
-        ${formatDate(item.start_date)} ~ ${formatDate(item.end_date)}
+      .getElementById('page')
+      .innerHTML =
+    `
+      <div class="empty" style="margin-top:60px;">
+        VOM LIVE를 찾을 수 없습니다.
+        <br><br>
+        <a href="/live/">
+          VOM LIVE로 돌아가기 →
+        </a>
       </div>
+    `;
+
+    return;
+  }
+
+
+  document.title =
+    `${event.title} · VOM LIVE`;
+
+
+  const location =
+    getLocation(event);
+
+
+  const image =
+    event.image_url ||
+    location?.image_url ||
+    '';
+
+
+  const people =
+    getParticipants(
+      event.id
+    );
+
+
+  const result =
+    getResult(
+      event.id
+    );
+
+
+  const ranking =
+    calculateRanking(
+      result,
+      people
+    );
+
+
+  const top3 =
+    ranking.filter(
+      row =>
+        row.rank <= 3
+    );
+
+
+  const winner =
+    ranking.find(
+      row =>
+        row.rank === 1
+    );
+
+
+  const nonTop =
+    ranking.filter(
+      row =>
+        row.rank > 3 ||
+        !row.rank
+    );
+
+
+  const page =
+    document.getElementById('page');
+
+
+  page.classList.toggle(
+    'admin-mode',
+    adminMode
+  );
+
+
+  page.innerHTML =
+  `
+    <div class="detail-page">
+
+      <a
+        href="/live/"
+        class="back-link"
+      >
+        ← VOM LIVE
+      </a>
+
+
+      <div class="detail-kicker">
+        VOM LIVE Archive
+      </div>
+
+
+      <h1 class="detail-title">
+        ${escapeHtml(event.title || '')}
+      </h1>
+
+
+      <div class="detail-image">
+
+        ${
+          image
+
+          ? `
+            <img
+              src="${escapeAttribute(image)}"
+              alt=""
+            >
+          `
+
+          : `
+            <div class="detail-image-empty">
+              Voice of Melody
+            </div>
+          `
+        }
+
+      </div>
+
+
+      <div class="detail-info">
+
+        <div class="detail-info-card">
+
+          <small>
+            DATE
+          </small>
+
+          <strong>
+            ${formatKoreanDate(event.event_date)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-info-card">
+
+          <small>
+            TIME
+          </small>
+
+          <strong>
+            ${escapeHtml(makeTime(event) || '시간 미정')}
+          </strong>
+
+        </div>
+
+
+        <div class="detail-info-card">
+
+          <small>
+            PLACE
+          </small>
+
+          <strong>
+            ${escapeHtml(
+              location?.name ||
+              event.location ||
+              '장소 미정'
+            )}
+          </strong>
+
+        </div>
+
+      </div>
+
 
       ${
-        item.description
-        ? `<div class="detail-desc">${escapeHtml(item.description).replace(/\n/g,'<br>')}</div>`
-        : ''
+        people.length
+
+        ? `
+          <div class="result-area">
+
+            <div class="result-summary">
+
+
+              <section class="summary-card">
+
+                <div class="summary-label">
+                  PARTICIPANTS
+                </div>
+
+                <div class="people-number">
+
+                  ${people.length}
+
+                  <small>
+                    명
+                  </small>
+
+                </div>
+
+              </section>
+
+
+              <section class="summary-card winner-card">
+
+                <div class="summary-label">
+                  WINNER
+                </div>
+
+                ${
+                  winner
+
+                  ? `
+                    <div class="winner-rank">
+                      ${winner.tied ? 'Joint 1st' : '1st Place'}
+                    </div>
+
+                    <div class="winner-name">
+                      ${escapeHtml(winner.name)}
+                    </div>
+
+                    <div class="winner-votes">
+
+                      ${winner.votes}표
+
+                      ·
+
+                      귀점유율
+                      ${winner.earShare.toFixed(1)}%
+
+                      ·
+
+                      +${winner.points}P
+
+                    </div>
+                  `
+
+                  : `
+                    <div
+                      class="winner-name"
+                      style="
+                        margin-top:30px;
+                        font-size:29px;
+                      "
+                    >
+                      결과 미등록
+                    </div>
+                  `
+                }
+
+              </section>
+
+            </div>
+
+
+            <section class="ranking-box">
+
+              <h2 class="ranking-title">
+                TOP 3
+              </h2>
+
+
+              ${
+                top3.length
+
+                ? `
+                  <div class="rank-list">
+
+                    ${
+                      top3
+                        .map(
+                          row =>
+                          `
+                            <div class="rank-row">
+
+                              <div class="rank-position">
+
+                                ${
+                                  row.tied
+                                  ? `공동 ${row.rank}위`
+                                  : `${row.rank}위`
+                                }
+
+                              </div>
+
+                              <div class="rank-name">
+                                ${escapeHtml(row.name)}
+                              </div>
+
+                              <div class="rank-ear">
+                                ${row.votes}표 · 귀점유율 ${row.earShare.toFixed(1)}%
+                              </div>
+
+                              <div class="rank-points">
+                                +${row.points}P
+                              </div>
+
+                            </div>
+                          `
+                        )
+                        .join('')
+                    }
+
+                  </div>
+                `
+
+                : `
+                  <div class="empty">
+                    아직 투표 결과가 없습니다.
+                  </div>
+                `
+              }
+
+            </section>
+
+
+            ${
+              nonTop.length
+
+              ? `
+                <section class="other-participants">
+
+                  <h3>
+                    Participants
+                  </h3>
+
+                  <div class="participant-chips">
+
+                    ${
+                      nonTop
+                        .map(
+                          row =>
+                          `
+                            <span class="participant-chip">
+
+                              ${escapeHtml(row.name)}
+
+                              ·
+
+                              ${row.votes}표
+
+                              ·
+
+                              ${row.earShare.toFixed(1)}%
+
+                              ·
+
+                              +5P
+
+                            </span>
+                          `
+                        )
+                        .join('')
+                    }
+
+                  </div>
+
+                </section>
+              `
+
+              : ''
+            }
+
+
+            ${
+              adminMode
+
+              ? `
+                <button
+                  class="save-result"
+                  onclick="openResultEditor(${event.id})"
+                >
+                  이 회차 결과 수정
+                </button>
+              `
+
+              : ''
+            }
+
+          </div>
+        `
+
+        : `
+          <div class="result-area">
+
+            <div class="empty">
+
+              아직 결과가 등록되지 않았습니다.
+
+              ${
+                adminMode
+
+                ? `
+                  <br><br>
+
+                  <button
+                    onclick="openResultEditor(${event.id})"
+                    style="
+                      border:0;
+                      padding:11px 16px;
+                      border-radius:999px;
+                      color:white;
+                      background:#171d31;
+                      cursor:pointer;
+                    "
+                  >
+                    결과 입력
+                  </button>
+                `
+
+                : ''
+              }
+
+            </div>
+
+          </div>
+        `
       }
 
-      <div class="detail-metrics">
-        ${
-          Number(item.point_cost||0)>0
-          ? `<span class="tag">POINT 사용 ${Number(item.point_cost)}P</span>`
-          : ''
-        }
-
-        ${
-          Number(item.reward_points||0)>0
-          ? `<span class="tag">보상 +${Number(item.reward_points)}P</span>`
-          : ''
-        }
-
-        <span class="tag">${typeLabel} 자동 집계</span>
-      </div>
-
-      <div id="periodResult" class="period-result">
-        <div class="period-empty">기간 내 VOM LIVE 기록을 집계하는 중...</div>
-      </div>
     </div>
   `;
-
-  document.getElementById('detailOverlay').classList.add('open');
-  await renderPeriodResult(item);
 }
 
-async function renderPeriodResult(item){
-  const box=document.getElementById('periodResult');
-  if(!box){
+
+/* =========================================
+   RESULT EDITOR
+========================================= */
+
+function openResultEditor(
+  eventId
+){
+
+  if(!adminMode){
     return;
   }
 
-  try{
-    const {data:eventData,error:eventError}=await db
-      .from('events')
-      .select('id,event_date,title,event_type')
-      .eq('event_type','VOM LIVE')
-      .gte('event_date',item.start_date)
-      .lte('event_date',item.end_date)
-      .order('event_date',{ascending:true});
 
-    if(eventError){
-      throw eventError;
+  document
+    .getElementById('resultEventId')
+    .value =
+    eventId;
+
+
+  const existingPeople =
+    getParticipants(
+      eventId
+    );
+
+
+  const existingResult =
+    getResult(
+      eventId
+    );
+
+
+  const votes =
+    normalizeResultArray(
+      existingResult?.results
+    );
+
+
+  const editor =
+    document
+      .getElementById(
+        'peopleEditor'
+      );
+
+
+  editor.innerHTML = '';
+
+
+  if(existingPeople.length){
+
+    existingPeople.forEach(
+      person => {
+
+        const vote =
+          votes.find(
+            item =>
+              (
+                person.member_id &&
+                item.member_id &&
+                String(item.member_id) ===
+                String(person.member_id)
+              ) ||
+              (
+                normalizeName(item.name) ===
+                normalizeName(person.name)
+              )
+          );
+
+        const memberId =
+          person.member_id ||
+          vote?.member_id ||
+          findMemberByName(person.name)?.id ||
+          '';
+
+        addPersonRow(
+          memberId,
+          vote?.votes || 0,
+          person.name
+        );
+      }
+    );
+
+  }else{
+
+    addPersonRow();
+    addPersonRow();
+    addPersonRow();
+  }
+
+
+  updatePreview();
+
+
+  document
+    .getElementById('resultOverlay')
+    .classList
+    .add('open');
+}
+
+
+function closeResultEditor(){
+
+  document
+    .getElementById('resultOverlay')
+    .classList
+    .remove('open');
+}
+
+
+function addPersonRow(
+  memberId = '',
+  votes = '',
+  legacyName = ''
+){
+
+  const row =
+    document.createElement(
+      'div'
+    );
+
+
+  row.className =
+    'person-row';
+
+
+  const options =
+    createMemberOptions(
+      memberId,
+      legacyName
+    );
+
+
+  row.innerHTML =
+  `
+    <select
+      class="field person-member"
+      onchange="updatePreview()"
+    >
+      ${options}
+    </select>
+
+    <input
+      class="field person-votes"
+      type="number"
+      min="0"
+      step="1"
+      inputmode="numeric"
+      placeholder="득표"
+      value="${escapeAttribute(votes)}"
+      oninput="updatePreview()"
+    >
+
+    <button
+      class="remove-person"
+      type="button"
+      onclick="
+        this.parentElement.remove();
+        updatePreview();
+      "
+    >
+      ×
+    </button>
+  `;
+
+
+  document
+    .getElementById('peopleEditor')
+    .appendChild(row);
+}
+
+
+function createMemberOptions(
+  selectedId = '',
+  legacyName = ''
+){
+
+  const placeholder =
+    `<option value="">멤버 선택</option>`;
+
+
+  const memberOptions =
+    members
+      .map(member => {
+
+        const selected =
+          String(member.id) ===
+          String(selectedId)
+          ? ' selected'
+          : '';
+
+
+        return `
+          <option
+            value="${escapeAttribute(member.id)}"${selected}
+          >
+            ${escapeHtml(memberOptionLabel(member))}
+          </option>
+        `;
+      })
+      .join('');
+
+
+  let legacyOption = '';
+
+
+  if(
+    !selectedId &&
+    legacyName
+  ){
+
+    const matched =
+      findMemberByName(
+        legacyName
+      );
+
+
+    if(matched){
+
+      return createMemberOptions(
+        matched.id,
+        ''
+      );
     }
 
-    const liveEvents=eventData||[];
-    const eventIds=liveEvents.map(row=>row.id);
 
-    if(!eventIds.length){
-      box.innerHTML=`<div class="period-empty">이 이벤트 기간에는 VOM LIVE 일정이 없습니다.</div>`;
+    legacyOption = `
+      <option value="" selected disabled>
+        기존 기록: ${escapeHtml(legacyName)} · MEMBERS에서 다시 선택
+      </option>
+    `;
+  }
+
+
+  return (
+    placeholder +
+    legacyOption +
+    memberOptions
+  );
+}
+
+
+function memberOptionLabel(member){
+
+  const order =
+    member.join_order ??
+    member.join_sequence ??
+    member.member_order ??
+    member.order_no ??
+    null;
+
+
+  const region =
+    member.region ||
+    member.area ||
+    '';
+
+
+  const role =
+    member.role ||
+    '';
+
+
+  const prefix =
+    order !== null &&
+    order !== ''
+    ? `#${order} `
+    : '';
+
+
+  const extras =
+    [role,region]
+      .filter(Boolean)
+      .join(' · ');
+
+
+  return
+    prefix +
+    String(member.name || '') +
+    (extras ? ` · ${extras}` : '');
+}
+
+
+function readEditor(){
+
+  return [
+    ...document
+      .querySelectorAll(
+        '.person-row'
+      )
+  ]
+  .map(row => {
+
+    const select =
+      row.querySelector(
+        '.person-member'
+      );
+
+
+    const memberId =
+      select.value;
+
+
+    const member =
+      getMember(
+        memberId
+      );
+
+
+    return {
+      member_id:
+        member?.id ?? null,
+
+      name:
+        String(
+          member?.name || ''
+        ).trim(),
+
+      votes:
+        Math.max(
+          0,
+          Number(
+            row
+              .querySelector(
+                '.person-votes'
+              )
+              .value || 0
+          )
+        )
+    };
+  })
+  .filter(
+    item =>
+      item.member_id !== null &&
+      item.name
+  );
+}
+
+
+function updatePreview(){
+
+  const people =
+    readEditor();
+
+
+  const preview =
+    document
+      .getElementById(
+        'resultPreview'
+      );
+
+
+  if(!people.length){
+
+    preview.textContent =
+      '참석자를 입력해주세요.';
+
+    return;
+  }
+
+
+  const ranking =
+    calculateRankingFromPeople(
+      people
+    );
+
+
+  const top3 =
+    ranking.filter(
+      row =>
+        row.rank <= 3
+    );
+
+
+  preview.innerHTML =
+  `
+    총원 <strong style="display:inline;">${people.length}명</strong>
+    <br>
+
+    ${
+      top3
+        .map(
+          row =>
+            `${
+              row.tied
+              ? `공동 ${row.rank}위`
+              : `${row.rank}위`
+            }
+            ${escapeHtml(row.name)}
+            · ${row.votes}표
+            · ${row.earShare.toFixed(1)}%
+            · +${row.points}P`
+        )
+        .join('<br>')
+    }
+
+    <br>
+
+    그 외 참석자
+    +5P
+  `;
+}
+
+
+/* =========================================
+   SAVE RESULTS
+========================================= */
+
+async function saveResults(){
+
+  if(!adminMode){
+    return;
+  }
+
+
+  const eventId =
+    Number(
+      document
+        .getElementById(
+          'resultEventId'
+        )
+        .value
+    );
+
+
+  const people =
+    readEditor();
+
+
+  if(!members.length){
+
+    alert(
+      'MEMBERS 명단을 불러오지 못했습니다.'
+    );
+
+    return;
+  }
+
+
+  if(!people.length){
+
+    alert(
+      '참석자를 한 명 이상 입력해주세요.'
+    );
+
+    return;
+  }
+
+
+  const duplicateCheck =
+    new Set();
+
+
+  for(const person of people){
+
+    const key =
+      String(
+        person.member_id
+      );
+
+
+    if(duplicateCheck.has(key)){
+
+      alert(
+        `같은 멤버가 두 번 선택되어 있습니다: ${person.name}`
+      );
+
       return;
     }
 
-    const [participantResponse,resultResponse,memberResponse]=await Promise.all([
-      db.from('live_participants').select('*').in('event_id',eventIds),
-      db.from('live_results').select('*').in('event_id',eventIds),
-      db.from('members').select('id,name')
-    ]);
 
-    if(participantResponse.error){throw participantResponse.error;}
-    if(resultResponse.error){throw resultResponse.error;}
-    if(memberResponse.error){throw memberResponse.error;}
+    duplicateCheck.add(
+      key
+    );
+  }
 
-    const participants=participantResponse.data||[];
-    const results=resultResponse.data||[];
-    const members=memberResponse.data||[];
-    const memberMap=new Map(members.map(row=>[String(row.id),row]));
-    const rows=new Map();
 
-    function getRow(memberId,name){
-      const key=memberId!==null&&memberId!==undefined&&memberId!==''
-        ? `id:${String(memberId)}`
-        : `name:${normalizeName(name)}`;
+  try{
 
-      if(!rows.has(key)){
-        const member=memberId!==null&&memberId!==undefined&&memberId!==''
-          ? memberMap.get(String(memberId))
-          : null;
+    /* 기존 참석자 삭제 */
 
-        rows.set(key,{
-          member_id:memberId??null,
-          name:String(member?.name||name||'이름 미상').trim(),
-          attendance:0,
-          votes:0,
-          denominator:0,
-          points:0,
-          first:0,
-          second:0,
-          third:0
-        });
-      }
-
-      return rows.get(key);
-    }
-
-    liveEvents.forEach(eventRow=>{
-      const eventPeople=participants.filter(row=>String(row.event_id)===String(eventRow.id));
-      const result=results.find(row=>String(row.event_id)===String(eventRow.id));
-      const voteItems=normalizeCampaignResultArray(result?.results);
-
-      const merged=eventPeople.map(person=>{
-        const found=voteItems.find(vote=>
-          (
-            person.member_id && vote.member_id &&
-            String(person.member_id)===String(vote.member_id)
-          ) || normalizeName(person.name)===normalizeName(vote.name)
+    const {
+      error:deleteError
+    } =
+      await db
+        .from('live_participants')
+        .delete()
+        .eq(
+          'event_id',
+          eventId
         );
 
-        return {
-          member_id:person.member_id||found?.member_id||null,
-          name:person.name||found?.name||'',
-          votes:Number(found?.votes||0)
-        };
-      });
 
-      const ranked=rankCampaignPeople(merged);
-      const participantCount=Number(result?.participant_count||eventPeople.length||0);
+    if(deleteError){
+      throw deleteError;
+    }
 
-      ranked.forEach(person=>{
-        const row=getRow(person.member_id,person.name);
-        row.attendance+=1;
-        row.votes+=Number(person.votes||0);
-        row.denominator+=participantCount;
-        row.points+=5;
 
-        if(person.rank===1){row.points+=50;row.first+=1;}
-        else if(person.rank===2){row.points+=35;row.second+=1;}
-        else if(person.rank===3){row.points+=20;row.third+=1;}
-      });
-    });
+    /* 새 참석자 저장 */
 
-    let list=[...rows.values()];
+    const {
+      error:participantError
+    } =
+      await db
+        .from('live_participants')
+        .insert(
+          people.map(
+            person => ({
+              event_id:eventId,
+              member_id:person.member_id,
+              name:person.name
+            })
+          )
+        );
 
-    list.forEach(row=>{
-      row.ear_share=row.denominator>0
-        ? row.votes/row.denominator*100
-        : 0;
-    });
 
-    if(item.campaign_type==='EAR'){
-      list.sort((a,b)=>b.ear_share-a.ear_share||b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
-    }else if(item.campaign_type==='MISSION'){
-      list.sort((a,b)=>b.attendance-a.attendance||b.points-a.points||a.name.localeCompare(b.name,'ko'));
+    if(participantError){
+      throw participantError;
+    }
+
+
+    /* 투표 결과 저장 */
+
+    const voteResults =
+      people.map(
+        person => ({
+          member_id:person.member_id,
+          name:person.name,
+          votes:person.votes
+        })
+      );
+
+
+    const {
+      error:resultError
+    } =
+      await db
+        .from('live_results')
+        .upsert(
+          {
+            event_id:eventId,
+
+            participant_count:
+              people.length,
+
+            results:
+              voteResults,
+
+            updated_at:
+              new Date()
+                .toISOString()
+          },
+          {
+            onConflict:
+              'event_id'
+          }
+        );
+
+
+    if(resultError){
+      throw resultError;
+    }
+
+
+    closeResultEditor();
+
+
+    await loadAllData();
+
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+
+    if(params.get('id')){
+
+      renderDetail(
+        params.get('id')
+      );
+
     }else{
-      list.sort((a,b)=>b.points-a.points||b.first-a.first||a.name.localeCompare(b.name,'ko'));
+
+      renderMain();
     }
 
-    assignCompetitionRank(list,item.campaign_type);
 
-    const title=
-      item.campaign_type==='EAR'?'기간 귀점유율 순위':
-      item.campaign_type==='MISSION'?'기간 LIVE 참여 순위':
-      '기간 VOM POINT 순위';
+    alert(
+      'VOM LIVE 결과가 저장되었습니다.'
+    );
 
-    box.innerHTML=`
-      <div class="period-result-head">
-        <h3>${title}</h3>
-        <span>VOM LIVE ${liveEvents.length}회 집계</span>
-      </div>
-      ${
-        list.length
-        ? `<div class="period-rank-list">${list.map(createPeriodRankRow).join('')}</div>`
-        : `<div class="period-empty">기간 내 집계 가능한 참가 기록이 없습니다.</div>`
-      }
-    `;
+
   }catch(error){
-    console.error('EVENT PERIOD RANKING:',error);
-    box.innerHTML=`<div class="period-empty">기간 집계 데이터를 불러오지 못했습니다.<br>${escapeHtml(error.message||'')}</div>`;
+
+    alert(
+      '결과를 저장하지 못했습니다.\n' +
+      error.message
+    );
   }
 }
 
-function createPeriodRankRow(row){
-  let score='';
-  let sub='';
 
-  if(currentDetailCampaignType==='EAR'){
-    score=`${row.ear_share.toFixed(1)}<small>%</small>`;
-    sub=`${row.votes}표 · LIVE ${row.attendance}회`;
-  }else if(currentDetailCampaignType==='MISSION'){
-    score=`${row.attendance}<small>회</small>`;
-    sub=`누적 ${row.points}P · 1위 ${row.first}회`;
-  }else{
-    score=`${row.points}<small>P</small>`;
-    sub=`참석 ${row.attendance}회 · 1위 ${row.first}회 · 2위 ${row.second}회 · 3위 ${row.third}회`;
-  }
+/* =========================================
+   RANKING
+========================================= */
 
-  return `
-    <div class="period-rank-row">
-      <div class="period-rank-no">${row.rank}</div>
-      <div>
-        <div class="period-rank-name">${escapeHtml(row.name)}</div>
-        <div class="period-rank-sub">${escapeHtml(sub)}</div>
-      </div>
-      <div class="period-rank-score">${score}</div>
-    </div>
-  `;
+function calculateRanking(
+  result,
+  people
+){
+
+  const votes =
+    normalizeResultArray(
+      result?.results
+    );
+
+
+  const merged =
+    people.map(
+      person => {
+
+        const found =
+          votes.find(
+            item =>
+              (
+                person.member_id &&
+                item.member_id &&
+                String(item.member_id) ===
+                String(person.member_id)
+              ) ||
+              (
+                normalizeName(item.name) ===
+                normalizeName(person.name)
+              )
+          );
+
+
+        return {
+          member_id:
+            person.member_id ||
+            found?.member_id ||
+            null,
+          name:person.name,
+          votes:
+            Number(
+              found?.votes || 0
+            )
+        };
+      }
+    );
+
+
+  return calculateRankingFromPeople(
+    merged
+  );
 }
 
-let currentDetailCampaignType='POINT';
 
-function assignCompetitionRank(list,type){
-  currentDetailCampaignType=type;
-  let previous=null;
-  let rank=0;
+function calculateRankingFromPeople(
+  people
+){
 
-  list.forEach((row,index)=>{
-    const value=type==='EAR'
-      ? Number(row.ear_share.toFixed(8))
-      : type==='MISSION'
-      ? row.attendance
-      : row.points;
+  const total =
+    people.length;
 
-    if(previous===null||value!==previous){
-      rank=index+1;
-      previous=value;
+
+  const sorted =
+    [...people]
+      .sort(
+        (a,b) => {
+
+          if(b.votes !== a.votes){
+            return b.votes - a.votes;
+          }
+
+          return a.name.localeCompare(
+            b.name,
+            'ko'
+          );
+        }
+      );
+
+
+  let lastVotes = null;
+  let currentRank = 0;
+
+
+  sorted.forEach(
+    row => {
+
+      if(
+        lastVotes === null ||
+        row.votes !== lastVotes
+      ){
+
+        currentRank += 1;
+
+        lastVotes =
+          row.votes;
+      }
+
+
+      row.rank =
+        currentRank;
+
+
+      row.earShare =
+        total > 0
+        ? row.votes / total * 100
+        : 0;
+
+
+      if(row.rank === 1){
+
+        row.points =
+          55;
+
+      }else if(row.rank === 2){
+
+        row.points =
+          40;
+
+      }else if(row.rank === 3){
+
+        row.points =
+          25;
+
+      }else{
+
+        row.points =
+          5;
+      }
     }
+  );
 
-    row.rank=rank;
-  });
-}
 
-function rankCampaignPeople(people){
-  const sorted=[...people].sort((a,b)=>b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
-  let previousVotes=null;
-  let currentRank=0;
+  sorted.forEach(
+    row => {
 
-  sorted.forEach((row,index)=>{
-    if(previousVotes===null||row.votes!==previousVotes){
-      currentRank=index+1;
-      previousVotes=row.votes;
+      row.tied =
+        sorted.filter(
+          other =>
+            other.rank === row.rank
+        ).length > 1;
     }
-    row.rank=currentRank;
-  });
+  );
+
 
   return sorted;
 }
 
-function normalizeCampaignResultArray(value){
-  if(Array.isArray(value)){
-    return value.map(row=>({
-      member_id:row?.member_id??null,
-      name:String(row?.name??''),
-      votes:Number(row?.votes??0)
-    }));
-  }
 
-  if(typeof value==='string'){
-    try{
-      return normalizeCampaignResultArray(JSON.parse(value));
-    }catch(error){
-      return [];
-    }
-  }
+/* =========================================
+   DATA HELPERS
+========================================= */
 
-  return [];
+function getLocation(event){
+
+  return locations.find(
+    location =>
+      String(location.id) ===
+      String(event.location_id)
+  );
 }
+
+
+function getResult(eventId){
+
+  return results.find(
+    result =>
+      String(result.event_id) ===
+      String(eventId)
+  );
+}
+
+
+function getParticipants(
+  eventId
+){
+
+  return participants.filter(
+    person =>
+      String(person.event_id) ===
+      String(eventId)
+  );
+}
+
+
+function getMember(memberId){
+
+  return members.find(
+    member =>
+      String(member.id) ===
+      String(memberId)
+  );
+}
+
+
+function findMemberByName(name){
+
+  const normalized =
+    normalizeName(name);
+
+
+  return members.find(
+    member =>
+      normalizeName(member.name) ===
+      normalized
+  );
+}
+
+
+function compareMembers(a,b){
+
+  const aOrder =
+    Number(
+      a.join_order ??
+      a.join_sequence ??
+      a.member_order ??
+      a.order_no ??
+      Number.MAX_SAFE_INTEGER
+    );
+
+
+  const bOrder =
+    Number(
+      b.join_order ??
+      b.join_sequence ??
+      b.member_order ??
+      b.order_no ??
+      Number.MAX_SAFE_INTEGER
+    );
+
+
+  if(aOrder !== bOrder){
+    return aOrder - bOrder;
+  }
+
+
+  return String(a.name || '')
+    .localeCompare(
+      String(b.name || ''),
+      'ko'
+    );
+}
+
+
+function normalizeResultArray(
+  value
+){
+
+  if(!Array.isArray(value)){
+    return [];
+  }
+
+
+  return value.map(
+    item => ({
+      member_id:
+        item?.member_id ?? null,
+
+      name:
+        String(
+          item?.name ?? ''
+        ),
+
+      votes:
+        Number(
+          item?.votes ?? 0
+        )
+    })
+  );
+}
+
 
 function normalizeName(value){
-  return String(value??'').trim().toLowerCase();
+
+  return String(value ?? '')
+    .trim()
+    .toLowerCase();
 }
 
-function closeDetail(){
-  document.getElementById('detailOverlay').classList.remove('open');
+
+/* =========================================
+   DATE / TEXT HELPERS
+========================================= */
+
+function makeTime(event){
+
+  const times = [];
+
+
+  if(event.start_time){
+
+    times.push(
+      event.start_time
+        .slice(0,5)
+    );
+  }
+
+
+  if(event.end_time){
+
+    times.push(
+      event.end_time
+        .slice(0,5)
+    );
+  }
+
+
+  return times.join(
+    ' - '
+  );
 }
 
 
-/* MENU */
-function openMenu(){
-  document.getElementById('menuOverlay').classList.add('open');
-}
-
-function closeMenu(){
-  document.getElementById('menuOverlay').classList.remove('open');
-}
-
-['menuOverlay','editorOverlay','detailOverlay'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',function(event){
-    if(event.target===this){
-      this.classList.remove('open');
-    }
-  });
-});
-
-
-/* HELPERS */
 function todayString(){
-  const d=new Date();
+
+  const now =
+    new Date();
+
 
   return [
-    d.getFullYear(),
-    String(d.getMonth()+1).padStart(2,'0'),
-    String(d.getDate()).padStart(2,'0')
+    now.getFullYear(),
+
+    String(
+      now.getMonth() + 1
+    ).padStart(2,'0'),
+
+    String(
+      now.getDate()
+    ).padStart(2,'0')
+
   ].join('-');
 }
 
-function formatDate(value){
-  return value
-    ? String(value).slice(0,10).replaceAll('-','.')
-    : '-';
+
+function parseDate(value){
+
+  return new Date(
+    value +
+    'T00:00:00'
+  );
 }
 
+
+function weekEnglish(date){
+
+  return [
+    'SUN',
+    'MON',
+    'TUE',
+    'WED',
+    'THU',
+    'FRI',
+    'SAT'
+  ][date.getDay()];
+}
+
+
+function formatKoreanDate(value){
+
+  return new Intl.DateTimeFormat(
+    'ko-KR',
+    {
+      year:'numeric',
+      month:'long',
+      day:'numeric',
+      weekday:'short'
+    }
+  ).format(
+    parseDate(value)
+  );
+}
+
+
 function escapeHtml(value){
-  const div=document.createElement('div');
-  div.textContent=String(value??'');
+
+  const div =
+    document.createElement(
+      'div'
+    );
+
+
+  div.textContent =
+    String(value ?? '');
+
+
   return div.innerHTML;
 }
 
+
 function escapeAttribute(value){
-  return String(value??'')
+
+  return String(value ?? '')
     .replace(/&/g,'&amp;')
     .replace(/"/g,'&quot;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;');
 }
 
+
+/* =========================================
+   MENU
+========================================= */
+
+function openMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .add('open');
+}
+
+
+function closeMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .remove('open');
+}
+
+
+document
+  .getElementById('menuOverlay')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeMenu();
+      }
+    }
+  );
+
+
+document
+  .getElementById('resultOverlay')
+  .addEventListener(
+    'click',
+    function(event){
+
+      if(event.target === this){
+        closeResultEditor();
+      }
+    }
+  );
+
+
 start();
 </script>
+
 </body>
 </html>
