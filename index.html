@@ -228,7 +228,7 @@ button{
   font-size:12px;
 }
 
-/* NEXT LIVE */
+/* NEXT SCHEDULE */
 
 .next-live{
   min-height:315px;
@@ -727,7 +727,7 @@ async function loadHomeNews(){
         kind:'schedule',
         label:
           row.event_type === 'VOM LIVE'
-          ? '봄LIVE'
+          ? 'VOM LIVE'
           : row.event_type === 'BUSKING'
           ? '버스킹'
           : '일정',
@@ -1184,7 +1184,7 @@ function formatHomeNewsDate(value){
     margin-top:20px;
   }
 
-  /* NEXT LIVE SMALLER */
+  /* NEXT SCHEDULE SMALLER */
 
   .next-live{
     min-height:245px;
@@ -1415,7 +1415,7 @@ function formatHomeNewsDate(value){
     <article id="nextLive" class="next-live">
 
       <div class="next-empty">
-        NEXT LIVE를 불러오는 중...
+        NEXT SCHEDULE을 불러오는 중...
       </div>
 
     </article>
@@ -1531,8 +1531,8 @@ function formatHomeNewsDate(value){
 
     <a href="/live/">
       <div class="quick-icon">♬</div>
-      <strong>봄LIVE</strong>
-      <small>VOM LIVE</small>
+      <strong>VOM LIVE</strong>
+      <small>LIVE</small>
     </a>
 
     <a href="/members/">
@@ -2027,7 +2027,7 @@ async function loadHomeEvents(){
 
     console.error('EVENT:',error);
 
-    renderNextLive(null);
+    renderNextSchedule(null);
     renderUpcoming([]);
 
     return;
@@ -2036,13 +2036,12 @@ async function loadHomeEvents(){
   const list =
     data || [];
 
-  const nextLive =
-    list.find(
-      row =>
-        row.event_type === 'VOM LIVE'
-    );
+  const nextSchedule =
+    list.length
+    ? list[0]
+    : null;
 
-  renderNextLive(nextLive);
+  renderNextSchedule(nextSchedule);
 
   renderUpcoming(
     list.slice(0,4)
@@ -2053,7 +2052,7 @@ async function loadHomeEvents(){
 
 /* NEXT LIVE */
 
-function renderNextLive(row){
+function renderNextSchedule(row){
 
   const box =
     document.getElementById('nextLive');
@@ -2062,7 +2061,7 @@ function renderNextLive(row){
 
     box.innerHTML =
       `<div class="next-empty">
-        예정된 VOM LIVE가 없습니다.<br>
+        예정된 일정이 없습니다.<br>
         CALENDAR에서 새 일정을 등록해주세요.
       </div>`;
 
@@ -2122,7 +2121,7 @@ function renderNextLive(row){
       <div class="divider"></div>
 
       <h3>
-        ${escapeHtml(row.title || 'VOM LIVE')}
+        ${escapeHtml(row.title || row.event_type || 'SCHEDULE')}
       </h3>
 
       <div class="next-meta">
@@ -2140,7 +2139,7 @@ function renderNextLive(row){
       </div>
 
       <a
-        href="/event/?id=${row.id}"
+        href="${getScheduleHref(row)}"
         class="next-link"
       >
         <span>자세히 보기</span>
@@ -2150,6 +2149,25 @@ function renderNextLive(row){
     </div>
   `;
 
+}
+
+
+
+function getScheduleHref(row){
+
+  if(!row){
+    return '/calendar/';
+  }
+
+  if(row.event_type === 'VOM LIVE'){
+    return `/live/?id=${encodeURIComponent(row.id)}`;
+  }
+
+  if(row.event_type === 'BUSKING'){
+    return `/busking/?id=${encodeURIComponent(row.id)}`;
+  }
+
+  return `/calendar/?schedule=${encodeURIComponent(row.id)}`;
 }
 
 
@@ -2199,7 +2217,7 @@ function createUpcomingCard(row,featured){
 
   return `
     <a
-      href="/event/?id=${row.id}"
+      href="${getScheduleHref(row)}"
       class="event-card ${featured ? 'featured' : ''}"
     >
 
