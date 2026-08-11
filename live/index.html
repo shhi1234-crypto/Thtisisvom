@@ -43,7 +43,7 @@ a{
   text-decoration:none;
 }
 
-button,input{
+button,input,select{
   font:inherit;
 }
 
@@ -874,6 +874,10 @@ button{
   font-size:12px;
 }
 
+.person-member{
+  cursor:pointer;
+}
+
 .field:focus{
   border-color:#8f7ce6;
   box-shadow:0 0 0 4px rgba(128,105,233,.09);
@@ -1181,7 +1185,7 @@ button{
     >
 
     <div class="editor-help">
-      실제 참석자 이름과 받은 표를 입력하세요.
+      MEMBERS에 등록된 실제 참석자를 선택하고 받은 표를 입력하세요.
       참석자 수는 자동으로 계산되고,
       공동 순위 · TOP 3 · 포인트 · 귀점유율도 자동 계산됩니다.
     </div>
@@ -1281,32 +1285,11 @@ button{
 
 
 <nav class="bottom">
-
-  <a href="/">
-    <span class="nav-icon">⌂</span>
-    HOME
-  </a>
-
-  <a href="/info/">
-    <span class="nav-icon">ⓘ</span>
-    INFO
-  </a>
-
-  <a href="/calendar/">
-    <span class="nav-icon">◫</span>
-    CALENDAR
-  </a>
-
-  <a href="/live/" class="active">
-    <span class="nav-icon">♬</span>
-    LIVE
-  </a>
-
-  <button onclick="openMenu()">
-    <span class="nav-icon">☰</span>
-    MENU
-  </button>
-
+  <a href="/" ><span class="nav-icon">⌂</span>HOME</a>
+  <a href="/calendar/" ><span class="nav-icon">◫</span>CALENDAR</a>
+  <a href="/members/" ><span class="nav-icon">♙</span>MEMBERS</a>
+  <a href="/event/" ><span class="nav-icon">✦</span>EVENT</a>
+  <button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button>
 </nav>
 
 
@@ -1330,6 +1313,7 @@ let events = [];
 let locations = [];
 let results = [];
 let participants = [];
+let members = [];
 
 
 /* =========================================
@@ -1451,17 +1435,25 @@ async function loadAllData(){
       .select('*');
 
 
+  const memberRequest =
+    db
+      .from('members')
+      .select('*');
+
+
   const [
     locationResponse,
     eventResponse,
     resultResponse,
-    participantResponse
+    participantResponse,
+    memberResponse
   ] =
     await Promise.all([
       locationRequest,
       eventRequest,
       resultRequest,
-      participantRequest
+      participantRequest,
+      memberRequest
     ]);
 
 
@@ -1479,6 +1471,11 @@ async function loadAllData(){
 
   participants =
     participantResponse.data || [];
+
+
+  members =
+    (memberResponse.data || [])
+      .sort(compareMembers);
 
 
   if(eventResponse.error){
@@ -1501,6 +1498,14 @@ async function loadAllData(){
 
     console.error(
       participantResponse.error
+    );
+  }
+
+
+  if(memberResponse.error){
+
+    console.error(
+      memberResponse.error
     );
   }
 }
@@ -2622,13 +2627,28 @@ function openResultEditor(
         const vote =
           votes.find(
             item =>
-              normalizeName(item.name) ===
-              normalizeName(person.name)
+              (
+                person.member_id &&
+                item.member_id &&
+                String(item.member_id) ===
+                String(person.member_id)
+              ) ||
+              (
+                normalizeName(item.name) ===
+                normalizeName(person.name)
+              )
           );
 
+        const memberId =
+          person.member_id ||
+          vote?.member_id ||
+          findMemberByName(person.name)?.id ||
+          '';
+
         addPersonRow(
-          person.name,
-          vote?.votes || 0
+          memberId,
+          vote?.votes || 0,
+          person.name
         );
       }
     );
@@ -2661,8 +2681,9 @@ function closeResultEditor(){
 
 
 function addPersonRow(
-  name = '',
-  votes = ''
+  memberId = '',
+  votes = '',
+  legacyName = ''
 ){
 
   const row =
@@ -2675,20 +2696,28 @@ function addPersonRow(
     'person-row';
 
 
+  const options =
+    createMemberOptions(
+      memberId,
+      legacyName
+    );
+
+
   row.innerHTML =
   `
-    <input
-      class="field person-name"
-      placeholder="참석자 이름"
-      value="${escapeAttribute(name)}"
-      oninput="updatePreview()"
+    <select
+      class="field person-member"
+      onchange="updatePreview()"
     >
+      ${options}
+    </select>
 
     <input
       class="field person-votes"
       type="number"
       min="0"
       step="1"
+      inputmode="numeric"
       placeholder="득표"
       value="${escapeAttribute(votes)}"
       oninput="updatePreview()"
@@ -2713,6 +2742,117 @@ function addPersonRow(
 }
 
 
+function createMemberOptions(
+  selectedId = '',
+  legacyName = ''
+){
+
+  const placeholder =
+    `<option value="">멤버 선택</option>`;
+
+
+  const memberOptions =
+    members
+      .map(member => {
+
+        const selected =
+          String(member.id) ===
+          String(selectedId)
+          ? ' selected'
+          : '';
+
+
+        return `
+          <option
+            value="${escapeAttribute(member.id)}"${selected}
+          >
+            ${escapeHtml(memberOptionLabel(member))}
+          </option>
+        `;
+      })
+      .join('');
+
+
+  let legacyOption = '';
+
+
+  if(
+    !selectedId &&
+    legacyName
+  ){
+
+    const matched =
+      findMemberByName(
+        legacyName
+      );
+
+
+    if(matched){
+
+      return createMemberOptions(
+        matched.id,
+        ''
+      );
+    }
+
+
+    legacyOption = `
+      <option value="" selected disabled>
+        기존 기록: ${escapeHtml(legacyName)} · MEMBERS에서 다시 선택
+      </option>
+    `;
+  }
+
+
+  return (
+    placeholder +
+    legacyOption +
+    memberOptions
+  );
+}
+
+
+function memberOptionLabel(member){
+
+  const order =
+    member.join_order ??
+    member.join_sequence ??
+    member.member_order ??
+    member.order_no ??
+    null;
+
+
+  const region =
+    member.region ||
+    member.area ||
+    '';
+
+
+  const role =
+    member.role ||
+    '';
+
+
+  const prefix =
+    order !== null &&
+    order !== ''
+    ? `#${order} `
+    : '';
+
+
+  const extras =
+    [role,region]
+      .filter(Boolean)
+      .join(' · ');
+
+
+  return
+    prefix +
+    String(member.name || '') +
+    (extras ? ` · ${extras}` : '');
+}
+
+
 function readEditor(){
 
   return [
@@ -2721,31 +2861,49 @@ function readEditor(){
         '.person-row'
       )
   ]
-  .map(row => ({
+  .map(row => {
 
-    name:
-      row
-        .querySelector(
-          '.person-name'
+    const select =
+      row.querySelector(
+        '.person-member'
+      );
+
+
+    const memberId =
+      select.value;
+
+
+    const member =
+      getMember(
+        memberId
+      );
+
+
+    return {
+      member_id:
+        member?.id ?? null,
+
+      name:
+        String(
+          member?.name || ''
+        ).trim(),
+
+      votes:
+        Math.max(
+          0,
+          Number(
+            row
+              .querySelector(
+                '.person-votes'
+              )
+              .value || 0
+          )
         )
-        .value
-        .trim(),
-
-    votes:
-      Math.max(
-        0,
-        Number(
-          row
-            .querySelector(
-              '.person-votes'
-            )
-            .value || 0
-        )
-      )
-
-  }))
+    };
+  })
   .filter(
     item =>
+      item.member_id !== null &&
       item.name
   );
 }
@@ -2841,6 +2999,16 @@ async function saveResults(){
     readEditor();
 
 
+  if(!members.length){
+
+    alert(
+      'MEMBERS 명단을 불러오지 못했습니다.'
+    );
+
+    return;
+  }
+
+
   if(!people.length){
 
     alert(
@@ -2858,15 +3026,15 @@ async function saveResults(){
   for(const person of people){
 
     const key =
-      normalizeName(
-        person.name
+      String(
+        person.member_id
       );
 
 
     if(duplicateCheck.has(key)){
 
       alert(
-        `같은 이름이 두 번 들어가 있습니다: ${person.name}`
+        `같은 멤버가 두 번 선택되어 있습니다: ${person.name}`
       );
 
       return;
@@ -2911,6 +3079,7 @@ async function saveResults(){
           people.map(
             person => ({
               event_id:eventId,
+              member_id:person.member_id,
               name:person.name
             })
           )
@@ -2927,6 +3096,7 @@ async function saveResults(){
     const voteResults =
       people.map(
         person => ({
+          member_id:person.member_id,
           name:person.name,
           votes:person.votes
         })
@@ -3025,12 +3195,24 @@ function calculateRanking(
         const found =
           votes.find(
             item =>
-              normalizeName(item.name) ===
-              normalizeName(person.name)
+              (
+                person.member_id &&
+                item.member_id &&
+                String(item.member_id) ===
+                String(person.member_id)
+              ) ||
+              (
+                normalizeName(item.name) ===
+                normalizeName(person.name)
+              )
           );
 
 
         return {
+          member_id:
+            person.member_id ||
+            found?.member_id ||
+            null,
           name:person.name,
           votes:
             Number(
@@ -3177,6 +3359,65 @@ function getParticipants(
 }
 
 
+function getMember(memberId){
+
+  return members.find(
+    member =>
+      String(member.id) ===
+      String(memberId)
+  );
+}
+
+
+function findMemberByName(name){
+
+  const normalized =
+    normalizeName(name);
+
+
+  return members.find(
+    member =>
+      normalizeName(member.name) ===
+      normalized
+  );
+}
+
+
+function compareMembers(a,b){
+
+  const aOrder =
+    Number(
+      a.join_order ??
+      a.join_sequence ??
+      a.member_order ??
+      a.order_no ??
+      Number.MAX_SAFE_INTEGER
+    );
+
+
+  const bOrder =
+    Number(
+      b.join_order ??
+      b.join_sequence ??
+      b.member_order ??
+      b.order_no ??
+      Number.MAX_SAFE_INTEGER
+    );
+
+
+  if(aOrder !== bOrder){
+    return aOrder - bOrder;
+  }
+
+
+  return String(a.name || '')
+    .localeCompare(
+      String(b.name || ''),
+      'ko'
+    );
+}
+
+
 function normalizeResultArray(
   value
 ){
@@ -3188,6 +3429,9 @@ function normalizeResultArray(
 
   return value.map(
     item => ({
+      member_id:
+        item?.member_id ?? null,
+
       name:
         String(
           item?.name ?? ''
