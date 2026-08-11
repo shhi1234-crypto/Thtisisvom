@@ -3,686 +3,1358 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>VOM EVENT</title>
+<meta name="theme-color" content="#f7f5fa">
+<title>EVENT · Voice of Melody</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
+:root{
+  --ink:#14182b;
+  --muted:#73798b;
+  --purple:#7762df;
+  --purple2:#7990eb;
+  --line:rgba(31,36,66,.08);
+  --card:rgba(255,255,255,.82);
 }
 
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
 body{
   margin:0;
-
+  min-height:100vh;
+  overflow-x:hidden;
   font-family:"Noto Sans KR",sans-serif;
-
-  color:#11182c;
-
+  color:var(--ink);
   background:#f8f7fa;
 }
-
-a{
-  color:inherit;
-  text-decoration:none;
-}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+button{color:inherit}
 
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
-
+  overflow:hidden;
+  background:linear-gradient(180deg,#f8f5fa,#f8f7fb 55%,#faf9fb);
+}
+.aurora::before{
+  content:"";
+  position:absolute;
+  width:1200px;
+  height:700px;
+  top:-330px;
+  right:-260px;
+  border-radius:50%;
   background:
-    radial-gradient(
-      circle at 85% 0%,
-      rgba(140,220,211,.48),
-      transparent 33%
-    ),
-    radial-gradient(
-      circle at 70% 15%,
-      rgba(164,151,244,.42),
-      transparent 38%
-    ),
-    #f8f7fa;
+    radial-gradient(ellipse at 22% 54%,rgba(139,221,214,.62),rgba(139,221,214,.22) 27%,transparent 55%),
+    radial-gradient(ellipse at 55% 36%,rgba(151,174,248,.66),rgba(151,174,248,.23) 27%,transparent 56%),
+    radial-gradient(ellipse at 76% 48%,rgba(189,151,244,.60),rgba(189,151,244,.22) 24%,transparent 55%);
+  filter:blur(55px);
+  transform:rotate(-13deg);
 }
 
 .header{
-  width:min(900px,100%);
-  height:78px;
-
+  width:min(1080px,100%);
+  height:80px;
   margin:auto;
-  padding:0 22px;
-
+  padding:0 24px;
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
-
-.logo{
-  font-weight:800;
-  font-size:26px;
-}
-
-.back{
-  padding:10px 15px;
-
+.brand{display:flex;flex-direction:column}
+.brand strong{font-size:27px;font-weight:800;line-height:1}
+.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}
+.header-right{display:flex;align-items:center;gap:9px}
+.admin-badge{
+  display:none;
+  align-items:center;
+  gap:7px;
+  padding:8px 12px;
   border-radius:999px;
-
-  background:rgba(255,255,255,.65);
-  border:1px solid rgba(255,255,255,.9);
-
-  font-size:11px;
+  color:#6652cb;
+  background:#eeeaff;
+  font-size:9px;
+  font-weight:800;
+}
+.admin-badge.show{display:flex}
+.menu-btn{
+  width:45px;
+  height:45px;
+  border:1px solid rgba(255,255,255,.95);
+  border-radius:50%;
+  background:rgba(255,255,255,.72);
+  box-shadow:0 10px 30px rgba(31,38,76,.08);
+  cursor:pointer;
 }
 
 .page{
-  width:min(820px,100%);
-
+  width:min(1040px,100%);
   margin:auto;
-
-  padding:
-    45px
-    20px
-    100px;
+  padding:0 20px 115px;
 }
 
-.type{
-  color:#7661df;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:23px;
+.hero{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:35px;
+  align-items:center;
+  padding:62px 0 44px;
 }
-
-.title{
-  margin:7px 0 0;
-
+.hero-label{
+  color:#7662dd;
   font-family:"Nanum Pen Script",cursive;
-
-  font-size:clamp(54px,10vw,88px);
+  font-size:22px;
+}
+.hero h1{
+  margin:4px 0 0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:clamp(84px,12vw,130px);
   font-weight:400;
-
-  line-height:.9;
+  line-height:.76;
 }
-
-.hero-image{
-  width:100%;
-  aspect-ratio:16/8;
-
-  margin-top:30px;
-
-  overflow:hidden;
-
+.hero p{
+  max-width:560px;
+  margin:25px 0 0;
+  color:#62697c;
+  font-size:13px;
+  line-height:1.9;
+}
+.hero-card{
+  min-height:270px;
+  padding:27px;
   border-radius:28px;
-
+  color:#fff;
   background:
-    linear-gradient(
-      145deg,
-      #e9e4ff,
-      #dff0f4
-    );
-
-  box-shadow:
-    0 20px 55px
-    rgba(28,35,72,.08);
+    radial-gradient(circle at 82% 18%,rgba(118,226,218,.48),transparent 34%),
+    radial-gradient(circle at 12% 90%,rgba(169,116,246,.68),transparent 43%),
+    linear-gradient(145deg,#1d2c53,#393e7e);
+  box-shadow:0 24px 62px rgba(28,35,75,.15);
 }
-
-.hero-image img{
-  width:100%;
-  height:100%;
-
+.hero-card small{
+  color:rgba(255,255,255,.65);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.8px;
+}
+.hero-card strong{
   display:block;
-
-  object-fit:cover;
+  margin-top:13px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:43px;
+  font-weight:400;
+  line-height:.95;
+}
+.hero-card p{
+  margin-top:20px;
+  color:rgba(255,255,255,.8);
+  font-size:11px;
+  line-height:1.8;
 }
 
-.image-empty{
-  width:100%;
-  height:100%;
+.section{margin-top:42px}
+.section-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:15px;
+}
+.kicker{
+  color:#7762df;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:20px;
+}
+.section-title{
+  margin:2px 0 0;
+  font-size:24px;
+  letter-spacing:-.8px;
+}
+.section-copy{
+  margin-top:6px;
+  color:#818696;
+  font-size:11px;
+  line-height:1.7;
+}
+.admin-add{
+  display:none;
+  min-height:41px;
+  padding:0 16px;
+  border:0;
+  border-radius:999px;
+  color:#fff;
+  background:#171d31;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
+}
+.admin-mode .admin-add{display:block}
 
+.idea-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.idea-card{
+  min-height:160px;
+  padding:19px;
+  border-radius:20px;
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 10px 28px rgba(31,37,74,.05);
+}
+.idea-icon{
+  width:38px;
+  height:38px;
   display:grid;
   place-items:center;
-
-  color:#9189b1;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:34px;
+  border-radius:12px;
+  background:#efebff;
+  font-size:18px;
 }
+.idea-card h3{margin:13px 0 6px;font-size:13px}
+.idea-card p{margin:0;color:#7a8090;font-size:10px;line-height:1.75}
 
-.info-card{
-  margin-top:18px;
-
-  padding:25px;
-
-  border-radius:25px;
-
-  background:rgba(255,255,255,.83);
-  border:1px solid rgba(255,255,255,.94);
-
-  box-shadow:
-    0 15px 40px
-    rgba(28,35,72,.06);
-}
-
-.info-grid{
+.stats{
   display:grid;
-
-  grid-template-columns:
-    repeat(3,1fr);
-
-  gap:13px;
-}
-
-.info-item{
-  padding:14px;
-
-  border-radius:16px;
-
-  background:#f7f6fa;
-}
-
-.info-item small{
-  display:block;
-
-  margin-bottom:6px;
-
-  color:#9497a5;
-
-  font-size:9px;
-  font-weight:700;
-
-  letter-spacing:1px;
-}
-
-.info-item strong{
-  font-size:13px;
-}
-
-.description{
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
   margin-top:18px;
-
-  padding:26px;
-
-  border-radius:25px;
-
-  background:rgba(255,255,255,.83);
-  border:1px solid rgba(255,255,255,.94);
-
-  color:#555d71;
-
-  font-size:13px;
-
-  line-height:1.9;
-
-  white-space:pre-wrap;
 }
-
-.description h2{
-  margin:0 0 15px;
-
-  color:#11182c;
-
+.stat{
+  padding:17px 18px;
+  border-radius:18px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.95);
+}
+.stat span{display:block;color:#888d9d;font-size:9px;font-weight:800;letter-spacing:.6px}
+.stat strong{
+  display:block;
+  margin-top:5px;
+  color:#6e5bd4;
   font-family:"Nanum Pen Script",cursive;
-
-  font-size:32px;
+  font-size:31px;
   font-weight:400;
 }
 
-.category-link{
-  display:none;
-
-  margin-top:18px;
-
-  min-height:64px;
-
-  padding:0 22px;
-
-  border-radius:20px;
-
+.toolbar{
+  display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+.filters{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{
+  flex:0 0 auto;
+  min-height:38px;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.95);
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  color:#74798b;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:700;
+}
+.filter.active{
+  color:#fff;
+  border-color:transparent;
+  background:linear-gradient(135deg,#8269e9,#748bed);
+}
 
-  color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #273562,
-      #414287
-    );
-
+.campaign-list{display:grid;gap:11px}
+.campaign{
+  position:relative;
+  display:grid;
+  grid-template-columns:125px minmax(0,1fr) auto;
+  gap:18px;
+  align-items:center;
+  min-height:140px;
+  padding:16px;
+  border-radius:22px;
+  background:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 10px 30px rgba(31,37,74,.055);
+  cursor:pointer;
+}
+.campaign-image{
+  width:125px;
+  height:105px;
+  overflow:hidden;
+  border-radius:16px;
+  background:linear-gradient(145deg,#eee9ff,#e3f2f6);
+}
+.campaign-image img{width:100%;height:100%;object-fit:cover}
+.campaign-image.empty{
+  display:grid;
+  place-items:center;
+  color:#8f86b5;
   font-family:"Nanum Pen Script",cursive;
-
   font-size:23px;
 }
-
-.category-link.show{
+.campaign-type{
+  color:#7562dd;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:17px;
+}
+.campaign h3{
+  margin:1px 0 5px;
+  font-size:16px;
+  letter-spacing:-.4px;
+}
+.campaign-date{
+  color:#696f81;
+  font-size:10px;
+  font-weight:700;
+}
+.campaign-desc{
+  margin-top:7px;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  color:#8b8f9e;
+  font-size:10px;
+  line-height:1.65;
+}
+.campaign-tags{
   display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
 }
-
-.loading{
-  padding:80px 20px;
-
+.tag{
+  padding:6px 9px;
+  border-radius:999px;
+  background:#f2f0f8;
+  color:#686e80;
+  font-size:9px;
+  font-weight:700;
+}
+.status{
+  align-self:flex-start;
+  min-width:64px;
+  padding:7px 9px;
+  border-radius:999px;
   text-align:center;
-
-  color:#858999;
+  font-size:9px;
+  font-weight:800;
+}
+.status.live{color:#327c66;background:#e8f7f0}
+.status.upcoming{color:#6e5bd3;background:#eeeaff}
+.status.done{color:#777c8c;background:#eef0f3}
+.admin-row{
+  display:none;
+  gap:6px;
+  margin-top:10px;
+  justify-content:flex-end;
+}
+.admin-mode .admin-row{display:flex}
+.mini-btn{
+  min-height:29px;
+  padding:0 10px;
+  border:0;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:9px;
+  font-weight:700;
+}
+.edit-btn{color:#6654c6;background:#efedf9}
+.end-btn{color:#716526;background:#fff6d9}
+.delete-btn{color:#ca536a;background:#fff0f2}
+.empty-state{
+  padding:42px 18px;
+  border-radius:20px;
+  text-align:center;
+  color:#9296a5;
+  background:rgba(255,255,255,.66);
+  font-size:11px;
 }
 
-@media(max-width:600px){
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(24,29,54,.36);
+  backdrop-filter:blur(15px);
+}
+.overlay.open{display:flex}
+.modal{
+  width:min(610px,100%);
+  max-height:calc(100vh - 28px);
+  overflow-y:auto;
+  padding:24px;
+  border-radius:27px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 30px 90px rgba(20,25,55,.22);
+}
+.modal-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+}
+.modal-title{
+  margin:0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:38px;
+  font-weight:400;
+}
+.close{
+  width:39px;
+  height:39px;
+  border:0;
+  border-radius:50%;
+  background:#efeff4;
+  cursor:pointer;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.field-wrap label{
+  display:block;
+  margin:0 0 6px;
+  color:#74798a;
+  font-size:10px;
+  font-weight:800;
+}
+.field{
+  width:100%;
+  min-height:46px;
+  padding:0 13px;
+  border:1px solid #dddce6;
+  border-radius:13px;
+  background:#fff;
+  outline:none;
+  font-size:12px;
+}
+.field:focus{
+  border-color:#8e7ae6;
+  box-shadow:0 0 0 4px rgba(128,105,233,.08);
+}
+textarea.field{
+  min-height:105px;
+  padding-top:12px;
+  resize:vertical;
+  line-height:1.65;
+}
+.full{grid-column:1/-1}
+.type-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+.type-choice{
+  min-height:58px;
+  border:1px solid #e4e2eb;
+  border-radius:15px;
+  background:#fff;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
+}
+.type-choice.active{
+  color:#fff;
+  border-color:transparent;
+  background:linear-gradient(135deg,#8168e9,#7689ec);
+}
+.save{
+  width:100%;
+  min-height:50px;
+  margin-top:15px;
+  border:0;
+  border-radius:14px;
+  color:#fff;
+  background:linear-gradient(135deg,#8068e8,#738bed);
+  cursor:pointer;
+  font-weight:800;
+}
 
-  .page{
-    padding-top:30px;
-  }
+/* DETAIL */
+.detail-card{
+  padding:23px;
+  border-radius:22px;
+  background:#fff;
+}
+.detail-type{color:#7562dd;font-family:"Nanum Pen Script",cursive;font-size:20px}
+.detail-card h2{margin:3px 0 7px;font-size:23px}
+.detail-date{color:#73798a;font-size:11px;font-weight:700}
+.detail-desc{margin-top:16px;color:#656b7d;font-size:12px;line-height:1.9}
+.detail-metrics{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.detail-note{
+  margin-top:15px;
+  padding:13px;
+  border-radius:13px;
+  background:#f5f3fb;
+  color:#74798b;
+  font-size:10px;
+  line-height:1.7;
+}
 
-  .title{
-    font-size:58px;
-  }
+.menu-card{
+  width:min(400px,100%);
+  padding:24px;
+  border-radius:27px;
+  background:#fff;
+}
+.menu-card a{
+  min-height:54px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.logout{
+  display:none;
+  width:100%;
+  min-height:54px;
+  border:0;
+  border-bottom:1px solid var(--line);
+  background:none;
+  color:#c95369;
+  text-align:left;
+  cursor:pointer;
+  font-size:13px;
+}
+.logout.show{display:block}
 
-  .hero-image{
-    border-radius:22px;
-    aspect-ratio:16/10;
-  }
+.bottom{
+  position:fixed;
+  z-index:80;
+  left:50%;
+  bottom:10px;
+  transform:translateX(-50%);
+  width:min(720px,calc(100% - 24px));
+  height:67px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  overflow:hidden;
+  border-radius:22px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 14px 42px rgba(30,37,75,.12);
+  backdrop-filter:blur(23px);
+}
+.bottom a,.bottom button{
+  border:0;
+  background:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  color:#777c8d;
+  cursor:pointer;
+  font-size:8px;
+}
+.bottom .active{color:#755fe1;font-weight:800}
+.nav-icon{font-size:18px}
 
-  .info-grid{
-    grid-template-columns:1fr;
-  }
-
-  .info-card,
-  .description{
-    padding:20px;
-    border-radius:21px;
-  }
+@media(max-width:760px){
+  .header{height:70px;padding:0 15px}
+  .brand strong{font-size:23px}
+  .page{padding:0 13px 105px}
+  .hero{grid-template-columns:1fr;gap:25px;padding:45px 2px 32px}
+  .hero h1{font-size:92px}
+  .hero-card{min-height:220px}
+  .idea-grid{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:1fr 1fr 1fr}
+  .campaign{grid-template-columns:88px minmax(0,1fr);gap:11px;padding:12px}
+  .campaign-image{width:88px;height:82px}
+  .status{position:absolute;right:12px;top:12px}
+  .campaign-main{padding-right:60px}
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+}
+@media(max-width:440px){
+  .idea-grid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr}
+  .type-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
-
 <div class="aurora"></div>
 
-
 <header class="header">
-
-  <a href="/" class="logo">
-    VOM
+  <a href="/" class="brand">
+    <strong>VOM</strong>
+    <small>VOICE OF MELODY</small>
   </a>
 
-  <a href="/calendar/" class="back">
-    ← CALENDAR
-  </a>
-
+  <div class="header-right">
+    <div id="adminBadge" class="admin-badge">ADMIN MODE</div>
+    <button class="menu-btn" onclick="openMenu()">☰</button>
+  </div>
 </header>
 
+<main id="page" class="page">
 
-<main
-  id="page"
-  class="page"
->
+  <section class="hero">
+    <div>
+      <div class="hero-label">VOM Playground</div>
+      <h1>Event</h1>
+      <p>
+        귀점유율과 VOM POINT를 실제 활동으로 이어가는 공간입니다.<br>
+        기간제 경쟁, 포인트 사용, 참여 미션 등 VOM만의 이벤트를 만들 수 있습니다.
+      </p>
+    </div>
 
-  <div class="loading">
-    일정을 불러오는 중...
-  </div>
+    <div class="hero-card">
+      <small>HOW TO USE</small>
+      <strong>
+        Earn.<br>
+        Use.<br>
+        Play.
+      </strong>
+      <p>
+        LIVE에서 쌓인 기록이 단순 랭킹으로 끝나지 않도록,
+        이벤트에서 다시 참여와 보상으로 연결합니다.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Ideas</div>
+        <h2 class="section-title">활용할 수 있는 방식</h2>
+        <div class="section-copy">
+          이벤트 생성 시 아래 기준을 선택해서 자유롭게 운영할 수 있습니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-grid">
+      <article class="idea-card">
+        <div class="idea-icon">👂</div>
+        <h3>귀점유율 챌린지</h3>
+        <p>특정 기간의 귀점유율 기록을 기준으로 TOP 멤버를 선정하는 이벤트.</p>
+      </article>
+
+      <article class="idea-card">
+        <div class="idea-icon">P</div>
+        <h3>VOM POINT 사용</h3>
+        <p>포인트 상점, 응모권, 참가권처럼 보유 포인트를 실제 혜택에 사용하는 이벤트.</p>
+      </article>
+
+      <article class="idea-card">
+        <div class="idea-icon">✓</div>
+        <h3>참여 미션</h3>
+        <p>LIVE, 버스킹, 모임 참석 횟수 등 참여 자체를 목표로 설정하는 기간제 미션.</p>
+      </article>
+
+      <article class="idea-card">
+        <div class="idea-icon">✦</div>
+        <h3>시즌 이벤트</h3>
+        <p>여름, 연말, 창립기념 등 운영진이 직접 기간과 보상을 정하는 자유형 이벤트.</p>
+      </article>
+    </div>
+
+    <div id="stats" class="stats">
+      <div class="stat"><span>진행 중</span><strong>0</strong></div>
+      <div class="stat"><span>예정</span><strong>0</strong></div>
+      <div class="stat"><span>종료</span><strong>0</strong></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">Campaigns</div>
+        <h2 class="section-title">기간제 이벤트</h2>
+      </div>
+
+      <button class="admin-add" onclick="openEditor()">
+        ＋ 새 이벤트 만들기
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="filters">
+        <button class="filter active" data-filter="ALL" onclick="setFilter('ALL',this)">전체</button>
+        <button class="filter" data-filter="LIVE" onclick="setFilter('LIVE',this)">진행 중</button>
+        <button class="filter" data-filter="UPCOMING" onclick="setFilter('UPCOMING',this)">예정</button>
+        <button class="filter" data-filter="DONE" onclick="setFilter('DONE',this)">종료</button>
+      </div>
+    </div>
+
+    <div id="campaignList" class="campaign-list">
+      <div class="empty-state">이벤트를 불러오는 중...</div>
+    </div>
+  </section>
 
 </main>
 
 
+<!-- EDITOR -->
+<div id="editorOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-top">
+      <h2 id="editorTitle" class="modal-title">New Event</h2>
+      <button class="close" onclick="closeEditor()">✕</button>
+    </div>
+
+    <input id="editingId" type="hidden">
+    <input id="campaignType" type="hidden" value="POINT">
+
+    <div class="field-wrap full">
+      <label>이벤트 방식</label>
+      <div class="type-grid">
+        <button id="type-point" class="type-choice active" type="button" onclick="setCampaignType('POINT')">VOM POINT</button>
+        <button id="type-ear" class="type-choice" type="button" onclick="setCampaignType('EAR')">귀점유율</button>
+        <button id="type-mission" class="type-choice" type="button" onclick="setCampaignType('MISSION')">참여 미션</button>
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-top:12px">
+      <div class="field-wrap full">
+        <label>이벤트명</label>
+        <input id="title" class="field" placeholder="예: 9월 귀점유율 챌린지">
+      </div>
+
+      <div class="field-wrap">
+        <label>시작일</label>
+        <input id="startDate" class="field" type="date">
+      </div>
+
+      <div class="field-wrap">
+        <label>종료일</label>
+        <input id="endDate" class="field" type="date">
+      </div>
+
+      <div class="field-wrap">
+        <label>POINT 사용량</label>
+        <input id="pointCost" class="field" type="number" min="0" placeholder="사용하지 않으면 0">
+      </div>
+
+      <div class="field-wrap">
+        <label>보상 POINT</label>
+        <input id="rewardPoints" class="field" type="number" min="0" placeholder="없으면 0">
+      </div>
+
+      <div class="field-wrap full">
+        <label>대표 이미지 URL</label>
+        <input id="imageUrl" class="field" placeholder="선택">
+      </div>
+
+      <div class="field-wrap full">
+        <label>설명</label>
+        <textarea id="description" class="field" placeholder="참여 방법, 집계 기준, 보상 등을 적어주세요."></textarea>
+      </div>
+    </div>
+
+    <button class="save" onclick="saveCampaign()">저장</button>
+  </div>
+</div>
+
+
+<!-- DETAIL -->
+<div id="detailOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-top">
+      <h2 class="modal-title">Event</h2>
+      <button class="close" onclick="closeDetail()">✕</button>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+</div>
+
+
+<!-- MENU -->
+<div id="menuOverlay" class="overlay">
+  <div class="menu-card">
+    <div class="modal-top">
+      <h2 class="modal-title">VOM Menu</h2>
+      <button class="close" onclick="closeMenu()">✕</button>
+    </div>
+
+    <a href="/">HOME <span>→</span></a>
+    <a href="/calendar/">CALENDAR <span>→</span></a>
+    <a href="/members/">MEMBERS <span>→</span></a>
+    <a href="/event/">EVENT <span>→</span></a>
+    <a href="/live/">VOM LIVE <span>→</span></a>
+
+    <button id="logoutButton" class="logout" onclick="adminLogout()">
+      관리자 모드 종료 <span style="float:right">→</span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="bottom">
+  <a href="/">
+    <span class="nav-icon">⌂</span>
+    HOME
+  </a>
+
+  <a href="/calendar/">
+    <span class="nav-icon">◫</span>
+    CALENDAR
+  </a>
+
+  <a href="/members/">
+    <span class="nav-icon">♙</span>
+    MEMBERS
+  </a>
+
+  <a href="/event/" class="active">
+    <span class="nav-icon">✦</span>
+    EVENT
+  </a>
+
+  <button onclick="openMenu()">
+    <span class="nav-icon">☰</span>
+    MENU
+  </button>
+</nav>
+
+
 <script>
-const SUPABASE_URL =
-  'https://aqfmhqultzpakfqwzulj.supabase.co';
+const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
+const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const SUPABASE_KEY =
-  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
-
-const db =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+let adminMode=false;
+let campaigns=[];
+let currentFilter='ALL';
+let currentCampaignType='POINT';
 
 
-async function loadEvent(){
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  const id =
-    params.get('id');
-
-
-  if(!id){
-
-    showError(
-      '일정 정보가 없습니다.'
-    );
-
-    return;
-  }
-
-
-  const { data:event,error } =
-    await db
-      .from('events')
-      .select('*')
-      .eq('id',id)
-      .maybeSingle();
-
-
-  if(error || !event){
-
-    showError(
-      '일정을 찾을 수 없습니다.'
-    );
-
-    return;
-  }
-
-
-  let location = null;
-
-
-  if(event.location_id){
-
-    const { data } =
-      await db
-        .from('locations')
-        .select('*')
-        .eq(
-          'id',
-          event.location_id
-        )
-        .maybeSingle();
-
-    location = data;
-  }
-
-
-  renderEvent(
-    event,
-    location
-  );
+/* START */
+async function start(){
+  await checkAdmin();
+  await loadCampaigns();
 }
 
 
-function renderEvent(
-  event,
-  location
-){
+/* ADMIN */
+async function checkAdmin(){
+  const {data}=await db.auth.getSession();
+  const session=data.session;
 
-  document.title =
-    `${event.title} · VOM`;
-
-
-  const page =
-    document.getElementById('page');
-
-
-  const locationName =
-    location?.name ||
-    event.location ||
-    '-';
-
-
-  const imageUrl =
-    event.image_url ||
-    location?.image_url ||
-    '';
-
-
-  const time =
-    makeTime(event) ||
-    '시간 미정';
-
-
-  let categoryLink = '';
-
-
-  if(event.event_type === 'VOM LIVE'){
-
-    categoryLink =
-    `
-      <a
-        href="/live/"
-        class="category-link show"
-      >
-
-        <span>
-          VOM LIVE 자세히 보기
-        </span>
-
-        <span>→</span>
-
-      </a>
-    `;
+  if(!session){
+    setAdmin(false);
+    return;
   }
 
+  const {data:admin}=await db
+    .from('admins')
+    .select('user_id')
+    .eq('user_id',session.user.id)
+    .maybeSingle();
 
-  if(event.event_type === 'BUSKING'){
+  setAdmin(!!admin);
+}
 
-    categoryLink =
-    `
-      <a
-        href="/busking/"
-        class="category-link show"
-      >
+function setAdmin(active){
+  adminMode=active;
 
-        <span>
-          BUSKING 자세히 보기
-        </span>
+  document
+    .getElementById('adminBadge')
+    .classList
+    .toggle('show',active);
 
-        <span>→</span>
+  document
+    .getElementById('page')
+    .classList
+    .toggle('admin-mode',active);
 
-      </a>
-    `;
+  document
+    .getElementById('logoutButton')
+    .classList
+    .toggle('show',active);
+}
+
+async function adminLogout(){
+  await db.auth.signOut();
+  setAdmin(false);
+  closeMenu();
+  renderCampaigns();
+}
+
+
+/* LOAD */
+async function loadCampaigns(){
+  const {data,error}=await db
+    .from('vom_campaigns')
+    .select('*')
+    .order('start_date',{ascending:false})
+    .order('created_at',{ascending:false});
+
+  if(error){
+    console.error(error);
+
+    document.getElementById('campaignList').innerHTML=
+      `<div class="empty-state">
+        이벤트 DB를 불러오지 못했습니다.<br>
+        Supabase에 vom_campaigns 테이블을 먼저 생성해주세요.
+      </div>`;
+
+    renderStats([]);
+    return;
   }
 
+  campaigns=data||[];
 
-  page.innerHTML =
-  `
-    <div class="type">
-      ${escapeHtml(
-        event.event_type ||
-        'OTHER'
-      )}
-    </div>
+  renderCampaigns();
+  renderStats(campaigns);
+}
 
+function renderStats(list){
+  const counts={LIVE:0,UPCOMING:0,DONE:0};
 
-    <h1 class="title">
-      ${escapeHtml(
-        event.title || ''
-      )}
-    </h1>
+  list.forEach(item=>{
+    counts[getStatus(item)]++;
+  });
 
-
-    <div class="hero-image">
-
-      ${
-        imageUrl
-
-        ? `
-          <img
-            src="${escapeAttribute(imageUrl)}"
-            alt=""
-          >
-        `
-
-        : `
-          <div class="image-empty">
-            Voice of Melody
-          </div>
-        `
-      }
-
-    </div>
-
-
-    <section class="info-card">
-
-      <div class="info-grid">
-
-
-        <div class="info-item">
-
-          <small>
-            DATE
-          </small>
-
-          <strong>
-            ${formatDate(
-              event.event_date
-            )}
-          </strong>
-
-        </div>
-
-
-        <div class="info-item">
-
-          <small>
-            TIME
-          </small>
-
-          <strong>
-            ${escapeHtml(time)}
-          </strong>
-
-        </div>
-
-
-        <div class="info-item">
-
-          <small>
-            PLACE
-          </small>
-
-          <strong>
-            ${escapeHtml(
-              locationName
-            )}
-          </strong>
-
-        </div>
-
-
-      </div>
-
-    </section>
-
-
-    <section class="description">
-
-      <h2>
-        Details
-      </h2>
-
-      ${
-        event.description
-
-        ? escapeHtml(
-            event.description
-          )
-
-        : '등록된 상세 내용이 없습니다.'
-      }
-
-    </section>
-
-
-    ${categoryLink}
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><span>진행 중</span><strong>${counts.LIVE}</strong></div>
+    <div class="stat"><span>예정</span><strong>${counts.UPCOMING}</strong></div>
+    <div class="stat"><span>종료</span><strong>${counts.DONE}</strong></div>
   `;
 }
 
 
-function makeTime(event){
-
-  const array = [];
-
-  if(event.start_time){
-    array.push(
-      event.start_time.slice(0,5)
-    );
-  }
-
-  if(event.end_time){
-    array.push(
-      event.end_time.slice(0,5)
-    );
-  }
-
-  return array.join(' - ');
-}
-
-
-function formatDate(value){
-
-  if(!value) return '-';
-
-  const date =
-    new Date(
-      value +
-      'T00:00:00'
-    );
-
-  return new Intl.DateTimeFormat(
-    'ko-KR',
-    {
-      year:'numeric',
-      month:'long',
-      day:'numeric',
-      weekday:'short'
-    }
-  ).format(date);
-}
-
-
-function showError(message){
+/* FILTER */
+function setFilter(filter,button){
+  currentFilter=filter;
 
   document
-    .getElementById('page')
-    .innerHTML =
-    `
-      <div class="loading">
-        ${escapeHtml(message)}
-        <br><br>
-        <a href="/calendar/">
-          CALENDAR로 돌아가기 →
-        </a>
-      </div>
-    `;
+    .querySelectorAll('.filter')
+    .forEach(btn=>btn.classList.remove('active'));
+
+  button.classList.add('active');
+
+  renderCampaigns();
 }
 
 
+/* RENDER */
+function renderCampaigns(){
+  const box=document.getElementById('campaignList');
+
+  const list=currentFilter==='ALL'
+    ? campaigns
+    : campaigns.filter(item=>getStatus(item)===currentFilter);
+
+  if(!list.length){
+    box.innerHTML=`<div class="empty-state">해당 이벤트가 없습니다.</div>`;
+    return;
+  }
+
+  box.innerHTML=list.map(createCampaignHtml).join('');
+}
+
+function createCampaignHtml(item){
+  const status=getStatus(item);
+  const statusLabel=
+    status==='LIVE'?'진행 중':
+    status==='UPCOMING'?'예정':
+    '종료';
+
+  const typeLabel=
+    item.campaign_type==='EAR'?'귀점유율':
+    item.campaign_type==='MISSION'?'참여 미션':
+    'VOM POINT';
+
+  const tags=[];
+
+  if(Number(item.point_cost||0)>0){
+    tags.push(`사용 ${Number(item.point_cost)}P`);
+  }
+
+  if(Number(item.reward_points||0)>0){
+    tags.push(`보상 +${Number(item.reward_points)}P`);
+  }
+
+  if(item.campaign_type==='EAR'){
+    tags.push('귀점유율 기준');
+  }
+
+  if(item.campaign_type==='MISSION'){
+    tags.push('참여형');
+  }
+
+  return `
+    <article class="campaign" onclick="openDetail('${escapeAttribute(item.id)}')">
+
+      ${
+        item.image_url
+        ? `
+          <div class="campaign-image">
+            <img src="${escapeAttribute(item.image_url)}" alt="">
+          </div>
+        `
+        : `
+          <div class="campaign-image empty">
+            VOM EVENT
+          </div>
+        `
+      }
+
+      <div class="campaign-main">
+        <div class="campaign-type">${typeLabel}</div>
+
+        <h3>${escapeHtml(item.title||'')}</h3>
+
+        <div class="campaign-date">
+          ${formatDate(item.start_date)} ~ ${formatDate(item.end_date)}
+        </div>
+
+        ${
+          item.description
+          ? `<div class="campaign-desc">${escapeHtml(item.description)}</div>`
+          : ''
+        }
+
+        ${
+          tags.length
+          ? `
+            <div class="campaign-tags">
+              ${tags.map(tag=>`<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+            </div>
+          `
+          : ''
+        }
+
+        <div class="admin-row">
+          <button
+            class="mini-btn edit-btn"
+            onclick="event.stopPropagation();openEditor('${escapeAttribute(item.id)}')"
+          >
+            수정
+          </button>
+
+          ${
+            status!=='DONE'
+            ? `
+              <button
+                class="mini-btn end-btn"
+                onclick="event.stopPropagation();endCampaign('${escapeAttribute(item.id)}')"
+              >
+                종료
+              </button>
+            `
+            : ''
+          }
+
+          <button
+            class="mini-btn delete-btn"
+            onclick="event.stopPropagation();deleteCampaign('${escapeAttribute(item.id)}')"
+          >
+            삭제
+          </button>
+        </div>
+      </div>
+
+      <div class="status ${status==='LIVE'?'live':status==='UPCOMING'?'upcoming':'done'}">
+        ${statusLabel}
+      </div>
+    </article>
+  `;
+}
+
+
+/* STATUS */
+function getStatus(item){
+  if(item.force_closed){
+    return 'DONE';
+  }
+
+  const today=todayString();
+
+  if(item.start_date>today){
+    return 'UPCOMING';
+  }
+
+  if(item.end_date<today){
+    return 'DONE';
+  }
+
+  return 'LIVE';
+}
+
+
+/* EDITOR */
+function setCampaignType(type){
+  currentCampaignType=type;
+
+  document.getElementById('campaignType').value=type;
+
+  ['POINT','EAR','MISSION'].forEach(key=>{
+    document
+      .getElementById('type-'+key.toLowerCase())
+      .classList
+      .toggle('active',key===type);
+  });
+}
+
+function openEditor(id=''){
+  if(!adminMode){
+    return;
+  }
+
+  const item=campaigns.find(row=>String(row.id)===String(id));
+
+  document.getElementById('editingId').value=item?.id||'';
+  document.getElementById('editorTitle').textContent=item?'Edit Event':'New Event';
+
+  setCampaignType(item?.campaign_type||'POINT');
+
+  document.getElementById('title').value=item?.title||'';
+  document.getElementById('startDate').value=item?.start_date||todayString();
+  document.getElementById('endDate').value=item?.end_date||todayString();
+  document.getElementById('pointCost').value=Number(item?.point_cost||0);
+  document.getElementById('rewardPoints').value=Number(item?.reward_points||0);
+  document.getElementById('imageUrl').value=item?.image_url||'';
+  document.getElementById('description').value=item?.description||'';
+
+  document.getElementById('editorOverlay').classList.add('open');
+}
+
+function closeEditor(){
+  document.getElementById('editorOverlay').classList.remove('open');
+}
+
+async function saveCampaign(){
+  if(!adminMode){
+    return;
+  }
+
+  const id=document.getElementById('editingId').value;
+  const title=document.getElementById('title').value.trim();
+  const startDate=document.getElementById('startDate').value;
+  const endDate=document.getElementById('endDate').value;
+
+  if(!title){
+    alert('이벤트명을 입력해주세요.');
+    return;
+  }
+
+  if(!startDate||!endDate){
+    alert('시작일과 종료일을 입력해주세요.');
+    return;
+  }
+
+  if(endDate<startDate){
+    alert('종료일은 시작일보다 빠를 수 없습니다.');
+    return;
+  }
+
+  const payload={
+    title,
+    campaign_type:currentCampaignType,
+    start_date:startDate,
+    end_date:endDate,
+    point_cost:Number(document.getElementById('pointCost').value||0),
+    reward_points:Number(document.getElementById('rewardPoints').value||0),
+    image_url:document.getElementById('imageUrl').value.trim()||null,
+    description:document.getElementById('description').value.trim(),
+    force_closed:false
+  };
+
+  let response;
+
+  if(id){
+    response=await db
+      .from('vom_campaigns')
+      .update(payload)
+      .eq('id',id);
+  }else{
+    response=await db
+      .from('vom_campaigns')
+      .insert(payload);
+  }
+
+  if(response.error){
+    alert('저장 실패\n'+response.error.message);
+    return;
+  }
+
+  closeEditor();
+  await loadCampaigns();
+}
+
+
+/* END / DELETE */
+async function endCampaign(id){
+  if(!adminMode){
+    return;
+  }
+
+  if(!confirm('이 이벤트를 종료 처리할까요?')){
+    return;
+  }
+
+  const {error}=await db
+    .from('vom_campaigns')
+    .update({force_closed:true})
+    .eq('id',id);
+
+  if(error){
+    alert('종료 처리 실패\n'+error.message);
+    return;
+  }
+
+  await loadCampaigns();
+}
+
+async function deleteCampaign(id){
+  if(!adminMode){
+    return;
+  }
+
+  if(!confirm('이 이벤트를 완전히 삭제할까요?\n종료 처리보다 삭제는 복구가 어렵습니다.')){
+    return;
+  }
+
+  const {error}=await db
+    .from('vom_campaigns')
+    .delete()
+    .eq('id',id);
+
+  if(error){
+    alert('삭제 실패\n'+error.message);
+    return;
+  }
+
+  await loadCampaigns();
+}
+
+
+/* DETAIL */
+function openDetail(id){
+  const item=campaigns.find(row=>String(row.id)===String(id));
+
+  if(!item){
+    return;
+  }
+
+  const typeLabel=
+    item.campaign_type==='EAR'?'귀점유율':
+    item.campaign_type==='MISSION'?'참여 미션':
+    'VOM POINT';
+
+  document.getElementById('detailBody').innerHTML=`
+    <div class="detail-card">
+      <div class="detail-type">${typeLabel}</div>
+
+      <h2>${escapeHtml(item.title||'')}</h2>
+
+      <div class="detail-date">
+        ${formatDate(item.start_date)} ~ ${formatDate(item.end_date)}
+      </div>
+
+      ${
+        item.description
+        ? `<div class="detail-desc">${escapeHtml(item.description).replace(/\n/g,'<br>')}</div>`
+        : ''
+      }
+
+      <div class="detail-metrics">
+        ${
+          Number(item.point_cost||0)>0
+          ? `<span class="tag">POINT 사용 ${Number(item.point_cost)}P</span>`
+          : ''
+        }
+
+        ${
+          Number(item.reward_points||0)>0
+          ? `<span class="tag">보상 +${Number(item.reward_points)}P</span>`
+          : ''
+        }
+
+        ${
+          item.campaign_type==='EAR'
+          ? `<span class="tag">귀점유율 집계</span>`
+          : ''
+        }
+      </div>
+
+      <div class="detail-note">
+        현재 페이지는 이벤트의 생성·기간·조건·보상을 관리합니다.
+        특정 기간의 실제 귀점유율/POINT 자동 집계는 다음 단계에서
+        LIVE 기록의 member_id와 날짜를 연결해 붙일 수 있습니다.
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+
+
+/* MENU */
+function openMenu(){
+  document.getElementById('menuOverlay').classList.add('open');
+}
+
+function closeMenu(){
+  document.getElementById('menuOverlay').classList.remove('open');
+}
+
+['menuOverlay','editorOverlay','detailOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(event){
+    if(event.target===this){
+      this.classList.remove('open');
+    }
+  });
+});
+
+
+/* HELPERS */
+function todayString(){
+  const d=new Date();
+
+  return [
+    d.getFullYear(),
+    String(d.getMonth()+1).padStart(2,'0'),
+    String(d.getDate()).padStart(2,'0')
+  ].join('-');
+}
+
+function formatDate(value){
+  return value
+    ? String(value).slice(0,10).replaceAll('-','.')
+    : '-';
+}
+
 function escapeHtml(value){
-
-  const div =
-    document.createElement('div');
-
-  div.textContent =
-    String(value ?? '');
-
+  const div=document.createElement('div');
+  div.textContent=String(value??'');
   return div.innerHTML;
 }
 
-
 function escapeAttribute(value){
-
-  return String(value ?? '')
+  return String(value??'')
     .replace(/&/g,'&amp;')
     .replace(/"/g,'&quot;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;');
 }
 
-
-loadEvent();
+start();
 </script>
-
 </body>
 </html>
