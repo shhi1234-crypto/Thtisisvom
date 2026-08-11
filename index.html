@@ -461,36 +461,39 @@ button{
 
 .quick{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
   overflow:hidden;
   border-radius:27px;
-  background:rgba(255,255,255,.68);
+  background:rgba(35,40,69,.08);
   border:1px solid rgba(255,255,255,.94);
   box-shadow:0 20px 55px rgba(33,39,78,.08);
 }
 
 .quick a{
-  min-height:122px;
+  min-height:116px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  border-right:1px solid var(--line);
+  background:rgba(255,255,255,.74);
+  transition:background .16s ease, transform .16s ease;
 }
 
-.quick a:last-child{
-  border-right:0;
+.quick a:hover{
+  background:rgba(255,255,255,.93);
 }
 
 .quick-icon{
-  margin-bottom:7px;
+  margin-bottom:6px;
   color:#8068ed;
   font-family:"Nanum Pen Script",cursive;
-  font-size:30px;
+  font-size:29px;
 }
 
 .quick strong{
   font-size:13px;
+  font-weight:800;
 }
 
 .quick small{
@@ -498,6 +501,22 @@ button{
   color:#9397a5;
   font-size:8px;
   letter-spacing:1px;
+}
+
+@media(max-width:700px){
+  .quick{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .quick a{
+    min-height:96px;
+  }
+}
+
+@media(max-width:390px){
+  .quick strong{
+    font-size:12px;
+  }
 }
 
 /* SECTION */
@@ -534,6 +553,44 @@ button{
 }
 
 /* NOTICE */
+
+.notice-empty{
+  min-height:168px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#969aa9;
+  text-align:center;
+  font-size:10px;
+  line-height:1.7;
+}
+
+.notice-row{
+  cursor:pointer;
+}
+
+.notice-row strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.notice-row time{
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:9px;
+  font-weight:700;
+}
+
+.notice-badge.event{
+  color:#6755cb;
+  background:#eeeaff;
+}
+
+.notice-badge.schedule{
+  color:#3e7882;
+  background:#e7f5f5;
+}
+
 
 .middle{
   display:grid;
@@ -615,6 +672,168 @@ button{
   font-family:"Nanum Pen Script",cursive;
   font-size:18px;
 }
+
+
+/* HOME NEWS */
+
+async function loadHomeNews(){
+
+  const box =
+    document.getElementById('homeNews');
+
+  if(!box){
+    return;
+  }
+
+  const today =
+    todayString();
+
+
+  const eventRequest =
+    db
+      .from('events')
+      .select('*')
+      .gte('event_date',today)
+      .order('created_at',{ascending:false})
+      .limit(6);
+
+
+  const campaignRequest =
+    db
+      .from('vom_campaigns')
+      .select('*')
+      .gte('end_date',today)
+      .order('created_at',{ascending:false})
+      .limit(6);
+
+
+  const [
+    eventResponse,
+    campaignResponse
+  ] =
+    await Promise.all([
+      eventRequest,
+      campaignRequest
+    ]);
+
+
+  const news = [];
+
+
+  (eventResponse.data || [])
+    .forEach(row => {
+
+      news.push({
+        kind:'schedule',
+        label:
+          row.event_type === 'VOM LIVE'
+          ? '봄LIVE'
+          : row.event_type === 'BUSKING'
+          ? '버스킹'
+          : '일정',
+        title:row.title || row.event_type || '새 일정',
+        href:`/event/?id=${encodeURIComponent(row.id)}`,
+        sortDate:
+          row.created_at ||
+          row.event_date,
+        displayDate:
+          formatHomeNewsDate(
+            row.created_at ||
+            row.event_date
+          )
+      });
+    });
+
+
+  (campaignResponse.data || [])
+    .forEach(row => {
+
+      news.push({
+        kind:'event',
+        label:'EVENT',
+        title:row.title || '새 이벤트',
+        href:'/event/',
+        sortDate:
+          row.created_at ||
+          row.start_date,
+        displayDate:
+          formatHomeNewsDate(
+            row.created_at ||
+            row.start_date
+          )
+      });
+    });
+
+
+  news.sort(
+    (a,b) =>
+      new Date(b.sortDate || 0) -
+      new Date(a.sortDate || 0)
+  );
+
+
+  const list =
+    news.slice(0,3);
+
+
+  if(!list.length){
+
+    box.innerHTML =
+      `<div class="notice-empty">
+        새로 등록된 소식이 없습니다.
+      </div>`;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(item => `
+        <a
+          href="${escapeAttribute(item.href)}"
+          class="notice-row"
+        >
+          <span class="notice-badge ${item.kind}">
+            ${escapeHtml(item.label)}
+          </span>
+
+          <strong>
+            ${escapeHtml(item.title)}
+          </strong>
+
+          <time>
+            ${escapeHtml(item.displayDate)}
+          </time>
+        </a>
+      `)
+      .join('');
+}
+
+
+function formatHomeNewsDate(value){
+
+  if(!value){
+    return 'NEW';
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(Number.isNaN(date.getTime())){
+    return 'NEW';
+  }
+
+
+  return [
+    String(date.getMonth() + 1).padStart(2,'0'),
+    String(date.getDate()).padStart(2,'0')
+  ].join('.');
+}
+
+
 
 /* EVENTS */
 
@@ -1304,16 +1523,28 @@ button{
       <small>SCHEDULE</small>
     </a>
 
-    <a href="/live/">
-      <div class="quick-icon">♬</div>
-      <strong>VOM LIVE</strong>
-      <small>LIVE</small>
-    </a>
-
     <a href="/busking/">
       <div class="quick-icon">♪</div>
       <strong>BUSKING</strong>
       <small>BUSKING</small>
+    </a>
+
+    <a href="/live/">
+      <div class="quick-icon">♬</div>
+      <strong>봄LIVE</strong>
+      <small>VOM LIVE</small>
+    </a>
+
+    <a href="/members/">
+      <div class="quick-icon">♙</div>
+      <strong>MEMBERS</strong>
+      <small>VOM PEOPLE</small>
+    </a>
+
+    <a href="/event/">
+      <div class="quick-icon">✦</div>
+      <strong>EVENT</strong>
+      <small>CAMPAIGN</small>
     </a>
 
     <a href="/qna/">
@@ -1332,12 +1563,12 @@ button{
     <div class="section-head">
 
       <h2 class="section-title">
-        공지사항
-        <em>Notice</em>
+        새 소식
+        <em>New</em>
       </h2>
 
-      <a href="/notice/" class="more">
-        전체 보기 →
+      <a href="/calendar/" class="more">
+        전체 일정 →
       </a>
 
     </div>
@@ -1345,26 +1576,10 @@ button{
 
     <div class="middle">
 
-      <div class="notice">
-
-        <a href="/notice/" class="notice-row">
-          <span class="notice-badge">공지</span>
-          <strong>VOM LIVE 안내</strong>
-          <time>NEW</time>
-        </a>
-
-        <a href="/notice/" class="notice-row">
-          <span class="notice-badge">공지</span>
-          <strong>BUSKING 일정 안내</strong>
-          <time>NEW</time>
-        </a>
-
-        <a href="/notice/" class="notice-row">
-          <span class="notice-badge">안내</span>
-          <strong>VOM 운영 안내</strong>
-          <time>INFO</time>
-        </a>
-
+      <div id="homeNews" class="notice">
+        <div class="notice-empty">
+          새로운 소식을 불러오는 중...
+        </div>
       </div>
 
 
@@ -1582,7 +1797,8 @@ async function start(){
   await Promise.all([
     loadEarShare(),
     loadPointRanking(),
-    loadHomeEvents()
+    loadHomeEvents(),
+    loadHomeNews()
   ]);
 
 }
