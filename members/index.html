@@ -9,19 +9,21 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --ink:#11182c;
-  --muted:#74798b;
-  --purple:#7c67e8;
-  --purple2:#748bed;
-  --line:rgba(28,34,65,.08);
-  --white:rgba(255,255,255,.82);
+  --ink:#151a2c;
+  --text:#34394b;
+  --muted:#6d7283;
+
+  --purple:#7863e7;
+  --purple2:#6f86eb;
+
+  --line:rgba(32,38,68,.09);
+  --surface:rgba(255,255,255,.84);
 }
 
 *{
@@ -37,9 +39,14 @@ body{
   margin:0;
   min-height:100vh;
   overflow-x:hidden;
+
   font-family:"Noto Sans KR",sans-serif;
   color:var(--ink);
+
   background:#f8f7fa;
+
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 
 a{
@@ -58,21 +65,46 @@ button{
   color:inherit;
 }
 
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible{
+  outline:3px solid rgba(119,98,230,.24);
+  outline-offset:2px;
+}
+
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
   overflow:hidden;
-  background:linear-gradient(180deg,#f7f4fa 0%,#f8f7fb 55%,#faf9fb 100%);
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7f4fa 0%,
+      #f8f7fb 55%,
+      #faf9fb 100%
+    );
 }
 
 .aurora::before{
   content:"";
+
   position:absolute;
+
   width:1200px;
   height:700px;
+
   top:-320px;
   right:-280px;
+
   border-radius:50%;
 
   background:
@@ -99,11 +131,15 @@ button{
   transform:rotate(-13deg);
 }
 
-/* HEADER */
+
+/* =====================================================
+   HEADER
+===================================================== */
 
 .header{
   width:min(1080px,100%);
   height:82px;
+
   margin:auto;
   padding:0 25px;
 
@@ -125,27 +161,37 @@ button{
 
 .brand small{
   margin-top:5px;
+
   font-size:8px;
-  font-weight:700;
+  font-weight:800;
+
   letter-spacing:3px;
 }
 
 .header-right{
   display:flex;
   align-items:center;
+
   gap:9px;
 }
 
 .admin-badge{
   display:none;
+
   align-items:center;
   gap:7px;
+
   padding:9px 13px;
+
   border-radius:999px;
-  color:#6955d2;
-  background:rgba(126,102,232,.10);
-  border:1px solid rgba(126,102,232,.15);
-  font-size:9px;
+
+  color:#624dd0;
+
+  background:rgba(126,102,232,.11);
+
+  border:1px solid rgba(126,102,232,.18);
+
+  font-size:10px;
   font-weight:800;
 }
 
@@ -156,155 +202,222 @@ button{
 .admin-dot{
   width:7px;
   height:7px;
+
   border-radius:50%;
+
   background:#765fe6;
 }
 
 .menu-btn{
   width:46px;
   height:46px;
+
   border:1px solid rgba(255,255,255,.95);
+
   border-radius:50%;
-  background:rgba(255,255,255,.68);
+
+  background:rgba(255,255,255,.72);
+
   box-shadow:0 10px 30px rgba(31,38,76,.08);
+
   cursor:pointer;
+
+  font-size:17px;
 }
 
-/* PAGE */
+
+/* =====================================================
+   PAGE
+===================================================== */
 
 .page{
-  width:min(1050px,100%);
+  width:min(1080px,100%);
+
   margin:auto;
-  padding:0 22px 115px;
+
+  padding:
+    0
+    22px
+    115px;
 }
 
-/* HERO */
+
+/* =====================================================
+   HERO
+===================================================== */
 
 .hero{
-  padding:52px 0 30px;
+  padding:
+    48px
+    0
+    28px;
 }
 
 .hero-label{
-  color:#6d73a0;
+  color:#626997;
+
   font-size:10px;
-  font-weight:700;
+  font-weight:800;
+
   letter-spacing:2.4px;
 }
 
 .hero-title{
-  margin:8px 0 0;
+  margin:
+    8px
+    0
+    0;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:clamp(72px,11vw,112px);
+
+  font-size:
+    clamp(
+      72px,
+      11vw,
+      112px
+    );
+
   font-weight:400;
   line-height:.8;
 }
 
 .hero-copy{
-  max-width:610px;
-  margin-top:16px;
-  color:#656c7f;
-  font-size:11px;
-  line-height:1.75;
+  max-width:650px;
+
+  margin-top:18px;
+
+  color:#575e72;
+
+  font-size:13px;
+  font-weight:500;
+
+  line-height:1.8;
 }
 
-/* STATS */
+
+/* =====================================================
+   STATS
+===================================================== */
 
 .toolbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
   gap:12px;
-  margin-bottom:12px;
+
+  margin-bottom:13px;
 }
 
 .stats{
   display:flex;
   flex-wrap:wrap;
+
   gap:7px;
 }
 
 .stat{
-  padding:8px 11px;
+  padding:
+    8px
+    12px;
+
   border-radius:999px;
-  background:rgba(255,255,255,.72);
-  border:1px solid rgba(255,255,255,.95);
-  color:#6d7283;
-  font-size:9px;
+
+  background:rgba(255,255,255,.78);
+
+  border:
+    1px solid
+    rgba(255,255,255,.98);
+
+  color:#646a7d;
+
+  font-size:10px;
+  font-weight:600;
 }
 
 .stat strong{
-  color:#6f5ed6;
+  color:#604ccc;
+  font-weight:800;
 }
 
 .admin-add{
   display:none;
-  min-height:40px;
-  padding:0 16px;
+
+  min-height:41px;
+
+  padding:
+    0
+    17px;
+
   border:0;
   border-radius:999px;
+
   color:white;
   background:#171d31;
+
   cursor:pointer;
-  font-size:10px;
-  font-weight:700;
+
+  font-size:11px;
+  font-weight:800;
 }
 
 .admin-add.show{
   display:block;
 }
 
-/* VIEW MODE */
+
+/* =====================================================
+   VIEW TABS
+===================================================== */
 
 .view-tabs{
   display:flex;
   flex-wrap:wrap;
+
   gap:7px;
-  margin-bottom:12px;
+
+  margin-bottom:13px;
 }
 
 .view-tab{
   min-height:39px;
-  padding:0 14px;
-  border:1px solid rgba(255,255,255,.96);
+
+  padding:
+    0
+    15px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.96);
+
   border-radius:999px;
-  background:rgba(255,255,255,.72);
-  color:#74798b;
+
+  background:rgba(255,255,255,.76);
+
+  color:#666c7e;
+
   cursor:pointer;
+
   font-size:10px;
+  font-weight:700;
 }
 
 .view-tab.active{
   color:white;
+
   border-color:transparent;
-  background:linear-gradient(135deg,#8168e9,#7588ec);
+
+  background:
+    linear-gradient(
+      135deg,
+      #8168e9,
+      #7588ec
+    );
+
+  box-shadow:
+    0 6px 18px
+    rgba(116,99,226,.18);
 }
-
-/* FILTER */
-
-.filters{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-bottom:12px;
-}
-
-.filter{
-  min-height:34px;
-  padding:0 12px;
-  border:1px solid rgba(255,255,255,.95);
-  border-radius:999px;
-  background:rgba(255,255,255,.64);
-  color:#74798b;
-  cursor:pointer;
-  font-size:9px;
-}
-
-.filter.active{
-  color:#6755c7;
-  background:#eeebfb;
-}
-
-/* VIEW */
 
 .view-panel{
   display:none;
@@ -314,129 +427,337 @@ button{
   display:block;
 }
 
-/* TABLE */
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+
+  gap:6px;
+
+  margin-bottom:11px;
+}
+
+.filter{
+  min-height:34px;
+
+  padding:
+    0
+    12px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.96);
+
+  border-radius:999px;
+
+  background:rgba(255,255,255,.68);
+
+  color:#6b7081;
+
+  cursor:pointer;
+
+  font-size:9px;
+  font-weight:700;
+}
+
+.filter.active{
+  color:#5e49c5;
+
+  background:#ebe7fb;
+
+  border-color:rgba(118,95,218,.10);
+}
+
+
+/* =====================================================
+   TABLE
+===================================================== */
 
 .table-shell{
   overflow:auto;
-  border-radius:22px;
-  background:rgba(255,255,255,.82);
-  border:1px solid rgba(255,255,255,.96);
-  box-shadow:0 14px 38px rgba(31,37,74,.06);
+
+  border-radius:21px;
+
+  background:rgba(255,255,255,.85);
+
+  border:
+    1px solid
+    rgba(255,255,255,.98);
+
+  box-shadow:
+    0 14px 38px
+    rgba(31,37,74,.06);
 }
 
 .member-table{
   width:100%;
-  min-width:820px;
+
+  min-width:790px;
+
   table-layout:fixed;
+
   border-collapse:collapse;
 }
 
 .member-table th{
-  height:39px;
-  padding:7px 8px;
+  height:40px;
+
+  padding:
+    7px
+    5px;
+
   text-align:left;
-  color:#8d91a0;
-  font-size:8px;
-  font-weight:700;
-  border-bottom:1px solid var(--line);
+
+  color:#666c80;
+
+  font-size:9px;
+  font-weight:800;
+
+  letter-spacing:.1px;
+
+  border-bottom:
+    1px solid
+    var(--line);
+
   white-space:nowrap;
 }
 
 .member-table td{
   height:50px;
-  padding:7px 8px;
-  border-bottom:1px solid var(--line);
-  font-size:9px;
+
+  padding:
+    6px
+    5px;
+
+  border-bottom:
+    1px solid
+    var(--line);
+
+  color:#34394b;
+
+  font-size:10px;
+  font-weight:500;
+
+  line-height:1.45;
+
   vertical-align:middle;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+
+.member-table tbody tr:hover{
+  background:rgba(119,99,225,.025);
 }
 
 .member-table tr:last-child td{
   border-bottom:0;
 }
 
+
+/* 가입순서 */
+
 .member-table th:nth-child(1),
 .member-table td:nth-child(1){
-  width:90px;
+  width:52px;
+  text-align:center;
 }
+
+
+/* 이름 */
 
 .member-table th:nth-child(2),
 .member-table td:nth-child(2){
-  width:78px;
+  width:82px;
 }
+
+
+/* 구분 */
 
 .member-table th:nth-child(3),
 .member-table td:nth-child(3){
-  width:95px;
-}
-
-.member-table th:nth-child(4),
-.member-table td:nth-child(4){
   width:70px;
 }
 
+
+/* 가입일 */
+
+.member-table th:nth-child(4),
+.member-table td:nth-child(4){
+  width:88px;
+}
+
+
+/* 지역 */
+
 .member-table th:nth-child(5),
 .member-table td:nth-child(5){
-  width:145px;
-}
-
-.member-table th:nth-child(6),
-.member-table td:nth-child(6){
-  width:58px;
-}
-
-.member-table th:nth-child(7),
-.member-table td:nth-child(7){
   width:62px;
 }
 
-.member-table th:nth-child(8),
-.member-table td:nth-child(8){
-  width:75px;
+
+/* 성별 */
+
+.member-table th:nth-child(6),
+.member-table td:nth-child(6){
+  width:48px;
 }
 
-.member-table th:nth-child(9),
-.member-table td:nth-child(9){
+
+/* 좋아하는 가수 */
+
+.member-table th:nth-child(7),
+.member-table td:nth-child(7){
   width:105px;
 }
 
+
+/* 직업 */
+
+.member-table th:nth-child(8),
+.member-table td:nth-child(8){
+  width:92px;
+}
+
+
+/* 상태 */
+
+.member-table th:nth-child(9),
+.member-table td:nth-child(9){
+  width:68px;
+}
+
+
+/* 관리 */
+
+.member-table th:nth-child(10),
+.member-table td:nth-child(10){
+  width:96px;
+}
+
+
+/* 가입순서 뱃지 */
+
+.order-badge{
+  width:28px;
+  height:28px;
+
+  margin:auto;
+
+  display:grid;
+  place-items:center;
+
+  border-radius:10px;
+
+  color:#6752d1;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f0ecff,
+      #e7eaff
+    );
+
+  border:
+    1px solid
+    rgba(112,92,213,.10);
+
+  box-shadow:
+    0 5px 12px
+    rgba(75,65,150,.08);
+
+  font-family:"Nanum Pen Script",cursive;
+
+  font-size:17px;
+  font-weight:400;
+}
+
+.order-badge.top-1{
+  color:#8b670b;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff7d9,
+      #ffeaae
+    );
+}
+
+.order-badge.top-2{
+  color:#657086;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f5f7fb,
+      #dfe5ef
+    );
+}
+
+.order-badge.top-3{
+  color:#9b5f36;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff0e4,
+      #f2d1b8
+    );
+}
+
 .member-name{
+  color:#202538;
+
+  font-size:11px;
   font-weight:800;
-  font-size:10px;
 }
 
 .role-badge,
 .status-badge{
   display:inline-flex;
+
   align-items:center;
   justify-content:center;
+
   min-height:25px;
-  padding:0 8px;
+
+  padding:
+    0
+    8px;
+
   border-radius:999px;
+
   font-size:8px;
-  font-weight:700;
+  font-weight:800;
 }
 
 .role-badge{
-  color:#6955cc;
-  background:#eee9ff;
+  color:#624dcb;
+
+  background:#ece8ff;
 }
 
 .status-badge{
-  color:#327862;
-  background:#e7f6ef;
+  color:#286c56;
+
+  background:#e1f4eb;
 }
 
 .status-badge.sleep{
-  color:#8b6e31;
-  background:#fbf2d7;
+  color:#7f6428;
+
+  background:#f8efd3;
 }
 
 .status-badge.out{
-  color:#9f5160;
-  background:#fde9ed;
+  color:#98495b;
+
+  background:#fbe6eb;
 }
 
 .action-wrap{
@@ -447,12 +768,21 @@ button{
 .edit-btn,
 .disable-btn{
   display:none;
-  min-height:27px;
-  padding:0 8px;
+
+  min-height:28px;
+
+  padding:
+    0
+    8px;
+
   border:0;
+
   border-radius:8px;
+
   cursor:pointer;
-  font-size:7px;
+
+  font-size:8px;
+  font-weight:800;
 }
 
 .admin-mode .edit-btn,
@@ -462,65 +792,107 @@ button{
 }
 
 .edit-btn{
-  color:#6653c7;
-  background:#efedf9;
+  color:#5d49c4;
+
+  background:#ece9fa;
 }
 
 .disable-btn{
-  color:#c14f65;
-  background:#fff0f2;
+  color:#b34b60;
+
+  background:#fdecef;
 }
 
 .empty{
-  padding:38px 20px;
+  padding:
+    38px
+    20px;
+
   text-align:center;
-  color:#9195a4;
-  font-size:10px;
+
+  color:#73798b;
+
+  font-size:11px;
+  font-weight:600;
+
+  line-height:1.7;
 }
 
-/* BIRTHDAY */
 
-.birthday-shell,
-.age-shell,
-.region-shell{
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+.dashboard-shell{
+  padding:20px;
+
   border-radius:24px;
-  background:rgba(255,255,255,.80);
-  border:1px solid rgba(255,255,255,.95);
-  box-shadow:0 14px 38px rgba(31,37,74,.06);
-  padding:19px;
+
+  background:rgba(255,255,255,.84);
+
+  border:
+    1px solid
+    rgba(255,255,255,.98);
+
+  box-shadow:
+    0 14px 38px
+    rgba(31,37,74,.06);
 }
 
 .sub-head{
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
+
   gap:14px;
-  margin-bottom:15px;
+
+  margin-bottom:16px;
 }
 
 .sub-kicker{
-  color:#7562df;
+  color:#725cdf;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:19px;
+
+  font-size:20px;
 }
 
 .sub-title{
   margin:0;
-  font-size:20px;
+
+  color:#202538;
+
+  font-size:21px;
+  font-weight:800;
 }
 
 .sub-copy{
-  margin-top:4px;
-  color:#888c9b;
-  font-size:9px;
+  margin-top:5px;
+
+  color:#6e7486;
+
+  font-size:10px;
+  font-weight:500;
+
+  line-height:1.6;
 }
+
+
+/* =====================================================
+   BIRTHDAY
+===================================================== */
 
 .month-tabs{
   display:flex;
+
   gap:6px;
+
   overflow-x:auto;
+
   padding-bottom:7px;
+
   margin-bottom:13px;
+
   scrollbar-width:none;
 }
 
@@ -529,353 +901,650 @@ button{
 }
 
 .month-btn{
-  flex:0 0 auto;
-  min-width:48px;
-  min-height:34px;
+  flex:
+    0
+    0
+    auto;
+
+  min-width:49px;
+  min-height:35px;
+
   border:0;
+
   border-radius:999px;
-  color:#777c8e;
-  background:#f1eff7;
+
+  color:#626879;
+
+  background:#f0eef6;
+
   cursor:pointer;
+
   font-size:9px;
+  font-weight:700;
 }
 
 .month-btn.active{
   color:white;
-  background:linear-gradient(135deg,#8068e8,#748bed);
+
+  background:
+    linear-gradient(
+      135deg,
+      #8068e8,
+      #748bed
+    );
 }
 
 .birthday-list{
   display:grid;
+
   gap:7px;
 }
 
 .birthday-row{
-  min-height:55px;
+  min-height:58px;
+
   display:grid;
-  grid-template-columns:48px minmax(0,1fr) auto;
+
+  grid-template-columns:
+    50px
+    minmax(0,1fr)
+    auto;
+
   align-items:center;
-  gap:11px;
-  padding:8px 11px;
+
+  gap:12px;
+
+  padding:
+    8px
+    12px;
+
   border-radius:15px;
-  background:#f8f7fb;
+
+  background:#f7f6fa;
 }
 
 .birthday-day{
-  color:#7560db;
+  color:#6c54d8;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:27px;
+
+  font-size:29px;
+
   text-align:center;
 }
 
 .birthday-name{
-  font-weight:700;
-  font-size:11px;
+  color:#23283a;
+
+  font-size:12px;
+  font-weight:800;
 }
 
 .birthday-meta{
-  margin-top:2px;
-  color:#9296a5;
-  font-size:8px;
+  margin-top:3px;
+
+  color:#717687;
+
+  font-size:9px;
+  font-weight:500;
 }
 
 .birthday-age{
-  color:#727789;
-  font-size:9px;
+  color:#606678;
+
+  font-size:10px;
+  font-weight:700;
 }
 
-/* AGE */
+
+/* =====================================================
+   AGE
+===================================================== */
 
 .age-filter{
   display:flex;
   flex-wrap:wrap;
+
   gap:6px;
+
   margin-bottom:13px;
 }
 
 .age-btn{
-  min-height:34px;
-  padding:0 12px;
+  min-height:35px;
+
+  padding:
+    0
+    12px;
+
   border:0;
+
   border-radius:999px;
-  color:#777c8d;
-  background:#f1eff7;
+
+  color:#626879;
+
+  background:#f0eef6;
+
   cursor:pointer;
+
   font-size:9px;
+  font-weight:700;
 }
 
 .age-btn.active{
   color:white;
-  background:linear-gradient(135deg,#8068e8,#748bed);
+
+  background:
+    linear-gradient(
+      135deg,
+      #8068e8,
+      #748bed
+    );
 }
 
 .age-list{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:7px;
+
+  grid-template-columns:
+    repeat(
+      2,
+      1fr
+    );
+
+  gap:8px;
 }
 
 .age-card{
-  min-height:72px;
-  padding:12px 14px;
+  min-height:78px;
+
+  padding:
+    13px
+    14px;
+
   border-radius:16px;
-  background:#f8f7fb;
+
+  background:#f7f6fa;
 }
 
 .age-card strong{
-  font-size:11px;
+  color:#23283a;
+
+  font-size:12px;
+  font-weight:800;
 }
 
 .age-number{
   margin-top:6px;
-  color:#765fdd;
+
+  color:#6b54d7;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:26px;
+
+  font-size:28px;
 }
 
 .age-detail{
-  margin-top:2px;
-  color:#8c90a0;
-  font-size:8px;
+  margin-top:3px;
+
+  color:#6e7485;
+
+  font-size:9px;
+  font-weight:500;
+
+  line-height:1.6;
 }
 
-/* REGION */
+
+/* =====================================================
+   REGION
+===================================================== */
 
 .region-layout{
   display:grid;
-  grid-template-columns:1.1fr .9fr;
+
+  grid-template-columns:
+    1.06fr
+    .94fr;
+
   gap:14px;
 }
 
 .map-card{
   position:relative;
+
   min-height:470px;
+
   overflow:hidden;
+
   border-radius:23px;
+
   color:white;
 
   background:
-    radial-gradient(circle at 80% 10%,rgba(122,224,216,.38),transparent 30%),
-    radial-gradient(circle at 12% 90%,rgba(169,115,243,.50),transparent 38%),
-    linear-gradient(145deg,#202c53,#353b7d);
+    radial-gradient(
+      circle at 82% 8%,
+      rgba(110,220,214,.34),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 15% 90%,
+      rgba(171,111,243,.46),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      #202c53,
+      #353b7d
+    );
 
-  box-shadow:0 18px 50px rgba(25,31,65,.14);
-}
-
-.map-card::before{
-  content:"KOREA";
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%) rotate(-4deg);
-  font-family:"Nanum Pen Script",cursive;
-  font-size:130px;
-  color:rgba(255,255,255,.045);
-  pointer-events:none;
+  box-shadow:
+    0 18px 50px
+    rgba(25,31,65,.14);
 }
 
 .map-label{
   position:absolute;
-  left:18px;
+
+  left:19px;
   top:17px;
-  z-index:2;
+
+  z-index:5;
 }
 
 .map-label span{
   color:#ddd5ff;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:18px;
+
+  font-size:20px;
 }
 
 .map-label strong{
   display:block;
+
   margin-top:2px;
+
   font-size:15px;
+  font-weight:800;
+}
+
+.map-label small{
+  display:block;
+
+  margin-top:5px;
+
+  color:rgba(255,255,255,.65);
+
+  font-size:8px;
+  font-weight:500;
+}
+
+.metro-map-bg{
+  position:absolute;
+
+  inset:
+    75px
+    25px
+    25px;
+
+  opacity:.34;
+
+  pointer-events:none;
+}
+
+.metro-map-bg svg{
+  width:100%;
+  height:100%;
+}
+
+.metro-line{
+  fill:none;
+
+  stroke:
+    rgba(255,255,255,.16);
+
+  stroke-width:1.3;
+
+  stroke-linecap:round;
+
+  stroke-dasharray:
+    4
+    5;
+}
+
+.metro-ring{
+  fill:
+    rgba(255,255,255,.015);
+
+  stroke:
+    rgba(255,255,255,.08);
+
+  stroke-width:1;
 }
 
 .map-stage{
   position:absolute;
-  inset:72px 22px 22px;
+
+  inset:
+    82px
+    24px
+    25px;
 }
 
 .map-dot{
   position:absolute;
-  transform:translate(-50%,-50%);
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
   border:0;
   padding:0;
+
   background:none;
+
   cursor:pointer;
+
+  z-index:4;
 }
 
 .map-dot-core{
   width:var(--dot-size);
   height:var(--dot-size);
-  min-width:24px;
-  min-height:24px;
+
+  min-width:27px;
+  min-height:27px;
+
   display:grid;
+
   place-items:center;
+
   border-radius:50%;
+
   color:white;
-  background:linear-gradient(135deg,#9b7cf6,#6ca9ec);
-  border:2px solid rgba(255,255,255,.80);
+
+  background:
+    linear-gradient(
+      135deg,
+      #9b7cf6,
+      #6ca9ec
+    );
+
+  border:
+    2px solid
+    rgba(255,255,255,.86);
+
   box-shadow:
-    0 0 0 7px rgba(133,111,239,.14),
+    0 0 0 7px rgba(133,111,239,.12),
     0 8px 20px rgba(0,0,0,.18);
-  font-size:8px;
+
+  font-size:9px;
   font-weight:800;
+
+  transition:
+    transform .16s ease,
+    box-shadow .16s ease;
+}
+
+.map-dot:hover .map-dot-core,
+.map-dot.selected .map-dot-core{
+  transform:scale(1.13);
+
+  box-shadow:
+    0 0 0 10px rgba(133,111,239,.18),
+    0 10px 28px rgba(0,0,0,.24);
 }
 
 .map-dot-name{
   margin-top:7px;
+
   color:white;
-  font-size:8px;
-  font-weight:700;
+
+  font-size:9px;
+  font-weight:800;
+
   white-space:nowrap;
-  text-shadow:0 2px 10px rgba(0,0,0,.28);
+
+  text-shadow:
+    0 2px 10px
+    rgba(0,0,0,.28);
 }
 
 .region-side{
   display:flex;
   flex-direction:column;
+
   gap:10px;
 }
 
 .region-summary{
   padding:17px;
+
   border-radius:19px;
-  background:#f8f7fb;
+
+  background:#f6f5f9;
 }
 
 .region-summary-label{
-  color:#898d9c;
+  color:#73798b;
+
   font-size:8px;
-  font-weight:700;
+  font-weight:800;
+
   letter-spacing:1px;
 }
 
 .region-summary-name{
-  margin-top:4px;
+  margin-top:5px;
+
+  color:#684fd4;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:32px;
-  color:#705adb;
+
+  font-size:34px;
 }
 
 .region-summary-count{
   margin-top:2px;
-  color:#707587;
+
+  color:#606679;
+
   font-size:9px;
+  font-weight:700;
 }
 
 .region-member-list{
   display:grid;
+
   gap:6px;
+
   margin-top:12px;
 }
 
 .region-member{
-  min-height:43px;
+  min-height:44px;
+
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   gap:10px;
-  padding:7px 10px;
+
+  padding:
+    7px
+    10px;
+
   border-radius:12px;
+
   background:white;
 }
 
 .region-member strong{
-  font-size:9px;
+  color:#262b3d;
+
+  font-size:10px;
+  font-weight:800;
 }
 
 .region-member span{
-  color:#8b8f9e;
-  font-size:7px;
+  color:#73798a;
+
+  font-size:8px;
+  font-weight:500;
 }
 
 .region-bars{
   display:grid;
+
   gap:7px;
 }
 
 .region-bar-row{
   display:grid;
-  grid-template-columns:60px 1fr 32px;
+
+  grid-template-columns:
+    60px
+    1fr
+    32px;
+
   align-items:center;
+
   gap:7px;
-  font-size:8px;
+
+  color:#555b6d;
+
+  font-size:9px;
+  font-weight:700;
 }
 
 .region-bar-track{
   height:7px;
+
   overflow:hidden;
+
   border-radius:999px;
-  background:#eceaf4;
+
+  background:#eae8f1;
 }
 
 .region-bar-fill{
   height:100%;
+
   border-radius:999px;
-  background:linear-gradient(90deg,#8068e8,#72a2ea);
+
+  background:
+    linear-gradient(
+      90deg,
+      #8068e8,
+      #72a2ea
+    );
 }
 
-/* OVERLAY */
+
+/* =====================================================
+   OVERLAY
+===================================================== */
 
 .overlay{
   position:fixed;
   inset:0;
+
   z-index:200;
+
   display:none;
+
   align-items:center;
   justify-content:center;
+
   padding:14px;
-  background:rgba(24,29,54,.36);
-  backdrop-filter:blur(16px);
+
+  background:
+    rgba(24,29,54,.36);
+
+  backdrop-filter:
+    blur(16px);
 }
 
 .overlay.open{
   display:flex;
 }
 
-/* MEMBER MODAL */
+
+/* =====================================================
+   MEMBER MODAL
+===================================================== */
 
 .modal{
-  width:min(650px,100%);
-  max-height:calc(100vh - 28px);
+  width:
+    min(
+      650px,
+      100%
+    );
+
+  max-height:
+    calc(
+      100vh - 28px
+    );
+
   overflow-y:auto;
+
   padding:22px;
+
   border-radius:27px;
-  background:rgba(255,255,255,.98);
-  box-shadow:0 28px 80px rgba(20,25,55,.22);
+
+  background:
+    rgba(255,255,255,.98);
+
+  box-shadow:
+    0 28px 80px
+    rgba(20,25,55,.22);
 }
 
 .modal-top{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   margin-bottom:14px;
 }
 
 .modal-title{
   margin:0;
+
   font-family:"Nanum Pen Script",cursive;
-  font-size:35px;
+
+  font-size:37px;
   font-weight:400;
 }
 
 .close{
-  width:37px;
-  height:37px;
+  width:38px;
+  height:38px;
+
   border:0;
+
   border-radius:50%;
+
   background:#eeeef4;
+
   cursor:pointer;
 }
 
 .form-section{
   margin-top:10px;
+
   padding:15px;
-  border:1px solid #ebeaf0;
+
+  border:
+    1px solid
+    #e6e5ed;
+
   border-radius:18px;
+
   background:#f8f7fb;
 }
 
@@ -884,21 +1553,31 @@ button{
 }
 
 .form-title{
-  font-size:11px;
-  font-weight:700;
+  color:#24293b;
+
+  font-size:12px;
+  font-weight:800;
 }
 
 .form-help{
-  margin-top:3px;
+  margin-top:4px;
   margin-bottom:11px;
-  color:#9699a8;
-  font-size:8px;
-  line-height:1.5;
+
+  color:#777c8d;
+
+  font-size:9px;
+  font-weight:500;
+
+  line-height:1.6;
 }
 
 .grid-2{
   display:grid;
-  grid-template-columns:1fr 1fr;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
   gap:9px;
 }
 
@@ -912,91 +1591,149 @@ button{
 
 .field label{
   display:block;
-  margin-bottom:5px;
-  color:#262b3e;
-  font-size:9px;
-  font-weight:700;
+
+  margin-bottom:6px;
+
+  color:#292e40;
+
+  font-size:10px;
+  font-weight:800;
 }
 
 .text-input,
 .pretty-select,
 .text-area{
   width:100%;
-  border:1px solid #dddce5;
+
+  border:
+    1px solid
+    #d8d8e1;
+
   border-radius:13px;
+
   background:white;
-  color:#303548;
+
+  color:#292e40;
+
   outline:none;
-  font-size:11px;
+
+  font-size:12px;
+  font-weight:500;
 }
 
 .text-input,
 .pretty-select{
-  min-height:43px;
-  padding:0 12px;
+  min-height:44px;
+
+  padding:
+    0
+    12px;
+}
+
+.text-input::placeholder,
+.text-area::placeholder{
+  color:#9195a2;
 }
 
 .pretty-select{
   appearance:none;
   -webkit-appearance:none;
+
   padding-right:36px;
+
   cursor:pointer;
 
   background-image:
-    linear-gradient(45deg,transparent 50%,#6c7184 50%),
-    linear-gradient(135deg,#6c7184 50%,transparent 50%);
+    linear-gradient(
+      45deg,
+      transparent 50%,
+      #62687a 50%
+    ),
+    linear-gradient(
+      135deg,
+      #62687a 50%,
+      transparent 50%
+    );
 
   background-position:
-    calc(100% - 17px) 19px,
-    calc(100% - 12px) 19px;
+    calc(100% - 17px) 20px,
+    calc(100% - 12px) 20px;
 
-  background-size:5px 5px,5px 5px;
+  background-size:
+    5px 5px,
+    5px 5px;
+
   background-repeat:no-repeat;
 }
 
 .text-area{
-  min-height:72px;
+  min-height:76px;
+
   padding:11px;
+
   resize:vertical;
-  line-height:1.6;
+
+  line-height:1.65;
 }
 
 .text-input:focus,
 .pretty-select:focus,
 .text-area:focus{
-  border-color:#8f7ce6;
-  box-shadow:0 0 0 4px rgba(128,105,233,.09);
+  border-color:#8470dc;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(128,105,233,.09);
 }
 
 .birth-hint{
   margin-top:5px;
-  color:#9699a7;
-  font-size:7px;
+
+  color:#74798a;
+
+  font-size:8px;
+  font-weight:500;
 }
 
-/* PRESET */
+
+/* =====================================================
+   PRESET
+===================================================== */
 
 .preset-row{
   display:grid;
-  grid-template-columns:1fr 88px;
+
+  grid-template-columns:
+    1fr
+    88px;
+
   gap:6px;
 }
 
 .new-option-btn{
   border:0;
+
   border-radius:12px;
-  color:#6553c5;
-  background:#eceaf7;
+
+  color:#5e4ac1;
+
+  background:#eae7f7;
+
   cursor:pointer;
-  font-size:8px;
-  font-weight:700;
+
+  font-size:9px;
+  font-weight:800;
 }
 
 .new-option-box{
   display:none;
+
   margin-top:7px;
+
   padding:9px;
+
   border-radius:13px;
+
   background:#efedf5;
 }
 
@@ -1006,97 +1743,180 @@ button{
 
 .new-option-save{
   width:100%;
-  min-height:37px;
+
+  min-height:38px;
+
   margin-top:6px;
+
   border:0;
+
   border-radius:10px;
+
   color:white;
+
   background:#171d31;
+
   cursor:pointer;
-  font-size:8px;
-  font-weight:700;
+
+  font-size:9px;
+  font-weight:800;
 }
 
 .save{
   width:100%;
-  min-height:47px;
+
+  min-height:48px;
+
   margin-top:12px;
+
   border:0;
+
   border-radius:14px;
+
   color:white;
-  background:linear-gradient(135deg,#8169e8,#7189eb);
+
+  background:
+    linear-gradient(
+      135deg,
+      #8169e8,
+      #7189eb
+    );
+
   cursor:pointer;
-  font-weight:700;
-  font-size:12px;
+
+  font-size:13px;
+  font-weight:800;
 }
 
-/* MENU */
+
+/* =====================================================
+   MENU
+===================================================== */
 
 .menu-card{
-  width:min(400px,100%);
+  width:
+    min(
+      400px,
+      100%
+    );
+
   padding:22px;
+
   border-radius:27px;
-  background:rgba(255,255,255,.97);
+
+  background:
+    rgba(255,255,255,.97);
 }
 
 .menu-card a{
   min-height:52px;
+
   display:flex;
+
   align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid var(--line);
-  font-size:12px;
+
+  border-bottom:
+    1px solid
+    var(--line);
+
+  color:#313648;
+
+  font-size:13px;
+  font-weight:700;
 }
 
-/* BOTTOM */
+
+/* =====================================================
+   BOTTOM
+===================================================== */
 
 .bottom{
   position:fixed;
+
   z-index:80;
+
   left:50%;
   bottom:10px;
-  transform:translateX(-50%);
 
-  width:min(720px,calc(100% - 24px));
+  transform:
+    translateX(-50%);
+
+  width:
+    min(
+      720px,
+      calc(100% - 24px)
+    );
+
   height:67px;
 
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+
+  grid-template-columns:
+    repeat(
+      5,
+      1fr
+    );
 
   overflow:hidden;
-  border-radius:22px;
-  background:rgba(255,255,255,.82);
-  border:1px solid rgba(255,255,255,.95);
 
-  box-shadow:0 14px 42px rgba(30,37,75,.12);
-  backdrop-filter:blur(23px);
+  border-radius:22px;
+
+  background:
+    rgba(255,255,255,.84);
+
+  border:
+    1px solid
+    rgba(255,255,255,.97);
+
+  box-shadow:
+    0 14px 42px
+    rgba(30,37,75,.12);
+
+  backdrop-filter:
+    blur(23px);
 }
 
 .bottom a,
 .bottom button{
   border:0;
+
   background:none;
+
   display:flex;
+
   flex-direction:column;
+
   align-items:center;
   justify-content:center;
+
   gap:3px;
-  color:#777c8d;
+
+  color:#676d7f;
+
   cursor:pointer;
-  font-size:8px;
+
+  font-size:9px;
+  font-weight:700;
 }
 
 .nav-icon{
   font-size:18px;
 }
 
-/* MOBILE */
+
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media(max-width:720px){
 
   .header{
     height:70px;
-    padding:0 16px;
+
+    padding:
+      0
+      16px;
   }
 
   .brand strong{
@@ -1104,11 +1924,17 @@ button{
   }
 
   .page{
-    padding:0 14px 105px;
+    padding:
+      0
+      14px
+      105px;
   }
 
   .hero{
-    padding:38px 0 26px;
+    padding:
+      37px
+      0
+      25px;
   }
 
   .hero-title{
@@ -1116,11 +1942,12 @@ button{
   }
 
   .hero-copy{
-    font-size:10px;
+    font-size:12px;
   }
 
   .toolbar{
     align-items:flex-start;
+
     flex-direction:column;
   }
 
@@ -1130,7 +1957,9 @@ button{
 
   .view-tabs{
     flex-wrap:nowrap;
+
     overflow-x:auto;
+
     scrollbar-width:none;
   }
 
@@ -1139,17 +1968,29 @@ button{
   }
 
   .view-tab{
-    flex:0 0 auto;
+    flex:
+      0
+      0
+      auto;
+
+    font-size:10px;
   }
 
   .member-table{
-    min-width:800px;
+    min-width:790px;
   }
 
-  .birthday-shell,
-  .age-shell,
-  .region-shell{
+  .member-table th{
+    font-size:9px;
+  }
+
+  .member-table td{
+    font-size:10px;
+  }
+
+  .dashboard-shell{
     padding:14px;
+
     border-radius:20px;
   }
 
@@ -1165,29 +2006,41 @@ button{
     min-height:390px;
   }
 
-  .map-card::before{
-    font-size:90px;
-  }
-
   .modal{
-    width:calc(100vw - 18px);
-    max-height:calc(100dvh - 18px);
+    width:
+      calc(
+        100vw - 18px
+      );
+
+    max-height:
+      calc(
+        100dvh - 18px
+      );
+
     padding:17px;
+
     border-radius:23px;
   }
 
   .grid-2{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:
+      1fr
+      1fr;
+
     gap:7px;
   }
 
   .text-input,
   .pretty-select{
-    min-height:42px;
+    min-height:43px;
+
+    font-size:12px;
   }
 
   .preset-row{
-    grid-template-columns:1fr 76px;
+    grid-template-columns:
+      1fr
+      76px;
   }
 }
 
@@ -1198,7 +2051,10 @@ button{
   }
 
   .region-bar-row{
-    grid-template-columns:52px 1fr 28px;
+    grid-template-columns:
+      52px
+      1fr
+      28px;
   }
 }
 </style>
@@ -1208,23 +2064,40 @@ button{
 
 <div class="aurora"></div>
 
+
 <header class="header">
 
   <a href="/" class="brand">
-    <strong>VOM</strong>
-    <small>VOICE OF MELODY</small>
+
+    <strong>
+      VOM
+    </strong>
+
+    <small>
+      VOICE OF MELODY
+    </small>
+
   </a>
+
 
   <div class="header-right">
 
-    <div id="adminBadge" class="admin-badge">
+    <div
+      id="adminBadge"
+      class="admin-badge"
+    >
+
       <span class="admin-dot"></span>
+
       ADMIN MODE
+
     </div>
+
 
     <button
       class="menu-btn"
       onclick="openMenu()"
+      aria-label="메뉴 열기"
     >
       ☰
     </button>
@@ -1278,6 +2151,7 @@ button{
       </div>
 
     </div>
+
 
     <button
       id="addMemberButton"
@@ -1375,28 +2249,36 @@ button{
       <table class="member-table">
 
         <thead>
+
           <tr>
+
+            <th>순서</th>
             <th>이름</th>
             <th>구분</th>
             <th>가입일</th>
             <th>지역</th>
-            <th>좋아하는 가수</th>
             <th>성별</th>
-            <th>가입순서</th>
+            <th>좋아하는 가수</th>
+            <th>직업</th>
             <th>상태</th>
             <th>관리</th>
+
           </tr>
+
         </thead>
+
 
         <tbody id="memberRows">
 
           <tr>
+
             <td
-              colspan="9"
+              colspan="10"
               class="empty"
             >
               멤버 정보를 불러오는 중...
             </td>
+
           </tr>
 
         </tbody>
@@ -1415,7 +2297,7 @@ button{
     class="view-panel"
   >
 
-    <div class="birthday-shell">
+    <div class="dashboard-shell">
 
       <div class="sub-head">
 
@@ -1437,10 +2319,12 @@ button{
 
       </div>
 
+
       <div
         id="monthTabs"
         class="month-tabs"
       ></div>
+
 
       <div
         id="birthdayList"
@@ -1459,7 +2343,7 @@ button{
     class="view-panel"
   >
 
-    <div class="age-shell">
+    <div class="dashboard-shell">
 
       <div class="sub-head">
 
@@ -1480,6 +2364,7 @@ button{
         </div>
 
       </div>
+
 
       <div class="age-filter">
 
@@ -1520,6 +2405,7 @@ button{
 
       </div>
 
+
       <div
         id="ageList"
         class="age-list"
@@ -1537,7 +2423,7 @@ button{
     class="view-panel"
   >
 
-    <div class="region-shell">
+    <div class="dashboard-shell">
 
       <div class="sub-head">
 
@@ -1552,7 +2438,7 @@ button{
           </h2>
 
           <div class="sub-copy">
-            개인 위치가 아닌 등록된 지역 단위 인원만 표시합니다.
+            등록된 지역 단위 인원만 표시합니다.
           </div>
 
         </div>
@@ -1565,9 +2451,74 @@ button{
         <div class="map-card">
 
           <div class="map-label">
-            <span>Where VOM Sings</span>
-            <strong>Member Map</strong>
+
+            <span>
+              Where VOM Sings
+            </span>
+
+            <strong>
+              수도권 중심 분포
+            </strong>
+
+            <small>
+              지역별 인원에 따라 마커 크기가 달라집니다.
+            </small>
+
           </div>
+
+
+          <div class="metro-map-bg">
+
+            <svg
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+
+              <ellipse
+                class="metro-ring"
+                cx="50"
+                cy="45"
+                rx="31"
+                ry="28"
+              />
+
+              <ellipse
+                class="metro-ring"
+                cx="50"
+                cy="45"
+                rx="21"
+                ry="18"
+              />
+
+              <path
+                class="metro-line"
+                d="M16 43 C29 34, 39 34, 51 39 C64 44, 72 39, 87 30"
+              />
+
+              <path
+                class="metro-line"
+                d="M26 18 C34 27, 42 36, 49 45 C56 53, 61 62, 69 78"
+              />
+
+              <path
+                class="metro-line"
+                d="M20 64 C34 57, 43 52, 52 43 C62 34, 72 28, 82 20"
+              />
+
+              <path
+                class="metro-line"
+                d="M34 13 C39 29, 42 41, 38 55 C34 68, 41 76, 48 87"
+              />
+
+              <path
+                class="metro-line"
+                d="M22 34 C35 43, 45 46, 57 46 C69 46, 79 52, 87 60"
+              />
+
+            </svg>
+
+          </div>
+
 
           <div
             id="mapStage"
@@ -1585,6 +2536,7 @@ button{
           >
             지역을 선택해주세요.
           </div>
+
 
           <div
             id="regionBars"
@@ -1620,6 +2572,7 @@ button{
         새 멤버
       </h2>
 
+
       <button
         class="close"
         onclick="closeMemberModal()"
@@ -1643,7 +2596,7 @@ button{
       </div>
 
       <div class="form-help">
-        반복 입력이 많은 항목은 선택식으로 구성했습니다.
+        자주 입력하는 항목은 최대한 선택식으로 구성했습니다.
       </div>
 
 
@@ -1794,6 +2747,7 @@ button{
 
           </div>
 
+
           <div
             id="regionOptionBox"
             class="new-option-box"
@@ -1834,6 +2788,40 @@ button{
       </div>
 
 
+      <div class="grid-2">
+
+        <div class="field">
+
+          <label>
+            직업
+          </label>
+
+          <input
+            id="memberJob"
+            class="text-input"
+            placeholder="예: 회사원, 대학생"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            전화번호
+          </label>
+
+          <input
+            id="memberPhone"
+            class="text-input"
+            placeholder="선택"
+          >
+
+        </div>
+
+      </div>
+
+
       <div class="field">
 
         <label>
@@ -1856,6 +2844,7 @@ button{
           </button>
 
         </div>
+
 
         <div
           id="singerOptionBox"
@@ -1880,21 +2869,6 @@ button{
 
       </div>
 
-
-      <div class="field">
-
-        <label>
-          전화번호
-        </label>
-
-        <input
-          id="memberPhone"
-          class="text-input"
-          placeholder="선택"
-        >
-
-      </div>
-
     </section>
 
 
@@ -1907,6 +2881,7 @@ button{
       <div class="form-help">
         운영진이 참고할 내용만 간단히 적어두면 됩니다.
       </div>
+
 
       <div class="field">
 
@@ -1952,6 +2927,7 @@ button{
         VOM Menu
       </h2>
 
+
       <button
         class="close"
         onclick="closeMenu()"
@@ -1960,6 +2936,7 @@ button{
       </button>
 
     </div>
+
 
     <a href="/">
       HOME <span>→</span>
@@ -2036,9 +3013,12 @@ let options = [];
 let adminMode = false;
 
 let currentFilter = 'ALL';
-let currentView = 'list';
-let currentMonth = new Date().getMonth() + 1;
+
+let currentMonth =
+  new Date().getMonth() + 1;
+
 let currentAgeFilter = 'ALL';
+
 let selectedRegion = null;
 
 
@@ -2048,61 +3028,105 @@ let selectedRegion = null;
 
 const REGION_POSITIONS = {
 
-  '서울': {x:52,y:24},
+  '서울': {
+    x:59,
+    y:34
+  },
 
-  '인천': {x:38,y:29},
+  '인천': {
+    x:28,
+    y:43
+  },
 
-  '부천': {x:45,y:28},
+  '부천': {
+    x:41,
+    y:39
+  },
 
-  '김포': {x:42,y:21},
+  '김포': {
+    x:38,
+    y:24
+  },
 
-  '시흥': {x:43,y:35},
+  '시흥': {
+    x:42,
+    y:54
+  },
 
-  '수원': {x:52,y:38},
+  '광명': {
+    x:50,
+    y:46
+  },
 
-  '성남': {x:58,y:34},
+  '고양': {
+    x:48,
+    y:23
+  },
 
-  '고양': {x:47,y:19},
+  '파주': {
+    x:39,
+    y:12
+  },
 
-  '의정부': {x:56,y:16},
+  '의정부': {
+    x:62,
+    y:20
+  },
 
-  '안양': {x:49,y:34},
+  '성남': {
+    x:66,
+    y:44
+  },
 
-  '안산': {x:44,y:40},
+  '안양': {
+    x:55,
+    y:48
+  },
 
-  '용인': {x:58,y:42},
+  '수원': {
+    x:58,
+    y:61
+  },
 
-  '화성': {x:48,y:46},
+  '안산': {
+    x:43,
+    y:61
+  },
 
-  '파주': {x:43,y:12},
+  '용인': {
+    x:68,
+    y:64
+  },
 
-  '대전': {x:53,y:58},
+  '화성': {
+    x:51,
+    y:73
+  },
 
-  '세종': {x:50,y:53},
+  '대전': {
+    x:56,
+    y:82
+  },
 
-  '청주': {x:57,y:51},
+  '부산': {
+    x:82,
+    y:90
+  },
 
-  '천안': {x:50,y:48},
+  '대구': {
+    x:74,
+    y:80
+  },
 
-  '대구': {x:69,y:66},
+  '광주': {
+    x:35,
+    y:88
+  },
 
-  '부산': {x:76,y:78},
-
-  '울산': {x:79,y:70},
-
-  '광주': {x:43,y:76},
-
-  '전주': {x:46,y:66},
-
-  '목포': {x:35,y:82},
-
-  '춘천': {x:68,y:21},
-
-  '강릉': {x:82,y:27},
-
-  '원주': {x:67,y:37},
-
-  '제주': {x:48,y:94}
+  '제주': {
+    x:48,
+    y:95
+  }
 
 };
 
@@ -2117,10 +3141,9 @@ async function start(){
 
   await loadOptions();
 
-  await loadMembers();
-
   renderMonthTabs();
 
+  await loadMembers();
 }
 
 
@@ -2174,7 +3197,9 @@ function setAdmin(active){
 
 
   document
-    .getElementById('adminBadge')
+    .getElementById(
+      'adminBadge'
+    )
     .classList
     .toggle(
       'show',
@@ -2183,7 +3208,9 @@ function setAdmin(active){
 
 
   document
-    .getElementById('addMemberButton')
+    .getElementById(
+      'addMemberButton'
+    )
     .classList
     .toggle(
       'show',
@@ -2192,7 +3219,9 @@ function setAdmin(active){
 
 
   document
-    .getElementById('page')
+    .getElementById(
+      'page'
+    )
     .classList
     .toggle(
       'admin-mode',
@@ -2425,7 +3454,9 @@ async function saveOption(type){
 
   if(error){
 
-    if(error.code === '23505'){
+    if(
+      error.code === '23505'
+    ){
 
       alert(
         '이미 등록된 항목입니다.'
@@ -2434,7 +3465,8 @@ async function saveOption(type){
     }else{
 
       alert(
-        '항목을 저장하지 못했습니다.\n' +
+        '항목을 저장하지 못했습니다.\n'
+        +
         error.message
       );
     }
@@ -2507,17 +3539,21 @@ async function loadMembers(){
 
 
     document
-      .getElementById('memberRows')
+      .getElementById(
+        'memberRows'
+      )
       .innerHTML =
     `
       <tr>
+
         <td
-          colspan="9"
+          colspan="10"
           class="empty"
         >
           멤버 정보를 불러오지 못했습니다.<br>
           ${escapeHtml(error.message)}
         </td>
+
       </tr>
     `;
 
@@ -2538,13 +3574,17 @@ async function loadMembers(){
 function updateStats(){
 
   document
-    .getElementById('totalCount')
+    .getElementById(
+      'totalCount'
+    )
     .textContent =
     members.length;
 
 
   document
-    .getElementById('activeCount')
+    .getElementById(
+      'activeCount'
+    )
     .textContent =
     members.filter(
       item =>
@@ -2553,7 +3593,9 @@ function updateStats(){
 
 
   document
-    .getElementById('staffCount')
+    .getElementById(
+      'staffCount'
+    )
     .textContent =
     members.filter(
       item =>
@@ -2561,12 +3603,8 @@ function updateStats(){
     ).length;
 
 
-  const now =
-    new Date();
-
-
   const month =
-    now.getMonth() + 1;
+    new Date().getMonth() + 1;
 
 
   const birthdays =
@@ -2579,7 +3617,9 @@ function updateStats(){
 
 
   document
-    .getElementById('birthdayCount')
+    .getElementById(
+      'birthdayCount'
+    )
     .textContent =
     birthdays.length;
 }
@@ -2593,10 +3633,6 @@ function setView(
   view,
   button
 ){
-
-  currentView =
-    view;
-
 
   document
     .querySelectorAll(
@@ -2612,7 +3648,9 @@ function setView(
 
   button
     .classList
-    .add('active');
+    .add(
+      'active'
+    );
 
 
   document
@@ -2632,7 +3670,9 @@ function setView(
       `${view}View`
     )
     .classList
-    .add('active');
+    .add(
+      'active'
+    );
 
 
   if(view === 'birthday'){
@@ -2665,7 +3705,9 @@ function setFilter(
 
 
   document
-    .querySelectorAll('.filter')
+    .querySelectorAll(
+      '.filter'
+    )
     .forEach(
       item =>
         item.classList.remove(
@@ -2676,7 +3718,9 @@ function setFilter(
 
   button
     .classList
-    .add('active');
+    .add(
+      'active'
+    );
 
 
   renderMembers();
@@ -2707,14 +3751,19 @@ function renderMembers(){
 
   const body =
     document
-      .getElementById('memberRows');
+      .getElementById(
+        'memberRows'
+      );
 
 
   let list =
     members;
 
 
-  if(currentFilter === '활동중'){
+  if(
+    currentFilter ===
+    '활동중'
+  ){
 
     list =
       members.filter(
@@ -2740,12 +3789,14 @@ function renderMembers(){
     body.innerHTML =
     `
       <tr>
+
         <td
-          colspan="9"
+          colspan="10"
           class="empty"
         >
           표시할 멤버가 없습니다.
         </td>
+
       </tr>
     `;
 
@@ -2776,13 +3827,48 @@ function createMemberRow(item){
     : '';
 
 
+  const order =
+    Number(
+      item.join_order || 0
+    );
+
+
+  const orderClass =
+    order === 1
+    ? 'top-1'
+    : order === 2
+    ? 'top-2'
+    : order === 3
+    ? 'top-3'
+    : '';
+
+
   return `
     <tr>
 
       <td>
+
+        ${
+          order
+
+          ? `
+            <div class="order-badge ${orderClass}">
+              ${order}
+            </div>
+          `
+
+          : '-'
+        }
+
+      </td>
+
+
+      <td>
+
         <div class="member-name">
           ${escapeHtml(item.name)}
         </div>
+
       </td>
 
 
@@ -2813,18 +3899,22 @@ function createMemberRow(item){
       </td>
 
 
-      <td title="${escapeAttribute(item.favorite_singers || '')}">
-        ${escapeHtml(item.favorite_singers || '-')}
-      </td>
-
-
       <td>
         ${escapeHtml(item.gender || '-')}
       </td>
 
 
-      <td>
-        ${item.join_order ?? '-'}
+      <td
+        title="${escapeAttribute(item.favorite_singers || '')}"
+      >
+        ${escapeHtml(item.favorite_singers || '-')}
+      </td>
+
+
+      <td
+        title="${escapeAttribute(item.job || '')}"
+      >
+        ${escapeHtml(item.job || '-')}
       </td>
 
 
@@ -2848,15 +3938,18 @@ function createMemberRow(item){
             수정
           </button>
 
+
           <button
             class="disable-btn"
             onclick="toggleMemberActive(${item.id})"
           >
+
             ${
               item.is_active === false
               ? '활성'
               : '비활성'
             }
+
           </button>
 
         </div>
@@ -2884,7 +3977,9 @@ function renderMonthTabs(){
   box.innerHTML =
     Array
       .from(
-        {length:12},
+        {
+          length:12
+        },
         (_,index) => {
 
           const month =
@@ -2928,7 +4023,9 @@ function setMonth(
 
   button
     .classList
-    .add('active');
+    .add(
+      'active'
+    );
 
 
   renderBirthday();
@@ -2955,8 +4052,13 @@ function renderBirthday(){
       )
       .sort(
         (a,b) =>
-          getBirthDay(a.birth_date) -
-          getBirthDay(b.birth_date)
+          getBirthDay(
+            a.birth_date
+          )
+          -
+          getBirthDay(
+            b.birth_date
+          )
       );
 
 
@@ -2988,12 +4090,15 @@ function renderBirthday(){
             <div class="birthday-row">
 
               <div class="birthday-day">
+
                 ${String(
                   getBirthDay(
                     item.birth_date
                   )
                 ).padStart(2,'0')}
+
               </div>
+
 
               <div>
 
@@ -3013,9 +4118,18 @@ function renderBirthday(){
                     item.region || '지역 미정'
                   )}
 
+                  ${
+                    item.job
+
+                    ? ` · ${escapeHtml(item.job)}`
+
+                    : ''
+                  }
+
                 </div>
 
               </div>
+
 
               <div class="birthday-age">
 
@@ -3062,7 +4176,9 @@ function setAgeFilter(
 
   button
     .classList
-    .add('active');
+    .add(
+      'active'
+    );
 
 
   renderAge();
@@ -3083,6 +4199,7 @@ function renderAge(){
       .map(
         item => ({
           ...item,
+
           age:
             calculateAge(
               item.birth_date
@@ -3096,7 +4213,8 @@ function renderAge(){
 
 
   if(
-    currentAgeFilter !== 'ALL'
+    currentAgeFilter !==
+    'ALL'
   ){
 
     list =
@@ -3140,12 +4258,17 @@ function renderAge(){
               ${escapeHtml(item.name)}
             </strong>
 
+
             <div class="age-number">
+
               ${item.age}
+
               <span style="font-size:13px;">
                 세
               </span>
+
             </div>
+
 
             <div class="age-detail">
 
@@ -3154,8 +4277,15 @@ function renderAge(){
               ·
 
               ${escapeHtml(
-                item.region || '지역 미정'
+                item.region ||
+                '지역 미정'
               )}
+
+              ${
+                item.job
+                ? ` · ${escapeHtml(item.job)}`
+                : ''
+              }
 
             </div>
 
@@ -3215,7 +4345,14 @@ function renderRegion(){
 
 
   if(
-    !selectedRegion &&
+    (
+      !selectedRegion
+      ||
+      !counts[
+        selectedRegion
+      ]
+    )
+    &&
     regions.length
   ){
 
@@ -3258,7 +4395,15 @@ function getRegionCounts(){
 
 
         counts[region] =
-          (counts[region] || 0) + 1;
+          (
+            counts[
+              region
+            ]
+            ||
+            0
+          )
+          +
+          1;
       }
     );
 
@@ -3294,8 +4439,9 @@ function renderMapDots(
           inset:0;
           display:grid;
           place-items:center;
-          color:rgba(255,255,255,.58);
-          font-size:10px;
+          color:rgba(255,255,255,.72);
+          font-size:11px;
+          font-weight:600;
         "
       >
         지역 정보가 등록되면 지도에 표시됩니다.
@@ -3309,10 +4455,15 @@ function renderMapDots(
   box.innerHTML =
     regions
       .map(
-        (region,index) => {
+        (
+          region,
+          index
+        ) => {
 
           const count =
-            counts[region];
+            counts[
+              region
+            ];
 
 
           const position =
@@ -3325,14 +4476,14 @@ function renderMapDots(
           const size =
             Math.min(
               48,
-              24 +
-              count * 4
+              26 +
+              count * 3
             );
 
 
           return `
             <button
-              class="map-dot"
+              class="map-dot ${selectedRegion === region ? 'selected' : ''}"
               onclick="selectRegion('${escapeJs(region)}')"
               style="
                 left:${position.x}%;
@@ -3375,13 +4526,32 @@ function getRegionPosition(
 
 
   const fallback = [
-    {x:32,y:45},
-    {x:69,y:46},
-    {x:37,y:61},
-    {x:65,y:60},
-    {x:48,y:72},
-    {x:78,y:50},
-    {x:25,y:68}
+
+    {
+      x:31,
+      y:71
+    },
+
+    {
+      x:70,
+      y:72
+    },
+
+    {
+      x:27,
+      y:82
+    },
+
+    {
+      x:76,
+      y:83
+    },
+
+    {
+      x:52,
+      y:88
+    }
+
   ];
 
 
@@ -3398,7 +4568,7 @@ function selectRegion(region){
     region;
 
 
-  renderRegionSummary();
+  renderRegion();
 }
 
 
@@ -3444,6 +4614,7 @@ function renderRegionSummary(){
       ${list.length} MEMBERS
     </div>
 
+
     <div class="region-member-list">
 
       ${
@@ -3460,10 +4631,18 @@ function renderRegionSummary(){
                   </strong>
 
                   <span>
+
                     ${escapeHtml(
                       item.role ||
                       '멤버'
                     )}
+
+                    ${
+                      item.job
+                      ? ` · ${escapeHtml(item.job)}`
+                      : ''
+                    }
+
                   </span>
 
                 </div>
@@ -3517,7 +4696,9 @@ function renderRegionBars(
     Math.max(
       ...regions.map(
         region =>
-          counts[region]
+          counts[
+            region
+          ]
       )
     );
 
@@ -3528,7 +4709,9 @@ function renderRegionBars(
         region => {
 
           const count =
-            counts[region];
+            counts[
+              region
+            ];
 
 
           const width =
@@ -3548,21 +4731,26 @@ function renderRegionBars(
                   padding:0;
                   text-align:left;
                   cursor:pointer;
-                  color:#62687a;
-                  font-size:8px;
+                  color:#53596b;
+                  font-size:9px;
+                  font-weight:700;
                 "
               >
                 ${escapeHtml(region)}
               </button>
 
+
               <div class="region-bar-track">
 
                 <div
                   class="region-bar-fill"
-                  style="width:${width}%"
+                  style="
+                    width:${width}%
+                  "
                 ></div>
 
               </div>
+
 
               <strong>
                 ${count}
@@ -3611,7 +4799,9 @@ function openMemberModal(){
       'memberOverlay'
     )
     .classList
-    .add('open');
+    .add(
+      'open'
+    );
 }
 
 
@@ -3622,22 +4812,27 @@ function closeMemberModal(){
       'memberOverlay'
     )
     .classList
-    .remove('open');
+    .remove(
+      'open'
+    );
 }
 
 
 function clearForm(){
 
   const values = [
+
     'editingMemberId',
     'memberName',
     'joinedAt',
     'birthDate',
+    'memberJob',
     'memberPhone',
     'joinOrder',
     'memberMemo',
     'newRegion',
     'newSinger'
+
   ];
 
 
@@ -3657,11 +4852,13 @@ function clearForm(){
 
 
   [
+
     'memberRole',
     'memberStatus',
     'memberRegion',
     'memberGender',
     'favoriteSinger'
+
   ]
   .forEach(
     id => {
@@ -3678,7 +4875,9 @@ function clearForm(){
       'regionOptionBox'
     )
     .classList
-    .remove('show');
+    .remove(
+      'show'
+    );
 
 
   document
@@ -3686,7 +4885,9 @@ function clearForm(){
       'singerOptionBox'
     )
     .classList
-    .remove('show');
+    .remove(
+      'show'
+    );
 }
 
 
@@ -3703,29 +4904,45 @@ function normalizeBirthDate(value){
 
   const digits =
     String(value)
-      .replace(/\D/g,'');
+      .replace(
+        /\D/g,
+        ''
+      );
 
 
-  if(digits.length !== 8){
+  if(
+    digits.length !==
+    8
+  ){
+
     return null;
   }
 
 
   const year =
     Number(
-      digits.slice(0,4)
+      digits.slice(
+        0,
+        4
+      )
     );
 
 
   const month =
     Number(
-      digits.slice(4,6)
+      digits.slice(
+        4,
+        6
+      )
     );
 
 
   const day =
     Number(
-      digits.slice(6,8)
+      digits.slice(
+        6,
+        8
+      )
     );
 
 
@@ -3738,11 +4955,14 @@ function normalizeBirthDate(value){
 
 
   if(
-    date.getFullYear() !== year
+    date.getFullYear() !==
+    year
     ||
-    date.getMonth() !== month - 1
+    date.getMonth() !==
+    month - 1
     ||
-    date.getDate() !== day
+    date.getDate() !==
+    day
   ){
 
     return null;
@@ -3781,10 +5001,11 @@ function formatBirthInput(){
   if(normalized){
 
     input.value =
-      normalized.replaceAll(
-        '-',
-        '.'
-      );
+      normalized
+        .replaceAll(
+          '-',
+          '.'
+        );
   }
 }
 
@@ -3863,8 +5084,9 @@ async function saveMember(){
       .getElementById(
         'memberStatus'
       )
-      .value ||
-    '활동중';
+      .value
+      ||
+      '활동중';
 
 
   let joinOrder =
@@ -3879,11 +5101,15 @@ async function saveMember(){
 
     const maxOrder =
       members.reduce(
-        (max,item) =>
+        (
+          max,
+          item
+        ) =>
           Math.max(
             max,
             Number(
-              item.join_order || 0
+              item.join_order ||
+              0
             )
           ),
         0
@@ -3922,17 +5148,24 @@ async function saveMember(){
         'memberGender'
       ),
 
+    job:
+      nullValue(
+        'memberJob'
+      ),
+
     favorite_singers:
       nullValue(
         'favoriteSinger'
       ),
 
-    join_order:
-      Number(joinOrder),
-
     phone:
       nullValue(
         'memberPhone'
+      ),
+
+    join_order:
+      Number(
+        joinOrder
       ),
 
     memo:
@@ -3957,8 +5190,12 @@ async function saveMember(){
 
     result =
       await db
-        .from('members')
-        .update(payload)
+        .from(
+          'members'
+        )
+        .update(
+          payload
+        )
         .eq(
           'id',
           id
@@ -3968,15 +5205,20 @@ async function saveMember(){
 
     result =
       await db
-        .from('members')
-        .insert(payload);
+        .from(
+          'members'
+        )
+        .insert(
+          payload
+        );
   }
 
 
   if(result.error){
 
     alert(
-      '멤버를 저장하지 못했습니다.\n' +
+      '멤버를 저장하지 못했습니다.\n'
+      +
       result.error.message
     );
 
@@ -4005,8 +5247,13 @@ function editMember(id){
   const item =
     members.find(
       row =>
-        String(row.id) ===
-        String(id)
+        String(
+          row.id
+        )
+        ===
+        String(
+          id
+        )
     );
 
 
@@ -4053,7 +5300,9 @@ function editMember(id){
       'memberStatus'
     )
     .value =
-    getStatus(item);
+    getStatus(
+      item
+    );
 
 
   document
@@ -4070,7 +5319,12 @@ function editMember(id){
     )
     .value =
     item.birth_date
-    ? item.birth_date.replaceAll('-','.')
+
+    ? item.birth_date.replaceAll(
+        '-',
+        '.'
+      )
+
     : '';
 
 
@@ -4084,6 +5338,14 @@ function editMember(id){
     'memberGender',
     item.gender
   );
+
+
+  document
+    .getElementById(
+      'memberJob'
+    )
+    .value =
+    item.job || '';
 
 
   setSelectValue(
@@ -4121,7 +5383,9 @@ function editMember(id){
       'memberOverlay'
     )
     .classList
-    .add('open');
+    .add(
+      'open'
+    );
 }
 
 
@@ -4139,8 +5403,13 @@ async function toggleMemberActive(id){
   const item =
     members.find(
       row =>
-        String(row.id) ===
-        String(id)
+        String(
+          row.id
+        )
+        ===
+        String(
+          id
+        )
     );
 
 
@@ -4157,10 +5426,13 @@ async function toggleMemberActive(id){
     error
   } =
     await db
-      .from('members')
+      .from(
+        'members'
+      )
       .update({
         is_active:
           next,
+
         note:
           next
           ? '활동중'
@@ -4175,7 +5447,8 @@ async function toggleMemberActive(id){
   if(error){
 
     alert(
-      '상태를 변경하지 못했습니다.\n' +
+      '상태를 변경하지 못했습니다.\n'
+      +
       error.message
     );
 
@@ -4220,12 +5493,14 @@ function calculateAge(value){
 
 
   let age =
-    today.getFullYear() -
+    today.getFullYear()
+    -
     birth.getFullYear();
 
 
   const monthDiff =
-    today.getMonth() -
+    today.getMonth()
+    -
     birth.getMonth();
 
 
@@ -4235,7 +5510,8 @@ function calculateAge(value){
     (
       monthDiff === 0
       &&
-      today.getDate() <
+      today.getDate()
+      <
       birth.getDate()
     )
   ){
@@ -4256,7 +5532,10 @@ function getBirthMonth(value){
 
 
   return Number(
-    value.slice(5,7)
+    value.slice(
+      5,
+      7
+    )
   );
 }
 
@@ -4269,7 +5548,10 @@ function getBirthDay(value){
 
 
   return Number(
-    value.slice(8,10)
+    value.slice(
+      8,
+      10
+    )
   );
 }
 
@@ -4282,7 +5564,9 @@ function nullValue(id){
 
   const value =
     document
-      .getElementById(id)
+      .getElementById(
+        id
+      )
       .value
       .trim();
 
@@ -4293,15 +5577,21 @@ function nullValue(id){
 
 function getStatus(item){
 
-  if(item.note === '탈퇴'){
+  if(
+    item.note ===
+    '탈퇴'
+  ){
+
     return '탈퇴';
   }
 
 
   if(
-    item.note === '휴면'
+    item.note ===
+    '휴면'
     ||
-    item.is_active === false
+    item.is_active ===
+    false
   ){
 
     return '휴면';
@@ -4324,14 +5614,17 @@ function setSelectValue(
 
   const select =
     document
-      .getElementById(id);
+      .getElementById(
+        id
+      );
 
 
   const exists =
     [...select.options]
       .some(
         option =>
-          option.value === value
+          option.value ===
+          value
       );
 
 
@@ -4369,11 +5662,10 @@ function formatDate(value){
   }
 
 
-  return value
-    .replaceAll(
-      '-',
-      '.'
-    );
+  return value.replaceAll(
+    '-',
+    '.'
+  );
 }
 
 
@@ -4400,10 +5692,22 @@ function escapeAttribute(value){
   return String(
     value ?? ''
   )
-  .replace(/&/g,'&amp;')
-  .replace(/"/g,'&quot;')
-  .replace(/</g,'&lt;')
-  .replace(/>/g,'&gt;');
+  .replace(
+    /&/g,
+    '&amp;'
+  )
+  .replace(
+    /"/g,
+    '&quot;'
+  )
+  .replace(
+    /</g,
+    '&lt;'
+  )
+  .replace(
+    />/g,
+    '&gt;'
+  );
 }
 
 
@@ -4412,9 +5716,18 @@ function escapeJs(value){
   return String(
     value ?? ''
   )
-  .replace(/\\/g,'\\\\')
-  .replace(/'/g,"\\'")
-  .replace(/\n/g,' ');
+  .replace(
+    /\\/g,
+    '\\\\'
+  )
+  .replace(
+    /'/g,
+    "\\'"
+  )
+  .replace(
+    /\n/g,
+    ' '
+  );
 }
 
 
@@ -4429,7 +5742,9 @@ function openMenu(){
       'menuOverlay'
     )
     .classList
-    .add('open');
+    .add(
+      'open'
+    );
 }
 
 
@@ -4440,7 +5755,9 @@ function closeMenu(){
       'menuOverlay'
     )
     .classList
-    .remove('open');
+    .remove(
+      'open'
+    );
 }
 
 
@@ -4452,7 +5769,11 @@ document
     'click',
     function(event){
 
-      if(event.target === this){
+      if(
+        event.target ===
+        this
+      ){
+
         closeMenu();
       }
 
@@ -4468,7 +5789,11 @@ document
     'click',
     function(event){
 
-      if(event.target === this){
+      if(
+        event.target ===
+        this
+      ){
+
         closeMemberModal();
       }
 
