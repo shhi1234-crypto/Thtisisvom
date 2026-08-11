@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BUSKING · Voice of Melody</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
+:root{--ink:#14182b;--muted:#74798b;--purple:#7762df;--line:rgba(31,36,66,.08)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;font-family:"Noto Sans KR",sans-serif;color:var(--ink);background:#f8f7fa}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+.aurora{position:fixed;inset:0;z-index:-10;background:
+radial-gradient(circle at 91% 3%,rgba(136,221,214,.35),transparent 28%),
+radial-gradient(circle at 63% 10%,rgba(183,153,243,.28),transparent 33%),
+linear-gradient(180deg,#faf8fb,#f8f7fb 60%,#fbfafc)}
+.header{width:min(1080px,100%);height:78px;margin:auto;padding:0 22px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}
+.menu-btn{width:44px;height:44px;border:1px solid rgba(255,255,255,.95);border-radius:50%;background:rgba(255,255,255,.74);box-shadow:0 10px 28px rgba(31,38,76,.08);cursor:pointer}
+.page{width:min(930px,100%);margin:auto;padding:35px 18px 110px}
+.back{display:inline-block;color:#7561dc;font-size:10px;font-weight:800}
+.hero{padding:34px 0 27px}.eyebrow{color:#7662dd;font-family:"Nanum Pen Script",cursive;font-size:21px}.hero h1{margin:4px 0 8px;font-family:"Nanum Pen Script",cursive;font-size:70px;font-weight:400;line-height:.85}.hero p{margin:0;color:#72788a;font-size:12px;line-height:1.8}
+.list{display:grid;gap:10px}.card{display:grid;grid-template-columns:74px minmax(0,1fr) 110px;gap:15px;align-items:center;padding:14px;border-radius:20px;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.96);box-shadow:0 10px 28px rgba(31,37,74,.05);cursor:pointer}
+.datebox{min-height:70px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(145deg,#e9e2ff,#e1f1f6);text-align:center}.datebox strong{font-family:"Nanum Pen Script",cursive;font-size:31px;font-weight:400}.datebox small{display:block;margin-top:4px;color:#767b8e;font-size:9px}
+.type{color:#7561dc;font-family:"Nanum Pen Script",cursive;font-size:16px}.card h3{margin:2px 0 5px;font-size:15px}.meta{color:#7c8192;font-size:10px;line-height:1.7}.hint{margin-top:5px;color:#7764dc;font-size:9px;font-weight:800}
+.thumb{width:110px;height:74px;border-radius:14px;overflow:hidden;background:linear-gradient(145deg,#ece7ff,#e2f1f4);display:grid;place-items:center;color:#9990ba;font-family:"Nanum Pen Script",cursive;font-size:18px}.thumb img{width:100%;height:100%;object-fit:cover}
+.detail{padding:23px;border-radius:24px;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 38px rgba(31,37,74,.06)}
+.detail-image{width:100%;height:320px;margin:18px 0;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,#ece7ff,#e2f1f4);display:grid;place-items:center;color:#938ab5;font-family:"Nanum Pen Script",cursive;font-size:30px}.detail-image img{width:100%;height:100%;object-fit:cover}
+.detail h1{margin:4px 0 7px;font-family:"Nanum Pen Script",cursive;font-size:50px;font-weight:400}.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.info{padding:14px;border-radius:14px;background:#f6f5fa}.info small{display:block;color:#9296a5;font-size:8px;font-weight:800}.info strong{display:block;margin-top:4px;font-size:11px}
+.desc{margin-top:14px;padding:15px;border-radius:15px;background:#f7f6fb;color:#676d7e;font-size:11px;line-height:1.9}
+.empty{padding:45px 15px;text-align:center;color:#9498a7;font-size:11px}
+.overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.34);backdrop-filter:blur(14px)}.overlay.open{display:flex}.menu-card{width:min(390px,100%);padding:22px;border-radius:24px;background:#fff}.menu-top{display:flex;align-items:center;justify-content:space-between}.menu-top h3{font-family:"Nanum Pen Script",cursive;font-size:32px;font-weight:400;margin:0}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:12px}
+.bottom{position:fixed;z-index:80;left:50%;bottom:10px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:67px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border-radius:22px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 42px rgba(30,37,75,.12);backdrop-filter:blur(22px)}
+.bottom a,.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#777c8d;cursor:pointer;font-size:8px}.nav-icon{font-size:18px}
+@media(max-width:650px){.header{height:70px;padding:0 15px}.page{padding:25px 12px 102px}.hero h1{font-size:58px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.datebox{min-height:60px}.thumb{width:72px;height:58px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.detail h1{font-size:42px}}
+</style></head>
+<body><div class="aurora"></div>
+<header class="header"><a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><button class="menu-btn" onclick="openMenu()">☰</button></header>
+<main id="page" class="page"><div class="empty">BUSKING을 불러오는 중...</div></main>
+
+<div id="menuOverlay" class="overlay"><div class="menu-card">
+  <div class="menu-top"><h3>VOM Menu</h3><button class="close" onclick="closeMenu()">✕</button></div>
+  <a href="/">HOME <span>→</span></a>
+  <a href="/calendar/">CALENDAR <span>→</span></a>
+  <a href="/members/">MEMBERS <span>→</span></a>
+  <a href="/event/">EVENT <span>→</span></a>
+  <a href="/live/">VOM LIVE <span>→</span></a>
+  <a href="/busking/">BUSKING <span>→</span></a>
+</div></div>
+<nav class="bottom">
+  <a href="/"><span class="nav-icon">⌂</span>HOME</a>
+  <a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a>
+  <a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a>
+  <a href="/event/"><span class="nav-icon">✦</span>EVENT</a>
+  <button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button>
+</nav>
+
+<script>
+const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
+let events=[],locations=[];
+async function start(){
+ const params=new URLSearchParams(location.search),id=params.get('id');
+ const [e,l]=await Promise.all([
+  db.from('events').select('*').eq('event_type','BUSKING').order('event_date',{ascending:true}),
+  db.from('locations').select('*')
+ ]);
+ events=e.data||[];locations=l.data||[];
+ if(id) renderDetail(id); else renderList();
+}
+function loc(row){return locations.find(x=>String(x.id)===String(row.location_id))}
+function renderList(){
+ document.getElementById('page').innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>VOM의 버스킹 일정을 한곳에서 확인할 수 있습니다.</p></section>
+ <div class="list">${events.length?events.map(row=>{
+  const l=loc(row),img=row.image_url||l?.image_url||'',d=new Date(row.event_date+'T00:00:00');
+  return `<article class="card" onclick="location.href='/busking/?id=${row.id}'">
+   <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${week(row.event_date)}</small></div></div>
+   <div><div class="type">BUSKING</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">자세히 보기 →</div></div>
+   <div class="thumb">${img?`<img src="${attr(img)}" alt="">`:'VOM'}</div>
+  </article>`}).join(''):'<div class="empty">등록된 버스킹 일정이 없습니다.</div>'}</div>`;
+}
+function renderDetail(id){
+ const row=events.find(x=>String(x.id)===String(id));
+ if(!row){document.getElementById('page').innerHTML='<div class="empty">버스킹 일정을 찾을 수 없습니다.</div>';return}
+ const l=loc(row),img=row.image_url||l?.image_url||'';
+ document.title=`${row.title||'BUSKING'} · BUSKING`;
+ document.getElementById('page').innerHTML=`<a class="back" href="/busking/">← BUSKING</a>
+ <section class="detail"><div class="type">VOM BUSKING</div><h1>${esc(row.title||'')}</h1>
+ ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
+ <div class="detail-meta"><div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div><div class="info"><small>TIME</small><strong>${esc(makeTime(row)||'시간 미정')}</strong></div><div class="info"><small>PLACE</small><strong>${esc(l?.name||row.location||'장소 미정')}</strong></div></div>
+ ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}</section>`;
+}
+
+function makeTime(row){
+  const a=row.start_time?String(row.start_time).slice(0,5):'';
+  const b=row.end_time?String(row.end_time).slice(0,5):'';
+  return [a,b].filter(Boolean).join(' - ');
+}
+function formatDate(v){
+  if(!v)return '-';
+  return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'})
+    .format(new Date(v+'T00:00:00'));
+}
+function week(v){
+  return ['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(v+'T00:00:00').getDay()];
+}
+function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
+function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function openMenu(){document.getElementById('menuOverlay').classList.add('open')}
+function closeMenu(){document.getElementById('menuOverlay').classList.remove('open')}
+document.getElementById('menuOverlay').addEventListener('click',function(e){if(e.target===this)closeMenu()});
+
+start();
+</script></body></html>
