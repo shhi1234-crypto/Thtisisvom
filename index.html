@@ -1106,6 +1106,26 @@ button{
     min-width:190px;
   }
 }
+
+/* HOME ranking cards are clickable */
+.rank-link-shell{
+  cursor:pointer;
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+.rank-link-shell:hover{
+  transform:translateY(-2px);
+  box-shadow:0 18px 44px rgba(31,37,74,.11);
+}
+.rank-link-shell .rank-head::after{
+  content:"전체 보기 →";
+  margin-left:auto;
+  color:#7b6bd7;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:9px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
 </style>
 </head>
 
@@ -1190,7 +1210,13 @@ button{
 
     <div class="ranking-grid">
 
-      <div class="rank-shell ear-shell">
+      <div
+        class="rank-shell ear-shell rank-link-shell"
+        role="link"
+        tabindex="0"
+        onclick="if(event.target.closest('.rank-row')) return; window.location.href='/live/?ranking=ear';"
+        onkeydown="if(event.key==='Enter'){window.location.href='/live/?ranking=ear';}"
+      >
 
         <div class="rank-head">
 
@@ -1221,7 +1247,13 @@ button{
       </div>
 
 
-      <div class="rank-shell point-shell">
+      <div
+        class="rank-shell point-shell rank-link-shell"
+        role="link"
+        tabindex="0"
+        onclick="if(event.target.closest('.rank-row')) return; window.location.href='/live/?ranking=point';"
+        onkeydown="if(event.key==='Enter'){window.location.href='/live/?ranking=point';}"
+      >
 
         <div class="rank-head">
 
