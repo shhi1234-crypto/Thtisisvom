@@ -506,6 +506,19 @@ textarea.field{
   line-height:1.7;
 }
 
+.period-result{margin-top:20px;padding:18px;border-radius:18px;background:#f8f7fc;border:1px solid #efedf6}
+.period-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}
+.period-result-head h3{margin:0;font-size:15px}
+.period-result-head span{color:#8a8e9d;font-size:9px;font-weight:700}
+.period-rank-list{display:grid;gap:7px}
+.period-rank-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:9px 11px;border-radius:13px;background:#fff}
+.period-rank-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}
+.period-rank-name{font-size:12px;font-weight:800}
+.period-rank-sub{margin-top:2px;color:#858999;font-size:9px}
+.period-rank-score{text-align:right;color:#6d58d5;font-size:15px;font-weight:800}
+.period-rank-score small{margin-left:2px;font-size:9px}
+.period-empty{padding:20px 10px;text-align:center;color:#9296a5;font-size:10px;line-height:1.7}
+
 .menu-card{
   width:min(400px,100%);
   padding:24px;
@@ -1241,7 +1254,7 @@ async function deleteCampaign(id){
 
 
 /* DETAIL */
-function openDetail(id){
+async function openDetail(id){
   const item=campaigns.find(row=>String(row.id)===String(id));
 
   if(!item){
@@ -1282,22 +1295,252 @@ function openDetail(id){
           : ''
         }
 
-        ${
-          item.campaign_type==='EAR'
-          ? `<span class="tag">귀점유율 집계</span>`
-          : ''
-        }
+        <span class="tag">${typeLabel} 자동 집계</span>
       </div>
 
-      <div class="detail-note">
-        현재 페이지는 이벤트의 생성·기간·조건·보상을 관리합니다.
-        특정 기간의 실제 귀점유율/POINT 자동 집계는 다음 단계에서
-        LIVE 기록의 member_id와 날짜를 연결해 붙일 수 있습니다.
+      <div id="periodResult" class="period-result">
+        <div class="period-empty">기간 내 VOM LIVE 기록을 집계하는 중...</div>
       </div>
     </div>
   `;
 
   document.getElementById('detailOverlay').classList.add('open');
+  await renderPeriodResult(item);
+}
+
+async function renderPeriodResult(item){
+  const box=document.getElementById('periodResult');
+  if(!box){
+    return;
+  }
+
+  try{
+    const {data:eventData,error:eventError}=await db
+      .from('events')
+      .select('id,event_date,title,event_type')
+      .eq('event_type','VOM LIVE')
+      .gte('event_date',item.start_date)
+      .lte('event_date',item.end_date)
+      .order('event_date',{ascending:true});
+
+    if(eventError){
+      throw eventError;
+    }
+
+    const liveEvents=eventData||[];
+    const eventIds=liveEvents.map(row=>row.id);
+
+    if(!eventIds.length){
+      box.innerHTML=`<div class="period-empty">이 이벤트 기간에는 VOM LIVE 일정이 없습니다.</div>`;
+      return;
+    }
+
+    const [participantResponse,resultResponse,memberResponse]=await Promise.all([
+      db.from('live_participants').select('*').in('event_id',eventIds),
+      db.from('live_results').select('*').in('event_id',eventIds),
+      db.from('members').select('id,name')
+    ]);
+
+    if(participantResponse.error){throw participantResponse.error;}
+    if(resultResponse.error){throw resultResponse.error;}
+    if(memberResponse.error){throw memberResponse.error;}
+
+    const participants=participantResponse.data||[];
+    const results=resultResponse.data||[];
+    const members=memberResponse.data||[];
+    const memberMap=new Map(members.map(row=>[String(row.id),row]));
+    const rows=new Map();
+
+    function getRow(memberId,name){
+      const key=memberId!==null&&memberId!==undefined&&memberId!==''
+        ? `id:${String(memberId)}`
+        : `name:${normalizeName(name)}`;
+
+      if(!rows.has(key)){
+        const member=memberId!==null&&memberId!==undefined&&memberId!==''
+          ? memberMap.get(String(memberId))
+          : null;
+
+        rows.set(key,{
+          member_id:memberId??null,
+          name:String(member?.name||name||'이름 미상').trim(),
+          attendance:0,
+          votes:0,
+          denominator:0,
+          points:0,
+          first:0,
+          second:0,
+          third:0
+        });
+      }
+
+      return rows.get(key);
+    }
+
+    liveEvents.forEach(eventRow=>{
+      const eventPeople=participants.filter(row=>String(row.event_id)===String(eventRow.id));
+      const result=results.find(row=>String(row.event_id)===String(eventRow.id));
+      const voteItems=normalizeCampaignResultArray(result?.results);
+
+      const merged=eventPeople.map(person=>{
+        const found=voteItems.find(vote=>
+          (
+            person.member_id && vote.member_id &&
+            String(person.member_id)===String(vote.member_id)
+          ) || normalizeName(person.name)===normalizeName(vote.name)
+        );
+
+        return {
+          member_id:person.member_id||found?.member_id||null,
+          name:person.name||found?.name||'',
+          votes:Number(found?.votes||0)
+        };
+      });
+
+      const ranked=rankCampaignPeople(merged);
+      const participantCount=Number(result?.participant_count||eventPeople.length||0);
+
+      ranked.forEach(person=>{
+        const row=getRow(person.member_id,person.name);
+        row.attendance+=1;
+        row.votes+=Number(person.votes||0);
+        row.denominator+=participantCount;
+        row.points+=5;
+
+        if(person.rank===1){row.points+=50;row.first+=1;}
+        else if(person.rank===2){row.points+=35;row.second+=1;}
+        else if(person.rank===3){row.points+=20;row.third+=1;}
+      });
+    });
+
+    let list=[...rows.values()];
+
+    list.forEach(row=>{
+      row.ear_share=row.denominator>0
+        ? row.votes/row.denominator*100
+        : 0;
+    });
+
+    if(item.campaign_type==='EAR'){
+      list.sort((a,b)=>b.ear_share-a.ear_share||b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
+    }else if(item.campaign_type==='MISSION'){
+      list.sort((a,b)=>b.attendance-a.attendance||b.points-a.points||a.name.localeCompare(b.name,'ko'));
+    }else{
+      list.sort((a,b)=>b.points-a.points||b.first-a.first||a.name.localeCompare(b.name,'ko'));
+    }
+
+    assignCompetitionRank(list,item.campaign_type);
+
+    const title=
+      item.campaign_type==='EAR'?'기간 귀점유율 순위':
+      item.campaign_type==='MISSION'?'기간 LIVE 참여 순위':
+      '기간 VOM POINT 순위';
+
+    box.innerHTML=`
+      <div class="period-result-head">
+        <h3>${title}</h3>
+        <span>VOM LIVE ${liveEvents.length}회 집계</span>
+      </div>
+      ${
+        list.length
+        ? `<div class="period-rank-list">${list.map(createPeriodRankRow).join('')}</div>`
+        : `<div class="period-empty">기간 내 집계 가능한 참가 기록이 없습니다.</div>`
+      }
+    `;
+  }catch(error){
+    console.error('EVENT PERIOD RANKING:',error);
+    box.innerHTML=`<div class="period-empty">기간 집계 데이터를 불러오지 못했습니다.<br>${escapeHtml(error.message||'')}</div>`;
+  }
+}
+
+function createPeriodRankRow(row){
+  let score='';
+  let sub='';
+
+  if(currentDetailCampaignType==='EAR'){
+    score=`${row.ear_share.toFixed(1)}<small>%</small>`;
+    sub=`${row.votes}표 · LIVE ${row.attendance}회`;
+  }else if(currentDetailCampaignType==='MISSION'){
+    score=`${row.attendance}<small>회</small>`;
+    sub=`누적 ${row.points}P · 1위 ${row.first}회`;
+  }else{
+    score=`${row.points}<small>P</small>`;
+    sub=`참석 ${row.attendance}회 · 1위 ${row.first}회 · 2위 ${row.second}회 · 3위 ${row.third}회`;
+  }
+
+  return `
+    <div class="period-rank-row">
+      <div class="period-rank-no">${row.rank}</div>
+      <div>
+        <div class="period-rank-name">${escapeHtml(row.name)}</div>
+        <div class="period-rank-sub">${escapeHtml(sub)}</div>
+      </div>
+      <div class="period-rank-score">${score}</div>
+    </div>
+  `;
+}
+
+let currentDetailCampaignType='POINT';
+
+function assignCompetitionRank(list,type){
+  currentDetailCampaignType=type;
+  let previous=null;
+  let rank=0;
+
+  list.forEach((row,index)=>{
+    const value=type==='EAR'
+      ? Number(row.ear_share.toFixed(8))
+      : type==='MISSION'
+      ? row.attendance
+      : row.points;
+
+    if(previous===null||value!==previous){
+      rank=index+1;
+      previous=value;
+    }
+
+    row.rank=rank;
+  });
+}
+
+function rankCampaignPeople(people){
+  const sorted=[...people].sort((a,b)=>b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
+  let previousVotes=null;
+  let currentRank=0;
+
+  sorted.forEach((row,index)=>{
+    if(previousVotes===null||row.votes!==previousVotes){
+      currentRank=index+1;
+      previousVotes=row.votes;
+    }
+    row.rank=currentRank;
+  });
+
+  return sorted;
+}
+
+function normalizeCampaignResultArray(value){
+  if(Array.isArray(value)){
+    return value.map(row=>({
+      member_id:row?.member_id??null,
+      name:String(row?.name??''),
+      votes:Number(row?.votes??0)
+    }));
+  }
+
+  if(typeof value==='string'){
+    try{
+      return normalizeCampaignResultArray(JSON.parse(value));
+    }catch(error){
+      return [];
+    }
+  }
+
+  return [];
+}
+
+function normalizeName(value){
+  return String(value??'').trim().toLowerCase();
 }
 
 function closeDetail(){
