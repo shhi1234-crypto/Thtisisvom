@@ -1122,6 +1122,93 @@ button{
     height:56px;
   }
 }
+
+/* =========================================
+   FULL RANKING VIEW
+========================================= */
+.full-ranking-page{
+  max-width:820px;
+  margin:auto;
+  padding:48px 0 30px;
+}
+.ranking-back{
+  color:#7561dc;
+  font-size:11px;
+  font-weight:800;
+}
+.ranking-hero{
+  margin-top:28px;
+  padding:27px;
+  border-radius:26px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 14px 38px rgba(31,37,74,.06);
+}
+.ranking-hero .kicker{
+  font-size:22px;
+}
+.ranking-hero h1{
+  margin:2px 0 5px;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:58px;
+  font-weight:400;
+}
+.ranking-hero p{
+  margin:0;
+  color:#777d8e;
+  font-size:11px;
+  line-height:1.7;
+}
+.full-rank-list{
+  display:grid;
+  gap:8px;
+  margin-top:14px;
+}
+.full-rank-row{
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr) auto;
+  align-items:center;
+  gap:12px;
+  min-height:65px;
+  padding:10px 14px;
+  border-radius:17px;
+  background:rgba(255,255,255,.86);
+  border:1px solid rgba(255,255,255,.96);
+}
+.full-rank-number{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:#6654c8;
+  background:#eeeaff;
+  font-weight:800;
+}
+.full-rank-row:first-child .full-rank-number{
+  color:#805f15;
+  background:#fff1c6;
+}
+.full-rank-name{
+  font-size:14px;
+  font-weight:800;
+}
+.full-rank-detail{
+  margin-top:2px;
+  color:#84899a;
+  font-size:9px;
+}
+.full-rank-score{
+  color:#6956ce;
+  font-size:18px;
+  font-weight:800;
+  text-align:right;
+}
+.full-rank-score small{
+  margin-left:2px;
+  font-size:9px;
+}
+
 </style>
 </head>
 
@@ -1334,8 +1421,15 @@ async function start(){
   const id =
     params.get('id');
 
+  const ranking =
+    params.get('ranking');
 
-  if(id){
+
+  if(ranking === 'ear' || ranking === 'point'){
+
+    await renderFullRanking(ranking);
+
+  }else if(id){
 
     renderDetail(id);
 
@@ -1508,6 +1602,178 @@ async function loadAllData(){
       memberResponse.error
     );
   }
+}
+
+
+
+/* =========================================
+   FULL RANKING PAGE
+========================================= */
+
+async function renderFullRanking(type){
+
+  const isEar =
+    type === 'ear';
+
+
+  document.title =
+    isEar
+    ? '귀점유율 · VOM LIVE'
+    : 'VOM POINT · VOM LIVE';
+
+
+  const page =
+    document.getElementById('page');
+
+
+  page.classList.toggle(
+    'admin-mode',
+    adminMode
+  );
+
+
+  const viewName =
+    isEar
+    ? 'ear_share_hall_of_fame'
+    : 'live_point_hall_of_fame';
+
+
+  const {data,error} =
+    await db
+      .from(viewName)
+      .select('*')
+      .order('rank',{ascending:true});
+
+
+  if(error){
+
+    console.error(error);
+
+    page.innerHTML = `
+      <div class="full-ranking-page">
+        <a href="/live/" class="ranking-back">← VOM LIVE</a>
+        <div class="empty" style="margin-top:25px;">
+          랭킹을 불러오지 못했습니다.
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const list =
+    data || [];
+
+
+  page.innerHTML = `
+    <div class="full-ranking-page">
+
+      <a href="/" class="ranking-back">
+        ← HOME
+      </a>
+
+      <section class="ranking-hero">
+
+        <div class="kicker">
+          ${
+            isEar
+            ? 'EAR SHARE · HALL OF FAME'
+            : 'VOM POINT · RANKING'
+          }
+        </div>
+
+        <h1>
+          ${
+            isEar
+            ? '귀점유율'
+            : 'VOM Point'
+          }
+        </h1>
+
+        <p>
+          ${
+            isEar
+            ? 'VOM LIVE 기록을 기준으로 누적 귀점유율 순위를 확인합니다.'
+            : 'VOM LIVE 참석과 순위 기록을 기준으로 누적 VOM POINT를 확인합니다.'
+          }
+        </p>
+
+      </section>
+
+      <div class="full-rank-list">
+
+        ${
+          list.length
+
+          ? list.map(row => {
+
+              const rank =
+                Number(row.rank || 0);
+
+              const score =
+                isEar
+                ? Number(
+                    row.ear_share_percent ??
+                    row.ear_share ??
+                    row.share_percent ??
+                    row.percent ??
+                    0
+                  )
+                : Number(
+                    row.total_points || 0
+                  );
+
+              const detail =
+                isEar
+                ? `${Number(row.votes || 0)}표 · ${Number(row.participant_count || 0)}명`
+                : `참석 ${Number(row.attendance_count || 0)}회 · 1위 ${Number(row.first_place_count || 0)}회`;
+
+              return `
+                <div class="full-rank-row">
+
+                  <div class="full-rank-number">
+                    ${rank}
+                  </div>
+
+                  <div>
+
+                    <div class="full-rank-name">
+                      ${escapeHtml(row.name || '')}
+                    </div>
+
+                    <div class="full-rank-detail">
+                      ${escapeHtml(detail)}
+                    </div>
+
+                  </div>
+
+                  <div class="full-rank-score">
+                    ${
+                      isEar
+                      ? score.toFixed(1)
+                      : score
+                    }
+                    <small>
+                      ${isEar ? '%' : 'P'}
+                    </small>
+                  </div>
+
+                </div>
+              `;
+            }).join('')
+
+          : `
+            <div class="empty">
+              아직 기록이 없습니다.
+            </div>
+          `
+        }
+
+      </div>
+
+    </div>
+  `;
 }
 
 
