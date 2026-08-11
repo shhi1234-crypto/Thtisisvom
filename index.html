@@ -9,7 +9,6 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,7 +18,6 @@
   --ink:#11182c;
   --muted:#73798b;
   --purple:#7d68e8;
-  --purple2:#748bed;
   --line:rgba(28,34,65,.08);
 }
 
@@ -36,11 +34,8 @@ body{
   margin:0;
   min-height:100vh;
   overflow-x:hidden;
-
   font-family:"Noto Sans KR",sans-serif;
-
   color:var(--ink);
-
   background:#f8f7fa;
 }
 
@@ -49,8 +44,7 @@ a{
   text-decoration:none;
 }
 
-button,
-input{
+button,input{
   font:inherit;
 }
 
@@ -58,77 +52,39 @@ button{
   color:inherit;
 }
 
-
-/* =====================================================
-   BACKGROUND
-===================================================== */
+/* BACKGROUND */
 
 .aurora{
   position:fixed;
   inset:0;
   z-index:-10;
-
   overflow:hidden;
-
-  background:
-    linear-gradient(
-      180deg,
-      #f7f4fa 0%,
-      #f8f7fb 55%,
-      #faf9fb 100%
-    );
+  background:linear-gradient(180deg,#f7f4fa 0%,#f8f7fb 55%,#faf9fb 100%);
 }
 
 .aurora::before{
   content:"";
-
   position:absolute;
-
   width:1200px;
   height:700px;
-
   top:-320px;
   right:-280px;
-
   border-radius:50%;
-
   background:
-    radial-gradient(
-      ellipse at 24% 53%,
-      rgba(139,220,214,.68),
-      rgba(139,220,214,.24) 28%,
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse at 55% 37%,
-      rgba(151,173,248,.68),
-      rgba(151,173,248,.24) 27%,
-      transparent 56%
-    ),
-    radial-gradient(
-      ellipse at 76% 49%,
-      rgba(188,151,244,.62),
-      rgba(188,151,244,.22) 25%,
-      transparent 55%
-    );
-
+    radial-gradient(ellipse at 24% 53%,rgba(139,220,214,.68),rgba(139,220,214,.24) 28%,transparent 55%),
+    radial-gradient(ellipse at 55% 37%,rgba(151,173,248,.68),rgba(151,173,248,.24) 27%,transparent 56%),
+    radial-gradient(ellipse at 76% 49%,rgba(188,151,244,.62),rgba(188,151,244,.22) 25%,transparent 55%);
   filter:blur(55px);
-
   transform:rotate(-13deg);
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
+/* HEADER */
 
 .header{
   width:min(1080px,100%);
   height:82px;
-
   margin:auto;
   padding:0 25px;
-
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -147,36 +103,26 @@ button{
 
 .brand small{
   margin-top:5px;
-
   font-size:8px;
   font-weight:700;
-
   letter-spacing:3px;
 }
 
 .header-right{
   display:flex;
   align-items:center;
-
   gap:9px;
 }
 
 .admin-badge{
   display:none;
-
   align-items:center;
   gap:7px;
-
   padding:9px 13px;
-
   border-radius:999px;
-
   color:#6955d2;
-
   background:rgba(126,102,232,.10);
-
   border:1px solid rgba(126,102,232,.15);
-
   font-size:9px;
   font-weight:800;
 }
@@ -188,623 +134,347 @@ button{
 .admin-dot{
   width:7px;
   height:7px;
-
   border-radius:50%;
-
   background:#765fe6;
 }
 
 .menu-btn{
   width:46px;
   height:46px;
-
   border:1px solid rgba(255,255,255,.95);
-
   border-radius:50%;
-
   background:rgba(255,255,255,.68);
-
   box-shadow:0 10px 30px rgba(31,38,76,.08);
-
   cursor:pointer;
 }
 
-
-/* =====================================================
-   PAGE
-===================================================== */
+/* PAGE */
 
 .page{
   width:min(1000px,100%);
-
   margin:auto;
-
   padding:0 22px 115px;
 }
 
-
-/* =====================================================
-   HALL OF FAME
-===================================================== */
-
-.hall-section{
-  padding:26px 0 8px;
-}
-
-.hall-grid{
-  display:grid;
-
-  grid-template-columns:1fr 1fr;
-
-  gap:14px;
-}
-
-
-/* EAR SHARE */
-
-.ear-shell,
-.point-shell{
-  position:relative;
-
-  overflow:hidden;
-
-  min-height:330px;
-
-  padding:24px;
-
-  border-radius:29px;
-
-  color:white;
-
-  box-shadow:0 22px 60px rgba(31,37,80,.14);
-}
-
-.ear-shell{
-  background:
-    radial-gradient(
-      circle at 92% 8%,
-      rgba(117,228,215,.52),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 4% 100%,
-      rgba(173,112,245,.62),
-      transparent 37%
-    ),
-    linear-gradient(
-      135deg,
-      #1b294f,
-      #303772 58%,
-      #443a83
-    );
-}
-
-.point-shell{
-  background:
-    radial-gradient(
-      circle at 88% 12%,
-      rgba(255,219,131,.30),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 10% 92%,
-      rgba(116,202,239,.26),
-      transparent 37%
-    ),
-    linear-gradient(
-      135deg,
-      #182135,
-      #27304b 58%,
-      #34354f
-    );
-}
-
-.ear-shell::after,
-.point-shell::after{
-  content:"";
-
-  position:absolute;
-
-  width:220px;
-  height:450px;
-
-  right:10%;
-  top:-200px;
-
-  transform:rotate(27deg);
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      rgba(255,255,255,.12),
-      transparent
-    );
-
-  filter:blur(9px);
-
-  pointer-events:none;
-}
-
-.hall-head{
-  position:relative;
-  z-index:2;
-
-  display:flex;
-
-  align-items:flex-start;
-  justify-content:space-between;
-
-  gap:15px;
-
-  margin-bottom:18px;
-}
-
-.hall-kicker{
-  color:#ded7ff;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:19px;
-}
-
-.point-shell .hall-kicker{
-  color:#ffe6a6;
-}
-
-.hall-title{
-  margin:0;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:37px;
-
-  font-weight:400;
-
-  line-height:.9;
-}
-
-.hall-copy{
-  margin-top:7px;
-
-  max-width:310px;
-
-  color:rgba(255,255,255,.61);
-
-  font-size:8px;
-
-  line-height:1.6;
-}
-
-.hall-symbol{
-  color:rgba(255,255,255,.20);
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:45px;
-}
-
-.hall-list{
-  position:relative;
-  z-index:2;
-
-  display:grid;
-
-  gap:8px;
-}
-
-.hall-card{
-  min-height:65px;
-
-  display:grid;
-
-  grid-template-columns:
-    50px
-    minmax(0,1fr)
-    auto;
-
-  align-items:center;
-
-  gap:10px;
-
-  padding:10px 13px;
-
-  border-radius:17px;
-
-  border:1px solid rgba(255,255,255,.12);
-
-  background:rgba(255,255,255,.08);
-
-  backdrop-filter:blur(10px);
-
-  transition:.17s;
-}
-
-.hall-card:hover{
-  transform:translateY(-1px);
-
-  background:rgba(255,255,255,.13);
-}
-
-.hall-rank{
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:19px;
-
-  color:#ddd5ff;
-}
-
-.hall-card.rank-1 .hall-rank{
-  color:#ffeb9a;
-}
-
-.hall-card.rank-2 .hall-rank{
-  color:#e5e9ff;
-}
-
-.hall-card.rank-3 .hall-rank{
-  color:#f5c79f;
-}
-
-.hall-name{
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
-  white-space:nowrap;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:26px;
-}
-
-.hall-sub{
-  margin-top:3px;
-
-  color:rgba(255,255,255,.52);
-
-  font-size:7px;
-}
-
-.hall-score{
-  text-align:right;
-
-  font-family:"Nanum Pen Script",cursive;
-
-  font-size:26px;
-}
-
-.hall-score small{
-  color:rgba(255,255,255,.55);
-
-  font-size:13px;
-}
-
-.hall-empty{
-  min-height:200px;
-
-  display:flex;
-
-  align-items:center;
-  justify-content:center;
-
-  text-align:center;
-
-  color:rgba(255,255,255,.60);
-
-  font-size:9px;
-
-  line-height:1.7;
-}
-
-
-/* =====================================================
-   HERO
-===================================================== */
+/* HERO */
 
 .hero{
-  min-height:525px;
-
+  min-height:520px;
   display:grid;
-
-  grid-template-columns:1.1fr .9fr;
-
+  grid-template-columns:1.08fr .92fr;
   align-items:center;
-
   gap:50px;
-
-  padding:70px 0 60px;
+  padding:70px 0 58px;
 }
 
 .hero-eyebrow{
   display:flex;
   align-items:center;
-
   gap:13px;
-
   color:#444b60;
-
   font-size:12px;
 }
 
 .hero-eyebrow::before{
   content:"";
-
   width:40px;
   height:1px;
-
   background:#4c5366;
 }
 
 .hero-title{
   margin:18px 0 0;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:clamp(120px,17vw,190px);
-
   font-weight:400;
-
   line-height:.68;
-
   letter-spacing:-7px;
 }
 
 .hero-brand{
   margin:18px 0 0 7px;
-
   font-size:13px;
-
   font-weight:700;
-
   letter-spacing:9px;
 }
 
 .hero-script{
   margin:31px 0 0 7px;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:30px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #906ce3,
-      #679fea,
-      #79b9b2
-    );
-
+  background:linear-gradient(90deg,#906ce3,#679fea,#79b9b2);
   -webkit-background-clip:text;
   background-clip:text;
-
   color:transparent;
 }
 
 .hero-copy{
   margin:24px 0 0 7px;
-
   color:#535b70;
-
   font-size:13px;
-
   line-height:1.8;
 }
 
 .info-link{
   width:max-content;
-
   margin:27px 0 0 7px;
-
   padding:12px 19px;
-
   display:flex;
   align-items:center;
-
   gap:22px;
-
   border:1px solid rgba(52,59,88,.18);
-
   border-radius:999px;
-
   background:rgba(255,255,255,.43);
-
   font-size:12px;
 }
 
-
-/* =====================================================
-   NEXT LIVE
-===================================================== */
+/* NEXT LIVE */
 
 .next-live{
   min-height:315px;
-
   position:relative;
-
   overflow:hidden;
-
   padding:29px;
-
   border-radius:29px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,.84),
-      rgba(244,240,252,.65)
-    );
-
+  background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(244,240,252,.65));
   border:1px solid rgba(255,255,255,.94);
-
   box-shadow:0 25px 70px rgba(41,45,91,.12);
 }
 
 .next-bg{
   position:absolute;
-
   width:195px;
   height:195px;
-
   right:-45px;
   bottom:-55px;
-
   overflow:hidden;
-
   border-radius:50%;
-
   opacity:.17;
 }
 
 .next-bg img{
   width:100%;
   height:100%;
-
   object-fit:cover;
 }
 
 .next-content{
   position:relative;
-
   z-index:2;
 }
 
 .next-top{
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
   color:#666b7e;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:18px;
 }
 
 .dday{
   padding:6px 12px;
-
   border-radius:999px;
-
   color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #8d6dea,
-      #817cf1
-    );
+  background:linear-gradient(135deg,#8d6dea,#817cf1);
 }
 
 .next-date{
   margin-top:25px;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:76px;
-
   line-height:.9;
 }
 
 .next-date small{
   margin-left:7px;
-
   font-size:21px;
 }
 
 .divider{
   height:1px;
-
   margin:20px 0;
-
   background:var(--line);
 }
 
 .next-live h3{
   margin:0;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:28px;
-
   font-weight:400;
 }
 
 .next-meta{
   margin-top:8px;
-
   color:#596076;
-
   font-size:12px;
-
   line-height:1.8;
 }
 
 .next-link{
   margin-top:21px;
-
   padding-top:17px;
-
   display:flex;
-
   justify-content:space-between;
-
   border-top:1px solid var(--line);
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:18px;
 }
 
 .next-empty{
   min-height:255px;
-
   display:flex;
-
   align-items:center;
   justify-content:center;
-
   text-align:center;
-
   color:#878b9b;
-
   font-size:11px;
-
   line-height:1.8;
 }
 
+/* RANKING */
 
-/* =====================================================
-   QUICK
-===================================================== */
+.ranking-section{
+  margin:0 0 22px;
+}
+
+.ranking-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+
+.rank-shell{
+  position:relative;
+  overflow:hidden;
+  padding:18px;
+  border-radius:24px;
+  color:white;
+  box-shadow:0 16px 45px rgba(31,37,80,.11);
+}
+
+.ear-shell{
+  background:
+    radial-gradient(circle at 94% 0%,rgba(117,228,215,.42),transparent 34%),
+    radial-gradient(circle at 5% 100%,rgba(173,112,245,.48),transparent 40%),
+    linear-gradient(135deg,#1b294f,#303772 58%,#443a83);
+}
+
+.point-shell{
+  background:
+    radial-gradient(circle at 90% 5%,rgba(255,219,131,.25),transparent 34%),
+    radial-gradient(circle at 8% 100%,rgba(116,202,239,.22),transparent 40%),
+    linear-gradient(135deg,#182135,#27304b 58%,#34354f);
+}
+
+.rank-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.rank-kicker{
+  color:rgba(255,255,255,.57);
+  font-size:7px;
+  font-weight:700;
+  letter-spacing:1.2px;
+}
+
+.rank-title{
+  margin:2px 0 0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:29px;
+  font-weight:400;
+  line-height:1;
+}
+
+.rank-icon{
+  font-size:25px;
+}
+
+.rank-list{
+  display:grid;
+  gap:6px;
+}
+
+.rank-row{
+  min-height:48px;
+  display:grid;
+  grid-template-columns:31px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;
+  background:rgba(255,255,255,.07);
+}
+
+.rank-number{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:18px;
+  color:#e2dcff;
+}
+
+.rank-row.rank-1 .rank-number{
+  color:#ffe78e;
+}
+
+.rank-name{
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:22px;
+}
+
+.rank-detail{
+  margin-top:1px;
+  color:rgba(255,255,255,.48);
+  font-size:6px;
+}
+
+.rank-score{
+  text-align:right;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:22px;
+}
+
+.rank-score small{
+  color:rgba(255,255,255,.55);
+  font-size:11px;
+}
+
+.rank-empty{
+  min-height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:rgba(255,255,255,.55);
+  text-align:center;
+  font-size:9px;
+  line-height:1.7;
+}
+
+/* QUICK */
 
 .quick{
   display:grid;
-
   grid-template-columns:repeat(5,1fr);
-
   overflow:hidden;
-
   border-radius:27px;
-
   background:rgba(255,255,255,.68);
-
   border:1px solid rgba(255,255,255,.94);
-
   box-shadow:0 20px 55px rgba(33,39,78,.08);
 }
 
 .quick a{
   min-height:122px;
-
   display:flex;
-
   flex-direction:column;
-
   align-items:center;
   justify-content:center;
-
   border-right:1px solid var(--line);
 }
 
@@ -814,11 +484,8 @@ button{
 
 .quick-icon{
   margin-bottom:7px;
-
   color:#8068ed;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:30px;
 }
 
@@ -828,18 +495,12 @@ button{
 
 .quick small{
   margin-top:4px;
-
   color:#9397a5;
-
   font-size:8px;
-
   letter-spacing:1px;
 }
 
-
-/* =====================================================
-   SECTION
-===================================================== */
+/* SECTION */
 
 .section{
   margin-top:48px;
@@ -847,77 +508,53 @@ button{
 
 .section-head{
   display:flex;
-
   align-items:flex-end;
   justify-content:space-between;
-
   margin-bottom:16px;
 }
 
 .section-title{
   margin:0;
-
   font-size:23px;
 }
 
 .section-title em{
   margin-left:7px;
-
   color:#7765df;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:27px;
-
   font-weight:400;
-
   font-style:normal;
 }
 
 .more{
   color:#60667a;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:17px;
 }
 
-
-/* =====================================================
-   NOTICE
-===================================================== */
+/* NOTICE */
 
 .middle{
   display:grid;
-
   grid-template-columns:1fr 1.15fr;
-
   gap:20px;
 }
 
 .notice{
   padding:7px 22px;
-
   border-radius:23px;
-
   background:rgba(255,255,255,.75);
-
   border:1px solid rgba(255,255,255,.92);
-
   box-shadow:0 14px 38px rgba(31,37,75,.07);
 }
 
 .notice-row{
   min-height:70px;
-
   display:grid;
-
   grid-template-columns:auto 1fr auto;
-
   align-items:center;
-
   gap:14px;
-
   border-bottom:1px solid var(--line);
 }
 
@@ -927,15 +564,10 @@ button{
 
 .notice-badge{
   padding:5px 8px;
-
   border-radius:7px;
-
   color:#745cdc;
-
   background:#eee9ff;
-
   font-size:9px;
-
   font-weight:700;
 }
 
@@ -945,166 +577,94 @@ button{
 
 .notice-row time{
   color:#9a9dab;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:16px;
 }
 
 .about{
   min-height:225px;
-
   position:relative;
-
   overflow:hidden;
-
   padding:27px;
-
   border-radius:24px;
-
   color:white;
-
   background:
-    radial-gradient(
-      circle at 82% 13%,
-      rgba(126,224,216,.50),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 19% 88%,
-      rgba(173,116,244,.60),
-      transparent 42%
-    ),
-    linear-gradient(
-      135deg,
-      #1a274b,
-      #31346b
-    );
+    radial-gradient(circle at 82% 13%,rgba(126,224,216,.50),transparent 35%),
+    radial-gradient(circle at 19% 88%,rgba(173,116,244,.60),transparent 42%),
+    linear-gradient(135deg,#1a274b,#31346b);
 }
 
 .about-script{
   color:#ded4ff;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:43px;
-
   line-height:.9;
 }
 
 .about p{
   margin-top:34px;
-
   color:rgba(255,255,255,.81);
-
   font-size:11px;
-
   line-height:1.75;
 }
 
 .about-link{
   position:absolute;
-
   left:27px;
   bottom:23px;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:18px;
 }
 
-
-/* =====================================================
-   UPCOMING
-===================================================== */
+/* EVENTS */
 
 .events{
   display:grid;
-
   grid-template-columns:1.15fr repeat(3,1fr);
-
   gap:14px;
 }
 
 .event-card{
   min-height:215px;
-
   position:relative;
-
   overflow:hidden;
-
   padding:22px;
-
   border-radius:22px;
-
   background:rgba(255,255,255,.78);
-
   border:1px solid rgba(255,255,255,.92);
-
   box-shadow:0 12px 35px rgba(31,37,74,.07);
-
-  transition:.18s;
-}
-
-.event-card:hover{
-  transform:translateY(-2px);
-
-  box-shadow:0 18px 42px rgba(31,37,74,.10);
 }
 
 .event-card.featured{
   color:white;
-
   background:
-    radial-gradient(
-      circle at 75% 15%,
-      rgba(118,235,214,.48),
-      transparent 38%
-    ),
-    radial-gradient(
-      circle at 20% 90%,
-      rgba(158,105,239,.68),
-      transparent 45%
-    ),
-    linear-gradient(
-      145deg,
-      #21325e,
-      #393c84
-    );
+    radial-gradient(circle at 75% 15%,rgba(118,235,214,.48),transparent 38%),
+    radial-gradient(circle at 20% 90%,rgba(158,105,239,.68),transparent 45%),
+    linear-gradient(145deg,#21325e,#393c84);
 }
 
 .event-image{
   position:absolute;
-
   width:100px;
   height:100px;
-
   right:-15px;
   bottom:-15px;
-
   overflow:hidden;
-
   border-radius:50%;
-
   opacity:.22;
 }
 
 .event-image img{
   width:100%;
   height:100%;
-
   object-fit:cover;
 }
 
 .event-type{
   position:relative;
-
   z-index:2;
-
   color:#767b8d;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:16px;
 }
 
@@ -1114,15 +674,10 @@ button{
 
 .event-date{
   position:relative;
-
   z-index:2;
-
   margin-top:15px;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:42px;
-
   line-height:.9;
 }
 
@@ -1132,27 +687,18 @@ button{
 
 .event-name{
   position:relative;
-
   z-index:2;
-
   margin-top:12px;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:21px;
 }
 
 .event-meta{
   position:relative;
-
   z-index:2;
-
   margin-top:7px;
-
   color:#707689;
-
   font-size:10px;
-
   line-height:1.65;
 }
 
@@ -1162,53 +708,34 @@ button{
 
 .event-arrow{
   position:absolute;
-
   left:22px;
   bottom:17px;
-
   z-index:2;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:22px;
 }
 
 .events-empty{
-  grid-column:1 / -1;
-
+  grid-column:1/-1;
   padding:45px;
-
   border-radius:23px;
-
   background:rgba(255,255,255,.65);
-
   color:#9094a4;
-
   text-align:center;
-
   font-size:11px;
 }
 
-
-/* =====================================================
-   MENU
-===================================================== */
+/* MENU */
 
 .overlay{
   position:fixed;
   inset:0;
-
   z-index:200;
-
   display:none;
-
   align-items:center;
   justify-content:center;
-
   padding:20px;
-
   background:rgba(24,29,54,.36);
-
   backdrop-filter:blur(15px);
 }
 
@@ -1216,48 +743,34 @@ button{
   display:flex;
 }
 
-.menu-card,
-.login-card{
+.menu-card,.login-card{
   width:min(410px,100%);
-
   padding:25px;
-
   border-radius:27px;
-
   background:rgba(255,255,255,.97);
-
   box-shadow:0 28px 80px rgba(20,25,55,.22);
 }
 
 .modal-head{
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
   margin-bottom:12px;
 }
 
 .modal-head h3{
   margin:0;
-
   font-family:"Nanum Pen Script",cursive;
-
   font-size:35px;
-
   font-weight:400;
 }
 
 .close{
   width:38px;
   height:38px;
-
   border:0;
-
   border-radius:50%;
-
   background:#eeeef4;
-
   cursor:pointer;
 }
 
@@ -1265,36 +778,30 @@ button{
 .admin-menu,
 .logout{
   width:100%;
-
-  min-height:56px;
-
+  min-height:54px;
   display:flex;
-
   align-items:center;
   justify-content:space-between;
-
   border:0;
-
   border-bottom:1px solid var(--line);
-
   background:none;
-
   cursor:pointer;
-
   text-align:left;
-
   font-size:13px;
+}
+
+.members-menu{
+  color:#705bd6;
+  font-weight:700;
 }
 
 .admin-menu{
   color:#725de0;
-
   font-weight:700;
 }
 
 .logout{
   display:none;
-
   color:#d15c70;
 }
 
@@ -1304,138 +811,84 @@ button{
 
 .login-copy{
   margin-bottom:19px;
-
   color:#777d8f;
-
   font-size:11px;
-
   line-height:1.7;
 }
 
 .login-card label{
   display:block;
-
   margin:14px 0 7px;
-
   font-size:11px;
-
   font-weight:700;
 }
 
 .login-card input{
   width:100%;
-
   min-height:48px;
-
   padding:0 14px;
-
   border:1px solid #e1e2e9;
-
   border-radius:14px;
-
   background:#fafafd;
-
   outline:none;
 }
 
 .login-submit{
   width:100%;
-
   min-height:49px;
-
   margin-top:19px;
-
   border:0;
-
   border-radius:15px;
-
   color:white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #8268eb,
-      #6f83ec
-    );
-
+  background:linear-gradient(135deg,#8268eb,#6f83ec);
   cursor:pointer;
-
   font-weight:700;
 }
 
 .login-message{
   min-height:18px;
-
   margin-top:11px;
-
   color:#d24f68;
-
   font-size:11px;
-
   text-align:center;
 }
 
-
-/* =====================================================
-   BOTTOM
-===================================================== */
+/* BOTTOM */
 
 .bottom{
   position:fixed;
-
   z-index:80;
-
   left:50%;
   bottom:10px;
-
   transform:translateX(-50%);
-
   width:min(720px,calc(100% - 24px));
-
   height:67px;
-
   display:grid;
-
   grid-template-columns:repeat(5,1fr);
-
   overflow:hidden;
-
   border-radius:22px;
-
   background:rgba(255,255,255,.82);
-
   border:1px solid rgba(255,255,255,.95);
-
   box-shadow:0 14px 42px rgba(30,37,75,.12);
-
   backdrop-filter:blur(23px);
 }
 
 .bottom a,
 .bottom button{
   border:0;
-
   background:none;
-
   display:flex;
-
   flex-direction:column;
-
   align-items:center;
   justify-content:center;
-
   gap:3px;
-
   color:#777c8d;
-
   cursor:pointer;
-
   font-size:8px;
 }
 
 .bottom .active{
   color:#755fe1;
-
   font-weight:700;
 }
 
@@ -1443,16 +896,12 @@ button{
   font-size:18px;
 }
 
-
-/* =====================================================
-   MOBILE
-===================================================== */
+/* MOBILE */
 
 @media(max-width:760px){
 
   .header{
     height:70px;
-
     padding:0 16px;
   }
 
@@ -1469,108 +918,159 @@ button{
     height:42px;
   }
 
-  .admin-badge{
-    padding:7px 9px;
-
-    font-size:7px;
-  }
-
   .page{
     padding:0 14px 105px;
   }
 
-
-  .hall-section{
-    padding-top:18px;
-  }
-
-  .hall-grid{
-    grid-template-columns:1fr;
-  }
-
-  .ear-shell,
-  .point-shell{
-    min-height:auto;
-
-    padding:21px 17px 18px;
-
-    border-radius:25px;
-  }
-
-  .hall-title{
-    font-size:34px;
-  }
-
-  .hall-symbol{
-    font-size:39px;
-  }
-
-  .hall-card{
-    min-height:61px;
-
-    grid-template-columns:
-      45px
-      minmax(0,1fr)
-      auto;
-  }
-
-  .hall-name{
-    font-size:24px;
-  }
-
-  .hall-score{
-    font-size:24px;
-  }
-
+  /* VOM FIRST */
 
   .hero{
     min-height:auto;
-
     grid-template-columns:1fr;
+    gap:28px;
+    padding:42px 0 32px;
+  }
 
-    gap:34px;
+  .hero-eyebrow{
+    font-size:10px;
+  }
 
-    padding:55px 0 45px;
+  .hero-eyebrow::before{
+    width:27px;
   }
 
   .hero-title{
-    font-size:120px;
-
+    margin-top:16px;
+    font-size:112px;
     letter-spacing:-5px;
   }
 
   .hero-brand{
-    font-size:10px;
-
-    letter-spacing:7px;
+    margin-top:15px;
+    font-size:9px;
+    letter-spacing:6px;
   }
 
   .hero-script{
-    font-size:27px;
+    margin-top:24px;
+    font-size:25px;
   }
 
+  .hero-copy{
+    margin-top:17px;
+    font-size:11px;
+  }
+
+  .info-link{
+    margin-top:20px;
+  }
+
+  /* NEXT LIVE SMALLER */
+
   .next-live{
-    min-height:295px;
+    min-height:245px;
+    padding:20px;
+    border-radius:23px;
+  }
 
-    padding:24px;
-
-    border-radius:25px;
+  .next-top{
+    font-size:16px;
   }
 
   .next-date{
-    font-size:64px;
+    margin-top:18px;
+    font-size:55px;
   }
 
+  .next-date small{
+    font-size:17px;
+  }
+
+  .divider{
+    margin:15px 0;
+  }
+
+  .next-live h3{
+    font-size:24px;
+  }
+
+  .next-meta{
+    font-size:10px;
+  }
+
+  .next-link{
+    margin-top:13px;
+    padding-top:12px;
+    font-size:16px;
+  }
+
+  /* COMPACT RANKING */
+
+  .ranking-section{
+    margin-top:0;
+    margin-bottom:17px;
+  }
+
+  .ranking-grid{
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .rank-shell{
+    padding:13px;
+    border-radius:20px;
+  }
+
+  .rank-head{
+    margin-bottom:7px;
+  }
+
+  .rank-kicker{
+    display:none;
+  }
+
+  .rank-title{
+    font-size:25px;
+  }
+
+  .rank-icon{
+    font-size:20px;
+  }
+
+  .rank-list{
+    gap:4px;
+  }
+
+  .rank-row{
+    min-height:41px;
+    grid-template-columns:27px minmax(0,1fr) auto;
+    padding:4px 9px;
+    border-radius:12px;
+  }
+
+  .rank-number{
+    font-size:16px;
+  }
+
+  .rank-name{
+    font-size:20px;
+  }
+
+  .rank-detail{
+    font-size:6px;
+  }
+
+  .rank-score{
+    font-size:20px;
+  }
+
+  .rank-empty{
+    min-height:70px;
+  }
 
   .quick{
-    grid-template-columns:
-      repeat(
-        5,
-        minmax(92px,1fr)
-      );
-
+    grid-template-columns:repeat(5,minmax(92px,1fr));
     overflow-x:auto;
-
     scrollbar-width:none;
   }
 
@@ -1580,30 +1080,21 @@ button{
 
   .quick a{
     min-width:92px;
-
-    min-height:105px;
+    min-height:100px;
   }
 
   .quick strong{
     font-size:11px;
   }
 
-
   .middle{
     grid-template-columns:1fr;
   }
 
   .events{
-    grid-template-columns:
-      repeat(
-        4,
-        minmax(190px,1fr)
-      );
-
+    grid-template-columns:repeat(4,minmax(190px,1fr));
     overflow-x:auto;
-
     padding-bottom:5px;
-
     scrollbar-width:none;
   }
 
@@ -1622,40 +1113,21 @@ button{
 
 <div class="aurora"></div>
 
-
 <header class="header">
 
   <a href="/" class="brand">
-
-    <strong>
-      VOM
-    </strong>
-
-    <small>
-      VOICE OF MELODY
-    </small>
-
+    <strong>VOM</strong>
+    <small>VOICE OF MELODY</small>
   </a>
-
 
   <div class="header-right">
 
-    <div
-      id="adminBadge"
-      class="admin-badge"
-    >
-
+    <div id="adminBadge" class="admin-badge">
       <span class="admin-dot"></span>
-
       ADMIN MODE
-
     </div>
 
-
-    <button
-      class="menu-btn"
-      onclick="openMenu()"
-    >
+    <button class="menu-btn" onclick="openMenu()">
       ☰
     </button>
 
@@ -1666,111 +1138,7 @@ button{
 
 <main class="page">
 
-
-  <!-- =================================================
-       HALL OF FAME
-  ================================================== -->
-
-  <section class="hall-section">
-
-    <div class="hall-grid">
-
-
-      <!-- EAR SHARE -->
-
-      <div class="ear-shell">
-
-        <div class="hall-head">
-
-          <div>
-
-            <div class="hall-kicker">
-              EAR SHARE · Hall of Fame
-            </div>
-
-            <h2 class="hall-title">
-              귀점유율
-            </h2>
-
-            <div class="hall-copy">
-              한 번의 VOM LIVE에서 가장 많은 귀를 점유한 기록.<br>
-              개인별 역대 최고 기록을 기준으로 합니다.
-            </div>
-
-          </div>
-
-          <div class="hall-symbol">
-            👂
-          </div>
-
-        </div>
-
-
-        <div
-          id="earHall"
-          class="hall-list"
-        >
-
-          <div class="hall-empty">
-            귀점유율 기록을 불러오는 중...
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- POINT -->
-
-      <div class="point-shell">
-
-        <div class="hall-head">
-
-          <div>
-
-            <div class="hall-kicker">
-              VOM POINT · Ranking
-            </div>
-
-            <h2 class="hall-title">
-              VOM Point
-            </h2>
-
-            <div class="hall-copy">
-              참석과 VOM LIVE 순위로 쌓이는 누적 활동 포인트.<br>
-              참석 +5P · 1위 +50P · 2위 +35P · 3위 +20P
-            </div>
-
-          </div>
-
-          <div class="hall-symbol">
-            ✦
-          </div>
-
-        </div>
-
-
-        <div
-          id="pointHall"
-          class="hall-list"
-        >
-
-          <div class="hall-empty">
-            VOM POINT를 불러오는 중...
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =================================================
-       HERO
-  ================================================== -->
+  <!-- VOM FIRST -->
 
   <section class="hero">
 
@@ -1797,10 +1165,7 @@ button{
         음악으로 이어지는 VOM의 이야기.
       </div>
 
-      <a
-        href="/info/"
-        class="info-link"
-      >
+      <a href="/info/" class="info-link">
         INFO
         <span>→</span>
       </a>
@@ -1808,10 +1173,7 @@ button{
     </div>
 
 
-    <article
-      id="nextLive"
-      class="next-live"
-    >
+    <article id="nextLive" class="next-live">
 
       <div class="next-empty">
         NEXT LIVE를 불러오는 중...
@@ -1822,121 +1184,127 @@ button{
   </section>
 
 
-  <!-- =================================================
-       QUICK
-  ================================================== -->
+  <!-- COMPACT RANKING -->
+
+  <section class="ranking-section">
+
+    <div class="ranking-grid">
+
+      <div class="rank-shell ear-shell">
+
+        <div class="rank-head">
+
+          <div>
+            <div class="rank-kicker">
+              EAR SHARE · HALL OF FAME
+            </div>
+
+            <h2 class="rank-title">
+              귀점유율
+            </h2>
+          </div>
+
+          <div class="rank-icon">
+            👂
+          </div>
+
+        </div>
+
+        <div id="earHall" class="rank-list">
+
+          <div class="rank-empty">
+            기록을 불러오는 중...
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="rank-shell point-shell">
+
+        <div class="rank-head">
+
+          <div>
+            <div class="rank-kicker">
+              VOM POINT · RANKING
+            </div>
+
+            <h2 class="rank-title">
+              VOM Point
+            </h2>
+          </div>
+
+          <div class="rank-icon">
+            ✦
+          </div>
+
+        </div>
+
+        <div id="pointHall" class="rank-list">
+
+          <div class="rank-empty">
+            포인트를 불러오는 중...
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- QUICK -->
 
   <section class="quick">
 
     <a href="/info/">
-
-      <div class="quick-icon">
-        ⓘ
-      </div>
-
-      <strong>
-        INFO
-      </strong>
-
-      <small>
-        ABOUT VOM
-      </small>
-
+      <div class="quick-icon">ⓘ</div>
+      <strong>INFO</strong>
+      <small>ABOUT VOM</small>
     </a>
-
 
     <a href="/calendar/">
-
-      <div class="quick-icon">
-        ◫
-      </div>
-
-      <strong>
-        CALENDAR
-      </strong>
-
-      <small>
-        SCHEDULE
-      </small>
-
+      <div class="quick-icon">◫</div>
+      <strong>CALENDAR</strong>
+      <small>SCHEDULE</small>
     </a>
-
 
     <a href="/live/">
-
-      <div class="quick-icon">
-        ♬
-      </div>
-
-      <strong>
-        VOM LIVE
-      </strong>
-
-      <small>
-        LIVE
-      </small>
-
+      <div class="quick-icon">♬</div>
+      <strong>VOM LIVE</strong>
+      <small>LIVE</small>
     </a>
-
 
     <a href="/busking/">
-
-      <div class="quick-icon">
-        ♪
-      </div>
-
-      <strong>
-        BUSKING
-      </strong>
-
-      <small>
-        BUSKING
-      </small>
-
+      <div class="quick-icon">♪</div>
+      <strong>BUSKING</strong>
+      <small>BUSKING</small>
     </a>
 
-
     <a href="/qna/">
-
-      <div class="quick-icon">
-        ?
-      </div>
-
-      <strong>
-        Q&A
-      </strong>
-
-      <small>
-        QUESTION
-      </small>
-
+      <div class="quick-icon">?</div>
+      <strong>Q&A</strong>
+      <small>QUESTION</small>
     </a>
 
   </section>
 
 
-  <!-- =================================================
-       NOTICE
-  ================================================== -->
+  <!-- NOTICE -->
 
   <section class="section">
 
     <div class="section-head">
 
       <h2 class="section-title">
-
         공지사항
-
-        <em>
-          Notice
-        </em>
-
+        <em>Notice</em>
       </h2>
 
-      <a
-        href="/notice/"
-        class="more"
-      >
+      <a href="/notice/" class="more">
         전체 보기 →
       </a>
 
@@ -1947,72 +1315,28 @@ button{
 
       <div class="notice">
 
-        <a
-          href="/notice/"
-          class="notice-row"
-        >
-
-          <span class="notice-badge">
-            공지
-          </span>
-
-          <strong>
-            VOM LIVE 안내
-          </strong>
-
-          <time>
-            NEW
-          </time>
-
+        <a href="/notice/" class="notice-row">
+          <span class="notice-badge">공지</span>
+          <strong>VOM LIVE 안내</strong>
+          <time>NEW</time>
         </a>
 
-
-        <a
-          href="/notice/"
-          class="notice-row"
-        >
-
-          <span class="notice-badge">
-            공지
-          </span>
-
-          <strong>
-            BUSKING 일정 안내
-          </strong>
-
-          <time>
-            NEW
-          </time>
-
+        <a href="/notice/" class="notice-row">
+          <span class="notice-badge">공지</span>
+          <strong>BUSKING 일정 안내</strong>
+          <time>NEW</time>
         </a>
 
-
-        <a
-          href="/notice/"
-          class="notice-row"
-        >
-
-          <span class="notice-badge">
-            안내
-          </span>
-
-          <strong>
-            VOM 운영 안내
-          </strong>
-
-          <time>
-            INFO
-          </time>
-
+        <a href="/notice/" class="notice-row">
+          <span class="notice-badge">안내</span>
+          <strong>VOM 운영 안내</strong>
+          <time>INFO</time>
         </a>
 
       </div>
 
 
-      <a
-        href="/info/"
-        class="about"
-      >
+      <a href="/info/" class="about">
 
         <div class="about-script">
           Voice<br>
@@ -2035,38 +1359,24 @@ button{
   </section>
 
 
-  <!-- =================================================
-       UPCOMING
-  ================================================== -->
+  <!-- UPCOMING -->
 
   <section class="section">
 
     <div class="section-head">
 
       <h2 class="section-title">
-
         다가오는 일정
-
-        <em>
-          Upcoming
-        </em>
-
+        <em>Upcoming</em>
       </h2>
 
-      <a
-        href="/calendar/"
-        class="more"
-      >
+      <a href="/calendar/" class="more">
         CALENDAR →
       </a>
 
     </div>
 
-
-    <div
-      id="upcomingEvents"
-      class="events"
-    >
+    <div id="upcomingEvents" class="events">
 
       <div class="events-empty">
         일정을 불러오는 중...
@@ -2079,14 +1389,9 @@ button{
 </main>
 
 
-<!-- =====================================================
-     MENU
-===================================================== -->
+<!-- MENU -->
 
-<div
-  id="menuOverlay"
-  class="overlay"
->
+<div id="menuOverlay" class="overlay">
 
   <div class="menu-card">
 
@@ -2096,46 +1401,39 @@ button{
         VOM Menu
       </h3>
 
-      <button
-        class="close"
-        onclick="closeMenu()"
-      >
+      <button class="close" onclick="closeMenu()">
         ✕
       </button>
 
     </div>
 
-
     <a href="/info/">
-      INFO
-      <span>→</span>
+      INFO <span>→</span>
     </a>
 
     <a href="/calendar/">
-      CALENDAR
-      <span>→</span>
+      CALENDAR <span>→</span>
     </a>
 
     <a href="/live/">
-      VOM LIVE
-      <span>→</span>
+      VOM LIVE <span>→</span>
     </a>
 
     <a href="/busking/">
-      BUSKING
-      <span>→</span>
+      BUSKING <span>→</span>
     </a>
 
     <a href="/notice/">
-      NOTICE
-      <span>→</span>
+      NOTICE <span>→</span>
     </a>
 
     <a href="/qna/">
-      Q&A
-      <span>→</span>
+      Q&A <span>→</span>
     </a>
 
+    <a href="/members/" class="members-menu">
+      MEMBERS <span>→</span>
+    </a>
 
     <button
       id="adminLoginButton"
@@ -2145,7 +1443,6 @@ button{
       관리자 모드
       <span>→</span>
     </button>
-
 
     <button
       id="logoutButton"
@@ -2161,14 +1458,9 @@ button{
 </div>
 
 
-<!-- =====================================================
-     LOGIN
-===================================================== -->
+<!-- LOGIN -->
 
-<div
-  id="loginOverlay"
-  class="overlay"
->
+<div id="loginOverlay" class="overlay">
 
   <div class="login-card">
 
@@ -2178,24 +1470,17 @@ button{
         Admin Mode
       </h3>
 
-      <button
-        class="close"
-        onclick="closeAdminLogin()"
-      >
+      <button class="close" onclick="closeAdminLogin()">
         ✕
       </button>
 
     </div>
 
-
     <div class="login-copy">
       VOM 운영진 전용입니다.
     </div>
 
-
-    <label>
-      이메일
-    </label>
+    <label>이메일</label>
 
     <input
       id="adminEmail"
@@ -2204,23 +1489,15 @@ button{
       placeholder="운영진 이메일"
     >
 
-
-    <label>
-      비밀번호
-    </label>
+    <label>비밀번호</label>
 
     <input
       id="adminPassword"
       type="password"
       autocomplete="current-password"
       placeholder="비밀번호"
-      onkeydown="
-        if(event.key === 'Enter'){
-          adminLogin();
-        }
-      "
+      onkeydown="if(event.key==='Enter'){adminLogin();}"
     >
-
 
     <button
       id="loginSubmit"
@@ -2230,27 +1507,18 @@ button{
       관리자 모드 시작
     </button>
 
-
-    <div
-      id="loginMessage"
-      class="login-message"
-    ></div>
+    <div id="loginMessage" class="login-message"></div>
 
   </div>
 
 </div>
 
 
-<!-- =====================================================
-     BOTTOM
-===================================================== -->
+<!-- BOTTOM -->
 
 <nav class="bottom">
 
-  <a
-    href="/"
-    class="active"
-  >
+  <a href="/" class="active">
     <span class="nav-icon">⌂</span>
     HOME
   </a>
@@ -2291,13 +1559,10 @@ const db =
     SUPABASE_KEY
   );
 
-
 let locations = [];
 
 
-/* =====================================================
-   START
-===================================================== */
+/* START */
 
 async function start(){
 
@@ -2308,381 +1573,207 @@ async function start(){
     loadPointRanking(),
     loadHomeEvents()
   ]);
+
 }
 
 
-/* =====================================================
-   EAR SHARE
-===================================================== */
+/* EAR SHARE */
 
 async function loadEarShare(){
 
   const box =
-    document
-      .getElementById(
-        'earHall'
-      );
-
+    document.getElementById('earHall');
 
   const {
     data,
     error
   } =
     await db
-      .from(
-        'ear_share_hall_of_fame'
-      )
+      .from('ear_share_hall_of_fame')
       .select('*')
-      .order(
-        'rank',
-        {
-          ascending:true
-        }
-      )
-      .order(
-        'ear_share_percent',
-        {
-          ascending:false
-        }
-      );
-
+      .order('rank',{ascending:true})
+      .order('ear_share_percent',{ascending:false});
 
   if(error){
 
-    console.error(
-      'EAR SHARE:',
-      error
-    );
-
+    console.error('EAR SHARE:',error);
 
     box.innerHTML =
-    `
-      <div class="hall-empty">
-
-        아직 귀점유율 기록을 불러올 수 없습니다.<br>
-        VOM LIVE 결과가 등록되면 자동으로 표시됩니다.
-
-      </div>
-    `;
+      `<div class="rank-empty">
+        아직 귀점유율 기록이 없습니다.
+      </div>`;
 
     return;
   }
 
-
   const list =
     (data || [])
-      .filter(
-        row =>
-          Number(row.rank) <= 3
-      );
-
+      .filter(row => Number(row.rank) <= 3);
 
   if(!list.length){
 
     box.innerHTML =
-    `
-      <div class="hall-empty">
-
-        아직 귀점유율 기록이 없습니다.<br>
-        첫 VOM LIVE 결과를 기다리고 있어요.
-
-      </div>
-    `;
+      `<div class="rank-empty">
+        아직 귀점유율 기록이 없습니다.
+      </div>`;
 
     return;
   }
 
-
   box.innerHTML =
-    list
-      .map(
-        createEarCard
-      )
-      .join('');
+    list.map(createEarRow).join('');
+
 }
 
 
-function createEarCard(row){
+function createEarRow(row){
 
   const rank =
-    Number(
-      row.rank
-    );
-
+    Number(row.rank);
 
   const percent =
-    Number(
-      row.ear_share_percent || 0
-    )
-    .toFixed(1);
-
+    Number(row.ear_share_percent || 0)
+      .toFixed(1);
 
   return `
     <a
-      href="/live/?id=${row.event_id}"
-      class="hall-card rank-${rank}"
+      href="/live/?id=${row.event_id || ''}"
+      class="rank-row rank-${rank}"
     >
 
-      <div class="hall-rank">
-
-        ${
-          rank === 1
-          ? '🥇'
-          : rank === 2
-          ? '🥈'
-          : '🥉'
-        }
-
+      <div class="rank-number">
         ${rank}
-
       </div>
-
 
       <div>
 
-        <div class="hall-name">
-
-          ${escapeHtml(
-            row.name
-          )}
-
+        <div class="rank-name">
+          ${escapeHtml(row.name)}
         </div>
 
-        <div class="hall-sub">
-
-          ${Number(row.votes || 0)}표
-
-          /
-
+        <div class="rank-detail">
+          ${Number(row.votes || 0)}표 ·
           ${Number(row.participant_count || 0)}명
-
         </div>
 
       </div>
 
-
-      <div class="hall-score">
-
-        ${percent}
-
-        <small>
-          %
-        </small>
-
+      <div class="rank-score">
+        ${percent}<small>%</small>
       </div>
 
     </a>
   `;
+
 }
 
 
-/* =====================================================
-   POINT RANKING
-===================================================== */
+/* POINT */
 
 async function loadPointRanking(){
 
   const box =
-    document
-      .getElementById(
-        'pointHall'
-      );
-
+    document.getElementById('pointHall');
 
   const {
     data,
     error
   } =
     await db
-      .from(
-        'live_point_hall_of_fame'
-      )
+      .from('live_point_hall_of_fame')
       .select('*')
-      .order(
-        'rank',
-        {
-          ascending:true
-        }
-      )
-      .order(
-        'total_points',
-        {
-          ascending:false
-        }
-      );
-
+      .order('rank',{ascending:true})
+      .order('total_points',{ascending:false});
 
   if(error){
 
-    console.error(
-      'POINT:',
-      error
-    );
-
+    console.error('POINT:',error);
 
     box.innerHTML =
-    `
-      <div class="hall-empty">
-
-        아직 VOM POINT를 불러올 수 없습니다.<br>
-        VOM LIVE 참석 기록이 생기면 자동으로 계산됩니다.
-
-      </div>
-    `;
+      `<div class="rank-empty">
+        아직 VOM POINT 기록이 없습니다.
+      </div>`;
 
     return;
   }
 
-
   const list =
     (data || [])
-      .filter(
-        row =>
-          Number(row.rank) <= 3
-      );
-
+      .filter(row => Number(row.rank) <= 3);
 
   if(!list.length){
 
     box.innerHTML =
-    `
-      <div class="hall-empty">
-
-        아직 VOM POINT 기록이 없습니다.<br>
-        VOM LIVE 참석 기록을 기다리고 있어요.
-
-      </div>
-    `;
+      `<div class="rank-empty">
+        아직 VOM POINT 기록이 없습니다.
+      </div>`;
 
     return;
   }
 
-
   box.innerHTML =
-    list
-      .map(
-        createPointCard
-      )
-      .join('');
+    list.map(createPointRow).join('');
+
 }
 
 
-function createPointCard(row){
+function createPointRow(row){
 
   const rank =
-    Number(
-      row.rank
-    );
-
+    Number(row.rank);
 
   const attendance =
-    Number(
-      row.attendance_count || 0
-    );
-
+    Number(row.attendance_count || 0);
 
   const first =
-    Number(
-      row.first_place_count || 0
-    );
+    Number(row.first_place_count || 0);
 
-
-  const second =
-    Number(
-      row.second_place_count || 0
-    );
-
-
-  const third =
-    Number(
-      row.third_place_count || 0
-    );
-
-
-  let record = `참석 ${attendance}회`;
-
+  let detail =
+    `참석 ${attendance}회`;
 
   if(first){
-    record += ` · 1위 ${first}회`;
+    detail += ` · 1위 ${first}회`;
   }
-
-
-  if(second){
-    record += ` · 2위 ${second}회`;
-  }
-
-
-  if(third){
-    record += ` · 3위 ${third}회`;
-  }
-
 
   return `
     <a
       href="/live/"
-      class="hall-card rank-${rank}"
+      class="rank-row rank-${rank}"
     >
 
-      <div class="hall-rank">
-
-        ${
-          rank === 1
-          ? '🥇'
-          : rank === 2
-          ? '🥈'
-          : '🥉'
-        }
-
+      <div class="rank-number">
         ${rank}
-
       </div>
-
 
       <div>
 
-        <div class="hall-name">
-
-          ${escapeHtml(
-            row.name
-          )}
-
+        <div class="rank-name">
+          ${escapeHtml(row.name)}
         </div>
 
-        <div class="hall-sub">
-
-          ${escapeHtml(record)}
-
+        <div class="rank-detail">
+          ${escapeHtml(detail)}
         </div>
 
       </div>
 
-
-      <div class="hall-score">
-
-        ${Number(
-          row.total_points || 0
-        )}
-
-        <small>
-          P
-        </small>
-
+      <div class="rank-score">
+        ${Number(row.total_points || 0)}
+        <small>P</small>
       </div>
 
     </a>
   `;
+
 }
 
 
-/* =====================================================
-   EVENTS
-===================================================== */
+/* EVENTS */
 
 async function loadHomeEvents(){
 
   const today =
     todayString();
-
 
   const {
     data:locationData
@@ -2691,10 +1782,8 @@ async function loadHomeEvents(){
       .from('locations')
       .select('*');
 
-
   locations =
     locationData || [];
-
 
   const {
     data,
@@ -2703,133 +1792,81 @@ async function loadHomeEvents(){
     await db
       .from('events')
       .select('*')
-      .gte(
-        'event_date',
-        today
-      )
-      .order(
-        'event_date',
-        {
-          ascending:true
-        }
-      )
+      .gte('event_date',today)
+      .order('event_date',{ascending:true})
       .limit(12);
-
 
   if(error){
 
-    console.error(
-      'EVENT:',
-      error
-    );
+    console.error('EVENT:',error);
 
-
-    renderNextLive(
-      null
-    );
-
-
-    renderUpcoming(
-      []
-    );
-
+    renderNextLive(null);
+    renderUpcoming([]);
 
     return;
   }
-
 
   const list =
     data || [];
 
-
   const nextLive =
     list.find(
       row =>
-        row.event_type ===
-        'VOM LIVE'
+        row.event_type === 'VOM LIVE'
     );
 
-
-  renderNextLive(
-    nextLive
-  );
-
+  renderNextLive(nextLive);
 
   renderUpcoming(
-    list.slice(
-      0,
-      4
-    )
+    list.slice(0,4)
   );
+
 }
 
 
-/* =====================================================
-   NEXT LIVE
-===================================================== */
+/* NEXT LIVE */
 
 function renderNextLive(row){
 
   const box =
-    document
-      .getElementById(
-        'nextLive'
-      );
-
+    document.getElementById('nextLive');
 
   if(!row){
 
     box.innerHTML =
-    `
-      <div class="next-empty">
-
+      `<div class="next-empty">
         예정된 VOM LIVE가 없습니다.<br>
         CALENDAR에서 새 일정을 등록해주세요.
-
-      </div>
-    `;
+      </div>`;
 
     return;
   }
 
-
   const date =
-    parseDate(
-      row.event_date
-    );
-
+    parseDate(row.event_date);
 
   const location =
-    getLocation(
-      row
-    );
-
+    getLocation(row);
 
   const image =
     row.image_url ||
     location?.image_url ||
     '';
 
-
   box.innerHTML =
   `
     ${
       image
-
       ? `
         <div class="next-bg">
-
           <img
             src="${escapeAttribute(image)}"
             alt=""
           >
-
         </div>
       `
-
       : ''
     }
-
 
     <div class="next-content">
 
@@ -2840,19 +1877,14 @@ function renderNextLive(row){
         </span>
 
         <span class="dday">
-
-          ${calculateDday(
-            row.event_date
-          )}
-
+          ${calculateDday(row.event_date)}
         </span>
 
       </div>
 
-
       <div class="next-date">
 
-        ${date.getMonth() + 1}.${date.getDate()}
+        ${date.getMonth()+1}.${date.getDate()}
 
         <small>
           ${weekEnglish(date)}
@@ -2860,19 +1892,11 @@ function renderNextLive(row){
 
       </div>
 
-
       <div class="divider"></div>
 
-
       <h3>
-
-        ${escapeHtml(
-          row.title ||
-          'VOM LIVE'
-        )}
-
+        ${escapeHtml(row.title || 'VOM LIVE')}
       </h3>
-
 
       <div class="next-meta">
 
@@ -2888,52 +1912,36 @@ function renderNextLive(row){
 
       </div>
 
-
       <a
         href="/event/?id=${row.id}"
         class="next-link"
       >
-
-        <span>
-          자세히 보기
-        </span>
-
-        <span>
-          →
-        </span>
-
+        <span>자세히 보기</span>
+        <span>→</span>
       </a>
 
     </div>
   `;
+
 }
 
 
-/* =====================================================
-   UPCOMING
-===================================================== */
+/* UPCOMING */
 
 function renderUpcoming(list){
 
   const box =
-    document
-      .getElementById(
-        'upcomingEvents'
-      );
-
+    document.getElementById('upcomingEvents');
 
   if(!list.length){
 
     box.innerHTML =
-    `
-      <div class="events-empty">
+      `<div class="events-empty">
         예정된 일정이 없습니다.
-      </div>
-    `;
+      </div>`;
 
     return;
   }
-
 
   box.innerHTML =
     list
@@ -2945,31 +1953,22 @@ function renderUpcoming(list){
           )
       )
       .join('');
+
 }
 
 
-function createUpcomingCard(
-  row,
-  featured
-){
+function createUpcomingCard(row,featured){
 
   const date =
-    parseDate(
-      row.event_date
-    );
-
+    parseDate(row.event_date);
 
   const location =
-    getLocation(
-      row
-    );
-
+    getLocation(row);
 
   const image =
     row.image_url ||
     location?.image_url ||
     '';
-
 
   return `
     <a
@@ -2979,62 +1978,38 @@ function createUpcomingCard(
 
       ${
         image
-
         ? `
           <div class="event-image">
-
             <img
               src="${escapeAttribute(image)}"
               alt=""
             >
-
           </div>
         `
-
         : ''
       }
 
-
       <div class="event-type">
-
         ${
           featured
-
           ? 'NEXT'
-
-          : escapeHtml(
-              row.event_type ||
-              'OTHER'
-            )
+          : escapeHtml(row.event_type || 'OTHER')
         }
-
       </div>
-
 
       <div class="event-date">
 
-        ${date.getMonth() + 1}.${String(
-          date.getDate()
-        ).padStart(2,'0')}
+        ${date.getMonth()+1}.${String(date.getDate()).padStart(2,'0')}
 
         <small>
-
           (${weekKorean(date)})
-
         </small>
 
       </div>
 
-
       <div class="event-name">
-
-        ${escapeHtml(
-          row.title ||
-          ''
-        )}
-
+        ${escapeHtml(row.title || '')}
       </div>
-
 
       <div class="event-meta">
 
@@ -3050,19 +2025,17 @@ function createUpcomingCard(
 
       </div>
 
-
       <div class="event-arrow">
         →
       </div>
 
     </a>
   `;
+
 }
 
 
-/* =====================================================
-   ADMIN
-===================================================== */
+/* ADMIN */
 
 async function restoreAdmin(){
 
@@ -3071,18 +2044,15 @@ async function restoreAdmin(){
   } =
     await db.auth.getSession();
 
-
   const session =
     data.session;
-
 
   if(!session){
 
     setAdminUI(false);
-
     return;
-  }
 
+  }
 
   const {
     data:admin
@@ -3090,12 +2060,8 @@ async function restoreAdmin(){
     await db
       .from('admins')
       .select('user_id')
-      .eq(
-        'user_id',
-        session.user.id
-      )
+      .eq('user_id',session.user.id)
       .maybeSingle();
-
 
   if(admin){
 
@@ -3106,42 +2072,29 @@ async function restoreAdmin(){
     await db.auth.signOut();
 
     setAdminUI(false);
+
   }
+
 }
 
 
 function setAdminUI(active){
 
   document
-    .getElementById(
-      'adminBadge'
-    )
+    .getElementById('adminBadge')
     .classList
-    .toggle(
-      'show',
-      active
-    );
-
+    .toggle('show',active);
 
   document
-    .getElementById(
-      'adminLoginButton'
-    )
+    .getElementById('adminLoginButton')
     .style.display =
-      active
-      ? 'none'
-      : 'flex';
-
+      active ? 'none' : 'flex';
 
   document
-    .getElementById(
-      'logoutButton'
-    )
+    .getElementById('logoutButton')
     .classList
-    .toggle(
-      'show',
-      active
-    );
+    .toggle('show',active);
+
 }
 
 
@@ -3149,34 +2102,20 @@ async function adminLogin(){
 
   const email =
     document
-      .getElementById(
-        'adminEmail'
-      )
+      .getElementById('adminEmail')
       .value
       .trim();
 
-
   const password =
     document
-      .getElementById(
-        'adminPassword'
-      )
+      .getElementById('adminPassword')
       .value;
 
-
   const message =
-    document
-      .getElementById(
-        'loginMessage'
-      );
-
+    document.getElementById('loginMessage');
 
   const button =
-    document
-      .getElementById(
-        'loginSubmit'
-      );
-
+    document.getElementById('loginSubmit');
 
   if(!email || !password){
 
@@ -3184,16 +2123,11 @@ async function adminLogin(){
       '이메일과 비밀번호를 입력해주세요.';
 
     return;
+
   }
 
-
-  button.disabled =
-    true;
-
-
-  button.textContent =
-    '확인 중...';
-
+  button.disabled = true;
+  button.textContent = '확인 중...';
 
   const {
     data,
@@ -3204,24 +2138,17 @@ async function adminLogin(){
       password
     });
 
-
   if(error){
 
     message.textContent =
       '이메일 또는 비밀번호를 확인해주세요.';
 
-
-    button.disabled =
-      false;
-
-
-    button.textContent =
-      '관리자 모드 시작';
-
+    button.disabled = false;
+    button.textContent = '관리자 모드 시작';
 
     return;
-  }
 
+  }
 
   const {
     data:admin
@@ -3229,53 +2156,34 @@ async function adminLogin(){
     await db
       .from('admins')
       .select('user_id')
-      .eq(
-        'user_id',
-        data.user.id
-      )
+      .eq('user_id',data.user.id)
       .maybeSingle();
-
 
   if(!admin){
 
     await db.auth.signOut();
 
-
     message.textContent =
       '관리자 권한이 없는 계정입니다.';
 
-
-    button.disabled =
-      false;
-
-
-    button.textContent =
-      '관리자 모드 시작';
-
+    button.disabled = false;
+    button.textContent = '관리자 모드 시작';
 
     return;
+
   }
 
-
-  button.disabled =
-    false;
-
-
-  button.textContent =
-    '관리자 모드 시작';
-
+  button.disabled = false;
+  button.textContent = '관리자 모드 시작';
 
   document
-    .getElementById(
-      'adminPassword'
-    )
+    .getElementById('adminPassword')
     .value = '';
-
 
   setAdminUI(true);
 
-
   closeAdminLogin();
+
 }
 
 
@@ -3283,17 +2191,14 @@ async function adminLogout(){
 
   await db.auth.signOut();
 
-
   setAdminUI(false);
 
-
   closeMenu();
+
 }
 
 
-/* =====================================================
-   HELPERS
-===================================================== */
+/* HELPERS */
 
 function getLocation(row){
 
@@ -3302,6 +2207,7 @@ function getLocation(row){
       String(location.id) ===
       String(row.location_id)
   );
+
 }
 
 
@@ -3309,26 +2215,16 @@ function makeTime(row){
 
   const times = [];
 
-
   if(row.start_time){
-
-    times.push(
-      row.start_time.slice(0,5)
-    );
+    times.push(row.start_time.slice(0,5));
   }
-
 
   if(row.end_time){
-
-    times.push(
-      row.end_time.slice(0,5)
-    );
+    times.push(row.end_time.slice(0,5));
   }
 
+  return times.join(' - ');
 
-  return times.join(
-    ' - '
-  );
 }
 
 
@@ -3337,28 +2233,21 @@ function todayString(){
   const now =
     new Date();
 
-
   return [
     now.getFullYear(),
-
-    String(
-      now.getMonth() + 1
-    ).padStart(2,'0'),
-
-    String(
-      now.getDate()
-    ).padStart(2,'0')
-
+    String(now.getMonth()+1).padStart(2,'0'),
+    String(now.getDate()).padStart(2,'0')
   ].join('-');
+
 }
 
 
 function parseDate(value){
 
   return new Date(
-    value +
-    'T00:00:00'
+    value + 'T00:00:00'
   );
+
 }
 
 
@@ -3367,89 +2256,60 @@ function calculateDday(value){
   const today =
     new Date();
 
-
-  today.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
+  today.setHours(0,0,0,0);
 
   const target =
-    parseDate(
-      value
-    );
-
+    parseDate(value);
 
   const diff =
     Math.round(
-      (
-        target -
-        today
-      )
-      /
+      (target - today) /
       86400000
     );
-
 
   if(diff === 0){
     return 'D-DAY';
   }
 
-
   if(diff > 0){
     return `D-${diff}`;
   }
 
-
   return `D+${Math.abs(diff)}`;
+
 }
 
 
 function weekEnglish(date){
 
   return [
-    'SUN',
-    'MON',
-    'TUE',
-    'WED',
-    'THU',
-    'FRI',
-    'SAT'
+    'SUN','MON','TUE','WED',
+    'THU','FRI','SAT'
   ][date.getDay()];
+
 }
 
 
 function weekKorean(date){
 
   return [
-    '일',
-    '월',
-    '화',
-    '수',
-    '목',
-    '금',
-    '토'
+    '일','월','화','수',
+    '목','금','토'
   ][date.getDay()];
+
 }
 
 
 function escapeHtml(value){
 
   const div =
-    document.createElement(
-      'div'
-    );
-
+    document.createElement('div');
 
   div.textContent =
-    String(
-      value ?? ''
-    );
-
+    String(value ?? '');
 
   return div.innerHTML;
+
 }
 
 
@@ -3460,32 +2320,29 @@ function escapeAttribute(value){
     .replace(/"/g,'&quot;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;');
+
 }
 
 
-/* =====================================================
-   MENU
-===================================================== */
+/* MENU */
 
 function openMenu(){
 
   document
-    .getElementById(
-      'menuOverlay'
-    )
+    .getElementById('menuOverlay')
     .classList
     .add('open');
+
 }
 
 
 function closeMenu(){
 
   document
-    .getElementById(
-      'menuOverlay'
-    )
+    .getElementById('menuOverlay')
     .classList
     .remove('open');
+
 }
 
 
@@ -3493,38 +2350,30 @@ function openAdminLogin(){
 
   closeMenu();
 
-
   document
-    .getElementById(
-      'loginOverlay'
-    )
+    .getElementById('loginOverlay')
     .classList
     .add('open');
+
 }
 
 
 function closeAdminLogin(){
 
   document
-    .getElementById(
-      'loginOverlay'
-    )
+    .getElementById('loginOverlay')
     .classList
     .remove('open');
 
-
   document
-    .getElementById(
-      'loginMessage'
-    )
+    .getElementById('loginMessage')
     .textContent = '';
+
 }
 
 
 document
-  .getElementById(
-    'menuOverlay'
-  )
+  .getElementById('menuOverlay')
   .addEventListener(
     'click',
     function(event){
@@ -3538,9 +2387,7 @@ document
 
 
 document
-  .getElementById(
-    'loginOverlay'
-  )
+  .getElementById('loginOverlay')
   .addEventListener(
     'click',
     function(event){
