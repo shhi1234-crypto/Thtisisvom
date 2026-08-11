@@ -1800,23 +1800,26 @@ button{
 }
 
 /* ======================================================
-   VIEW SWITCH / MONTH CALENDAR
+   LIST / MONTH VIEW
 ====================================================== */
+
 .calendar-viewbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  margin:0 0 16px;
+  margin-bottom:16px;
 }
+
 .view-switch{
   display:flex;
   gap:7px;
 }
+
 .view-switch button{
-  min-height:38px;
-  padding:0 14px;
-  border:1px solid rgba(255,255,255,.95);
+  min-height:39px;
+  padding:0 15px;
+  border:1px solid rgba(255,255,255,.94);
   border-radius:999px;
   background:rgba(255,255,255,.74);
   color:#74798b;
@@ -1824,116 +1827,135 @@ button{
   font-size:10px;
   font-weight:800;
 }
+
 .view-switch button.active{
   color:#fff;
   border-color:transparent;
-  background:linear-gradient(135deg,#836be9,#758bed);
+  background:linear-gradient(135deg,#846be9,#7586eb);
 }
+
 .month-nav{
   display:none;
   align-items:center;
   gap:8px;
 }
-.month-nav.show{display:flex}
+
+.month-nav.show{
+  display:flex;
+}
+
 .month-nav button{
-  width:37px;
-  height:37px;
-  border:1px solid rgba(255,255,255,.95);
+  width:38px;
+  height:38px;
+  border:1px solid rgba(255,255,255,.94);
   border-radius:50%;
   background:rgba(255,255,255,.78);
   cursor:pointer;
   font-size:18px;
 }
+
 .month-nav strong{
-  min-width:120px;
+  min-width:125px;
   text-align:center;
   font-family:"Nanum Pen Script",cursive;
-  font-size:25px;
+  font-size:26px;
   font-weight:400;
 }
 
-.month-calendar{
+.real-calendar{
   padding:20px;
   border-radius:27px;
-  background:rgba(255,255,255,.78);
-  border:1px solid rgba(255,255,255,.94);
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(255,255,255,.92);
   box-shadow:var(--shadow);
   backdrop-filter:blur(20px);
 }
-.week-row,
+
+.week-head,
 .calendar-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
 }
-.week-row{
+
+.week-head{
   margin-bottom:5px;
 }
-.week-row div{
+
+.week-head div{
   padding:7px 2px;
-  color:#9397a6;
   text-align:center;
+  color:#9599a8;
   font-size:10px;
   font-weight:800;
 }
-.week-row div:first-child{color:#d16a7e}
-.week-row div:last-child{color:#6f7fd6}
+
+.week-head div:first-child{color:#cf667b}
+.week-head div:last-child{color:#6f7ed5}
 
 .calendar-day{
   position:relative;
   min-height:92px;
   padding:8px;
-  border:1px solid rgba(37,42,71,.055);
-  background:rgba(255,255,255,.62);
+  border:1px solid rgba(32,37,67,.055);
+  background:rgba(255,255,255,.64);
+  text-align:left;
   cursor:pointer;
 }
-.calendar-day:nth-child(7n+1){border-radius:10px 0 0 10px}
-.calendar-day:nth-child(7n){border-radius:0 10px 10px 0}
+
 .calendar-day.outside{
-  color:#bdc0cb;
-  background:rgba(246,246,249,.50);
+  color:#bec1cc;
+  background:rgba(246,246,249,.48);
 }
+
 .calendar-day.today{
-  box-shadow:inset 0 0 0 2px rgba(121,103,226,.38);
+  box-shadow:inset 0 0 0 2px rgba(124,105,229,.34);
 }
+
 .calendar-day.selected{
-  background:linear-gradient(145deg,rgba(238,234,255,.92),rgba(232,244,255,.88));
+  background:linear-gradient(145deg,rgba(239,235,255,.94),rgba(232,244,255,.90));
   box-shadow:inset 0 0 0 2px #816be8;
 }
+
 .day-number{
   font-size:11px;
   font-weight:800;
 }
+
 .day-events{
   display:grid;
   gap:4px;
   margin-top:6px;
 }
+
 .day-event{
   overflow:hidden;
   padding:4px 6px;
   border-radius:7px;
+  color:#6556bb;
+  background:#efecff;
   text-overflow:ellipsis;
   white-space:nowrap;
-  color:#6154b9;
-  background:#efecff;
   font-size:8px;
   font-weight:800;
 }
+
 .day-event.live{
   color:#fff;
   background:linear-gradient(135deg,#8069e8,#7791eb);
 }
+
 .day-event.busking{
-  color:#406b83;
-  background:#e7f4fb;
+  color:#407383;
+  background:#e5f3f8;
 }
+
 .day-more{
-  color:#898e9e;
+  color:#8d91a0;
   font-size:8px;
   font-weight:700;
 }
 
-.selected-day-panel{
+.selected-date-box{
   margin-top:13px;
   padding:18px;
   border-radius:20px;
@@ -1941,29 +1963,34 @@ button{
   border:1px solid rgba(255,255,255,.95);
   box-shadow:0 10px 28px rgba(31,37,74,.05);
 }
-.selected-day-head{
+
+.selected-date-head{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
+  gap:10px;
   margin-bottom:10px;
 }
-.selected-day-head h3{
+
+.selected-date-head h3{
   margin:0;
   font-family:"Nanum Pen Script",cursive;
-  font-size:28px;
+  font-size:29px;
   font-weight:400;
 }
-.selected-day-head span{
-  color:#888d9d;
+
+.selected-date-head span{
+  color:#8b8f9e;
   font-size:9px;
   font-weight:800;
 }
-.selected-day-list{
+
+.selected-date-list{
   display:grid;
   gap:8px;
 }
-.selected-day-item{
+
+.selected-date-event{
   display:grid;
   grid-template-columns:72px minmax(0,1fr) auto;
   align-items:center;
@@ -1973,42 +2000,49 @@ button{
   background:#f7f6fb;
   cursor:pointer;
 }
-.selected-day-type{
+
+.selected-date-type{
   color:#7561dc;
   font-size:9px;
   font-weight:800;
 }
-.selected-day-name{
+
+.selected-date-title{
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
   font-size:11px;
   font-weight:800;
 }
-.selected-day-time{
+
+.selected-date-time{
   color:#818697;
   font-size:9px;
   white-space:nowrap;
 }
 
 @media(max-width:650px){
+
   .calendar-viewbar{
     align-items:flex-start;
     flex-direction:column;
   }
+
   .calendar-day{
     min-height:72px;
     padding:5px;
   }
-  .day-number{font-size:10px}
+
   .day-event{
     padding:3px 4px;
     font-size:7px;
   }
-  .selected-day-item{
+
+  .selected-date-event{
     grid-template-columns:58px minmax(0,1fr);
   }
-  .selected-day-time{
+
+  .selected-date-time{
     grid-column:2;
   }
 }
@@ -2132,20 +2166,40 @@ button{
 
 
   <section class="calendar-viewbar">
+
     <div class="view-switch">
-      <button id="listViewButton" class="active" onclick="setCalendarView('LIST')">
+
+      <button
+        id="listViewButton"
+        class="active"
+        onclick="setCalendarView('LIST')"
+      >
         목록 보기
       </button>
-      <button id="monthViewButton" onclick="setCalendarView('MONTH')">
+
+      <button
+        id="monthViewButton"
+        onclick="setCalendarView('MONTH')"
+      >
         달력 보기
       </button>
+
     </div>
 
     <div id="monthNav" class="month-nav">
-      <button onclick="moveCalendarMonth(-1)" aria-label="이전 달">‹</button>
+
+      <button onclick="moveCalendarMonth(-1)">
+        ‹
+      </button>
+
       <strong id="monthNavTitle"></strong>
-      <button onclick="moveCalendarMonth(1)" aria-label="다음 달">›</button>
+
+      <button onclick="moveCalendarMonth(1)">
+        ›
+      </button>
+
     </div>
+
   </section>
 
   <div id="calendarContainer">
@@ -2635,12 +2689,12 @@ let currentFilter = 'ALL';
 
 let calendarView = 'LIST';
 
-const nowForCalendar = new Date();
+const calendarNow = new Date();
 
-let calendarYear = nowForCalendar.getFullYear();
-let calendarMonth = nowForCalendar.getMonth();
+let calendarYear = calendarNow.getFullYear();
+let calendarMonth = calendarNow.getMonth();
 
-let selectedCalendarDate = todayString();
+let selectedCalendarDate = calendarDateString(calendarNow);
 
 let currentEventType =
   'VOM LIVE';
@@ -2711,7 +2765,7 @@ function setAdmin(active){
     .toggle('show',active);
 
 
-  renderCurrentView();
+  renderCalendar();
 }
 
 
@@ -2830,7 +2884,7 @@ async function loadEvents(){
     data || [];
 
 
-  renderCurrentView();
+  renderCalendarView();
 }
 
 
@@ -2939,43 +2993,56 @@ function setFilter(
     .add('active');
 
 
-  renderCurrentView();
+  renderCalendarView();
 }
 
 
 
 /* ======================================================
-   VIEW MODE
+   CALENDAR VIEW MODE
 ====================================================== */
 
 function setCalendarView(view){
 
   calendarView = view;
 
+
   document
     .getElementById('listViewButton')
     .classList
-    .toggle('active',view === 'LIST');
+    .toggle(
+      'active',
+      view === 'LIST'
+    );
+
 
   document
     .getElementById('monthViewButton')
     .classList
-    .toggle('active',view === 'MONTH');
+    .toggle(
+      'active',
+      view === 'MONTH'
+    );
+
 
   document
     .getElementById('monthNav')
     .classList
-    .toggle('show',view === 'MONTH');
+    .toggle(
+      'show',
+      view === 'MONTH'
+    );
 
-  renderCurrentView();
+
+  renderCalendarView();
 }
 
 
-function renderCurrentView(){
+function renderCalendarView(){
 
   if(calendarView === 'MONTH'){
 
-    renderMonthCalendar();
+    renderRealCalendar();
 
   }else{
 
@@ -2984,9 +3051,24 @@ function renderCurrentView(){
 }
 
 
-function moveCalendarMonth(delta){
+function getFilteredCalendarEvents(){
 
-  calendarMonth += delta;
+  return currentFilter === 'ALL'
+
+    ? events
+
+    : events.filter(
+        item =>
+          item.event_type ===
+          currentFilter
+      );
+}
+
+
+function moveCalendarMonth(direction){
+
+  calendarMonth += direction;
+
 
   if(calendarMonth < 0){
 
@@ -3003,45 +3085,31 @@ function moveCalendarMonth(delta){
   selectedCalendarDate =
     `${calendarYear}-${String(calendarMonth + 1).padStart(2,'0')}-01`;
 
-  renderMonthCalendar();
+
+  renderRealCalendar();
 }
 
 
-function filteredEvents(){
-
-  return currentFilter === 'ALL'
-
-    ? events
-
-    : events.filter(
-        item =>
-          item.event_type ===
-          currentFilter
-      );
-}
-
-
-function renderMonthCalendar(){
+function renderRealCalendar(){
 
   const container =
-    document.getElementById('calendarContainer');
+    document
+      .getElementById(
+        'calendarContainer'
+      );
 
 
   const filtered =
-    filteredEvents();
-
-
-  const title =
-    `${calendarYear}.${String(calendarMonth + 1).padStart(2,'0')}`;
+    getFilteredCalendarEvents();
 
 
   document
     .getElementById('monthNavTitle')
     .textContent =
-    title;
+    `${calendarYear}.${String(calendarMonth + 1).padStart(2,'0')}`;
 
 
-  const first =
+  const firstDay =
     new Date(
       calendarYear,
       calendarMonth,
@@ -3049,36 +3117,44 @@ function renderMonthCalendar(){
     );
 
 
-  const gridStart =
+  const start =
     new Date(
       calendarYear,
       calendarMonth,
-      1 - first.getDay()
+      1 - firstDay.getDay()
     );
 
 
   const today =
-    todayString();
+    calendarDateString(
+      new Date()
+    );
 
 
-  const days = [];
+  const cells = [];
 
 
-  for(let i = 0; i < 42; i++){
+  for(
+    let index = 0;
+    index < 42;
+    index++
+  ){
 
     const date =
-      new Date(gridStart);
+      new Date(start);
+
 
     date.setDate(
-      gridStart.getDate() + i
+      start.getDate() +
+      index
     );
 
 
     const dateString =
-      localDateString(date);
+      calendarDateString(date);
 
 
-    const dayEvents =
+    const list =
       filtered.filter(
         item =>
           item.event_date ===
@@ -3091,14 +3167,18 @@ function renderMonthCalendar(){
       calendarMonth;
 
 
-    days.push(`
+    cells.push(`
       <button
-        class="calendar-day
+        class="
+          calendar-day
           ${outside ? 'outside' : ''}
           ${dateString === today ? 'today' : ''}
-          ${dateString === selectedCalendarDate ? 'selected' : ''}"
+          ${dateString === selectedCalendarDate ? 'selected' : ''}
+        "
         onclick="selectCalendarDate('${dateString}')"
+        type="button"
       >
+
         <div class="day-number">
           ${date.getDate()}
         </div>
@@ -3106,17 +3186,20 @@ function renderMonthCalendar(){
         <div class="day-events">
 
           ${
-            dayEvents
+            list
               .slice(0,2)
               .map(item => `
                 <div
-                  class="day-event ${
-                    item.event_type === 'VOM LIVE'
-                    ? 'live'
-                    : item.event_type === 'BUSKING'
-                    ? 'busking'
-                    : ''
-                  }"
+                  class="
+                    day-event
+                    ${
+                      item.event_type === 'VOM LIVE'
+                      ? 'live'
+                      : item.event_type === 'BUSKING'
+                      ? 'busking'
+                      : ''
+                    }
+                  "
                 >
                   ${escapeHtml(item.title || item.event_type || '일정')}
                 </div>
@@ -3125,21 +3208,26 @@ function renderMonthCalendar(){
           }
 
           ${
-            dayEvents.length > 2
-            ? `<div class="day-more">+${dayEvents.length - 2}개</div>`
+            list.length > 2
+            ? `
+              <div class="day-more">
+                +${list.length - 2}개
+              </div>
+            `
             : ''
           }
 
         </div>
+
       </button>
     `);
   }
 
 
   container.innerHTML = `
-    <section class="month-calendar">
+    <section class="real-calendar">
 
-      <div class="week-row">
+      <div class="week-head">
         <div>일</div>
         <div>월</div>
         <div>화</div>
@@ -3150,16 +3238,16 @@ function renderMonthCalendar(){
       </div>
 
       <div class="calendar-grid">
-        ${days.join('')}
+        ${cells.join('')}
       </div>
 
     </section>
 
-    <div id="selectedDayPanel"></div>
+    <div id="selectedDateArea"></div>
   `;
 
 
-  renderSelectedDay();
+  renderSelectedCalendarDate();
 }
 
 
@@ -3171,13 +3259,16 @@ function selectCalendarDate(dateString){
 
   const selected =
     new Date(
-      dateString + 'T00:00:00'
+      dateString +
+      'T00:00:00'
     );
 
 
   if(
-    selected.getFullYear() !== calendarYear ||
-    selected.getMonth() !== calendarMonth
+    selected.getFullYear() !==
+    calendarYear ||
+    selected.getMonth() !==
+    calendarMonth
   ){
 
     calendarYear =
@@ -3188,14 +3279,17 @@ function selectCalendarDate(dateString){
   }
 
 
-  renderMonthCalendar();
+  renderRealCalendar();
 }
 
 
-function renderSelectedDay(){
+function renderSelectedCalendarDate(){
 
   const box =
-    document.getElementById('selectedDayPanel');
+    document
+      .getElementById(
+        'selectedDateArea'
+      );
 
 
   if(!box){
@@ -3204,7 +3298,7 @@ function renderSelectedDay(){
 
 
   const list =
-    filteredEvents()
+    getFilteredCalendarEvents()
       .filter(
         item =>
           item.event_date ===
@@ -3219,17 +3313,14 @@ function renderSelectedDay(){
     );
 
 
-  const title =
-    `${date.getMonth() + 1}월 ${date.getDate()}일`;
-
-
   box.innerHTML = `
-    <section class="selected-day-panel">
+    <section class="selected-date-box">
 
-      <div class="selected-day-head">
+      <div class="selected-date-head">
 
         <h3>
-          ${title}
+          ${date.getMonth() + 1}월
+          ${date.getDate()}일
         </h3>
 
         <span>
@@ -3242,26 +3333,28 @@ function renderSelectedDay(){
         list.length
 
         ? `
-          <div class="selected-day-list">
+          <div class="selected-date-list">
 
             ${
               list
                 .map(item => `
                   <div
-                    class="selected-day-item"
+                    class="selected-date-event"
                     onclick="openEventDetail(${item.id})"
                   >
-                    <div class="selected-day-type">
+
+                    <div class="selected-date-type">
                       ${escapeHtml(item.event_type || 'OTHER')}
                     </div>
 
-                    <div class="selected-day-name">
+                    <div class="selected-date-title">
                       ${escapeHtml(item.title || '')}
                     </div>
 
-                    <div class="selected-day-time">
+                    <div class="selected-date-time">
                       ${escapeHtml(makeTime(item) || '시간 미정')}
                     </div>
+
                   </div>
                 `)
                 .join('')
@@ -3271,7 +3364,7 @@ function renderSelectedDay(){
         `
 
         : `
-          <div class="empty" style="padding:18px 6px;">
+          <div class="empty" style="padding:18px 5px;">
             이 날짜에는 등록된 일정이 없습니다.
           </div>
         `
@@ -3282,12 +3375,16 @@ function renderSelectedDay(){
 }
 
 
-function localDateString(date){
+function calendarDateString(date){
 
   return [
     date.getFullYear(),
-    String(date.getMonth() + 1).padStart(2,'0'),
-    String(date.getDate()).padStart(2,'0')
+    String(
+      date.getMonth() + 1
+    ).padStart(2,'0'),
+    String(
+      date.getDate()
+    ).padStart(2,'0')
   ].join('-');
 }
 
