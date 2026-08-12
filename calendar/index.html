@@ -2212,7 +2212,6 @@ button{
 
       <button
         id="listViewButton"
-        class="active"
         onclick="setCalendarView('LIST')"
       >
         목록 보기
@@ -2220,6 +2219,7 @@ button{
 
       <button
         id="monthViewButton"
+        class="active"
         onclick="setCalendarView('MONTH')"
       >
         달력 보기
@@ -2227,7 +2227,7 @@ button{
 
     </div>
 
-    <div id="monthNav" class="month-nav">
+    <div id="monthNav" class="month-nav show">
 
       <button onclick="moveCalendarMonth(-1)">
         ‹
@@ -2759,7 +2759,7 @@ let mediaLibrary = [];
 
 let currentFilter = 'ALL';
 
-let calendarView = 'LIST';
+let calendarView = 'MONTH';
 
 const calendarNow = new Date();
 
