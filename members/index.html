@@ -85,6 +85,9 @@ async function saveMember(){if(!adminMode)return;const id=memberId.value,b=fBirt
 
 function openMemberSongs(id){
   const m=members.find(x=>String(x.id)===String(id));if(!m)return;
+  if(role(m)==='운영진'&&!adminMode){
+    return;
+  }
   currentSongMember=m;memberSongsTitle.textContent=`${m.name} · Songs`;resetMemberSongForm();renderMemberSongs();memberSongsOverlay.classList.add('open')
 }
 function closeMemberSongs(){memberSongsOverlay.classList.remove('open');currentSongMember=null}
