@@ -10,7 +10,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+function syncAdminMenuUI(){
+ const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');
+ if(a)a.style.display=adminMode?'none':'block';
+ if(l)l.style.display=adminMode?'block':'none';
+}
+setTimeout(syncAdminMenuUI,0);
+</script>
 
 <style>
 :root{
@@ -808,10 +815,22 @@ textarea.field{
     <button id="logoutButton" class="logout" onclick="adminLogout()">
       관리자 모드 종료 <span style="float:right">→</span>
     </button>
-  </div>
+  
+<button id="adminLoginButton" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid rgba(28,34,65,.08);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
+<button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
+</div>
 </div>
 
 
+
+<div id="loginOverlay" class="overlay"><div class="menu-card" style="width:min(410px,100%)">
+<div class="modal-top"><h2 style="margin:0">Admin Mode</h2><button class="close" onclick="closeAdminLogin()">✕</button></div>
+<p style="color:#777d8f;font-size:11px">VOM 운영진 전용입니다.</p>
+<input id="adminEmail" type="email" placeholder="운영진 이메일" style="width:100%;height:46px;padding:0 12px;border:1px solid #dddde7;border-radius:12px">
+<input id="adminPassword" type="password" placeholder="비밀번호" style="width:100%;height:46px;margin-top:8px;padding:0 12px;border:1px solid #dddde7;border-radius:12px" onkeydown="if(event.key==='Enter')adminLogin()">
+<button onclick="adminLogin()" style="width:100%;height:47px;margin-top:12px;border:0;border-radius:13px;color:#fff;background:linear-gradient(135deg,#8268eb,#6f83ec);font-weight:700">관리자 모드 시작</button>
+<div id="loginMessage" style="min-height:18px;margin-top:9px;color:#d24f68;font-size:11px;text-align:center"></div>
+</div></div>
 <nav class="bottom">
   <a href="/">
     <span class="nav-icon">⌂</span>
@@ -877,7 +896,7 @@ async function checkAdmin(){
   setAdmin(!!admin);
 }
 
-function setAdmin(active){
+function setAdmin(active){ setTimeout(syncAdminMenuUI,0);
   adminMode=active;
 
   document
@@ -1549,6 +1568,19 @@ function closeDetail(){
 
 
 /* MENU */
+
+function openAdminLogin(){closeMenu();document.getElementById('loginOverlay').classList.add('open')}
+function closeAdminLogin(){document.getElementById('loginOverlay').classList.remove('open')}
+async function adminLogin(){
+ const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;
+ const msg=document.getElementById('loginMessage');msg.textContent='';
+ const {data,error}=await db.auth.signInWithPassword({email,password});
+ if(error){msg.textContent='로그인 정보를 확인해주세요.';return}
+ const {data:a}=await db.from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
+ if(!a){await db.auth.signOut();msg.textContent='관리자 권한이 없습니다.';return}
+ if(typeof setAdmin==='function')setAdmin(true);
+ closeAdminLogin();location.reload()
+}
 function openMenu(){
   document.getElementById('menuOverlay').classList.add('open');
 }
