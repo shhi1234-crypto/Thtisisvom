@@ -97,14 +97,14 @@ function renderDetail(id){
 function renderSetlistRows(){
   const box=document.getElementById('setlistRows'); if(!box)return;
   if(!setItems.length){box.innerHTML='<div class="empty">아직 등록된 셋리스트가 없습니다.</div>';return}
-  box.innerHTML=setItems.map((item,i)=>{const s=songById(item.repertoire_id);if(!s)return '';const duet=s.duet_name?` · duet ${esc(s.duet_name)}`:'';return `<div class="set-row"><div class="order">${i+1}</div><div><div class="song">${esc(s.song_title)} <span style="font-weight:500;color:#85899a">— ${esc(s.artist_name||'')}</span></div><div class="song-meta">${esc(s.vocalist_name)}${duet}</div></div><div class="song-actions">${s.youtube_url?`<a class="yt" href="${attr(s.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}<button class="icon-btn" onclick="moveItem(${item.id},-1)">↑</button><button class="icon-btn" onclick="moveItem(${item.id},1)">↓</button><button class="secondary" onclick="editSong(${s.id})">곡 수정</button><button class="danger" onclick="removeItem(${item.id})">삭제</button></div></div>`}).join('');
+  box.innerHTML=setItems.map((item,i)=>{const s=songById(item.repertoire_id);if(!s)return '';const duet=s.duet_name?` · duet ${esc(s.duet_name)}`:'';return `<div class="set-row"><div class="order">${i+1}</div><div><div class="song">${esc(s.song_title)} <span style="font-weight:500;color:#85899a">— ${esc(s.artist_name||'')}</span></div><div class="song-meta">${esc(s.vocalist_name)}${duet}</div></div><div class="song-actions">${s.youtube_url?`<a class="yt" href="${attr(s.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}<button class="icon-btn" onclick="moveItem(${item.id},-1)">↑</button><button class="icon-btn" onclick="moveItem(${item.id},1)">↓</button>${canEditSong(s)?`<button class="secondary" onclick="editSong(${s.id})">곡 수정</button>`:''}<button class="danger" onclick="removeItem(${item.id})">삭제</button></div></div>`}).join('');
 }
 function openSetlistEditor(){libSearch.value='';renderLibrary();setlistOverlay.classList.add('open')}
 function closeSetlistEditor(){setlistOverlay.classList.remove('open')}
 function renderLibrary(){
   const q=norm(libSearch.value);
   const list=repertoire.filter(s=>!q||[s.vocalist_name,s.song_title,s.artist_name,s.duet_name].some(v=>norm(v).includes(q))).slice(0,100);
-  libraryList.innerHTML=list.length?list.map(s=>`<div class="lib-row"><div><strong>${esc(s.vocalist_name)} · ${esc(s.song_title)}</strong><small>${esc(s.artist_name||'-')}${s.duet_name?` · duet ${esc(s.duet_name)}`:''}</small></div><div style="display:flex;gap:5px"><button class="secondary" onclick="addExistingSong(${s.id})">추가</button><button class="icon-btn" onclick="editSong(${s.id})">✎</button></div></div>`).join(''):'<div class="empty">검색 결과가 없습니다. 새 곡으로 등록할 수 있습니다.</div>';
+  libraryList.innerHTML=list.length?list.map(s=>`<div class="lib-row"><div><strong>${esc(s.vocalist_name)} · ${esc(s.song_title)}</strong><small>${esc(s.artist_name||'-')}${s.duet_name?` · duet ${esc(s.duet_name)}`:''}</small></div><div style="display:flex;gap:5px"><button class="secondary" onclick="addExistingSong(${s.id})">추가</button>${canEditSong(s)?`<button class="icon-btn" onclick="editSong(${s.id})">✎</button>`:''}</div></div>`).join(''):'<div class="empty">검색 결과가 없습니다. 새 곡으로 등록할 수 있습니다.</div>';
 }
 async function addExistingSong(repertoireId){
   if(!currentEventId)return;
@@ -128,6 +128,10 @@ async function saveSong(){
   const vocalist=songVocalist.value.trim(),title=songTitle.value.trim();
   if(!vocalist||!title){alert('가창자와 곡명은 필수입니다.');return}
   const vm=memberByName(vocalist),dm=memberByName(songDuet.value.trim());
+  if(vm && isStaffMember(vm) && !adminMode){
+    alert('운영진 멤버의 곡은 관리자 모드에서만 추가할 수 있습니다.');
+    return;
+  }
   const payload={member_id:vm?String(vm.id):null,vocalist_name:vocalist,song_title:title,artist_name:songArtist.value.trim(),duet_member_id:dm?String(dm.id):null,duet_name:songDuet.value.trim(),youtube_url:songYoutube.value.trim()};
   let id=songId.value;
   if(id){
