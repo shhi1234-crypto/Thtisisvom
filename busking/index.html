@@ -52,20 +52,30 @@
 <div id="menuOverlay" class="overlay"><div class="menu-card">
   <div class="modal-top"><h3>VOM Menu</h3><button class="close" onclick="closeMenu()">✕</button></div>
   <a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a href="/busking/">BUSKING <span>→</span></a>
+<button id="adminLoginButton" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
+<button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
 </div></div>
 
+<div id="loginOverlay" class="overlay"><div class="modal" style="width:min(410px,100%)">
+<div class="modal-top"><h3>Admin Mode</h3><button class="close" onclick="closeAdminLogin()">✕</button></div>
+<input id="adminEmail" class="field" type="email" placeholder="운영진 이메일">
+<input id="adminPassword" class="field" type="password" placeholder="비밀번호" style="margin-top:8px" onkeydown="if(event.key==='Enter')adminLogin()">
+<button class="primary" style="width:100%;margin-top:12px" onclick="adminLogin()">관리자 모드 시작</button>
+<div id="loginMessage" style="min-height:18px;margin-top:9px;color:#d24f68;font-size:11px;text-align:center"></div>
+</div></div>
 <nav class="bottom"><a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a><a href="/event/"><span class="nav-icon">✦</span>EVENT</a><button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button></nav>
 
 <script>
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
-let events=[],locations=[],members=[],repertoire=[],setItems=[],currentEventId=null,currentEditingSong=null;
+let adminMode=false,events=[],locations=[],members=[],repertoire=[],setItems=[],currentEventId=null,currentEditingSong=null;
 
 async function start(){
+  await checkAdmin();
   const params=new URLSearchParams(location.search),id=params.get('id');
   const [e,l,m,r]=await Promise.all([
     db.from('events').select('*').eq('event_type','BUSKING').order('event_date',{ascending:true}),
     db.from('locations').select('*'),
-    db.from('members').select('id,name'),
+    db.from('members').select('id,name,role'),
     db.from('busking_repertoire').select('*').order('updated_at',{ascending:false})
   ]);
   events=e.data||[]; locations=l.data||[]; members=m.data||[]; repertoire=r.data||[];
@@ -81,6 +91,8 @@ async function loadSetlist(id){
 }
 function loc(row){return locations.find(x=>String(x.id)===String(row.location_id))}
 function memberByName(name){return members.find(x=>norm(x.name)===norm(name))}
+function isStaffMember(m){return String(m?.role||'')==='운영진'}
+function canEditSong(s){const m=members.find(x=>String(x.id)===String(s?.member_id))||memberByName(s?.vocalist_name);return !(m&&isStaffMember(m))||adminMode}
 function songById(id){return repertoire.find(x=>String(x.id)===String(id))}
 function renderList(){
   page.innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>하프봄 · 풀봄을 포함한 VOM 버스킹 일정과 셋리스트를 확인할 수 있습니다.</p></section>
@@ -165,8 +177,14 @@ function week(v){return['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(v+'T
 function norm(v){return String(v??'').trim().toLowerCase()}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}
+function setAdmin(v){adminMode=v;const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none'}
+function openAdminLogin(){closeMenu();loginOverlay.classList.add('open')}function closeAdminLogin(){loginOverlay.classList.remove('open')}
+async function adminLogin(){const {data,error}=await db.auth.signInWithPassword({email:adminEmail.value.trim(),password:adminPassword.value});if(error){loginMessage.textContent='로그인 정보를 확인해주세요.';return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();if(!a){await db.auth.signOut();loginMessage.textContent='관리자 권한이 없습니다.';return}setAdmin(true);closeAdminLogin();location.reload()}
+async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu();location.reload()}
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}
-[menuOverlay,setlistOverlay,songOverlay].forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
+[menuOverlay,setlistOverlay,songOverlay,loginOverlay].forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
 start();
 </script>
 </body>
