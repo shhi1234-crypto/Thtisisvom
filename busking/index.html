@@ -69,7 +69,10 @@ async function start(){
     db.from('busking_repertoire').select('*').order('updated_at',{ascending:false})
   ]);
   events=e.data||[]; locations=l.data||[]; members=m.data||[]; repertoire=r.data||[];
-  memberNames.innerHTML=members.map(x=>`<option value="${attr(x.name||'')}"></option>`).join('');
+  memberNames.innerHTML=members
+    .filter(x=>adminMode || !isStaffMember(x))
+    .map(x=>`<option value="${attr(x.name||'')}"></option>`)
+    .join('');
   if(id){currentEventId=id; await loadSetlist(id); renderDetail(id)} else renderList();
 }
 async function loadSetlist(id){
@@ -111,6 +114,10 @@ async function addExistingSong(repertoireId){
   await loadSetlist(currentEventId);renderSetlistRows();closeSetlistEditor();
 }
 function openSongForm(song=null){
+  if(song && !canEditSong(song)){
+    alert('운영진 멤버의 곡은 관리자 모드에서만 수정할 수 있습니다.');
+    return;
+  }
   currentEditingSong=song;
   songId.value=song?.id||'';songVocalist.value=song?.vocalist_name||'';songDuet.value=song?.duet_name||'';songTitle.value=song?.song_title||'';songArtist.value=song?.artist_name||'';songYoutube.value=song?.youtube_url||'';
   songFormTitle.textContent=song?'Song Edit':'New Song';songOverlay.classList.add('open')
