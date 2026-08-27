@@ -27,6 +27,9 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .primary,.secondary,.danger,.icon-btn{border:0;border-radius:12px;cursor:pointer;font-weight:800}.primary{padding:11px 14px;color:#fff;background:linear-gradient(135deg,#8068e8,#738aed)}.secondary{padding:9px 11px;background:#f0edfb;color:#6756c8}.danger{padding:8px 10px;background:#fff0f2;color:#a74f62}.icon-btn{width:32px;height:32px;background:#f1eff6}
 .board-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}.summary-card{padding:13px 14px;border-radius:15px;background:#f7f6fb}.summary-card small{display:block;color:#9397a6;font-size:8px;font-weight:800}.summary-card strong{display:block;margin-top:4px;font-size:12px}.summary-card.highlight{background:linear-gradient(145deg,#f0ecff,#eaf4ff)}.summary-card.highlight strong{color:#6956ce}
 
+.signup-draw{margin:0 0 14px;padding:14px;border-radius:16px;background:linear-gradient(145deg,#f6f3ff,#eef6ff);border:1px solid rgba(118,95,227,.08)}
+.signup-draw-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.signup-draw-title{font-size:11px;font-weight:800;color:#6654c7}.signup-draw-sub{margin-top:4px;color:#85899a;font-size:9px}.draw-sequence{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.draw-chip{min-width:30px;height:30px;padding:0 8px;display:grid;place-items:center;border-radius:9px;background:#fff;color:#6655c8;font-size:10px;font-weight:800;border:1px solid rgba(102,85,200,.1)}.draw-chip.used{background:#eceaf2;color:#aaaeb9;text-decoration:line-through}.draw-chip.next{background:#7765e5;color:#fff;box-shadow:0 6px 16px rgba(119,101,229,.2)}
+.signup-add{display:flex;gap:8px;align-items:center;margin-top:12px}.signup-add .field{flex:1}.signup-add .primary{white-space:nowrap}
 .part-title{margin:16px 0 7px;padding:8px 11px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:48px 135px minmax(0,1fr) 140px;gap:10px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:76px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
 .song-stack{display:grid;gap:5px}.song-line{display:flex;align-items:center;gap:6px;min-width:0}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;padding:6px 7px;border-radius:8px;background:#181b28;color:#fff;font-size:8px;font-weight:800}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
 
@@ -120,7 +123,7 @@ const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_pu
 
 let adminMode=false;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[];
-let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0};
+let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[]};
 let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null;
 
 async function start(){
@@ -169,7 +172,8 @@ async function loadBoard(id){
     max_songs_per_member:5,
     section_count:1,
     part1_capacity:defaultMax,
-    part2_capacity:0
+    part2_capacity:0,
+    signup_slot_order:[]
   };
 
   settings.section_count=Number(settings.section_count||1);
@@ -177,6 +181,7 @@ async function loadBoard(id){
   settings.max_songs_per_member=Number(settings.max_songs_per_member||5);
   settings.part1_capacity=Number(settings.part1_capacity||settings.max_participants);
   settings.part2_capacity=Number(settings.part2_capacity||0);
+  settings.signup_slot_order=normalizeSignupOrder(settings.signup_slot_order,settings.max_participants);
 
   const slotIds=slots.map(s=>s.id);
   if(slotIds.length){
@@ -266,6 +271,7 @@ function renderDetail(id){
         <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${settings.max_participants}명</strong></div>
         <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>최대 ${settings.max_songs_per_member}곡</strong></div>
       </div>
+      ${renderSignupDraw()}
       <div id="participantBoard"></div>
     </section>
 
@@ -280,6 +286,122 @@ function renderDetail(id){
 
   renderParticipantBoard();
   renderPerformanceOrder();
+}
+
+
+function normalizeSignupOrder(value,max){
+  let arr=Array.isArray(value)?value.map(Number):[];
+  const valid=arr.length===max&&new Set(arr).size===max&&arr.every(n=>n>=1&&n<=max);
+  if(valid)return arr;
+  return shuffleNumbers(max);
+}
+
+function shuffleNumbers(max){
+  const arr=Array.from({length:max},(_,i)=>i+1);
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function nextSignupPosition(){
+  const used=new Set(slots.map(s=>Number(s.sort_order)));
+  return settings.signup_slot_order.find(pos=>!used.has(Number(pos)))||null;
+}
+
+function isNextSignupPosition(pos){
+  return Number(nextSignupPosition())===Number(pos);
+}
+
+function renderSignupDraw(){
+  const used=new Set(slots.map(s=>Number(s.sort_order)));
+  const next=nextSignupPosition();
+  const chips=settings.signup_slot_order.map(pos=>{
+    const cls=used.has(Number(pos))?'used':Number(pos)===Number(next)?'next':'';
+    return `<span class="draw-chip ${cls}">${pos}</span>`;
+  }).join('');
+
+  return `<div class="signup-draw">
+    <div class="signup-draw-top">
+      <div>
+        <div class="signup-draw-title">선착순 랜덤 배정</div>
+        <div class="signup-draw-sub">참가자 확정 전에 자리 순서를 먼저 랜덤으로 고정합니다. 신청 순서대로 다음 번호에 자동 배정됩니다.</div>
+      </div>
+      ${adminMode?`<button class="secondary" onclick="redrawSignupOrder()">랜덤 다시 뽑기</button>`:''}
+    </div>
+    <div class="draw-sequence">${chips}</div>
+    ${adminMode&&next?`<div class="signup-add">
+      <select id="quickMemberPicker" class="field">${quickMemberOptions()}</select>
+      <button class="primary" onclick="addNextSignupMember()">선착순 참가자 추가</button>
+    </div>`:''}
+  </div>`;
+}
+
+function quickMemberOptions(){
+  const used=new Set(slots.map(s=>String(s.member_id)));
+  return `<option value="">멤버 선택</option>`+
+    members.filter(m=>!used.has(String(m.id)))
+      .map(m=>`<option value="${attr(m.id)}">${esc(memberLabel(m))}</option>`)
+      .join('');
+}
+
+async function ensureSignupOrderSaved(){
+  if(!adminMode)return;
+  const current=settings.signup_slot_order;
+  const {error}=await db.from('busking_setlist_settings').upsert({
+    event_id:Number(currentEventId),
+    max_participants:settings.max_participants,
+    max_songs_per_member:settings.max_songs_per_member,
+    section_count:settings.section_count,
+    part1_capacity:settings.part1_capacity,
+    part2_capacity:settings.part2_capacity,
+    signup_slot_order:current,
+    updated_at:new Date().toISOString()
+  },{onConflict:'event_id'});
+  if(error)throw error;
+}
+
+async function redrawSignupOrder(){
+  if(!adminMode)return;
+  if(slots.length&& !confirm('이미 배치된 참가자는 그대로 두고, 아직 비어 있는 자리의 선착순 순서만 다시 섞을까요?'))return;
+
+  const used=new Set(slots.map(s=>Number(s.sort_order)));
+  const unused=Array.from({length:settings.max_participants},(_,i)=>i+1).filter(n=>!used.has(n));
+  for(let i=unused.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [unused[i],unused[j]]=[unused[j],unused[i]];
+  }
+  const usedInOriginal=settings.signup_slot_order.filter(n=>used.has(Number(n)));
+  settings.signup_slot_order=[...usedInOriginal,...unused];
+
+  try{
+    await ensureSignupOrderSaved();
+    renderDetail(currentEventId);
+  }catch(e){
+    alert('랜덤 순서 저장 실패\n'+e.message);
+  }
+}
+
+async function addNextSignupMember(){
+  if(!adminMode)return;
+  const next=nextSignupPosition();
+  if(!next){alert('모든 참가자가 배정되었습니다.');return}
+  const member=memberById(document.getElementById('quickMemberPicker')?.value);
+  if(!member){alert('멤버를 선택해주세요.');return}
+
+  const {error}=await db.from('busking_setlist_slots').insert({
+    event_id:Number(currentEventId),
+    member_id:String(member.id),
+    member_name:member.name||'',
+    repertoire_id:null,
+    sort_order:Number(next),
+    updated_at:new Date().toISOString()
+  });
+  if(error){alert('참가자 추가 실패\n'+error.message);return}
+
+  await loadBoard(currentEventId);
+  renderDetail(currentEventId);
 }
 
 function renderParticipantBoard(){
@@ -301,7 +423,7 @@ function renderParticipantBoard(){
         <div><div class="slot-no">${pos}</div></div>
         <div class="slot-empty-text">미배정</div>
         <div class="slot-empty-text">참가자를 먼저 배치해주세요.</div>
-        <div class="slot-actions">${adminMode?`<button class="secondary" onclick="openMemberPicker(${pos})">참가자 추가</button>`:''}</div>
+        <div class="slot-actions"><span class="slot-empty-text">${isNextSignupPosition(pos)?'다음 선착순 배정':'대기'}</span></div>
       </div>`;
     }else{
       const m=memberById(slot.member_id),songs=songsForSlot(slot),canSong=canEditSlotSongs(slot);
@@ -400,6 +522,19 @@ async function saveSettings(){
     return;
   }
 
+  const oldMax=settings.max_participants;
+  let signupOrder=settings.signup_slot_order;
+  if(oldMax!==maxParticipants || !Array.isArray(signupOrder) || signupOrder.length!==maxParticipants){
+    const used=new Set(slots.map(s=>Number(s.sort_order)));
+    const usedOrder=(Array.isArray(signupOrder)?signupOrder:[]).map(Number).filter(n=>used.has(n)&&n<=maxParticipants);
+    const remaining=Array.from({length:maxParticipants},(_,i)=>i+1).filter(n=>!used.has(n));
+    for(let i=remaining.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [remaining[i],remaining[j]]=[remaining[j],remaining[i]];
+    }
+    signupOrder=[...usedOrder,...remaining];
+  }
+
   const payload={
     event_id:Number(currentEventId),
     max_participants:maxParticipants,
@@ -407,6 +542,7 @@ async function saveSettings(){
     section_count:sectionCount,
     part1_capacity:p1,
     part2_capacity:p2,
+    signup_slot_order:signupOrder,
     updated_at:new Date().toISOString()
   };
   const {error}=await db.from('busking_setlist_settings').upsert(payload,{onConflict:'event_id'});
