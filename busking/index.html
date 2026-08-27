@@ -33,10 +33,11 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .quick-signup{display:flex;gap:8px;align-items:center;margin-top:12px}.quick-signup .field{flex:1}.quick-signup .primary{white-space:nowrap}
 .order-badge{flex:0 0 auto;min-width:34px;height:24px;padding:0 7px;display:grid;place-items:center;border-radius:8px;background:#ece8ff;color:#6655c8;font-size:9px;font-weight:900}
 .part-title{margin:16px 0 7px;padding:8px 11px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:48px 135px minmax(0,1fr) 140px;gap:10px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:76px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
-.song-stack{display:grid;gap:5px}.song-line{display:flex;align-items:center;gap:6px;min-width:0}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;padding:6px 7px;border-radius:8px;background:#181b28;color:#fff;font-size:8px;font-weight:800}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
+.song-stack{display:grid;gap:5px}.song-line{display:flex;align-items:center;gap:6px;min-width:0}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 12px;border-radius:10px;background:#181b28;color:#fff;font-size:10px;font-weight:800;white-space:nowrap}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
 
 .order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
 .performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
+.time-block{margin-top:10px}.time-block:first-child{margin-top:0}.time-block-head{display:flex;align-items:center;gap:8px;margin:10px 0 7px;padding:7px 10px;border-radius:10px;background:#f4f2f9;color:#6c5bc9;font-size:9px;font-weight:800}.time-block-head span{color:#989cab;font-weight:700}.time-block-head::after{content:"";height:1px;flex:1;background:rgba(28,34,65,.08)}
 .order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:32px 28px 120px minmax(0,1fr) auto;gap:9px;align-items:center;min-height:55px;padding:8px 10px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
 
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal,.menu-card{width:min(650px,100%);max-height:calc(100vh - 30px);overflow:auto;padding:22px;border-radius:24px;background:#fff;box-shadow:0 28px 80px rgba(20,25,55,.22)}.menu-card{width:min(390px,100%)}.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-top h3{margin:0;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:51px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:13px}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #dddde7;border-radius:12px;background:#fff;outline:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field-wrap label{display:block;margin-bottom:5px;color:#777c8d;font-size:9px;font-weight:800}.full{grid-column:1/-1}.modal-note{margin:-4px 0 13px;color:#85899a;font-size:10px;line-height:1.65}.song-library{display:grid;gap:7px}.song-choice{padding:11px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.song-choice strong{font-size:12px}.song-choice small{display:block;margin-top:3px;color:#7e8292;font-size:10px}
@@ -284,7 +285,7 @@ function renderDetail(id){
         <div><h2>Running Order</h2><p>곡 슬롯에 미리 정해진 순서 번호가 적용되며, 이후 드래그로 실제 공연 순서를 조정할 수 있습니다.</p></div>
         ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
-      <div class="order-help">곡 순서는 참가자/곡 확정 전에 미리 추첨됩니다. 곡을 넣으면 해당 번호로 Running Order에 들어가며, 드래그 후 순서는 자동 저장됩니다.</div>
+      <div class="order-help">곡 순서는 참가자/곡 확정 전에 미리 추첨됩니다. 각 부 안에서 6곡을 약 30분 구간으로 나눠 표시하며, 곡을 넣으면 해당 번호로 Running Order에 들어갑니다. 드래그 후 순서는 자동 저장됩니다.</div>
       <div id="performanceOrder"></div>
     </section>`;
 
@@ -319,26 +320,67 @@ function buildRandomPlanForPositions(positions,maxSongs){
     }
   });
 
-  for(let attempt=0;attempt<1000;attempt++){
+  const BLOCK=6;
+
+  for(let attempt=0;attempt<3000;attempt++){
     const remaining=[...tokens];
     const result=[];
+    let failed=false;
+
     while(remaining.length){
-      const blocked=result.length>=2&&result[result.length-1].pos===result[result.length-2].pos
-        ? result[result.length-1].pos:null;
+      const index=result.length;
+      const blockIndex=Math.floor(index/BLOCK);
+      const currentBlock=result.slice(blockIndex*BLOCK,index);
+      const previousBlock=blockIndex>0
+        ? result.slice((blockIndex-1)*BLOCK,blockIndex*BLOCK)
+        : [];
 
-      let candidates=remaining.map((x,i)=>({x,i})).filter(v=>blocked===null||v.x.pos!==blocked);
-      if(!candidates.length)break;
+      const currentCounts={};
+      currentBlock.forEach(x=>currentCounts[x.pos]=(currentCounts[x.pos]||0)+1);
 
+      const previousCounts={};
+      previousBlock.forEach(x=>previousCounts[x.pos]=(previousCounts[x.pos]||0)+1);
+
+      const last1=result[index-1]?.pos ?? null;
+      const last2=result[index-2]?.pos ?? null;
+
+      let candidates=remaining.map((x,i)=>({x,i})).filter(({x})=>{
+        // 같은 사람 3곡 연속 금지
+        if(last1===x.pos && last2===x.pos)return false;
+
+        // 한 30분(6곡) 구간 안에서는 같은 사람 최대 2곡
+        const cur=currentCounts[x.pos]||0;
+        if(cur>=2)return false;
+
+        // 직전 30분 구간에서 2곡 불렀으면 다음 구간은 최대 1곡
+        const prev=previousCounts[x.pos]||0;
+        if(prev>=2 && cur>=1)return false;
+
+        return true;
+      });
+
+      if(!candidates.length){
+        failed=true;
+        break;
+      }
+
+      // 남은 곡 수가 많은 사람을 조금 우선하되 랜덤성 유지
       const counts={};
       remaining.forEach(x=>counts[x.pos]=(counts[x.pos]||0)+1);
-      candidates.sort((a,b)=>(counts[b.x.pos]-counts[a.x.pos])+(Math.random()-.5)*2);
 
-      const chosen=candidates[Math.floor(Math.random()*Math.min(3,candidates.length))];
+      candidates.sort((a,b)=>{
+        const diff=(counts[b.x.pos]-counts[a.x.pos]);
+        return diff!==0 ? diff : Math.random()-.5;
+      });
+
+      const poolSize=Math.min(4,candidates.length);
+      const chosen=candidates[Math.floor(Math.random()*poolSize)];
+
       result.push(chosen.x);
       remaining.splice(chosen.i,1);
     }
 
-    if(result.length===tokens.length){
+    if(!failed && result.length===tokens.length){
       const plan={};
       result.forEach((item,idx)=>{
         if(!plan[item.pos])plan[item.pos]=[];
@@ -347,6 +389,7 @@ function buildRandomPlanForPositions(positions,maxSongs){
       return plan;
     }
   }
+
   return {};
 }
 
@@ -383,7 +426,7 @@ function renderSongDraw(){
     <div class="song-draw-top">
       <div>
         <div class="song-draw-title">곡 순서 사전 추첨</div>
-        <div class="song-draw-sub">참가자와 곡이 정해지기 전에 각 참가자 자리의 ${settings.max_songs_per_member}개 곡 슬롯에 전체 공연 순서 번호를 미리 배정합니다. 같은 참가자 슬롯이 3곡 연속 나오지 않도록 생성됩니다. · ${totalPerPart}</div>
+        <div class="song-draw-sub">참가자와 곡이 정해지기 전에 각 참가자 자리의 ${settings.max_songs_per_member}개 곡 슬롯에 전체 공연 순서 번호를 미리 배정합니다. 6곡을 약 30분 단위로 보고, 한 구간에서 같은 사람은 최대 2곡까지 배치합니다. 한 구간에서 2곡을 부른 사람은 다음 30분 구간에서는 최대 1곡만 배치하며, 3곡 연속도 금지합니다. · ${totalPerPart}</div>
       </div>
       ${adminMode?`<button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>`:''}
     </div>
@@ -516,6 +559,7 @@ function renderParticipantBoard(){
 function renderPerformanceOrder(){
   const box=document.getElementById('performanceOrder');
   if(!box)return;
+
   if(!performanceOrder.length){
     box.innerHTML='<div class="empty">아직 실제 공연 순서가 생성되지 않았습니다.</div>';
     return;
@@ -523,12 +567,40 @@ function renderPerformanceOrder(){
 
   let html='<div class="performance-parts">';
   const parts=settings.section_count===2?[1,2]:[1];
+
   parts.forEach(part=>{
-    const rows=performanceOrder.filter(x=>Number(x.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
-    html+=`<div><div class="performance-part-title">${partLabel(part)}</div><div class="order-list" data-part="${part}">`;
-    html+=rows.length?rows.map((row,i)=>createOrderItem(row,i+1)).join(''):'<div class="empty">배치된 곡이 없습니다.</div>';
-    html+='</div></div>';
+    const rows=performanceOrder
+      .filter(x=>Number(x.part_no)===part)
+      .sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
+
+    html+=`<div><div class="performance-part-title">${partLabel(part)}</div>`;
+
+    if(!rows.length){
+      html+='<div class="empty">배치된 곡이 없습니다.</div></div>';
+      return;
+    }
+
+    for(let start=0;start<rows.length;start+=6){
+      const block=rows.slice(start,start+6);
+      const blockNo=Math.floor(start/6)+1;
+      const first=start+1;
+      const last=start+block.length;
+
+      html+=`
+        <div class="time-block">
+          <div class="time-block-head">
+            약 30분 · ${blockNo}구간
+            <span>${first}~${last}곡</span>
+          </div>
+          <div class="order-list" data-part="${part}" data-block="${blockNo}">
+            ${block.map((row,i)=>createOrderItem(row,start+i+1)).join('')}
+          </div>
+        </div>`;
+    }
+
+    html+='</div>';
   });
+
   html+='</div>';
   box.innerHTML=html;
 }
