@@ -495,7 +495,7 @@ function renderParticipantBoard(){
         <div class="song-stack">
           ${songs.length?songs.map((ss,i)=>{
             const song=repertoireById(ss.repertoire_id); if(!song)return '';
-            return `<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="song-index">${i+1}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YT ↗</a>`:''}${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
+            return `<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="song-index">${i+1}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
           }).join(''):`<div class="song-stack">${Array.from({length:settings.max_songs_per_member},(_,i)=>`<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="slot-empty-text">${i+1}번째 곡 미정</span></div>`).join('')}</div>`}
         </div>
         <div class="slot-actions">
@@ -545,7 +545,7 @@ function createOrderItem(row,no){
     <div class="order-num">${no}</div>
     <div class="order-member">${esc(member?.name||slot?.member_name||'-')}</div>
     <div class="order-song"><strong>${esc(song?.song_title||'곡 정보 없음')}</strong><small>${esc(song?.artist_name||'')}${song?.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div>
-    <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YT ↗</a>`:''}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
+    <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
   </div>`;
 }
 
