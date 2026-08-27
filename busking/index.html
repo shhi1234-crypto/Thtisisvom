@@ -12,29 +12,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--ink:#11182c;--muted:#73798b;--purple:#765fe3;--line:rgba(28,34,65,.08);--card:rgba(255,255,255,.86)}
+:root{--ink:#11182c;--muted:#73798b;--purple:#765fe3;--line:rgba(28,34,65,.08);--card:rgba(255,255,255,.88)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;min-height:100vh;font-family:"Noto Sans KR",sans-serif;color:var(--ink);background:#f8f7fa}
 a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{color:inherit}
 .aurora{position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 88% 0%,rgba(134,220,211,.42),transparent 28%),radial-gradient(circle at 68% 8%,rgba(181,151,241,.42),transparent 32%),linear-gradient(180deg,#faf8fb,#f8f7fb 56%,#fbfafc)}
 .header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}.header-right{display:flex;align-items:center;gap:9px}.admin-badge{display:none;padding:8px 12px;border-radius:999px;background:#eee9ff;color:#6955d2;font-size:9px;font-weight:800}.admin-badge.show{display:block}.menu-btn{width:44px;height:44px;border:1px solid rgba(255,255,255,.95);border-radius:50%;background:rgba(255,255,255,.76);cursor:pointer}
 .page{width:min(1080px,100%);margin:auto;padding:28px 18px 110px}.hero{padding:30px 0 25px}.eyebrow,.type{color:#725dde;font-family:"Nanum Pen Script",cursive;font-size:23px}.hero h1,.detail h1{margin:2px 0 10px;font-family:"Nanum Pen Script",cursive;font-size:68px;font-weight:400;line-height:.92}.hero p{margin:0;color:#6e7487;font-size:13px}
-.list{display:grid;gap:10px}.card{display:grid;grid-template-columns:72px minmax(0,1fr) 110px;align-items:center;gap:14px;padding:12px;border-radius:20px;background:var(--card);border:1px solid rgba(255,255,255,.96);box-shadow:0 10px 28px rgba(31,37,74,.05);cursor:pointer}.datebox{min-height:68px;display:grid;place-items:center;border-radius:15px;color:white;background:linear-gradient(145deg,#8068e8,#7598eb);text-align:center}.datebox strong{display:block;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.datebox small{font-size:8px}.card h3{margin:3px 0 4px;font-size:16px}.meta,.hint{color:#7a7f90;font-size:11px}.hint{margin-top:7px;color:#715ddd;font-weight:800}.thumb{width:110px;height:70px;border-radius:14px;overflow:hidden;background:#eeeaf8;display:grid;place-items:center;font-family:"Nanum Pen Script";font-size:25px}.thumb img{width:100%;height:100%;object-fit:cover}
+.list{display:grid;gap:10px}.card{display:grid;grid-template-columns:72px minmax(0,1fr) 110px;align-items:center;gap:14px;padding:12px;border-radius:20px;background:var(--card);border:1px solid rgba(255,255,255,.96);box-shadow:0 10px 28px rgba(31,37,74,.05);cursor:pointer}.datebox{min-height:68px;display:grid;place-items:center;border-radius:15px;color:#fff;background:linear-gradient(145deg,#8068e8,#7598eb);text-align:center}.datebox strong{display:block;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.datebox small{font-size:8px}.card h3{margin:3px 0 4px;font-size:16px}.meta,.hint{color:#7a7f90;font-size:11px}.hint{margin-top:7px;color:#715ddd;font-weight:800}.thumb{width:110px;height:70px;border-radius:14px;overflow:hidden;background:#eeeaf8;display:grid;place-items:center;font-family:"Nanum Pen Script";font-size:25px}.thumb img{width:100%;height:100%;object-fit:cover}
 .back{display:inline-flex;margin-bottom:18px;color:#725fde;font-size:12px;font-weight:800}.detail{padding:25px;border-radius:27px;background:var(--card);border:1px solid rgba(255,255,255,.97)}.detail-image{height:320px;margin:22px 0;border-radius:22px;overflow:hidden;background:linear-gradient(145deg,#e8e2ff,#dff0f3);display:grid;place-items:center;font-family:"Nanum Pen Script";font-size:40px}.detail-image img{width:100%;height:100%;object-fit:cover}.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.info{padding:15px;border-radius:15px;background:#f6f4fa}.info small{display:block;margin-bottom:5px;color:#8a8e9d;font-size:9px;font-weight:800}.info strong{font-size:12px}.desc{margin-top:16px;padding:18px;border-radius:16px;background:#faf9fc;color:#676d7f;font-size:12px;line-height:1.8}
 
-.board{margin-top:18px;padding:22px;border-radius:24px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.97)}
-.board-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}.board-head h2{margin:0;font-family:"Nanum Pen Script";font-size:38px;font-weight:400}.board-head p{margin:3px 0 0;color:#85899a;font-size:10px;line-height:1.6}
-.primary,.secondary,.danger,.icon-btn{border:0;border-radius:12px;cursor:pointer;font-weight:800}.primary{padding:11px 14px;color:white;background:linear-gradient(135deg,#8068e8,#738aed)}.secondary{padding:9px 11px;background:#f0edfb;color:#6756c8}.danger{padding:8px 10px;background:#fff0f2;color:#a74f62}.icon-btn{width:32px;height:32px;background:#f1eff6}
-.board-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}.summary-card{padding:13px 14px;border-radius:15px;background:#f7f6fb}.summary-card small{display:block;color:#9397a6;font-size:8px;font-weight:800}.summary-card strong{display:block;margin-top:4px;font-size:12px}.summary-card.highlight{background:linear-gradient(145deg,#f0ecff,#eaf4ff)}.summary-card.highlight strong{color:#6956ce}
-.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:48px 135px minmax(0,1fr) 140px;gap:10px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:76px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
-.song-stack{display:grid;gap:5px}.song-line{display:flex;align-items:center;gap:6px;min-width:0}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;padding:6px 7px;border-radius:8px;background:#181b28;color:white;font-size:8px;font-weight:800}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}
-.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
+.board,.run-order{margin-top:18px;padding:22px;border-radius:24px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.97)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}.section-head h2{margin:0;font-family:"Nanum Pen Script";font-size:38px;font-weight:400}.section-head p{margin:3px 0 0;color:#85899a;font-size:10px;line-height:1.6}
+.primary,.secondary,.danger,.icon-btn{border:0;border-radius:12px;cursor:pointer;font-weight:800}.primary{padding:11px 14px;color:#fff;background:linear-gradient(135deg,#8068e8,#738aed)}.secondary{padding:9px 11px;background:#f0edfb;color:#6756c8}.danger{padding:8px 10px;background:#fff0f2;color:#a74f62}.icon-btn{width:32px;height:32px;background:#f1eff6}
+.board-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}.summary-card{padding:13px 14px;border-radius:15px;background:#f7f6fb}.summary-card small{display:block;color:#9397a6;font-size:8px;font-weight:800}.summary-card strong{display:block;margin-top:4px;font-size:12px}.summary-card.highlight{background:linear-gradient(145deg,#f0ecff,#eaf4ff)}.summary-card.highlight strong{color:#6956ce}
+
+.part-title{margin:16px 0 7px;padding:8px 11px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:48px 135px minmax(0,1fr) 140px;gap:10px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:76px;padding:10px 12px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
+.song-stack{display:grid;gap:5px}.song-line{display:flex;align-items:center;gap:6px;min-width:0}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;padding:6px 7px;border-radius:8px;background:#181b28;color:#fff;font-size:8px;font-weight:800}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
+
+.order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
+.performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
+.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:32px 28px 120px minmax(0,1fr) auto;gap:9px;align-items:center;min-height:55px;padding:8px 10px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
 
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal,.menu-card{width:min(650px,100%);max-height:calc(100vh - 30px);overflow:auto;padding:22px;border-radius:24px;background:#fff;box-shadow:0 28px 80px rgba(20,25,55,.22)}.menu-card{width:min(390px,100%)}.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-top h3{margin:0;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:51px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:13px}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #dddde7;border-radius:12px;background:#fff;outline:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field-wrap label{display:block;margin-bottom:5px;color:#777c8d;font-size:9px;font-weight:800}.full{grid-column:1/-1}.modal-note{margin:-4px 0 13px;color:#85899a;font-size:10px;line-height:1.65}.song-library{display:grid;gap:7px}.song-choice{padding:11px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.song-choice strong{font-size:12px}.song-choice small{display:block;margin-top:3px;color:#7e8292;font-size:10px}
 .bottom{position:fixed;z-index:80;left:50%;bottom:10px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:67px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border-radius:22px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 42px rgba(30,37,75,.12);backdrop-filter:blur(22px)}.bottom a,.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#777c8d;cursor:pointer;font-size:8px}.nav-icon{font-size:18px}
 
-@media(max-width:700px){
-.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board{padding:15px}.board-head{align-items:flex-start;flex-direction:column}.board-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.summary-card:last-child{grid-column:1/-1}.slot-table{overflow-x:auto}.slot-head,.slot-row{min-width:690px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
+@media(max-width:760px){
+.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.slot-table{overflow-x:auto}.slot-head,.slot-row{min-width:690px}.order-item{grid-template-columns:25px 28px 90px minmax(150px,1fr) auto;min-width:600px}.order-list{overflow-x:auto}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
 }
 </style>
 </head>
@@ -49,14 +53,23 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
   </div>
 </header>
 
-<main id="page" class="page"><div class="empty">BUSKING을 불러오는 중...</div></main>
+<main id="page" class="page"><div class="empty">일정을 불러오는 중...</div></main>
 
 <div id="settingsOverlay" class="overlay"><div class="modal">
   <div class="modal-top"><h3>Setlist Setting</h3><button class="close" onclick="closeSettings()">✕</button></div>
-  <p class="modal-note">진행시간에 따라 기본 참가 정원이 자동 계산됩니다. 필요하면 직접 변경할 수 있습니다.</p>
+  <p class="modal-note">1부만 진행할지, 1·2부로 나눌지 정하고 각 부의 참가 인원을 설정합니다.</p>
   <div class="form-grid">
-    <div class="field-wrap"><label>참가 정원</label><input id="settingMaxParticipants" class="field" type="number" min="1"></div>
+    <div class="field-wrap full">
+      <label>공연 구성</label>
+      <select id="settingSectionCount" class="field" onchange="syncSettingParts()">
+        <option value="1">1부만</option>
+        <option value="2">1부 + 2부</option>
+      </select>
+    </div>
+    <div class="field-wrap"><label>총 참가 정원</label><input id="settingMaxParticipants" class="field" type="number" min="1"></div>
     <div class="field-wrap"><label>1인 최대 곡 수</label><input id="settingMaxSongs" class="field" type="number" min="1"></div>
+    <div class="field-wrap"><label>1부 참가자 수</label><input id="settingPart1" class="field" type="number" min="1"></div>
+    <div id="part2Wrap" class="field-wrap"><label>2부 참가자 수</label><input id="settingPart2" class="field" type="number" min="1"></div>
   </div>
   <button class="primary" style="width:100%;margin-top:12px" onclick="saveSettings()">설정 저장</button>
 </div></div>
@@ -106,18 +119,17 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
 
 let adminMode=false;
-let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[];
-let settings={max_participants:5,max_songs_per_member:5};
-let currentEventId=null,currentEditingPosition=null,currentSongSlot=null;
+let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[];
+let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0};
+let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null;
 
 async function start(){
   await checkAdmin();
-
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
 
   const [e,l,m,r]=await Promise.all([
-    db.from('events').select('*').eq('event_type','BUSKING').order('event_date',{ascending:true}),
+    db.from('events').select('*').order('event_date',{ascending:true}),
     db.from('locations').select('*'),
     db.from('members').select('*'),
     db.from('busking_repertoire').select('*').order('updated_at',{ascending:false})
@@ -133,26 +145,38 @@ async function start(){
     await loadBoard(id);
     renderDetail(id);
   }else{
-    renderList();
+    renderBuskingList();
   }
 }
 
 async function loadBoard(id){
-  const [slotRes,settingRes]=await Promise.all([
+  const [slotRes,settingRes,orderRes]=await Promise.all([
     db.from('busking_setlist_slots').select('*').eq('event_id',Number(id)).order('sort_order',{ascending:true}).order('id',{ascending:true}),
-    db.from('busking_setlist_settings').select('*').eq('event_id',Number(id)).maybeSingle()
+    db.from('busking_setlist_settings').select('*').eq('event_id',Number(id)).maybeSingle(),
+    db.from('busking_setlist_order').select('*').eq('event_id',Number(id)).order('part_no',{ascending:true}).order('sequence_no',{ascending:true})
   ]);
 
   slots=slotRes.data||[];
+  performanceOrder=orderRes.data||[];
 
   const event=events.find(x=>String(x.id)===String(id));
   const defaultMax=defaultCapacity(event);
+  const found=settingRes.data;
 
-  settings=settingRes.data||{
+  settings=found||{
     event_id:Number(id),
     max_participants:defaultMax,
-    max_songs_per_member:5
+    max_songs_per_member:5,
+    section_count:1,
+    part1_capacity:defaultMax,
+    part2_capacity:0
   };
+
+  settings.section_count=Number(settings.section_count||1);
+  settings.max_participants=Number(settings.max_participants||defaultMax);
+  settings.max_songs_per_member=Number(settings.max_songs_per_member||5);
+  settings.part1_capacity=Number(settings.part1_capacity||settings.max_participants);
+  settings.part2_capacity=Number(settings.part2_capacity||0);
 
   const slotIds=slots.map(s=>s.id);
   if(slotIds.length){
@@ -170,36 +194,35 @@ function defaultCapacity(event){
   if(mins<=180)return 8;
   return 10;
 }
-
 function durationMinutes(event){
   if(!event?.start_time||!event?.end_time)return 0;
   const [sh,sm]=String(event.start_time).slice(0,5).split(':').map(Number);
   const [eh,em]=String(event.end_time).slice(0,5).split(':').map(Number);
   let mins=(eh*60+em)-(sh*60+sm);
-  if(mins<0)mins+=24*60;
+  if(mins<0)mins+=1440;
   return mins;
 }
-
 function durationLabel(event){
   const mins=durationMinutes(event);
   if(!mins)return '미정';
   const h=Math.floor(mins/60),m=mins%60;
   return `${h?`${h}시간`:''}${m?` ${m}분`:''}`.trim();
 }
-
 function loc(row){return locations.find(x=>String(x.id)===String(row.location_id))}
 function memberById(id){return members.find(x=>String(x.id)===String(id))}
 function repertoireById(id){return repertoire.find(x=>String(x.id)===String(id))}
 function songsForSlot(slot){return slotSongs.filter(x=>String(x.slot_id)===String(slot.id)).sort((a,b)=>Number(a.sort_order)-Number(b.sort_order))}
+function slotBySongId(slotSongId){const ss=slotSongs.find(x=>String(x.id)===String(slotSongId));return ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null}
+function slotSongById(id){return slotSongs.find(x=>String(x.id)===String(id))}
 function isStaffMember(m){return String(m?.role||'')==='운영진'}
-function canEditSlotSongs(slot){
-  const member=memberById(slot.member_id);
-  return !(member&&isStaffMember(member))||adminMode;
-}
+function canEditSlotSongs(slot){const m=memberById(slot.member_id);return !(m&&isStaffMember(m))||adminMode}
+function partForPosition(pos){return settings.section_count===2&&pos>settings.part1_capacity?2:1}
+function partLabel(part){return settings.section_count===2?`${part}부`:'공연'}
 
-function renderList(){
-  page.innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>하프봄 · 풀봄을 포함한 VOM 버스킹 일정과 셋리스트를 확인할 수 있습니다.</p></section>
-  <div class="list">${events.length?events.map(row=>{
+function renderBuskingList(){
+  const list=events.filter(e=>e.event_type==='BUSKING');
+  page.innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>VOM 버스킹 일정과 셋리스트를 확인할 수 있습니다.</p></section>
+  <div class="list">${list.length?list.map(row=>{
     const l=loc(row),img=row.image_url||l?.image_url||'',d=new Date(row.event_date+'T00:00:00');
     return `<article class="card" onclick="location.href='/busking/?id=${row.id}'">
       <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${week(row.event_date)}</small></div></div>
@@ -211,15 +234,15 @@ function renderList(){
 
 function renderDetail(id){
   const row=events.find(x=>String(x.id)===String(id));
-  if(!row){page.innerHTML='<div class="empty">버스킹 일정을 찾을 수 없습니다.</div>';return}
-
+  if(!row){page.innerHTML='<div class="empty">일정을 찾을 수 없습니다.</div>';return}
   const l=loc(row),img=row.image_url||l?.image_url||'';
-  document.title=`${row.title||'BUSKING'} · BUSKING`;
+  const isBusking=row.event_type==='BUSKING';
+  document.title=`${row.title||'SETLIST'} · VOM`;
 
   page.innerHTML=`
-    <a class="back" href="/busking/">← BUSKING</a>
+    <a class="back" href="${isBusking?'/busking/':'/calendar/'}">← ${isBusking?'BUSKING':'CALENDAR'}</a>
     <section class="detail">
-      <div class="type">VOM BUSKING</div>
+      <div class="type">${esc(row.event_type||'VOM SETLIST')}</div>
       <h1>${esc(row.title||'')}</h1>
       ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
       <div class="detail-meta">
@@ -231,43 +254,48 @@ function renderDetail(id){
     </section>
 
     <section class="board">
-      <div class="board-head">
-        <div>
-          <h2>Setlist Board</h2>
-          <p>운영진이 순서를 먼저 배치하고, 각 참가자의 MEMBERS 개인곡을 하나씩 추가합니다.</p>
-        </div>
+      <div class="section-head">
+        <div><h2>Setlist Board</h2><p>참가자를 배치하고 각 멤버의 개인곡을 채웁니다.</p></div>
         ${adminMode?`<button class="primary" onclick="openSettings()">편성 설정</button>`:''}
       </div>
-
       <div class="board-summary">
         <div class="summary-card"><small>START</small><strong>${esc(row.start_time?String(row.start_time).slice(0,5):'미정')}</strong></div>
         <div class="summary-card"><small>END</small><strong>${esc(row.end_time?String(row.end_time).slice(0,5):'미정')}</strong></div>
         <div class="summary-card"><small>DURATION</small><strong>${esc(durationLabel(row))}</strong></div>
-        <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${Number(settings.max_participants||5)}명</strong></div>
-        <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>최대 ${Number(settings.max_songs_per_member||5)}곡</strong></div>
+        <div class="summary-card highlight"><small>PARTS</small><strong>${settings.section_count===2?'1부 + 2부':'1부만'}</strong></div>
+        <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${settings.max_participants}명</strong></div>
+        <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>최대 ${settings.max_songs_per_member}곡</strong></div>
       </div>
+      <div id="participantBoard"></div>
+    </section>
 
-      <div class="slot-table">
-        <div class="slot-head"><div>순서</div><div>참가자</div><div>곡</div><div>관리</div></div>
-        <div id="slotRows"></div>
+    <section class="run-order">
+      <div class="section-head">
+        <div><h2>Running Order</h2><p>곡을 모두 채운 뒤 랜덤 생성하고, 이후 드래그로 실제 공연 순서를 조정합니다.</p></div>
+        ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">랜덤 순서 생성</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
+      <div class="order-help">기본 랜덤은 같은 사람이 3곡 이상 연속으로 나오지 않도록 생성합니다. 드래그 후 순서는 자동 저장됩니다.</div>
+      <div id="performanceOrder"></div>
     </section>`;
 
-  renderBoardRows();
+  renderParticipantBoard();
+  renderPerformanceOrder();
 }
 
-function renderBoardRows(){
-  const box=document.getElementById('slotRows');
+function renderParticipantBoard(){
+  const box=document.getElementById('participantBoard');
   if(!box)return;
-
-  const max=Math.max(1,Number(settings.max_participants||5));
+  const max=settings.max_participants;
   const slotByOrder=new Map(slots.map(s=>[Number(s.sort_order),s]));
-
   let html='';
 
   for(let pos=1;pos<=max;pos++){
-    const slot=slotByOrder.get(pos);
+    if(pos===1|| (settings.section_count===2&&pos===settings.part1_capacity+1)){
+      html+=`<div class="part-title">${partLabel(partForPosition(pos))} · ${settings.section_count===2?(partForPosition(pos)===1?settings.part1_capacity:settings.part2_capacity):max}명</div>
+      <div class="slot-table"><div class="slot-head"><div>순서</div><div>참가자</div><div>곡</div><div>관리</div></div>`;
+    }
 
+    const slot=slotByOrder.get(pos);
     if(!slot){
       html+=`<div class="slot-row empty-slot">
         <div><div class="slot-no">${pos}</div></div>
@@ -275,57 +303,100 @@ function renderBoardRows(){
         <div class="slot-empty-text">참가자를 먼저 배치해주세요.</div>
         <div class="slot-actions">${adminMode?`<button class="secondary" onclick="openMemberPicker(${pos})">참가자 추가</button>`:''}</div>
       </div>`;
-      continue;
+    }else{
+      const m=memberById(slot.member_id),songs=songsForSlot(slot),canSong=canEditSlotSongs(slot);
+      html+=`<div class="slot-row">
+        <div><div class="slot-no">${pos}</div></div>
+        <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small></div>
+        <div class="song-stack">
+          ${songs.length?songs.map((ss,i)=>{
+            const song=repertoireById(ss.repertoire_id); if(!song)return '';
+            return `<div class="song-line"><span class="song-index">${i+1}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YT ↗</a>`:''}${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
+          }).join(''):`<div class="slot-empty-text">아직 선택된 곡이 없습니다.</div>`}
+        </div>
+        <div class="slot-actions">
+          ${canSong&&songs.length<settings.max_songs_per_member?`<button class="secondary" onclick="openSongChooser(${slot.id})">＋ 곡 추가</button>`:''}
+          ${adminMode?`<button class="tiny" onclick="moveSlot(${slot.id},-1)">↑</button><button class="tiny" onclick="moveSlot(${slot.id},1)">↓</button><button class="tiny danger" onclick="removeParticipant(${slot.id})">참가 삭제</button>`:''}
+        </div>
+      </div>`;
     }
 
-    const m=memberById(slot.member_id);
-    const songs=songsForSlot(slot);
-    const canSong=canEditSlotSongs(slot);
+    const isPartEnd=settings.section_count===2
+      ? (pos===settings.part1_capacity||pos===max)
+      : pos===max;
+    if(isPartEnd)html+='</div>';
+  }
+  box.innerHTML=html;
+}
 
-    html+=`<div class="slot-row">
-      <div><div class="slot-no">${pos}</div></div>
-      <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small></div>
-      <div class="song-stack">
-        ${songs.length?songs.map((ss,i)=>{
-          const song=repertoireById(ss.repertoire_id);
-          if(!song)return '';
-          return `<div class="song-line">
-            <span class="song-index">${i+1}</span>
-            <span class="song-name">${esc(song.song_title||'')}</span>
-            <span class="song-artist">· ${esc(song.artist_name||'')}</span>
-            <span class="song-tools">
-              ${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YT ↗</a>`:''}
-              ${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}
-            </span>
-          </div>`;
-        }).join(''):`<div class="slot-empty-text">아직 선택된 곡이 없습니다.</div>`}
-      </div>
-      <div class="slot-actions">
-        ${canSong&&songs.length<Number(settings.max_songs_per_member||5)?`<button class="secondary" onclick="openSongChooser(${slot.id})">＋ 곡 추가</button>`:''}
-        ${adminMode?`<button class="tiny" onclick="moveSlot(${slot.id},-1)">↑</button><button class="tiny" onclick="moveSlot(${slot.id},1)">↓</button><button class="tiny danger" onclick="removeParticipant(${slot.id})">참가 삭제</button>`:''}
-      </div>
-    </div>`;
+function renderPerformanceOrder(){
+  const box=document.getElementById('performanceOrder');
+  if(!box)return;
+  if(!performanceOrder.length){
+    box.innerHTML='<div class="empty">아직 실제 공연 순서가 생성되지 않았습니다.</div>';
+    return;
   }
 
+  let html='<div class="performance-parts">';
+  const parts=settings.section_count===2?[1,2]:[1];
+  parts.forEach(part=>{
+    const rows=performanceOrder.filter(x=>Number(x.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
+    html+=`<div><div class="performance-part-title">${partLabel(part)}</div><div class="order-list" data-part="${part}">`;
+    html+=rows.length?rows.map((row,i)=>createOrderItem(row,i+1)).join(''):'<div class="empty">배치된 곡이 없습니다.</div>';
+    html+='</div></div>';
+  });
+  html+='</div>';
   box.innerHTML=html;
+}
+
+function createOrderItem(row,no){
+  const ss=slotSongById(row.slot_song_id);
+  const slot=ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null;
+  const member=slot?memberById(slot.member_id):null;
+  const song=ss?repertoireById(ss.repertoire_id):null;
+
+  return `<div class="order-item" draggable="${adminMode?'true':'false'}" data-order-id="${row.id}" data-part="${row.part_no}"
+    ondragstart="orderDragStart(event)" ondragover="orderDragOver(event)" ondrop="orderDrop(event)" ondragend="orderDragEnd(event)">
+    <div class="drag-handle">${adminMode?'⋮⋮':''}</div>
+    <div class="order-num">${no}</div>
+    <div class="order-member">${esc(member?.name||slot?.member_name||'-')}</div>
+    <div class="order-song"><strong>${esc(song?.song_title||'곡 정보 없음')}</strong><small>${esc(song?.artist_name||'')}${song?.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div>
+    <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YT ↗</a>`:''}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
+  </div>`;
 }
 
 function openSettings(){
   if(!adminMode)return;
-  settingMaxParticipants.value=Number(settings.max_participants||5);
-  settingMaxSongs.value=Number(settings.max_songs_per_member||5);
+  settingSectionCount.value=String(settings.section_count);
+  settingMaxParticipants.value=settings.max_participants;
+  settingMaxSongs.value=settings.max_songs_per_member;
+  settingPart1.value=settings.part1_capacity;
+  settingPart2.value=settings.part2_capacity||Math.max(1,settings.max_participants-settings.part1_capacity);
+  syncSettingParts();
   settingsOverlay.classList.add('open');
+}
+function syncSettingParts(){
+  const two=Number(settingSectionCount.value)===2;
+  part2Wrap.style.display=two?'block':'none';
+  if(!two)settingPart1.value=settingMaxParticipants.value||settings.max_participants;
 }
 function closeSettings(){settingsOverlay.classList.remove('open')}
 
 async function saveSettings(){
   if(!adminMode)return;
-
+  const sectionCount=Number(settingSectionCount.value);
   const maxParticipants=Math.max(1,Number(settingMaxParticipants.value||5));
   const maxSongs=Math.max(1,Number(settingMaxSongs.value||5));
+  let p1=Math.max(1,Number(settingPart1.value||maxParticipants));
+  let p2=sectionCount===2?Math.max(1,Number(settingPart2.value||1)):0;
 
+  if(sectionCount===1){p1=maxParticipants;p2=0}
+  if(sectionCount===2&&p1+p2!==maxParticipants){
+    alert(`1부(${p1}명) + 2부(${p2}명)의 합이 총 정원(${maxParticipants}명)과 같아야 합니다.`);
+    return;
+  }
   if(maxParticipants<slots.length){
-    alert(`현재 배치된 참가자가 ${slots.length}명입니다. 참가 정원은 그보다 작게 설정할 수 없습니다.`);
+    alert(`현재 배치된 참가자가 ${slots.length}명입니다. 참가 정원을 더 크게 설정해주세요.`);
     return;
   }
 
@@ -333,163 +404,259 @@ async function saveSettings(){
     event_id:Number(currentEventId),
     max_participants:maxParticipants,
     max_songs_per_member:maxSongs,
+    section_count:sectionCount,
+    part1_capacity:p1,
+    part2_capacity:p2,
     updated_at:new Date().toISOString()
   };
-
   const {error}=await db.from('busking_setlist_settings').upsert(payload,{onConflict:'event_id'});
   if(error){alert('설정 저장 실패\n'+error.message);return}
-
   settings={...settings,...payload};
   closeSettings();
+  await clearPerformanceOrder(false);
   renderDetail(currentEventId);
 }
 
 function openMemberPicker(position){
   if(!adminMode)return;
   currentEditingPosition=position;
-
   const used=new Set(slots.map(s=>String(s.member_id)));
-  memberPicker.innerHTML=
-    `<option value="">멤버 선택</option>`+
-    members.filter(m=>!used.has(String(m.id))).map(m=>`<option value="${attr(m.id)}">${esc(memberLabel(m))}</option>`).join('');
-
-  memberOverlayTitle.textContent=`${position}번 참가자`;
+  memberPicker.innerHTML=`<option value="">멤버 선택</option>`+members.filter(m=>!used.has(String(m.id))).map(m=>`<option value="${attr(m.id)}">${esc(memberLabel(m))}</option>`).join('');
+  memberOverlayTitle.textContent=`${partLabel(partForPosition(position))} · ${position}번 참가자`;
   memberOverlay.classList.add('open');
 }
 function closeMemberPicker(){memberOverlay.classList.remove('open');currentEditingPosition=null}
 
 async function saveMemberToSlot(){
   if(!adminMode||!currentEditingPosition)return;
-
   const member=memberById(memberPicker.value);
   if(!member){alert('멤버를 선택해주세요.');return}
-
   const {error}=await db.from('busking_setlist_slots').insert({
-    event_id:Number(currentEventId),
-    member_id:String(member.id),
-    member_name:member.name||'',
-    repertoire_id:null,
-    sort_order:Number(currentEditingPosition),
-    updated_at:new Date().toISOString()
+    event_id:Number(currentEventId),member_id:String(member.id),member_name:member.name||'',repertoire_id:null,
+    sort_order:Number(currentEditingPosition),updated_at:new Date().toISOString()
   });
-
   if(error){alert('참가자 추가 실패\n'+error.message);return}
-
-  closeMemberPicker();
-  await loadBoard(currentEventId);
-  renderDetail(currentEventId);
+  closeMemberPicker();await loadBoard(currentEventId);renderDetail(currentEventId);
 }
 
 async function moveSlot(id,dir){
   if(!adminMode)return;
+  const slot=slots.find(x=>String(x.id)===String(id));if(!slot)return;
+  const from=Number(slot.sort_order),to=from+dir;
+  if(to<1||to>settings.max_participants)return;
 
-  const slot=slots.find(x=>String(x.id)===String(id));
-  if(!slot)return;
-
-  const targetOrder=Number(slot.sort_order)+dir;
-  if(targetOrder<1||targetOrder>Number(settings.max_participants||5))return;
-
-  const target=slots.find(x=>Number(x.sort_order)===targetOrder);
-
-  if(target){
-    await db.from('busking_setlist_slots').update({sort_order:-999}).eq('id',slot.id);
-    await db.from('busking_setlist_slots').update({sort_order:Number(slot.sort_order)}).eq('id',target.id);
-    await db.from('busking_setlist_slots').update({sort_order:targetOrder}).eq('id',slot.id);
-  }else{
-    await db.from('busking_setlist_slots').update({sort_order:targetOrder}).eq('id',slot.id);
+  if(settings.section_count===2&&partForPosition(from)!==partForPosition(to)){
+    if(!confirm(`${partLabel(partForPosition(to))}로 참가자를 이동할까요?`))return;
   }
 
-  await loadBoard(currentEventId);
-  renderDetail(currentEventId);
+  const target=slots.find(x=>Number(x.sort_order)===to);
+  if(target){
+    await db.from('busking_setlist_slots').update({sort_order:-999}).eq('id',slot.id);
+    await db.from('busking_setlist_slots').update({sort_order:from}).eq('id',target.id);
+    await db.from('busking_setlist_slots').update({sort_order:to}).eq('id',slot.id);
+  }else{
+    await db.from('busking_setlist_slots').update({sort_order:to}).eq('id',slot.id);
+  }
+  await clearPerformanceOrder(false);
+  await loadBoard(currentEventId);renderDetail(currentEventId);
 }
 
 async function removeParticipant(id){
   if(!adminMode)return;
   if(!confirm('이 참가자를 편성표에서 삭제할까요? MEMBERS 개인곡은 삭제되지 않습니다.'))return;
-
   const {error}=await db.from('busking_setlist_slots').delete().eq('id',id);
   if(error){alert('참가자 삭제 실패\n'+error.message);return}
-
-  await loadBoard(currentEventId);
-  renderDetail(currentEventId);
+  await clearPerformanceOrder(false);
+  await loadBoard(currentEventId);renderDetail(currentEventId);
 }
 
 function openSongChooser(slotId){
-  const slot=slots.find(x=>String(x.id)===String(slotId));
-  if(!slot)return;
-  if(!canEditSlotSongs(slot))return;
-
+  const slot=slots.find(x=>String(x.id)===String(slotId));if(!slot||!canEditSlotSongs(slot))return;
   const current=songsForSlot(slot);
-  if(current.length>=Number(settings.max_songs_per_member||5)){
-    alert(`이 버스킹은 1인 최대 ${settings.max_songs_per_member}곡으로 설정되어 있습니다.`);
-    return;
-  }
-
+  if(current.length>=settings.max_songs_per_member){alert(`최대 ${settings.max_songs_per_member}곡까지 추가할 수 있습니다.`);return}
   currentSongSlot=slot;
-  const m=memberById(slot.member_id);
-  const used=new Set(current.map(x=>String(x.repertoire_id)));
-
-  const songs=repertoire.filter(s=>
-    !used.has(String(s.id)) &&
-    (
-      String(s.member_id||'')===String(slot.member_id) ||
-      norm(s.vocalist_name)===norm(m?.name||slot.member_name)
-    )
-  );
-
+  const m=memberById(slot.member_id),used=new Set(current.map(x=>String(x.repertoire_id)));
+  const songs=repertoire.filter(s=>!used.has(String(s.id))&&(String(s.member_id||'')===String(slot.member_id)||norm(s.vocalist_name)===norm(m?.name||slot.member_name)));
   songOverlayTitle.textContent=`${m?.name||slot.member_name||''} · Song`;
-  songOverlayNote.textContent=`MEMBERS에 저장된 개인곡만 표시됩니다. 현재 ${current.length}/${Number(settings.max_songs_per_member||5)}곡`;
-
-  songLibrary.innerHTML=songs.length
-    ? songs.map(song=>`<div class="song-choice">
-        <div><strong>${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}${song.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div>
-        <div style="display:flex;gap:5px;align-items:center">
-          ${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}
-          <button class="secondary" onclick="addSongToSlot(${song.id})">추가</button>
-        </div>
-      </div>`).join('')
-    : `<div class="empty">추가할 수 있는 개인곡이 없습니다.<br><br><a href="/members/" style="color:#715ddd;font-weight:800">MEMBERS에서 곡 관리 →</a></div>`;
-
+  songOverlayNote.textContent=`MEMBERS 개인곡 · 현재 ${current.length}/${settings.max_songs_per_member}곡`;
+  songLibrary.innerHTML=songs.length?songs.map(song=>`<div class="song-choice"><div><strong>${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}${song.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div><div style="display:flex;gap:5px;align-items:center">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}<button class="secondary" onclick="addSongToSlot(${song.id})">추가</button></div></div>`).join(''):`<div class="empty">추가할 수 있는 개인곡이 없습니다.<br><br><a href="/members/" style="color:#715ddd;font-weight:800">MEMBERS에서 곡 관리 →</a></div>`;
   songOverlay.classList.add('open');
 }
-
 function closeSongChooser(){songOverlay.classList.remove('open');currentSongSlot=null}
 
 async function addSongToSlot(repertoireId){
   if(!currentSongSlot)return;
-
   const existing=songsForSlot(currentSongSlot);
-  if(existing.length>=Number(settings.max_songs_per_member||5)){
-    alert(`최대 ${settings.max_songs_per_member}곡까지 추가할 수 있습니다.`);
-    return;
-  }
-
+  if(existing.length>=settings.max_songs_per_member)return;
   const next=(existing.length?Math.max(...existing.map(x=>Number(x.sort_order)||0)):0)+1;
-
-  const {error}=await db.from('busking_setlist_slot_songs').insert({
-    slot_id:currentSongSlot.id,
-    repertoire_id:repertoireId,
-    sort_order:next
-  });
-
+  const {error}=await db.from('busking_setlist_slot_songs').insert({slot_id:currentSongSlot.id,repertoire_id:repertoireId,sort_order:next});
   if(error){alert('곡 추가 실패\n'+error.message);return}
-
-  await loadBoard(currentEventId);
-  closeSongChooser();
-  renderDetail(currentEventId);
+  await clearPerformanceOrder(false);
+  await loadBoard(currentEventId);closeSongChooser();renderDetail(currentEventId);
 }
 
 async function removeSong(id){
-  const songRow=slotSongs.find(x=>String(x.id)===String(id));
-  if(!songRow)return;
-  const slot=slots.find(x=>String(x.id)===String(songRow.slot_id));
+  const ss=slotSongById(id);if(!ss)return;
+  const slot=slots.find(x=>String(x.id)===String(ss.slot_id));
   if(!slot||!canEditSlotSongs(slot))return;
-
   const {error}=await db.from('busking_setlist_slot_songs').delete().eq('id',id);
   if(error){alert('곡 삭제 실패\n'+error.message);return}
+  await clearPerformanceOrder(false);
+  await loadBoard(currentEventId);renderDetail(currentEventId);
+}
 
-  await loadBoard(currentEventId);
-  renderDetail(currentEventId);
+/* =======================
+   RANDOM PERFORMANCE ORDER
+======================= */
+async function generateRandomOrder(){
+  if(!adminMode)return;
+
+  if(!slots.length){alert('참가자를 먼저 배치해주세요.');return}
+  if(!slotSongs.length){alert('곡을 먼저 추가해주세요.');return}
+
+  const result=[];
+  const parts=settings.section_count===2?[1,2]:[1];
+
+  for(const part of parts){
+    const partSlots=slots.filter(s=>partForPosition(Number(s.sort_order))===part);
+    const partSlotIds=new Set(partSlots.map(s=>String(s.id)));
+    const items=slotSongs
+      .filter(ss=>partSlotIds.has(String(ss.slot_id)))
+      .map(ss=>{
+        const slot=slots.find(s=>String(s.id)===String(ss.slot_id));
+        return {slot_song_id:ss.id,member_id:String(slot?.member_id||''),part_no:part};
+      });
+
+    if(!items.length)continue;
+
+    const generated=randomizeNoThree(items);
+    if(!generated){
+      alert(`${partLabel(part)}는 현재 곡 배분으로 같은 사람이 3곡 연속 나오지 않게 배치할 수 없습니다.\n참가자별 곡 수를 조정해주세요.`);
+      return;
+    }
+    result.push(...generated);
+  }
+
+  if(!result.length){alert('순서에 넣을 곡이 없습니다.');return}
+
+  const {error:delError}=await db.from('busking_setlist_order').delete().eq('event_id',Number(currentEventId));
+  if(delError){alert('기존 순서 초기화 실패\n'+delError.message);return}
+
+  const rows=[];
+  for(const part of parts){
+    const arr=result.filter(x=>x.part_no===part);
+    arr.forEach((x,i)=>rows.push({
+      event_id:Number(currentEventId),
+      part_no:part,
+      sequence_no:i+1,
+      slot_song_id:x.slot_song_id,
+      updated_at:new Date().toISOString()
+    }));
+  }
+
+  const {error}=await db.from('busking_setlist_order').insert(rows);
+  if(error){alert('랜덤 순서 저장 실패\n'+error.message);return}
+  await loadBoard(currentEventId);renderPerformanceOrder();
+}
+
+function randomizeNoThree(items){
+  const source=items.map(x=>({...x}));
+  for(let attempt=0;attempt<500;attempt++){
+    const remaining=[...source];
+    const out=[];
+    while(remaining.length){
+      const blocked=out.length>=2&&out[out.length-1].member_id===out[out.length-2].member_id
+        ? out[out.length-1].member_id:null;
+      const candidates=remaining.map((x,i)=>({x,i})).filter(v=>!blocked||v.x.member_id!==blocked);
+      if(!candidates.length)break;
+
+      // 같은 사람 곡이 너무 뒤에 몰리지 않도록 남은 개수가 많은 멤버를 약간 우선하면서 랜덤
+      const counts={};
+      remaining.forEach(x=>counts[x.member_id]=(counts[x.member_id]||0)+1);
+      candidates.sort((a,b)=>(counts[b.x.member_id]-counts[a.x.member_id])+(Math.random()-.5)*2);
+      const topCount=Math.min(3,candidates.length);
+      const chosen=candidates[Math.floor(Math.random()*topCount)];
+      out.push(chosen.x);
+      remaining.splice(chosen.i,1);
+    }
+    if(out.length===source.length&&!hasThreeConsecutive(out))return out;
+  }
+  return null;
+}
+function hasThreeConsecutive(arr){
+  for(let i=2;i<arr.length;i++){
+    if(arr[i].member_id===arr[i-1].member_id&&arr[i].member_id===arr[i-2].member_id)return true;
+  }
+  return false;
+}
+
+async function clearPerformanceOrder(showConfirm=true){
+  if(showConfirm&&adminMode&&!confirm('현재 실제 공연 순서를 초기화할까요? 참가자와 곡은 유지됩니다.'))return;
+  const {error}=await db.from('busking_setlist_order').delete().eq('event_id',Number(currentEventId));
+  if(error&&showConfirm){alert('순서 초기화 실패\n'+error.message);return}
+  performanceOrder=[];
+  renderPerformanceOrder();
+}
+
+/* =======================
+   DRAG ORDER
+======================= */
+function orderDragStart(e){
+  if(!adminMode)return;
+  dragOrderId=e.currentTarget.dataset.orderId;
+  e.currentTarget.classList.add('dragging');
+  e.dataTransfer.effectAllowed='move';
+}
+function orderDragOver(e){
+  if(!adminMode)return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+}
+async function orderDrop(e){
+  if(!adminMode)return;
+  e.preventDefault();
+  const targetId=e.currentTarget.dataset.orderId;
+  if(!dragOrderId||dragOrderId===targetId)return;
+
+  const dragged=performanceOrder.find(x=>String(x.id)===String(dragOrderId));
+  const target=performanceOrder.find(x=>String(x.id)===String(targetId));
+  if(!dragged||!target)return;
+  if(Number(dragged.part_no)!==Number(target.part_no)){
+    alert('드래그는 같은 부 안에서만 가능합니다. 부를 바꾸려면 참가자 편성을 변경해주세요.');
+    return;
+  }
+
+  const part=Number(dragged.part_no);
+  const rows=performanceOrder.filter(x=>Number(x.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
+  const from=rows.findIndex(x=>String(x.id)===String(dragOrderId));
+  const to=rows.findIndex(x=>String(x.id)===String(targetId));
+  const [moved]=rows.splice(from,1);rows.splice(to,0,moved);
+
+  await saveOrderSequence(part,rows);
+}
+function orderDragEnd(e){
+  e.currentTarget.classList.remove('dragging');
+  dragOrderId=null;
+}
+
+async function moveOrder(id,dir){
+  if(!adminMode)return;
+  const row=performanceOrder.find(x=>String(x.id)===String(id));if(!row)return;
+  const part=Number(row.part_no);
+  const rows=performanceOrder.filter(x=>Number(x.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
+  const idx=rows.findIndex(x=>String(x.id)===String(id)),to=idx+dir;
+  if(to<0||to>=rows.length)return;
+  [rows[idx],rows[to]]=[rows[to],rows[idx]];
+  await saveOrderSequence(part,rows);
+}
+
+async function saveOrderSequence(part,rows){
+  for(let i=0;i<rows.length;i++){
+    rows[i].sequence_no=i+1;
+    const {error}=await db.from('busking_setlist_order').update({sequence_no:i+1,updated_at:new Date().toISOString()}).eq('id',rows[i].id);
+    if(error){alert('순서 저장 실패\n'+error.message);await loadBoard(currentEventId);renderPerformanceOrder();return}
+  }
+  await loadBoard(currentEventId);renderPerformanceOrder();
 }
 
 function memberLabel(member){
@@ -497,40 +664,32 @@ function memberLabel(member){
   const extras=[member.role,member.region].filter(Boolean).join(' · ');
   return `${order!==''?'#'+order+' ':''}${member.name||''}${extras?' · '+extras:''}`;
 }
-
 function compareMembers(a,b){
   const ao=Number(a.join_order??a.join_sequence??a.member_order??a.order_no??999999);
   const bo=Number(b.join_order??b.join_sequence??b.member_order??b.order_no??999999);
   return ao-bo||String(a.name||'').localeCompare(String(b.name||''),'ko');
 }
-
 function makeTime(row){
   const a=row.start_time?String(row.start_time).slice(0,5):'';
   const b=row.end_time?String(row.end_time).slice(0,5):'';
   return [a,b].filter(Boolean).join(' - ');
 }
-function formatDate(v){
-  if(!v)return '-';
-  return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(new Date(v+'T00:00:00'));
-}
+function formatDate(v){if(!v)return '-';return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'}).format(new Date(v+'T00:00:00'))}
 function week(v){return['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(v+'T00:00:00').getDay()]}
 function norm(v){return String(v??'').trim().toLowerCase()}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 async function checkAdmin(){
-  const {data}=await db.auth.getSession();
-  const s=data.session;
+  const {data}=await db.auth.getSession();const s=data.session;
   if(!s){setAdmin(false);return}
   const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();
   setAdmin(!!a);
 }
 function setAdmin(v){
-  adminMode=v;
-  adminBadge.classList.toggle('show',v);
+  adminMode=v;adminBadge.classList.toggle('show',v);
   const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');
-  if(a)a.style.display=v?'none':'block';
-  if(l)l.style.display=v?'block':'none';
+  if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';
 }
 function openAdminLogin(){closeMenu();loginOverlay.classList.add('open')}
 function closeAdminLogin(){loginOverlay.classList.remove('open')}
