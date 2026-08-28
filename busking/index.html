@@ -306,7 +306,7 @@ function renderDetail(id){
       ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}
       ${setlistExists
         ? `<a class="setlist-cta" href="/busking/setlist/?id=${row.id}"><div><strong>셋리스트 보기</strong><small>참가자 편성 · 개인곡 · 최종 공연 순서</small></div><span>→</span></a>`
-        : isAdmin
+        : adminMode
           ? `<a class="setlist-cta create" href="/busking/setlist/?id=${row.id}&create=1"><div><strong>셋리스트 생성하기</strong><small>이 모임의 참가자와 공연 순서를 처음 설정합니다.</small></div><span>＋</span></a>`
           : `<div class="setlist-cta pending"><div><strong>셋리스트 준비중</strong><small>운영진이 셋리스트를 준비하고 있습니다.</small></div><span>…</span></div>`}
     </section>`;
