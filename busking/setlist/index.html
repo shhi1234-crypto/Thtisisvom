@@ -51,7 +51,9 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
 .performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
 .time-block{margin-top:10px}.time-block:first-child{margin-top:0}.time-block-head{display:flex;align-items:center;gap:8px;margin:10px 0 7px;padding:7px 10px;border-radius:10px;background:#f4f2f9;color:#6c5bc9;font-size:9px;font-weight:800}.time-block-head span{color:#989cab;font-weight:700}.time-block-head::after{content:"";height:1px;flex:1;background:rgba(28,34,65,.08)}
-.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:26px 28px 112px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:49px;padding:6px 9px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
+.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:26px 28px 112px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:49px;padding:6px 9px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;min-width:0}
+.member-pos{flex:0 0 auto;font-size:9px;font-weight:900;color:#52596c;white-space:nowrap}
+.order-member .performer-chips{margin-top:0;flex-wrap:wrap}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
 
 
 .schedule-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 12px}.schedule-step{padding:10px 12px;border-radius:13px;background:#f7f6fb;border:1px solid rgba(28,34,65,.05)}.schedule-step small{display:block;color:#9296a5;font-size:8px;font-weight:800}.schedule-step strong{display:block;margin-top:3px;font-size:11px}.schedule-step.live{background:linear-gradient(145deg,#f0ecff,#eef7ff)}.schedule-step.live strong{color:#6654c7}.personal-order-title{margin-top:8px;color:#777c8d;font-size:9px;font-weight:800}.extra-block{margin-top:12px;padding:11px;border:1px dashed rgba(102,85,200,.22);border-radius:14px;background:#fbfaff}.extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.extra-head strong{font-size:11px;color:#6654c7}.extra-head small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.extra-list{display:grid;gap:5px;margin-top:8px}.extra-row{display:grid;grid-template-columns:28px 110px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 8px;border-radius:11px;background:#fff}.extra-row .extra-tag{font-size:8px;font-weight:900;color:#6654c7}.time-block-head strong{font-size:10px}.time-note{font-size:8px;color:#9a9dab;font-weight:700}.time-block-head{flex-wrap:wrap}.block-time-controls{margin-left:auto;display:flex;align-items:center;gap:4px}.block-time-controls button{width:26px;height:26px;border:0;border-radius:8px;background:#fff;color:#6654c7;font-size:13px;font-weight:900;cursor:pointer}.block-time-controls b{min-width:42px;text-align:center;color:#6654c7;font-size:9px}.timeline-buffer{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:#f7f6fb;color:#85899a;font-size:9px;font-weight:700}.timeline-buffer.warn{background:#fff2f3;color:#a95568}.timeline-buffer.good{background:#eef8f3;color:#4f806e}
@@ -84,7 +86,8 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 
 .performer-chips{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:2px}
 .performer-chip{display:inline-flex;align-items:center;gap:4px;min-height:20px;padding:2px 7px;border-radius:999px;background:var(--person-bg,#f2eff9);color:var(--person-ink,#6654c7);font-size:9px;font-weight:900;white-space:nowrap}
-.performer-chip.main::after{content:"주체";font-size:7px;font-weight:900;opacity:.72;padding-left:3px}
+.performer-chip.main{box-shadow:inset 0 0 0 1.5px currentColor}
+.performer-chip.main::before{content:"●";font-size:6px;line-height:1;opacity:.8}
 .performer-chip.group{background:#f1eff8;color:#625b78}
 .direct-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 .direct-song-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -736,7 +739,8 @@ function renderParticipantBoard(){
       const count=songs.length,done=count>=settings.max_songs_per_member;
       const readyClass=count===0?'empty':done?'done':'wait';
       const participate=participationCount(slot.member_id);
-      const readyText=(done?`준비완료 ${count}/${settings.max_songs_per_member}`:count===0?`곡 미등록 0/${settings.max_songs_per_member}`:`준비중 ${count}/${settings.max_songs_per_member}`)+(participate?` · 참여곡 ${participate}`:'');
+      const totalParticipation=count+participate;
+      const readyText=(done?`준비완료 ${count}/${settings.max_songs_per_member}`:count===0?`곡 미등록 0/${settings.max_songs_per_member}`:`준비중 ${count}/${settings.max_songs_per_member}`)+` · 총 참여곡 ${totalParticipation}곡`;
       html+=`<div class="slot-row person-${Math.min(pos,10)}">
         <div><div class="slot-no">${pos}</div></div>
         <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small><span class="ready-badge ${readyClass}">${readyText}</span></div>
@@ -859,7 +863,7 @@ function createDirectOrderItem(song,no){
   return `<div class="order-item">
     <div class="drag-handle"></div>
     <div class="order-num">＋</div>
-    <div class="order-member">${performerChipsForDirect(song)}</div>
+    <div class="order-member"><span class="member-pos">${song.song_type==='group'?'단체':'직접'}</span>${performerChipsForDirect(song)}</div>
     <div class="order-song"><strong>${esc(song.song_title||'곡명 미입력')}</strong><small>${esc(song.artist_name||'')}${song.song_type==='group'?' · 단체곡':song.song_type==='duet'?' · 듀엣':' · 솔로'}</small></div>
     <div class="order-fallback">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny danger" onclick="removeDirectSong(${song.id})">삭제</button>`:''}</div>
   </div>`;
@@ -872,7 +876,7 @@ function createPlannedOrderItem(item){
   return `<div class="order-item person-${Math.min(pos,10)}" draggable="${draggable?'true':'false'}" data-sequence="${sequence}" ${saved?`data-order-id="${saved.id}" data-part="${saved.part_no}" ondragstart="orderDragStart(event)" ondragover="orderDragOver(event)" ondrop="orderDrop(event)" ondragend="orderDragEnd(event)"`:adminMode?'ondragover="orderDragOver(event)" ondrop="orderDropToSequence(event)"':''}>
     <div class="drag-handle">${draggable?'⋮⋮':''}</div>
     <div class="order-num">#${sequence}</div>
-    <div class="order-member">${pos}번${song?performerChipsForRepertoire(song,slot):` · ${esc(member?.name||'미정')}`}</div>
+    <div class="order-member"><span class="member-pos">${pos}번</span>${song?performerChipsForRepertoire(song,slot):`<div class="performer-chips"><span class="performer-chip person-${Math.min(pos,10)} main">${esc(member?.name||'미정')}</span></div>`}</div>
     <div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}</strong><small>${song?esc(song.artist_name||''):'곡 추가 시 자동 반영'}</small></div>
     <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div>
   </div>`;
