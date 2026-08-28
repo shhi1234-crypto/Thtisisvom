@@ -51,9 +51,9 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
 .performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
 .time-block{margin-top:10px}.time-block:first-child{margin-top:0}.time-block-head{display:flex;align-items:center;gap:8px;margin:10px 0 7px;padding:7px 10px;border-radius:10px;background:#f4f2f9;color:#6c5bc9;font-size:9px;font-weight:800}.time-block-head span{color:#989cab;font-weight:700}.time-block-head::after{content:"";height:1px;flex:1;background:rgba(28,34,65,.08)}
-.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:26px 28px 112px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:49px;padding:6px 9px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;min-width:0}
+.order-list{display:grid;gap:5px}.order-item{display:grid;grid-template-columns:26px 28px 112px minmax(0,1fr) auto;gap:6px;align-items:center;min-height:42px;padding:5px 8px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px;min-width:0}
 .member-pos{flex:0 0 auto;font-size:9px;font-weight:900;color:#52596c;white-space:nowrap}
-.order-member .performer-chips{margin-top:0;flex-wrap:wrap}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
+.order-member .performer-chips{margin-top:0;flex-wrap:wrap}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.15}.song-artist-inline{font-size:9px;font-weight:700;color:#8a8e9d}.order-song small{display:none}.order-fallback{display:flex;gap:4px}
 
 
 .schedule-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 12px}.schedule-step{padding:10px 12px;border-radius:13px;background:#f7f6fb;border:1px solid rgba(28,34,65,.05)}.schedule-step small{display:block;color:#9296a5;font-size:8px;font-weight:800}.schedule-step strong{display:block;margin-top:3px;font-size:11px}.schedule-step.live{background:linear-gradient(145deg,#f0ecff,#eef7ff)}.schedule-step.live strong{color:#6654c7}.personal-order-title{margin-top:8px;color:#777c8d;font-size:9px;font-weight:800}.extra-block{margin-top:12px;padding:11px;border:1px dashed rgba(102,85,200,.22);border-radius:14px;background:#fbfaff}.extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.extra-head strong{font-size:11px;color:#6654c7}.extra-head small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.extra-list{display:grid;gap:5px;margin-top:8px}.extra-row{display:grid;grid-template-columns:28px 110px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 8px;border-radius:11px;background:#fff}.extra-row .extra-tag{font-size:8px;font-weight:900;color:#6654c7}.time-block-head strong{font-size:10px}.time-note{font-size:8px;color:#9a9dab;font-weight:700}.time-block-head{flex-wrap:wrap}.block-time-controls{margin-left:auto;display:flex;align-items:center;gap:4px}.block-time-controls button{width:26px;height:26px;border:0;border-radius:8px;background:#fff;color:#6654c7;font-size:13px;font-weight:900;cursor:pointer}.block-time-controls b{min-width:42px;text-align:center;color:#6654c7;font-size:9px}.timeline-buffer{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:#f7f6fb;color:#85899a;font-size:9px;font-weight:700}.timeline-buffer.warn{background:#fff2f3;color:#a95568}.timeline-buffer.good{background:#eef8f3;color:#4f806e}
@@ -81,7 +81,7 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 
 @media(max-width:760px){
 .block-time-controls{width:100%;margin-left:0;justify-content:flex-end}.time-block-head{align-items:center}
-.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.schedule-strip{grid-template-columns:1fr}.slot-table{overflow:visible}.slot-head{display:none}.slot-row{min-width:0;grid-template-columns:38px minmax(0,1fr);gap:5px 7px;padding:6px 8px}.slot-row>div:nth-child(1){grid-column:1}.slot-member,.slot-empty-text{grid-column:2}.slot-row>.song-stack{grid-column:1/-1;padding-top:2px}.slot-row>.slot-actions{grid-column:1/-1;justify-content:flex-start}.song-line{width:100%;flex-wrap:nowrap}.song-name{flex:1;min-width:0}.song-artist{display:none}.song-tools{margin-left:0;flex:0 0 auto}.yt{min-width:0;height:24px;padding:0 9px;font-size:8px}.order-list{overflow:visible}.order-item{min-width:0;grid-template-columns:22px 28px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:3px 6px;padding:7px}.drag-handle{grid-column:1;grid-row:1/3}.order-num{grid-column:2;grid-row:1/3}.order-member{grid-column:3;grid-row:1}.order-song{grid-column:3/5;grid-row:2}.order-fallback{grid-column:4;grid-row:1;justify-self:end}.order-fallback .yt{min-width:0}.extra-row{grid-template-columns:26px minmax(0,1fr) auto}.extra-row .order-song{grid-column:2}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.setlist-tabs{margin-top:10px}.setlist-tab{min-height:40px;font-size:10px}.participant-chips{gap:5px}.participant-chip{min-height:29px;padding:0 9px}.personal-order-panel{padding:9px 10px}.song-library{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.song-choice{padding:8px;grid-template-columns:minmax(0,1fr) auto;gap:5px}.song-choice strong{font-size:10px}.song-choice small{font-size:8px}.song-choice .secondary{padding:6px 7px;font-size:8px}
+.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.schedule-strip{grid-template-columns:1fr}.slot-table{overflow:visible}.slot-head{display:none}.slot-row{min-width:0;grid-template-columns:38px minmax(0,1fr);gap:5px 7px;padding:6px 8px}.slot-row>div:nth-child(1){grid-column:1}.slot-member,.slot-empty-text{grid-column:2}.slot-row>.song-stack{grid-column:1/-1;padding-top:2px}.slot-row>.slot-actions{grid-column:1/-1;justify-content:flex-start}.song-line{width:100%;flex-wrap:nowrap}.song-name{flex:1;min-width:0}.song-artist{display:none}.song-tools{margin-left:0;flex:0 0 auto}.yt{min-width:0;height:24px;padding:0 9px;font-size:8px}.order-list{overflow:visible}.order-item{min-width:0;grid-template-columns:18px 28px minmax(100px,auto) minmax(0,1fr) auto;grid-template-rows:auto;gap:4px 5px;padding:6px}.drag-handle{grid-column:1;grid-row:1}.order-num{grid-column:2;grid-row:1}.order-member{grid-column:3;grid-row:1;min-width:0}.order-song{grid-column:4;grid-row:1;min-width:0}.order-fallback{grid-column:5;grid-row:1;justify-self:end}.order-fallback .yt{min-width:0}.extra-row{grid-template-columns:26px minmax(0,1fr) auto}.extra-row .order-song{grid-column:2}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.setlist-tabs{margin-top:10px}.setlist-tab{min-height:40px;font-size:10px}.participant-chips{gap:5px}.participant-chip{min-height:29px;padding:0 9px}.personal-order-panel{padding:9px 10px}.song-library{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.song-choice{padding:8px;grid-template-columns:minmax(0,1fr) auto;gap:5px}.song-choice strong{font-size:10px}.song-choice small{font-size:8px}.song-choice .secondary{padding:6px 7px;font-size:8px}
 }
 
 .performer-chips{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:2px}
@@ -98,6 +98,30 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 .direct-member{border:1px solid rgba(40,45,75,.10);border-radius:999px;padding:6px 9px;background:#fff;font-size:9px;font-weight:800;cursor:pointer}
 .direct-member.selected{outline:2px solid #7564d8;outline-offset:1px}
 .participation-note{font-size:8px;font-weight:800;color:#77758c;margin-left:4px}
+
+
+.song-draw-actions{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex:0 0 auto}
+.song-draw-actions .secondary{min-height:31px;padding:6px 9px;border-radius:10px;font-size:8.5px;line-height:1;white-space:nowrap}
+.time-block-head.compact{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+.time-block-head.compact::after{display:none}
+.time-block-label{display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
+.time-block-label strong{font-size:10px}
+.time-block-label span{font-size:9px;color:#989cab;font-weight:700}
+.time-block-head.compact .block-time-controls{width:auto;margin-left:auto;justify-content:flex-end;flex:0 0 auto}
+.time-block-head.compact .block-time-controls button{width:25px;height:25px}
+.time-block-head.compact .block-time-controls b{min-width:34px;font-size:8.5px}
+@media(max-width:760px){
+  .song-draw-top{align-items:flex-start}
+  .song-draw-actions{gap:4px}
+  .song-draw-actions .secondary{min-height:28px;padding:5px 7px;font-size:8px}
+  .time-block-head.compact{padding:6px 8px}
+  .time-block-label{gap:4px}
+  .time-block-label strong{font-size:9px}
+  .time-block-label span{font-size:8px}
+  .time-block-head.compact .block-time-controls{width:auto;margin-left:auto}
+  .time-block-head.compact .block-time-controls button{width:24px;height:24px}
+  .time-block-head.compact .block-time-controls b{min-width:30px;font-size:8px}
+}
 
 </style>
 </head>
@@ -604,9 +628,9 @@ function renderSongDraw(){
         <div class="song-draw-title">곡 순서 사전 추첨</div>
         <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하고, 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 관리하며, 최종 셋리스트에서 구간별 시간을 5분 단위로 조정할 수 있습니다. · ${totalPerPart}</div>
       </div>
-      ${adminMode?`<div class="direct-actions">
-        <button class="secondary" onclick="openDirectSong()">＋ 직접 곡 추가</button>
-        <button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>
+      ${adminMode?`<div class="song-draw-actions">
+        <button class="secondary" onclick="openDirectSong()">＋ 직접 추가</button>
+        <button class="secondary" onclick="redrawSongPlan()">${valid?'순서 다시':'순서 뽑기'}</button>
       </div>`:''}
     </div>
     ${valid?`<div class="personal-order-title">개인순번 확인 · 참가자 이름을 눌러주세요</div>
@@ -845,7 +869,7 @@ function renderPerformanceOrder(){
       const block=planned.slice(i,i+6),blockNo=Math.floor(i/6)+1;
       const mins=blockMinutes(part,blockNo,block.length);
       const time=blockTimeLabel(row,part,blockNo,block.length);
-      html+=`<div class="time-block"><div class="time-block-head"><strong>${time}</strong> · ${blockNo}구간 <span>${block.length}곡 · ${mins}분</span>${adminMode?`<div class="block-time-controls"><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},-5)" title="5분 줄이기">−</button><b>${mins}분</b><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},5)" title="5분 늘리기">＋</button></div>`:''}</div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
+      html+=`<div class="time-block"><div class="time-block-head compact"><div class="time-block-label"><strong>${time}</strong><span>· ${blockNo}구간 · ${block.length}곡 · ${mins}분</span></div>${adminMode?`<div class="block-time-controls"><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},-5)" title="5분 줄이기">−</button><b>${mins}분</b><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},5)" title="5분 늘리기">＋</button></div>`:''}</div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
     }
     const direct=directSongsForPart(part);
     if(direct.length){
@@ -864,7 +888,7 @@ function createDirectOrderItem(song,no){
     <div class="drag-handle"></div>
     <div class="order-num">＋</div>
     <div class="order-member"><span class="member-pos">${song.song_type==='group'?'단체':'직접'}</span>${performerChipsForDirect(song)}</div>
-    <div class="order-song"><strong>${esc(song.song_title||'곡명 미입력')}</strong><small>${esc(song.artist_name||'')}${song.song_type==='group'?' · 단체곡':song.song_type==='duet'?' · 듀엣':' · 솔로'}</small></div>
+    <div class="order-song"><strong>${esc(song.song_title||'곡명 미입력')}${song.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
     <div class="order-fallback">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny danger" onclick="removeDirectSong(${song.id})">삭제</button>`:''}</div>
   </div>`;
 }
@@ -877,7 +901,7 @@ function createPlannedOrderItem(item){
     <div class="drag-handle">${draggable?'⋮⋮':''}</div>
     <div class="order-num">#${sequence}</div>
     <div class="order-member"><span class="member-pos">${pos}번</span>${song?performerChipsForRepertoire(song,slot):`<div class="performer-chips"><span class="performer-chip person-${Math.min(pos,10)} main">${esc(member?.name||'미정')}</span></div>`}</div>
-    <div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}</strong><small>${song?esc(song.artist_name||''):'곡 추가 시 자동 반영'}</small></div>
+    <div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
     <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div>
   </div>`;
 }
@@ -889,7 +913,7 @@ function extraSongsForFinalBlock(){
 }
 function renderExtraSongs(){
   const extra=extraSongsForFinalBlock();
-  return `<div class="extra-block"><div class="extra-head"><div><strong>＋ 추가곡 · 현장 결정</strong><small>마지막 구간 뒤에 진행 · 순서는 현장에서 자유롭게 결정</small></div>${adminMode?`<button class="secondary" onclick="openExtraSongChooser()">추가곡 선택</button>`:''}</div><div class="extra-list">${extra.length?extra.map(({slot,ss,song})=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<div class="extra-row person-${Math.min(pos,10)}"><div class="extra-tag">추가</div><div class="order-member">${pos}번 · ${esc(m?.name||slot.member_name||'')}</div><div class="order-song"><strong>${esc(song?.song_title||'곡 미정')}</strong><small>${esc(song?.artist_name||'')}</small></div><div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</div></div>`}).join(''):'<div class="slot-empty-text" style="padding:4px 0">추가곡은 현장에서 필요할 때 넣으면 됩니다.</div>'}</div></div>`;
+  return `<div class="extra-block"><div class="extra-head"><div><strong>＋ 추가곡 · 현장 결정</strong><small>마지막 구간 뒤에 진행 · 순서는 현장에서 자유롭게 결정</small></div>${adminMode?`<button class="secondary" onclick="openExtraSongChooser()">추가곡 선택</button>`:''}</div><div class="extra-list">${extra.length?extra.map(({slot,ss,song})=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<div class="extra-row person-${Math.min(pos,10)}"><div class="extra-tag">추가</div><div class="order-member">${pos}번 · ${esc(m?.name||slot.member_name||'')}</div><div class="order-song"><strong>${esc(song?.song_title||'곡 미정')}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div><div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</div></div>`}).join(''):'<div class="slot-empty-text" style="padding:4px 0">추가곡은 현장에서 필요할 때 넣으면 됩니다.</div>'}</div></div>`;
 }
 function openExtraSongChooser(){
   if(!adminMode)return;
@@ -925,7 +949,7 @@ function createOrderItem(row,no){
     <div class="drag-handle">${adminMode?'⋮⋮':''}</div>
     <div class="order-num">${no}</div>
     <div class="order-member">${esc(member?.name||slot?.member_name||'-')}</div>
-    <div class="order-song"><strong>${esc(song?.song_title||'곡 정보 없음')}</strong><small>${esc(song?.artist_name||'')}${song?.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div>
+    <div class="order-song"><strong>${esc(song?.song_title||'곡 정보 없음')}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
     <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
   </div>`;
 }
