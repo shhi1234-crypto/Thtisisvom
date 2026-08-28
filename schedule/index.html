@@ -1,7 +1,5 @@
 <!DOCTYPE html><html lang="ko"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<link rel="icon" type="image/png" href="/favicon.png?v=3">
-<link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
 <title>SCHEDULE · Voice of Melody</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,6 +31,12 @@ linear-gradient(180deg,#faf8fb,#f8f7fb 60%,#fbfafc)}
 .bottom{position:fixed;z-index:80;left:50%;bottom:10px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:67px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border-radius:22px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 42px rgba(30,37,75,.12);backdrop-filter:blur(22px)}
 .bottom a,.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#777c8d;cursor:pointer;font-size:8px}.nav-icon{font-size:18px}
 @media(max-width:650px){.header{height:70px;padding:0 15px}.page{padding:25px 12px 102px}.hero h1{font-size:58px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.datebox{min-height:60px}.thumb{width:72px;height:58px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.detail h1{font-size:42px}}
+
+.setlist-cta{margin-top:16px;padding:14px 16px;border-radius:17px;border:1px solid rgba(111,91,216,.14);background:linear-gradient(135deg,#f1edff,#edf7ff);display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:#171b2d}
+.setlist-cta strong{display:block;font-size:12px}.setlist-cta small{display:block;margin-top:3px;color:#898da0;font-size:8.5px;font-weight:700}.setlist-cta>span{font-size:20px;font-weight:900;color:#6f5bd8}
+.setlist-cta.create{border-style:dashed;background:#f8f6ff}
+@media(max-width:650px){.setlist-cta{padding:12px 13px}.setlist-cta strong{font-size:11px}}
+
 </style></head>
 <body><div class="aurora"></div>
 <header class="header"><a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><button class="menu-btn" onclick="openMenu()">☰</button></header>
@@ -57,22 +61,49 @@ linear-gradient(180deg,#faf8fb,#f8f7fb 60%,#fbfafc)}
 
 <script>
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
+let adminMode=false;
+
+async function checkAdmin(){
+ const {data}=await db.auth.getSession();
+ const session=data.session;
+ if(!session){adminMode=false;return}
+ const {data:admin}=await db.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+ adminMode=!!admin;
+}
+
 async function start(){
  const id=new URLSearchParams(location.search).get('id');
  if(!id){document.getElementById('page').innerHTML='<div class="empty">선택된 일정이 없습니다.<br><br><a href="/calendar/">CALENDAR →</a></div>';return}
- const [e,l]=await Promise.all([db.from('events').select('*').eq('id',id).maybeSingle(),db.from('locations').select('*')]);
- const row=e.data, locations=l.data||[];
+
+ await checkAdmin();
+
+ const [e,l,s]=await Promise.all([
+   db.from('events').select('*').eq('id',id).maybeSingle(),
+   db.from('locations').select('*'),
+   db.from('busking_setlist_settings').select('event_id').eq('event_id',Number(id)).maybeSingle()
+ ]);
+ const row=e.data, locations=l.data||[], setlistExists=!!s.data;
+
  if(!row){document.getElementById('page').innerHTML='<div class="empty">일정을 찾을 수 없습니다.</div>';return}
  if(row.event_type==='VOM LIVE'){location.replace(`/live/?id=${encodeURIComponent(id)}`);return}
  if(row.event_type==='BUSKING'){location.replace(`/busking/?id=${encodeURIComponent(id)}`);return}
+
  const place=locations.find(x=>String(x.id)===String(row.location_id));
  const img=row.image_url||place?.image_url||'';
  document.title=`${row.title||'SCHEDULE'} · VOM`;
+
+ const setlistCta=setlistExists
+   ? `<a class="setlist-cta" href="/busking/setlist/?id=${row.id}"><div><strong>셋리스트 보기</strong><small>편성 · 준비 · 최종 순서</small></div><span>→</span></a>`
+   : adminMode
+     ? `<a class="setlist-cta create" href="/busking/setlist/?id=${row.id}&create=1"><div><strong>＋ 셋리스트 추가</strong><small>필요한 행사에만 선택해서 만들 수 있습니다.</small></div><span>＋</span></a>`
+     : '';
+
  document.getElementById('page').innerHTML=`<a class="back" href="/calendar/">← CALENDAR</a>
  <section class="detail"><div class="type">${esc(row.event_type||'OTHER')}</div><h1>${esc(row.title||'')}</h1>
  ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">VOM Schedule</div>`}
  <div class="detail-meta"><div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div><div class="info"><small>TIME</small><strong>${esc(makeTime(row)||'시간 미정')}</strong></div><div class="info"><small>PLACE</small><strong>${esc(place?.name||row.location||'장소 미정')}</strong></div></div>
- ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}</section>`;
+ ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}
+ ${setlistCta}</section>`;
 }
 
 function makeTime(row){
