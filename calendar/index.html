@@ -3853,7 +3853,8 @@ function openEventDetail(id){
   }
 
 
-  openScheduleDetail(item);
+  window.location.href =
+    `/schedule/?id=${encodeURIComponent(id)}`;
 }
 
 
