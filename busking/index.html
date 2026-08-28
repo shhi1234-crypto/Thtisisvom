@@ -279,7 +279,7 @@ function renderBuskingList(){
     const l=loc(row),img=row.image_url||l?.image_url||'',d=new Date(row.event_date+'T00:00:00');
     return `<article class="card" onclick="location.href='/busking/?id=${row.id}'">
       <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${week(row.event_date)}</small></div></div>
-      <div><div class="type">BUSKING</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">셋리스트 보기 →</div></div>
+      <div><div class="type">BUSKING</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">상세 보기 →</div></div>
       <div class="thumb">${img?`<img src="${attr(img)}" alt="">`:'VOM'}</div>
     </article>`;
   }).join(''):'<div class="empty">등록된 버스킹 일정이 없습니다.</div>'}</div>`;
@@ -289,13 +289,11 @@ function renderDetail(id){
   const row=events.find(x=>String(x.id)===String(id));
   if(!row){page.innerHTML='<div class="empty">일정을 찾을 수 없습니다.</div>';return}
   const l=loc(row),img=row.image_url||l?.image_url||'';
-  const isBusking=row.event_type==='BUSKING';
-  document.title=`${row.title||'SETLIST'} · VOM`;
-
+  document.title=`${row.title||'BUSKING'} · VOM`;
   page.innerHTML=`
-    <a class="back" href="${isBusking?'/busking/':'/calendar/'}">← ${isBusking?'BUSKING':'CALENDAR'}</a>
+    <a class="back" href="/busking/">← BUSKING</a>
     <section class="detail">
-      <div class="type">${esc(row.event_type||'VOM SETLIST')}</div>
+      <div class="type">BUSKING</div>
       <h1>${esc(row.title||'')}</h1>
       ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
       <div class="detail-meta">
@@ -304,40 +302,9 @@ function renderDetail(id){
         <div class="info"><small>PLACE</small><strong>${esc(l?.name||row.location||'장소 미정')}</strong></div>
       </div>
       ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}
-    </section>
-
-    <section class="board">
-      <div class="section-head">
-        <div><h2>Setlist Board</h2><p>참가자를 배치하고 각 멤버의 개인곡을 채웁니다.</p></div>
-        ${adminMode?`<button class="primary" onclick="openSettings()">편성 설정</button>`:''}
-      </div>
-      <div class="board-summary">
-        <div class="summary-card"><small>START</small><strong>${esc(row.start_time?String(row.start_time).slice(0,5):'미정')}</strong></div>
-        <div class="summary-card"><small>END</small><strong>${esc(row.end_time?String(row.end_time).slice(0,5):'미정')}</strong></div>
-        <div class="summary-card"><small>DURATION</small><strong>${esc(durationLabel(row))}</strong></div>
-        <div class="summary-card highlight"><small>PARTS</small><strong>${settings.section_count===2?'1부 + 2부':'1부만'}</strong></div>
-        <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${settings.max_participants}명</strong></div>
-        <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>최대 ${settings.max_songs_per_member}곡</strong></div>
-      </div>
-      ${renderOperationSchedule(row)}
-      ${renderSongDraw()}
-      <div id="participantBoard"></div>
-    </section>
-
-    <section class="run-order">
-      <div class="section-head">
-        <div><h2>Running Order</h2><p>곡 슬롯에 미리 정해진 순서 번호가 적용되며, 이후 드래그로 실제 공연 순서를 조정할 수 있습니다.</p></div>
-        ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
-      </div>
-      <div class="order-help">곡 순서는 참가자/곡 확정 전에 미리 추첨됩니다. 등록된 시작시간부터 15분은 준비 및 여유시간, 종료 전 15분은 정리시간으로 확보합니다. 본 공연은 6곡당 약 30분으로 나누며 마지막 구간은 남은 곡 수만 표시합니다. 관리자는 등록된 모든 곡을 드래그하거나 ↑↓로 재배치할 수 있습니다.</div>
-      <div id="performanceOrder"></div>
+      <a class="setlist-cta" href="/busking/setlist/?id=${row.id}"><div><strong>셋리스트 보기</strong><small>참가자 편성 · 개인곡 · 최종 공연 순서</small></div><span>→</span></a>
     </section>`;
-
-  renderParticipantBoard();
-  renderPerformanceOrder();
 }
-
-
 
 function renderOperationSchedule(row){
   const t=operationTimes(row);
