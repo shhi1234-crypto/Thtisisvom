@@ -175,7 +175,7 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
 
 let adminMode=false;
-let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[];
+let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[],directSongs=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
 let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup';
 
@@ -206,14 +206,16 @@ async function start(){
 }
 
 async function loadBoard(id){
-  const [slotRes,settingRes,orderRes]=await Promise.all([
+  const [slotRes,settingRes,orderRes,directRes]=await Promise.all([
     db.from('busking_setlist_slots').select('*').eq('event_id',Number(id)).order('sort_order',{ascending:true}).order('id',{ascending:true}),
     db.from('busking_setlist_settings').select('*').eq('event_id',Number(id)).maybeSingle(),
-    db.from('busking_setlist_order').select('*').eq('event_id',Number(id)).order('part_no',{ascending:true}).order('sequence_no',{ascending:true})
+    db.from('busking_setlist_order').select('*').eq('event_id',Number(id)).order('part_no',{ascending:true}).order('sequence_no',{ascending:true}),
+    db.from('busking_setlist_direct_songs').select('*').eq('event_id',Number(id)).order('created_at',{ascending:true})
   ]);
 
   slots=slotRes.data||[];
   performanceOrder=orderRes.data||[];
+  directSongs=directRes.error?[]:(directRes.data||[]);
 
   const event=events.find(x=>String(x.id)===String(id));
   const defaultMax=defaultCapacity(event);
@@ -783,7 +785,7 @@ function participationCount(memberId){
     const song=repertoireById(ss.repertoire_id);
     if(song&&String(song.duet_member_id||'')===id&&String(slot?.member_id||'')!==id)n++;
   });
-  directSongs.forEach(song=>{
+  (directSongs||[]).forEach(song=>{
     const ids=(song.participant_ids||[]).map(String);
     if(ids.includes(id)){
       if(song.song_type==='group'||String(song.owner_member_id||'')!==id)n++;
