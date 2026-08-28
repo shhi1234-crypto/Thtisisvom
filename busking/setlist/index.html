@@ -210,6 +210,7 @@ async function start(){
   await checkAdmin();
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
+  const createRequested=params.get('create')==='1';
 
   const [e,l,m,r]=await Promise.all([
     db.from('events').select('*').order('event_date',{ascending:true}),
@@ -223,12 +224,59 @@ async function start(){
   members=(m.data||[]).sort(compareMembers);
   repertoire=r.data||[];
 
-  if(id){
-    currentEventId=id;
-    await loadBoard(id);
-    renderDetail(id);
-  }else{
-    location.replace('/busking/');
+  if(!id){
+    location.replace('/calendar/');
+    return;
+  }
+
+  currentEventId=id;
+
+  const event=events.find(x=>String(x.id)===String(id));
+  if(!event){
+    page.innerHTML='<div class="empty">일정을 찾을 수 없습니다.<br><br><a href="/calendar/">CALENDAR →</a></div>';
+    return;
+  }
+
+  // "셋리스트 추가"를 누른 순간 실제 settings 행을 생성한다.
+  // BUSKING / VOM LIVE / OTHER 등 event_type과 무관하게 동일하게 작동한다.
+  if(createRequested && adminMode){
+    const {data:existing}=await db
+      .from('busking_setlist_settings')
+      .select('event_id')
+      .eq('event_id',Number(id))
+      .maybeSingle();
+
+    if(!existing){
+      const defaultMax=defaultCapacity(event);
+      const initial={
+        event_id:Number(id),
+        max_participants:defaultMax,
+        max_songs_per_member:5,
+        section_count:1,
+        part1_capacity:defaultMax,
+        part2_capacity:0,
+        signup_slot_order:Array.from({length:defaultMax},(_,i)=>i+1),
+        song_slot_plan:{}
+      };
+
+      const {error:createError}=await db
+        .from('busking_setlist_settings')
+        .upsert(initial,{onConflict:'event_id'});
+
+      if(createError){
+        page.innerHTML=`<div class="empty">셋리스트 생성 실패<br><br>${esc(createError.message)}</div>`;
+        return;
+      }
+    }
+  }
+
+  await loadBoard(id);
+  renderDetail(id);
+
+  if(createRequested && adminMode){
+    // URL의 create=1은 일회성 동작이므로 제거.
+    history.replaceState(null,'',`/busking/setlist/?id=${encodeURIComponent(id)}`);
+    setTimeout(()=>openSettings(),50);
   }
 }
 
@@ -414,10 +462,11 @@ function renderDetail(id){
   const l=loc(row),img=row.image_url||l?.image_url||'';
   const eventType=String(row.event_type||'OTHER');
   const backHref=eventType==='BUSKING'?`/busking/?id=${row.id}`:eventType==='VOM LIVE'?`/live/?id=${row.id}`:`/schedule/?id=${row.id}`;
+  const backLabel=eventType==='OTHER'?'일정':eventType;
   document.title=`${row.title||'SETLIST'} · SETLIST · VOM`;
 
   page.innerHTML=`
-    <a class="back" href="${backHref}">← ${esc(eventType)}</a>
+    <a class="back" href="${backHref}">← ${esc(backLabel)}</a>
     <section class="detail">
       <div class="type">${esc(eventType)} SETLIST</div>
       <h1>${esc(row.title||'')}</h1>
