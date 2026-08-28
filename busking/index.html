@@ -27,9 +27,9 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .primary,.secondary,.danger,.icon-btn{border:0;border-radius:12px;cursor:pointer;font-weight:800}.primary{padding:11px 14px;color:#fff;background:linear-gradient(135deg,#8068e8,#738aed)}.secondary{padding:9px 11px;background:#f0edfb;color:#6756c8}.danger{padding:8px 10px;background:#fff0f2;color:#a74f62}.icon-btn{width:32px;height:32px;background:#f1eff6}
 .board-summary{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}.summary-card{padding:13px 14px;border-radius:15px;background:#f7f6fb}.summary-card small{display:block;color:#9397a6;font-size:8px;font-weight:800}.summary-card strong{display:block;margin-top:4px;font-size:12px}.summary-card.highlight{background:linear-gradient(145deg,#f0ecff,#eaf4ff)}.summary-card.highlight strong{color:#6956ce}
 
-.song-draw{margin:0 0 14px;padding:14px;border-radius:16px;background:linear-gradient(145deg,#f6f3ff,#eef6ff);border:1px solid rgba(118,95,227,.08)}
+.song-draw{margin:0 0 10px;padding:11px 12px;border-radius:16px;background:linear-gradient(145deg,#f6f3ff,#eef6ff);border:1px solid rgba(118,95,227,.08)}
 .song-draw-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.song-draw-title{font-size:11px;font-weight:800;color:#6654c7}.song-draw-sub{margin-top:4px;color:#85899a;font-size:9px;line-height:1.55}
-.song-order-preview{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.song-order-chip{min-width:34px;height:30px;padding:0 8px;display:grid;place-items:center;border-radius:9px;background:#fff;color:#6655c8;font-size:10px;font-weight:800;border:1px solid rgba(102,85,200,.1)}
+.song-order-preview{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.song-order-chip{min-width:34px;height:27px;padding:0 8px;display:grid;place-items:center;border-radius:9px;background:#fff;color:#6655c8;font-size:10px;font-weight:800;border:1px solid rgba(102,85,200,.1)}
 .quick-signup{display:flex;gap:8px;align-items:center;margin-top:12px}.quick-signup .field{flex:1}.quick-signup .primary{white-space:nowrap}
 .order-badge{flex:0 0 auto;min-width:34px;height:24px;padding:0 7px;display:grid;place-items:center;border-radius:8px;background:#ece8ff;color:#6655c8;font-size:9px;font-weight:900}
 :root{--p1:#eee7ff;--p1i:#6f58c9;--p2:#e5f0ff;--p2i:#5274ae;--p3:#e2f5ef;--p3i:#477e70;--p4:#fff0df;--p4i:#9b7046;--p5:#fde8ef;--p5i:#9b5f73;--p6:#f0e9f8;--p6i:#795f91;--p7:#e2f2f2;--p7i:#4d7e80;--p8:#fff5d9;--p8i:#91783d;--p9:#e8eef4;--p9i:#60758a;--p10:#f8e5e7;--p10i:#956168}
@@ -45,19 +45,22 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .person-10{--person-bg:var(--p10);--person-ink:var(--p10i)}
 .slot-row[class*="person-"]{background:linear-gradient(90deg,var(--person-bg),rgba(255,255,255,.82) 42%)}.slot-row[class*="person-"] .slot-no,.slot-row[class*="person-"] .order-badge{background:var(--person-bg);color:var(--person-ink)}.order-item[class*="person-"]{background:linear-gradient(90deg,var(--person-bg),#f8f7fb 36%)}.order-item[class*="person-"] .order-num{background:var(--person-bg);color:var(--person-ink)}
 
-.part-title{margin:16px 0 7px;padding:8px 11px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:44px 120px minmax(0,1fr) 126px;gap:8px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:62px;padding:7px 10px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
-.song-stack{display:grid;gap:3px}.song-line{display:flex;align-items:center;gap:5px;min-width:0;min-height:27px}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;align-items:center;justify-content:center;height:27px;min-width:112px;padding:0 13px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
+.part-title{margin:12px 0 6px;padding:6px 10px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:44px 120px minmax(0,1fr) 126px;gap:8px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:54px;padding:5px 9px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
+.song-stack{display:grid;gap:2px}.song-line{display:flex;align-items:center;gap:5px;min-width:0;min-height:24px}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:118px;padding:0 14px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
 
 .order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
 .performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
 .time-block{margin-top:10px}.time-block:first-child{margin-top:0}.time-block-head{display:flex;align-items:center;gap:8px;margin:10px 0 7px;padding:7px 10px;border-radius:10px;background:#f4f2f9;color:#6c5bc9;font-size:9px;font-weight:800}.time-block-head span{color:#989cab;font-weight:700}.time-block-head::after{content:"";height:1px;flex:1;background:rgba(28,34,65,.08)}
-.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:32px 28px 120px minmax(0,1fr) auto;gap:9px;align-items:center;min-height:55px;padding:8px 10px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
+.order-list{display:grid;gap:6px}.order-item{display:grid;grid-template-columns:26px 28px 112px minmax(0,1fr) auto;gap:7px;align-items:center;min-height:49px;padding:6px 9px;border-radius:14px;background:#f8f7fb;border:1px solid rgba(28,34,65,.06);cursor:grab}.order-item.dragging{opacity:.45}.drag-handle{color:#9a9daa;font-size:17px;text-align:center;cursor:grab}.order-num{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#eeeaff;color:#6655c8;font-size:10px;font-weight:800}.order-member{font-size:11px;font-weight:800}.order-song{min-width:0}.order-song strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}.order-song small{display:block;margin-top:2px;color:#8a8e9d;font-size:9px}.order-fallback{display:flex;gap:4px}
+
+
+.schedule-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 12px}.schedule-step{padding:10px 12px;border-radius:13px;background:#f7f6fb;border:1px solid rgba(28,34,65,.05)}.schedule-step small{display:block;color:#9296a5;font-size:8px;font-weight:800}.schedule-step strong{display:block;margin-top:3px;font-size:11px}.schedule-step.live{background:linear-gradient(145deg,#f0ecff,#eef7ff)}.schedule-step.live strong{color:#6654c7}.personal-order-title{margin-top:8px;color:#777c8d;font-size:9px;font-weight:800}.extra-block{margin-top:12px;padding:11px;border:1px dashed rgba(102,85,200,.22);border-radius:14px;background:#fbfaff}.extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.extra-head strong{font-size:11px;color:#6654c7}.extra-head small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.extra-list{display:grid;gap:5px;margin-top:8px}.extra-row{display:grid;grid-template-columns:28px 110px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 8px;border-radius:11px;background:#fff}.extra-row .extra-tag{font-size:8px;font-weight:900;color:#6654c7}.time-block-head strong{font-size:10px}.time-note{font-size:8px;color:#9a9dab;font-weight:700}
 
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal,.menu-card{width:min(650px,100%);max-height:calc(100vh - 30px);overflow:auto;padding:22px;border-radius:24px;background:#fff;box-shadow:0 28px 80px rgba(20,25,55,.22)}.menu-card{width:min(390px,100%)}.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-top h3{margin:0;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:51px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:13px}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #dddde7;border-radius:12px;background:#fff;outline:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field-wrap label{display:block;margin-bottom:5px;color:#777c8d;font-size:9px;font-weight:800}.full{grid-column:1/-1}.modal-note{margin:-4px 0 13px;color:#85899a;font-size:10px;line-height:1.65}.song-library{display:grid;gap:7px}.song-choice{padding:11px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.song-choice strong{font-size:12px}.song-choice small{display:block;margin-top:3px;color:#7e8292;font-size:10px}
 .bottom{position:fixed;z-index:80;left:50%;bottom:10px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:67px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border-radius:22px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 42px rgba(30,37,75,.12);backdrop-filter:blur(22px)}.bottom a,.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#777c8d;cursor:pointer;font-size:8px}.nav-icon{font-size:18px}
 
 @media(max-width:760px){
-.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.slot-table{overflow-x:auto}.slot-head,.slot-row{min-width:690px}.order-item{grid-template-columns:25px 28px 90px minmax(150px,1fr) auto;min-width:600px}.order-list{overflow-x:auto}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
+.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.schedule-strip{grid-template-columns:1fr}.slot-table{overflow:visible}.slot-head{display:none}.slot-row{min-width:0;grid-template-columns:38px minmax(0,1fr);gap:5px 7px;padding:6px 8px}.slot-row>div:nth-child(1){grid-column:1}.slot-member,.slot-empty-text{grid-column:2}.slot-row>.song-stack{grid-column:1/-1;padding-top:2px}.slot-row>.slot-actions{grid-column:1/-1;justify-content:flex-start}.song-line{width:100%;flex-wrap:nowrap}.song-name{flex:1;min-width:0}.song-artist{display:none}.song-tools{margin-left:0;flex:0 0 auto}.yt{min-width:116px;height:25px;padding:0 12px}.order-list{overflow:visible}.order-item{min-width:0;grid-template-columns:22px 28px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:3px 6px;padding:7px}.drag-handle{grid-column:1;grid-row:1/3}.order-num{grid-column:2;grid-row:1/3}.order-member{grid-column:3;grid-row:1}.order-song{grid-column:3/5;grid-row:2}.order-fallback{grid-column:4;grid-row:1;justify-self:end}.order-fallback .yt{min-width:110px}.extra-row{grid-template-columns:26px minmax(0,1fr) auto}.extra-row .order-song{grid-column:2}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
 }
 </style>
 </head>
@@ -140,7 +143,7 @@ const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_pu
 let adminMode=false;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
-let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null;
+let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false;
 
 async function start(){
   await checkAdmin();
@@ -231,6 +234,33 @@ function durationLabel(event){
   const h=Math.floor(mins/60),m=mins%60;
   return `${h?`${h}시간`:''}${m?` ${m}분`:''}`.trim();
 }
+
+function clockToMinutes(v){if(!v)return null;const [h,m]=String(v).slice(0,5).split(':').map(Number);return h*60+m}
+function minutesToClock(v){if(v===null||Number.isNaN(v))return '미정';v=((v%1440)+1440)%1440;return `${String(Math.floor(v/60)).padStart(2,'0')}:${String(v%60).padStart(2,'0')}`}
+function plannedBaseSongCount(){return Number(settings.max_participants||5)*Number(settings.max_songs_per_member||5)}
+function plannedRunMinutes(){return plannedBaseSongCount()*5}
+function operationTimes(event){
+  const eventStart=clockToMinutes(event?.start_time);
+  let eventEnd=clockToMinutes(event?.end_time);
+  if(eventStart===null)return {setupStart:null,liveStart:null,liveEnd:null,cleanupEnd:null};
+  if(eventEnd!==null&&eventEnd<eventStart)eventEnd+=1440;
+  const liveStart=eventStart+15;
+  const cleanupEnd=eventEnd!==null?eventEnd:liveStart+plannedRunMinutes()+15;
+  const liveEnd=Math.max(liveStart,cleanupEnd-15);
+  return {setupStart:eventStart,liveStart,liveEnd,cleanupEnd};
+}
+function partSongOffset(part){return settings.section_count===2&&Number(part)===2?settings.part1_capacity*settings.max_songs_per_member:0}
+function blockTimeLabel(event,part,blockIndex,blockLength=6){
+  const t=operationTimes(event);if(t.liveStart===null)return '시간 미정';
+  const totalSongs=Math.max(1,plannedBaseSongCount());
+  const usable=Math.max(0,t.liveEnd-t.liveStart);
+  const songOffset=partSongOffset(part)+blockIndex*6;
+  const endOffset=songOffset+blockLength;
+  const a=t.liveStart+(usable*songOffset/totalSongs);
+  const b=t.liveStart+(usable*endOffset/totalSongs);
+  return `${minutesToClock(Math.round(a))}–${minutesToClock(Math.round(b))}`;
+}
+function performanceWindowMinutes(event){return operationTimes(event).liveStart===null?0:plannedRunMinutes()}
 function loc(row){return locations.find(x=>String(x.id)===String(row.location_id))}
 function memberById(id){return members.find(x=>String(x.id)===String(id))}
 function repertoireById(id){return repertoire.find(x=>String(x.id)===String(id))}
@@ -289,6 +319,7 @@ function renderDetail(id){
         <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${settings.max_participants}명</strong></div>
         <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>최대 ${settings.max_songs_per_member}곡</strong></div>
       </div>
+      ${renderOperationSchedule(row)}
       ${renderSongDraw()}
       <div id="participantBoard"></div>
     </section>
@@ -298,7 +329,7 @@ function renderDetail(id){
         <div><h2>Running Order</h2><p>곡 슬롯에 미리 정해진 순서 번호가 적용되며, 이후 드래그로 실제 공연 순서를 조정할 수 있습니다.</p></div>
         ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
-      <div class="order-help">곡 순서는 참가자/곡 확정 전에 미리 추첨됩니다. 각 부 안에서 6곡을 약 30분 구간으로 나눠 표시하며, 곡을 넣으면 해당 번호로 Running Order에 들어갑니다. 드래그 후 순서는 자동 저장됩니다.</div>
+      <div class="order-help">곡 순서는 참가자/곡 확정 전에 미리 추첨됩니다. 등록된 시작시간부터 15분은 준비 및 여유시간, 종료 전 15분은 정리시간으로 확보합니다. 본 공연은 6곡당 약 30분으로 나누며 마지막 구간은 남은 곡 수만 표시합니다. 관리자는 등록된 모든 곡을 드래그하거나 ↑↓로 재배치할 수 있습니다.</div>
       <div id="performanceOrder"></div>
     </section>`;
 
@@ -307,6 +338,16 @@ function renderDetail(id){
 }
 
 
+
+function renderOperationSchedule(row){
+  const t=operationTimes(row);
+  if(t.setupStart===null)return '';
+  return `<div class="schedule-strip">
+    <div class="schedule-step"><small>SETUP · 준비 및 여유시간 15분</small><strong>${minutesToClock(t.setupStart)}–${minutesToClock(t.liveStart)}</strong></div>
+    <div class="schedule-step live"><small>BUSKING · ${plannedBaseSongCount()}곡 기준</small><strong>${minutesToClock(t.liveStart)}–${minutesToClock(t.liveEnd)}</strong></div>
+    <div class="schedule-step"><small>CLEANUP · 15MIN</small><strong>${minutesToClock(t.liveEnd)}–${minutesToClock(t.cleanupEnd)}</strong></div>
+  </div>`;
+}
 
 function normalizeSignupOrder(value,max){
   let arr=Array.isArray(value)?value.map(Number):[];
@@ -439,13 +480,13 @@ function renderSongDraw(){
     <div class="song-draw-top">
       <div>
         <div class="song-draw-title">곡 순서 사전 추첨</div>
-        <div class="song-draw-sub">참가자와 곡이 정해지기 전에 각 참가자 자리의 ${settings.max_songs_per_member}개 곡 슬롯에 전체 공연 순서 번호를 미리 배정합니다. 6곡을 약 30분 단위로 보고, 한 구간에서 같은 사람은 최대 2곡까지 배치합니다. 한 구간에서 2곡을 부른 사람은 다음 30분 구간에서는 최대 1곡만 배치하며, 3곡 연속도 금지합니다. · ${totalPerPart}</div>
+        <div class="song-draw-sub">참가자와 곡이 정해지기 전에 각 참가자 자리의 ${settings.max_songs_per_member}개 곡 슬롯에 전체 공연 순서 번호를 미리 배정합니다. 6곡을 약 30분 단위(곡당 약 5분)로 보고, 한 구간에서 같은 사람은 최대 2곡까지 배치합니다. 한 구간에서 2곡을 부른 사람은 다음 30분 구간에서는 최대 1곡만 배치하며, 3곡 연속도 금지합니다. · ${totalPerPart}</div>
       </div>
       ${adminMode?`<button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>`:''}
     </div>
-    ${valid?`<div class="song-order-preview">${Array.from({length:settings.max_participants},(_,i)=>i+1).map(pos=>{
-      const arr=settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[];
-      return `<span class="song-order-chip">${pos}번 · ${arr.join(' · ')}</span>`;
+    ${valid?`<div class="personal-order-title">개인별 공연 순번 · 참가자 번호별 준비 순서</div><div class="song-order-preview">${Array.from({length:settings.max_participants},(_,i)=>i+1).map(pos=>{
+      const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b);
+      return `<span class="song-order-chip person-${Math.min(pos,10)}">개인순번 ${pos}번 · ${arr.map(n=>'#'+n).join(' → ')}</span>`;
     }).join('')}</div>`:'<div class="empty" style="padding:18px 0 4px">아직 곡 순서가 추첨되지 않았습니다.</div>'}
     ${adminMode?`<div class="quick-signup">
       <select id="quickMemberPicker" class="field">${quickMemberOptions()}</select>
@@ -484,6 +525,8 @@ async function redrawSongPlan(){
   settings.song_slot_plan=buildCompleteSongPlan();
   try{
     await saveSongPlan();
+    await clearPerformanceOrder(false);
+    await loadBoard(currentEventId);
     await syncPerformanceOrderToPlan();
     await loadBoard(currentEventId);
     renderDetail(currentEventId);
@@ -544,7 +587,7 @@ function renderParticipantBoard(){
         <div class="slot-actions"><span class="slot-empty-text">${Number(nextParticipantPosition())===Number(pos)?'다음 선착순 배정':'대기'}</span></div>
       </div>`;
     }else{
-      const m=memberById(slot.member_id),songs=songsForSlot(slot),canSong=canEditSlotSongs(slot);
+      const m=memberById(slot.member_id),allSongs=songsForSlot(slot),songs=allSongs.slice(0,settings.max_songs_per_member),canSong=canEditSlotSongs(slot);
       html+=`<div class="slot-row person-${Math.min(pos,10)}">
         <div><div class="slot-no">${pos}</div></div>
         <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small></div>
@@ -572,36 +615,88 @@ function renderParticipantBoard(){
 function renderPerformanceOrder(){
   const box=document.getElementById('performanceOrder');
   if(!box)return;
-  if(!validSongPlan()){box.innerHTML='<div class="empty">곡 순서를 먼저 추첨해주세요.</div>';return;}
+  const row=events.find(x=>String(x.id)===String(currentEventId));
+  if(!validSongPlan()){box.innerHTML='<div class="empty">곡 순서를 먼저 추첨해주세요.</div>';return}
+
   let html='<div class="performance-parts">';
   const parts=settings.section_count===2?[1,2]:[1];
   parts.forEach(part=>{
-    const planned=[];
-    partPositions(part).forEach(pos=>{
-      const slot=slots.find(s=>Number(s.sort_order)===Number(pos));
-      const songs=slot?songsForSlot(slot):[];
+    const positions=partPositions(part),planned=[];
+    positions.forEach(pos=>{
+      const slot=slots.find(x=>Number(x.sort_order)===Number(pos));
+      const songs=slot?songsForSlot(slot).slice(0,settings.max_songs_per_member):[];
       for(let songIndex=0;songIndex<settings.max_songs_per_member;songIndex++){
-        const sequence=songOrderNumber(pos,songIndex); if(!sequence)continue;
+        const planSeq=songOrderNumber(pos,songIndex);if(!planSeq)continue;
         const ss=songs[songIndex]||null;
         const saved=ss?performanceOrder.find(x=>String(x.slot_song_id)===String(ss.id)):null;
-        planned.push({sequence,pos,songIndex,slot,ss,saved});
+        planned.push({sequence:saved?Number(saved.sequence_no):planSeq,planSeq,pos,songIndex,slot,ss,saved});
       }
     });
-    planned.sort((a,b)=>a.sequence-b.sequence);
+    // 기본 추첨 순서를 뼈대로 두고, 관리자가 저장한 실제 이동을 적용해 빈 슬롯까지 포함한 순서를 재구성
+    planned.sort((a,b)=>a.planSeq-b.planSeq);
+    const moved=planned.filter(x=>x.saved).sort((a,b)=>Number(a.saved.sequence_no)-Number(b.saved.sequence_no));
+    moved.forEach(item=>{
+      const from=planned.indexOf(item);if(from<0)return;
+      planned.splice(from,1);
+      const target=Math.max(0,Math.min(planned.length,Number(item.saved.sequence_no)-1));
+      planned.splice(target,0,item);
+    });
+    planned.forEach((item,idx)=>item.sequence=idx+1);
     html+=`<div><div class="performance-part-title">${partLabel(part)}</div>`;
-    for(let s=0;s<planned.length;s+=6){
-      const block=planned.slice(s,s+6), blockNo=Math.floor(s/6)+1;
-      html+=`<div class="time-block"><div class="time-block-head">약 30분 · ${blockNo}구간 <span>#${block[0]?.sequence||s+1}~#${block[block.length-1]?.sequence||s+block.length}</span></div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
+    for(let i=0;i<planned.length;i+=6){
+      const block=planned.slice(i,i+6),blockNo=Math.floor(i/6)+1;
+      const time=blockTimeLabel(row,part,blockNo-1,block.length);
+      html+=`<div class="time-block"><div class="time-block-head"><strong>${time}</strong> · ${blockNo}구간 <span>${block.length}곡</span></div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
     }
+    if(part===parts[parts.length-1])html+=renderExtraSongs();
     html+='</div>';
   });
   box.innerHTML=html+'</div>';
 }
+
 function createPlannedOrderItem(item){
   const {sequence,pos,songIndex,slot,ss,saved}=item;
-  const member=slot?memberById(slot.member_id):null, song=ss?repertoireById(ss.repertoire_id):null;
-  const draggable=adminMode&&saved;
-  return `<div class="order-item person-${Math.min(pos,10)}" draggable="${draggable?'true':'false'}" ${saved?`data-order-id="${saved.id}" data-part="${saved.part_no}" ondragstart="orderDragStart(event)" ondragover="orderDragOver(event)" ondrop="orderDrop(event)" ondragend="orderDragEnd(event)"`:''}><div class="drag-handle">${draggable?'⋮⋮':''}</div><div class="order-num">${sequence}</div><div class="order-member">${pos}번 · ${esc(member?.name||'미정')}</div><div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}</strong><small>${song?esc(song.artist_name||'')+(song.duet_name?` · duet ${esc(song.duet_name)}`:''):'곡 추가 시 자동 반영'}</small></div><div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div></div>`;
+  const member=slot?memberById(slot.member_id):null,song=ss?repertoireById(ss.repertoire_id):null;
+  const draggable=adminMode&&!!saved;
+  return `<div class="order-item person-${Math.min(pos,10)}" draggable="${draggable?'true':'false'}" data-sequence="${sequence}" ${saved?`data-order-id="${saved.id}" data-part="${saved.part_no}" ondragstart="orderDragStart(event)" ondragover="orderDragOver(event)" ondrop="orderDrop(event)" ondragend="orderDragEnd(event)"`:adminMode?'ondragover="orderDragOver(event)" ondrop="orderDropToSequence(event)"':''}>
+    <div class="drag-handle">${draggable?'⋮⋮':''}</div>
+    <div class="order-num">${sequence}</div>
+    <div class="order-member">${pos}번 · ${esc(member?.name||'미정')}</div>
+    <div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}</strong><small>${song?esc(song.artist_name||'')+(song.duet_name?` · duet ${esc(song.duet_name)}`:''):'곡 추가 시 자동 반영'}</small></div>
+    <div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div>
+  </div>`;
+}
+
+function extraSongsForFinalBlock(){
+  const out=[];
+  slots.forEach(slot=>{songsForSlot(slot).slice(settings.max_songs_per_member).forEach(ss=>out.push({slot,ss,song:repertoireById(ss.repertoire_id)}))});
+  return out;
+}
+function renderExtraSongs(){
+  const extra=extraSongsForFinalBlock();
+  return `<div class="extra-block"><div class="extra-head"><div><strong>＋ 추가곡 · 현장 결정</strong><small>마지막 구간 뒤에 진행 · 순서는 현장에서 자유롭게 결정</small></div>${adminMode?`<button class="secondary" onclick="openExtraSongChooser()">추가곡 선택</button>`:''}</div><div class="extra-list">${extra.length?extra.map(({slot,ss,song})=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<div class="extra-row person-${Math.min(pos,10)}"><div class="extra-tag">추가</div><div class="order-member">${pos}번 · ${esc(m?.name||slot.member_name||'')}</div><div class="order-song"><strong>${esc(song?.song_title||'곡 미정')}</strong><small>${esc(song?.artist_name||'')}</small></div><div class="order-fallback">${song?.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${adminMode?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</div></div>`}).join(''):'<div class="slot-empty-text" style="padding:4px 0">추가곡은 현장에서 필요할 때 넣으면 됩니다.</div>'}</div></div>`;
+}
+function openExtraSongChooser(){
+  if(!adminMode)return;
+  extraSongMode=true;
+  currentSongSlot=null;
+  const assigned=[...slots].sort((a,b)=>Number(a.sort_order)-Number(b.sort_order));
+  songOverlayTitle.textContent='마지막 추가곡 · 현장 결정';
+  songOverlayNote.textContent='현장에서 부를 추가곡을 선택하세요. 기본 5곡 순번과 별도로 마지막에 표시됩니다.';
+  const cards=[];
+  assigned.forEach(slot=>{
+    const m=memberById(slot.member_id),used=new Set(songsForSlot(slot).map(x=>String(x.repertoire_id)));
+    repertoire.filter(song=>!used.has(String(song.id))&&(String(song.member_id||'')===String(slot.member_id)||norm(song.vocalist_name)===norm(m?.name||slot.member_name))).forEach(song=>{
+      cards.push(`<div class="song-choice person-${Math.min(Number(slot.sort_order),10)}"><div><strong>${Number(slot.sort_order)}번 · ${esc(m?.name||slot.member_name||'')} · ${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}</small></div><div style="display:flex;gap:5px;align-items:center">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}<button class="secondary" onclick="addExtraSongToSlot(${slot.id},${song.id})">추가</button></div></div>`);
+    });
+  });
+  songLibrary.innerHTML=cards.length?cards.join(''):'<div class="empty">추가할 수 있는 개인곡이 없습니다.</div>';
+  songOverlay.classList.add('open');
+}
+async function addExtraSongToSlot(slotId,repertoireId){
+  const slot=slots.find(x=>String(x.id)===String(slotId));if(!slot||!adminMode)return;
+  currentSongSlot=slot;extraSongMode=true;
+  await addSongToSlot(repertoireId);
 }
 
 function createOrderItem(row,no){
@@ -741,6 +836,7 @@ async function removeParticipant(id){
 }
 
 function openSongChooser(slotId){
+  extraSongMode=false;
   const slot=slots.find(x=>String(x.id)===String(slotId));if(!slot||!canEditSlotSongs(slot))return;
   const current=songsForSlot(slot);
   if(current.length>=settings.max_songs_per_member){alert(`최대 ${settings.max_songs_per_member}곡까지 추가할 수 있습니다.`);return}
@@ -752,12 +848,12 @@ function openSongChooser(slotId){
   songLibrary.innerHTML=songs.length?songs.map(song=>`<div class="song-choice"><div><strong>${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}${song.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div><div style="display:flex;gap:5px;align-items:center">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}<button class="secondary" onclick="addSongToSlot(${song.id})">추가</button></div></div>`).join(''):`<div class="empty">추가할 수 있는 개인곡이 없습니다.<br><br><a href="/members/" style="color:#715ddd;font-weight:800">MEMBERS에서 곡 관리 →</a></div>`;
   songOverlay.classList.add('open');
 }
-function closeSongChooser(){songOverlay.classList.remove('open');currentSongSlot=null}
+function closeSongChooser(){songOverlay.classList.remove('open');currentSongSlot=null;extraSongMode=false}
 
 async function addSongToSlot(repertoireId){
   if(!currentSongSlot)return;
   const existing=songsForSlot(currentSongSlot);
-  if(existing.length>=settings.max_songs_per_member)return;
+  if(!extraSongMode&&existing.length>=settings.max_songs_per_member)return;
   const next=(existing.length?Math.max(...existing.map(x=>Number(x.sort_order)||0)):0)+1;
   const {error}=await db.from('busking_setlist_slot_songs').insert({slot_id:currentSongSlot.id,repertoire_id:repertoireId,sort_order:next});
   if(error){alert('곡 추가 실패\n'+error.message);return}
@@ -767,11 +863,14 @@ async function addSongToSlot(repertoireId){
 async function removeSong(id){
   const ss=slotSongById(id);if(!ss)return;
   const slot=slots.find(x=>String(x.id)===String(ss.slot_id));
-  if(!slot||!canEditSlotSongs(slot))return;
+  if(!slot||(!canEditSlotSongs(slot)&&!adminMode))return;
+  await db.from('busking_setlist_order').delete().eq('slot_song_id',ss.id);
   const {error}=await db.from('busking_setlist_slot_songs').delete().eq('id',id);
   if(error){alert('곡 삭제 실패\n'+error.message);return}
-  await clearPerformanceOrder(false);
-  await loadBoard(currentEventId);renderDetail(currentEventId);
+  await loadBoard(currentEventId);
+  await syncPerformanceOrderToPlan();
+  await loadBoard(currentEventId);
+  renderDetail(currentEventId);
 }
 
 /* =======================
@@ -790,32 +889,21 @@ async function generateRandomOrder(){
 
 async function syncPerformanceOrderToPlan(){
   if(!validSongPlan())return;
-
-  const rows=[];
+  const desired=[];
   for(const slot of slots){
-    const pos=Number(slot.sort_order);
-    const part=partForPosition(pos);
-    const songs=songsForSlot(slot);
-    songs.forEach((ss,i)=>{
-      const seq=songOrderNumber(pos,i);
-      if(seq){
-        rows.push({
-          event_id:Number(currentEventId),
-          part_no:part,
-          sequence_no:seq,
-          slot_song_id:ss.id,
-          updated_at:new Date().toISOString()
-        });
-      }
-    });
+    const pos=Number(slot.sort_order),part=partForPosition(pos);
+    const songs=songsForSlot(slot).slice(0,settings.max_songs_per_member);
+    songs.forEach((ss,i)=>{const seq=songOrderNumber(pos,i);if(seq)desired.push({event_id:Number(currentEventId),part_no:part,sequence_no:seq,slot_song_id:ss.id,updated_at:new Date().toISOString()})});
   }
-
-  const {error:delError}=await db.from('busking_setlist_order').delete().eq('event_id',Number(currentEventId));
-  if(delError){console.error(delError);return}
-
-  if(rows.length){
-    const {error}=await db.from('busking_setlist_order').insert(rows);
-    if(error)console.error(error);
+  const desiredIds=new Set(desired.map(x=>String(x.slot_song_id)));
+  const existingBySong=new Map(performanceOrder.map(x=>[String(x.slot_song_id),x]));
+  for(const old of performanceOrder){if(!desiredIds.has(String(old.slot_song_id)))await db.from('busking_setlist_order').delete().eq('id',old.id)}
+  for(const row of desired){
+    if(existingBySong.has(String(row.slot_song_id)))continue;
+    let seq=row.sequence_no;
+    const occupied=new Set(performanceOrder.filter(x=>Number(x.part_no)===row.part_no).map(x=>Number(x.sequence_no)));
+    while(occupied.has(seq))seq++;
+    const {error}=await db.from('busking_setlist_order').insert({...row,sequence_no:seq});if(error)console.error(error);
   }
 }
 
@@ -903,11 +991,9 @@ async function moveOrder(id,dir){
   if(!adminMode)return;
   const row=performanceOrder.find(x=>String(x.id)===String(id));if(!row)return;
   const part=Number(row.part_no);
-  const rows=performanceOrder.filter(x=>Number(x.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
-  const idx=rows.findIndex(x=>String(x.id)===String(id)),to=idx+dir;
-  if(to<0||to>=rows.length)return;
-  [rows[idx],rows[to]]=[rows[to],rows[idx]];
-  await saveOrderSequence(part,rows);
+  const max=partPositions(part).length*settings.max_songs_per_member;
+  const target=Math.max(1,Math.min(max,Number(row.sequence_no)+dir));
+  await moveOrderToSequence(id,target);
 }
 
 async function saveOrderSequence(part,rows){
