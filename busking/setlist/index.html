@@ -86,7 +86,7 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 .performer-chip{display:inline-flex;align-items:center;gap:4px;min-height:20px;padding:2px 7px;border-radius:999px;background:var(--person-bg,#f2eff9);color:var(--person-ink,#6654c7);font-size:9px;font-weight:900;white-space:nowrap}
 .performer-chip.main::after{content:"주체";font-size:7px;font-weight:900;opacity:.72;padding-left:3px}
 .performer-chip.group{background:#f1eff8;color:#625b78}
-.direct-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.direct-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
 .direct-song-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .direct-song-form .full{grid-column:1/-1}
 .direct-type{display:flex;gap:6px;flex-wrap:wrap}
@@ -585,7 +585,10 @@ function renderSongDraw(){
         <div class="song-draw-title">곡 순서 사전 추첨</div>
         <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하고, 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 관리하며, 최종 셋리스트에서 구간별 시간을 5분 단위로 조정할 수 있습니다. · ${totalPerPart}</div>
       </div>
-      ${adminMode?`<button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>`:''}
+      ${adminMode?`<div class="direct-actions">
+        <button class="secondary" onclick="openDirectSong()">＋ 직접 곡 추가</button>
+        <button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>
+      </div>`:''}
     </div>
     ${valid?`<div class="personal-order-title">개인순번 확인 · 참가자 이름을 눌러주세요</div>
       <div class="participant-chips">${assigned.length?assigned.map(slot=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<button class="participant-chip person-${Math.min(pos,10)} ${Number(selectedPersonalPos)===pos?'active':''}" onclick="selectPersonalOrder(${pos})">${pos} · ${esc(m?.name||slot.member_name||'')}</button>`}).join(''):'<span class="slot-empty-text">참가자를 먼저 배치해주세요.</span>'}</div>
@@ -696,7 +699,7 @@ function renderParticipantBoard(){
   if(!box)return;
   const max=settings.max_participants;
   const slotByOrder=new Map(slots.map(s=>[Number(s.sort_order),s]));
-  let html=adminMode?`<div class="direct-actions"><button class="secondary" onclick="openDirectSong()">＋ 직접 곡 추가</button></div>`:'';
+  let html='';
 
   for(let pos=1;pos<=max;pos++){
     if(pos===1|| (settings.section_count===2&&pos===settings.part1_capacity+1)){
