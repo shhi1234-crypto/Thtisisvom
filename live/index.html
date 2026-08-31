@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f7f5fa">
 
-<link rel="icon" type="image/png" href="/favicon.png?v=3">
-<link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
 <title>VOM LIVE · Voice of Melody</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1125,90 +1123,55 @@ button{
   }
 }
 
-/* =========================================
-   FULL RANKING VIEW
-========================================= */
-.full-ranking-page{
-  max-width:820px;
-  margin:auto;
-  padding:48px 0 30px;
+/* OPTIONAL SETLIST */
+.setlist-cta{
+  margin:18px 0 6px;padding:15px 17px;border-radius:18px;
+  border:1px solid rgba(111,91,216,.14);
+  background:linear-gradient(135deg,rgba(240,236,255,.96),rgba(235,246,255,.92));
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  text-decoration:none;color:#171b2d;box-shadow:0 8px 24px rgba(49,45,98,.05)
 }
-.ranking-back{
-  color:#7561dc;
-  font-size:11px;
-  font-weight:800;
+.setlist-cta strong{display:block;font-size:13px}
+.setlist-cta small{display:block;margin-top:3px;color:#898da0;font-size:9px;font-weight:700}
+.setlist-cta>span{font-size:22px;font-weight:900;color:#6f5bd8}
+.setlist-cta.create{border-style:dashed;background:rgba(247,245,255,.92)}
+@media(max-width:650px){
+  .setlist-cta{padding:12px 13px;border-radius:15px}
+  .setlist-cta strong{font-size:11px}.setlist-cta small{font-size:8px}
 }
-.ranking-hero{
-  margin-top:28px;
-  padding:27px;
-  border-radius:26px;
-  background:rgba(255,255,255,.82);
-  border:1px solid rgba(255,255,255,.95);
-  box-shadow:0 14px 38px rgba(31,37,74,.06);
-}
-.ranking-hero .kicker{
-  font-size:22px;
-}
-.ranking-hero h1{
-  margin:2px 0 5px;
-  font-family:"Nanum Pen Script",cursive;
-  font-size:58px;
-  font-weight:400;
-}
-.ranking-hero p{
-  margin:0;
-  color:#777d8e;
-  font-size:11px;
-  line-height:1.7;
-}
-.full-rank-list{
+
+
+/* V2 · 일정/컨텐츠 진입 분리 */
+.detail-choice{
   display:grid;
-  gap:8px;
-  margin-top:14px;
-}
-.full-rank-row{
-  display:grid;
-  grid-template-columns:52px minmax(0,1fr) auto;
-  align-items:center;
+  grid-template-columns:1fr 1fr;
   gap:12px;
-  min-height:65px;
-  padding:10px 14px;
-  border-radius:17px;
-  background:rgba(255,255,255,.86);
-  border:1px solid rgba(255,255,255,.96);
+  margin:18px 0 24px;
 }
-.full-rank-number{
-  width:34px;
-  height:34px;
-  display:grid;
-  place-items:center;
-  border-radius:11px;
-  color:#6654c8;
-  background:#eeeaff;
-  font-weight:800;
+.detail-choice a{
+  min-height:92px;
+  padding:18px 16px;
+  border:1px solid rgba(111,88,190,.16);
+  border-radius:22px;
+  background:rgba(255,255,255,.78);
+  box-shadow:0 10px 30px rgba(92,76,150,.07);
+  text-decoration:none;
+  color:inherit;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:10px;
 }
-.full-rank-row:first-child .full-rank-number{
-  color:#805f15;
-  background:#fff1c6;
+.detail-choice a.active{
+  background:linear-gradient(135deg,rgba(236,230,255,.95),rgba(232,250,246,.9));
+  border-color:rgba(116,88,202,.28);
 }
-.full-rank-name{
-  font-size:14px;
-  font-weight:800;
-}
-.full-rank-detail{
-  margin-top:2px;
-  color:#84899a;
-  font-size:9px;
-}
-.full-rank-score{
-  color:#6956ce;
-  font-size:18px;
-  font-weight:800;
-  text-align:right;
-}
-.full-rank-score small{
-  margin-left:2px;
-  font-size:9px;
+.detail-choice strong{font-size:17px;line-height:1.25}
+.detail-choice small{font-size:12px;line-height:1.45;color:#777}
+@media(max-width:560px){
+  .detail-choice{gap:9px}
+  .detail-choice a{min-height:96px;padding:16px 13px;border-radius:19px}
+  .detail-choice strong{font-size:16px}
 }
 
 </style>
@@ -1423,17 +1386,10 @@ async function start(){
   const id =
     params.get('id');
 
-  const ranking =
-    params.get('ranking');
 
+  if(id){
 
-  if(ranking === 'ear' || ranking === 'point'){
-
-    await renderFullRanking(ranking);
-
-  }else if(id){
-
-    renderDetail(id);
+    await renderDetail(id);
 
   }else{
 
@@ -1604,178 +1560,6 @@ async function loadAllData(){
       memberResponse.error
     );
   }
-}
-
-
-
-/* =========================================
-   FULL RANKING PAGE
-========================================= */
-
-async function renderFullRanking(type){
-
-  const isEar =
-    type === 'ear';
-
-
-  document.title =
-    isEar
-    ? '귀점유율 · VOM LIVE'
-    : 'VOM POINT · VOM LIVE';
-
-
-  const page =
-    document.getElementById('page');
-
-
-  page.classList.toggle(
-    'admin-mode',
-    adminMode
-  );
-
-
-  const viewName =
-    isEar
-    ? 'ear_share_hall_of_fame'
-    : 'live_point_hall_of_fame';
-
-
-  const {data,error} =
-    await db
-      .from(viewName)
-      .select('*')
-      .order('rank',{ascending:true});
-
-
-  if(error){
-
-    console.error(error);
-
-    page.innerHTML = `
-      <div class="full-ranking-page">
-        <a href="/live/" class="ranking-back">← VOM LIVE</a>
-        <div class="empty" style="margin-top:25px;">
-          랭킹을 불러오지 못했습니다.
-        </div>
-      </div>
-    `;
-
-    return;
-  }
-
-
-  const list =
-    data || [];
-
-
-  page.innerHTML = `
-    <div class="full-ranking-page">
-
-      <a href="/" class="ranking-back">
-        ← HOME
-      </a>
-
-      <section class="ranking-hero">
-
-        <div class="kicker">
-          ${
-            isEar
-            ? 'EAR SHARE · HALL OF FAME'
-            : 'VOM POINT · RANKING'
-          }
-        </div>
-
-        <h1>
-          ${
-            isEar
-            ? '귀점유율'
-            : 'VOM Point'
-          }
-        </h1>
-
-        <p>
-          ${
-            isEar
-            ? 'VOM LIVE 기록을 기준으로 누적 귀점유율 순위를 확인합니다.'
-            : 'VOM LIVE 참석과 순위 기록을 기준으로 누적 VOM POINT를 확인합니다.'
-          }
-        </p>
-
-      </section>
-
-      <div class="full-rank-list">
-
-        ${
-          list.length
-
-          ? list.map(row => {
-
-              const rank =
-                Number(row.rank || 0);
-
-              const score =
-                isEar
-                ? Number(
-                    row.ear_share_percent ??
-                    row.ear_share ??
-                    row.share_percent ??
-                    row.percent ??
-                    0
-                  )
-                : Number(
-                    row.total_points || 0
-                  );
-
-              const detail =
-                isEar
-                ? `${Number(row.votes || 0)}표 · ${Number(row.participant_count || 0)}명`
-                : `참석 ${Number(row.attendance_count || 0)}회 · 1위 ${Number(row.first_place_count || 0)}회`;
-
-              return `
-                <div class="full-rank-row">
-
-                  <div class="full-rank-number">
-                    ${rank}
-                  </div>
-
-                  <div>
-
-                    <div class="full-rank-name">
-                      ${escapeHtml(row.name || '')}
-                    </div>
-
-                    <div class="full-rank-detail">
-                      ${escapeHtml(detail)}
-                    </div>
-
-                  </div>
-
-                  <div class="full-rank-score">
-                    ${
-                      isEar
-                      ? score.toFixed(1)
-                      : score
-                    }
-                    <small>
-                      ${isEar ? '%' : 'P'}
-                    </small>
-                  </div>
-
-                </div>
-              `;
-            }).join('')
-
-          : `
-            <div class="empty">
-              아직 기록이 없습니다.
-            </div>
-          `
-        }
-
-      </div>
-
-    </div>
-  `;
 }
 
 
@@ -2406,7 +2190,7 @@ function createLiveCard(
    DETAIL
 ========================================= */
 
-function renderDetail(id){
+async function renderDetail(id){
 
   const event =
     events.find(
@@ -2490,6 +2274,16 @@ function renderDetail(id){
     );
 
 
+  const { data:setlistSetting } =
+    await db
+      .from('busking_setlist_settings')
+      .select('event_id')
+      .eq('event_id', Number(event.id))
+      .maybeSingle();
+
+  const setlistExists = !!setlistSetting;
+
+
   const page =
     document.getElementById('page');
 
@@ -2520,6 +2314,17 @@ function renderDetail(id){
       <h1 class="detail-title">
         ${escapeHtml(event.title || '')}
       </h1>
+
+      <div class="detail-choice">
+        <a class="active" href="/live/?id=${event.id}">
+          <strong>일정 자세히 보기</strong>
+          <small>날짜 · 장소 · 참가자 · 셋리스트</small>
+        </a>
+        <a href="/live/">
+          <strong>컨텐츠 소개 보기</strong>
+          <small>봄라이브가 어떤 활동인지</small>
+        </a>
+      </div>
 
 
       <div class="detail-image">
@@ -2589,6 +2394,19 @@ function renderDetail(id){
         </div>
 
       </div>
+
+
+      ${
+        setlistExists
+        ? `<a class="setlist-cta" href="/busking/setlist/?id=${event.id}">
+             <div><strong>셋리스트 보기</strong><small>편성 · 준비 · 최종 순서</small></div><span>→</span>
+           </a>`
+        : adminMode
+          ? `<a class="setlist-cta create" href="/busking/setlist/?id=${event.id}&create=1">
+               <div><strong>＋ 셋리스트 추가</strong><small>이 일정에 셋리스트를 만듭니다.</small></div><span>＋</span>
+             </a>`
+          : ''
+      }
 
 
       ${
