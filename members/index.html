@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f7f5fa">
-<link rel="icon" type="image/png" href="/favicon.png?v=3">
-<link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
+<link rel="icon" type="image/png" href="/favicon.png">
 <title>MEMBERS · Voice of Melody</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +16,7 @@
 .aurora{position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 88% 0%,rgba(134,220,211,.4),transparent 28%),radial-gradient(circle at 68% 8%,rgba(181,151,241,.38),transparent 32%),linear-gradient(180deg,#faf8fb,#f8f7fb 56%,#fbfafc)}
 .header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}.header-right{display:flex;align-items:center;gap:9px}.admin-badge{display:none;padding:8px 12px;border-radius:999px;background:#eee9ff;color:#6955d2;font-size:9px;font-weight:800}.admin-badge.show{display:block}.menu-btn{width:44px;height:44px;border:1px solid rgba(255,255,255,.95);border-radius:50%;background:rgba(255,255,255,.74);box-shadow:0 10px 28px rgba(31,38,76,.08);cursor:pointer}
 .page{width:min(1080px,100%);margin:auto;padding:34px 18px 110px}.hero{padding:24px 0 22px}.eyebrow{color:#7562df;font-family:"Nanum Pen Script",cursive;font-size:23px}.hero h1{margin:1px 0 8px;font-family:"Nanum Pen Script",cursive;font-size:72px;font-weight:400;line-height:.9}.hero p{margin:0;color:#6d7488;font-size:13px;line-height:1.75}
-.summary{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.summary span{padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.96);font-size:11px;font-weight:700}.summary b{color:#755fe0}
+.summary{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.summary span{padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.96);font-size:11px;font-weight:700}.summary b{color:#755fe0}.birthday-now{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:11px;padding:11px 14px;border-radius:15px;background:rgba(255,255,255,.64);border:1px solid rgba(255,255,255,.92);color:#62697b;font-size:11px;line-height:1.5}.birthday-now strong{color:#755fe0;font-size:12px}.birthday-now .birthday-person{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;background:#f1edff;color:#6552c8;font-weight:800}.birthday-now.today{background:linear-gradient(135deg,rgba(255,248,223,.9),rgba(244,238,255,.9));}.birthday-now.today strong{color:#d17b43}@media(max-width:640px){.birthday-now{gap:7px;padding:10px 12px}.birthday-now .birthday-person{padding:4px 8px}}
 .toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 11px}.tabs{display:flex;flex-wrap:wrap;gap:7px}.tab,.add-btn{height:38px;padding:0 14px;border:1px solid #e7e4f2;border-radius:11px;background:#fff;cursor:pointer;font-size:11px;font-weight:800}.tab.active{color:#fff;border-color:transparent;background:linear-gradient(135deg,#8068e8,#7489eb)}.add-btn{display:none;color:#6552c8;background:#f1edff}.admin-mode .add-btn{display:block}
 .panel{display:none}.panel.active{display:block}.table-shell{overflow-x:auto;border-radius:18px;background:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.96);box-shadow:0 12px 34px rgba(31,37,74,.055)}table{width:100%;min-width:865px;border-collapse:collapse;table-layout:fixed}th{height:39px;padding:0 6px;border-bottom:1px solid var(--line);color:#74798a;font-size:11px;font-weight:800;white-space:nowrap}td{height:45px;padding:4px 6px;border-bottom:1px solid rgba(28,34,65,.055);font-size:13px;font-weight:600;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}tbody tr:last-child td{border-bottom:0}.admin-mode tbody tr{cursor:pointer}.admin-mode tbody tr:hover{background:#faf9fe}
 .gender-mark{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;margin-left:6px;border-radius:999px;font-size:11px;font-weight:800;vertical-align:middle}.gender-mark.male{color:#4f78a8;background:#edf5fc;border:1px solid #dcebf8}.gender-mark.female{color:#93628e;background:#f8eff8;border:1px solid #eedfed}.member-name-wrap{display:flex;align-items:center;min-width:0}.member-name-wrap .name-text{overflow:hidden;text-overflow:ellipsis}.member-row-male td:first-child{box-shadow:inset 3px 0 0 rgba(108,157,200,.18)}.member-row-female td:first-child{box-shadow:inset 3px 0 0 rgba(184,126,178,.18)}
@@ -36,7 +35,7 @@
 <div class="aurora"></div>
 <header class="header"><a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><div class="header-right"><div id="adminBadge" class="admin-badge">ADMIN MODE</div><button class="menu-btn" onclick="openMenu()">☰</button></div></header>
 <main id="page" class="page">
-<section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div></section>
+<section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div><div id="birthdayNow" class="birthday-now"></div></section>
 <div class="toolbar"><div class="tabs"><button class="tab active" data-view="all" onclick="setView('all')">전체 명단</button><button class="tab" data-view="birthday" onclick="setView('birthday')">생일</button><button class="tab" data-view="age" onclick="setView('age')">나이별</button><button class="tab" data-view="region" onclick="setView('region')">지역별</button></div><button class="add-btn" onclick="openEditor()">＋ 멤버 추가</button></div>
 <section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">순서</th><th class="c-name">이름</th><th class="c-role">구분</th><th class="c-date">가입일</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th><th class="c-status">상태</th><th class="c-song">곡</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section id="panel-birthday" class="panel"><div id="birthdayGrid" class="group-grid"></div></section>
@@ -96,15 +95,26 @@ const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k]
 async function start(){await checkAdmin();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
-async function load(){const {data,error}=await db.from('members').select('*');if(error){console.error(error);members=[]}else members=(data||[]).sort((a,b)=>ord(a)-ord(b)||String(a.name||'').localeCompare(String(b.name||''),'ko'))}
-function render(){summary();table();birthdayView();ageView();regionView()}
-function setView(view){
-  document.querySelectorAll('.tab').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
-  document.querySelectorAll('.panel').forEach(panel=>panel.classList.remove('active'));
-  const target=document.getElementById('panel-'+view);
-  if(target)target.classList.add('active');
-}
+async function load(){const {data,error}=await db.from('members').select('*');if(error){console.error(error);members=[]}else members=(data||[]).sort((a,b)=>ord(a)-ord(b)||String(a.name||'').localeCompare(String(b.name||''),'ko'))}function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
 function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>운영진 <b>${staff}명</b></span><span>이번 달 생일 <b>${b}명</b></span>`}
+function birthdayNow(){
+  const box=document.getElementById('birthdayNow');if(!box)return;
+  const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
+  const list=members.map(m=>({m,b:parseBirth(birth(m))})).filter(x=>x.b&&x.b.month===mon).sort((a,b)=>a.b.day-b.b.day);
+  const today=list.filter(x=>x.b.day===day);
+  if(today.length){
+    box.classList.add('today');
+    box.innerHTML=`<strong>🎉 오늘 생일!</strong>${today.map(x=>`<span class="birthday-person">${esc(x.m.name)}님</span>`).join('')}<span>생일 축하해요 :)</span>`;
+    return;
+  }
+  box.classList.remove('today');
+  if(!list.length){
+    box.innerHTML=`<strong>🎂 ${mon}월의 생일</strong><span>이번 달 생일자는 없어요 ㅠㅠ</span>`;
+    return;
+  }
+  box.innerHTML=`<strong>🎂 ${mon}월의 생일</strong>${list.map(x=>`<span class="birthday-person">${esc(x.m.name)} · ${x.b.day}일</span>`).join('')}`;
+}
+
 function table(){
   const box=document.getElementById('rows');
   if(!members.length){
@@ -160,11 +170,11 @@ async function savePublicProfile(){
   closeProfileEditor();await load();render();
 }
 function birthdayView(){const g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;(g[b.month]??=[]).push({...m,_d:b.day})});document.getElementById('birthdayGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(mon=>`<div class="group-card"><h3>${mon}월</h3><div class="chips">${g[mon].sort((a,b)=>a._d-b._d).map(m=>`<span class="chip">${m._d}일 · ${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">생일 정보가 없습니다.</div>'}
-function ageView(){const y=new Date().getFullYear(),g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;const a=y-b.year+1;(g[a]??=[]).push(m)});document.getElementById('ageGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(a=>`<div class="group-card"><h3>${a}세</h3><div class="chips">${g[a].map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">나이 정보가 없습니다.</div>'}
+function ageView(){const y=new Date().getFullYear(),g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;const a=y-b.year;(g[a]??=[]).push(m)});document.getElementById('ageGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(a=>`<div class="group-card"><h3>${a}세</h3><div class="chips">${g[a].map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">나이 정보가 없습니다.</div>'}
 function regionView(){const g={};members.forEach(m=>(g[reg(m)]??=[]).push(m));document.getElementById('regionGrid').innerHTML=Object.keys(g).sort((a,b)=>g[b].length-g[a].length||a.localeCompare(b,'ko')).map(r=>`<div class="group-card region-card" onclick="showRegion('${r.replace(/'/g,"\\'")}')"><h3>${esc(r)}</h3><div class="region-count">${g[r].length}명</div></div>`).join('');document.getElementById('regionPeople').innerHTML=''}function showRegion(r){const list=members.filter(m=>reg(m)===r);document.getElementById('regionPeople').innerHTML=`<div class="group-card"><h3>${esc(r)} 멤버</h3><div class="chips">${list.map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`}
 function parseBirth(v){const d=String(v||'').replace(/\D/g,'');if(d.length===8)return{year:+d.slice(0,4),month:+d.slice(4,6),day:+d.slice(6,8)};const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?{year:+m[1],month:+m[2],day:+m[3]}:null}function fmt(v){return v?String(v).slice(0,10).replaceAll('-','.'):'-'}
 function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}function closeEditor(){memberOverlay.classList.remove('open')}
-async function saveMember(){if(!adminMode)return;const id=memberId.value,b=fBirth.value.replace(/\D/g,'');if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}const p={name:fName.value.trim(),role:fRole.value,status:fStatus.value,join_date:fJoinDate.value||null,birth_date:b?`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}`:null,region:fRegion.value.trim(),gender:fGender.value,job:fJob.value.trim(),favorite_artist:fSinger.value.trim(),phone:fPhone.value.trim(),join_order:Number(fOrder.value)||null,memo:fMemo.value.trim()};if(!p.name){alert('이름을 입력해주세요.');return}const q=id?db.from('members').update(p).eq('id',id):db.from('members').insert(p);const {error}=await q;if(error){alert('저장 실패\n'+error.message);return}closeEditor();await load();render()}
+async function saveMember(){if(!adminMode)return;const id=memberId.value,b=fBirth.value.replace(/\D/g,'');if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}const p={name:fName.value.trim(),role:fRole.value,status:fStatus.value,join_date:fJoinDate.value||null,birth_date:b?`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}`:null,region:fRegion.value.trim(),gender:fGender.value,job:fJob.value.trim(),favorite_singer:fSinger.value.trim(),phone:fPhone.value.trim(),join_order:Number(fOrder.value)||null,memo:fMemo.value.trim()};if(!p.name){alert('이름을 입력해주세요.');return}const q=id?db.from('members').update(p).eq('id',id):db.from('members').insert(p);const {error}=await q;if(error){alert('저장 실패\n'+error.message);return}closeEditor();await load();render()}
 
 function openMemberSongs(id){
   const m=members.find(x=>String(x.id)===String(id));if(!m)return;
