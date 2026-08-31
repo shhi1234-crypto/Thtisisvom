@@ -1832,6 +1832,8 @@ async function start(){
 
   await restoreAdmin();
 
+  loadHomeBirthday();
+
   await Promise.all([
     loadEarShare(),
     loadPointRanking(),
@@ -1862,6 +1864,7 @@ async function loadHomeBirthday(){
   const box=document.getElementById('homeToday');
   if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
+  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">🎂 이번 달 생일을 확인하는 중...</span>`;
   const {data,error}=await db.from('members').select('name,birth_date,status');
   let birthdayHtml='';
   if(error){
