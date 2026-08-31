@@ -1799,6 +1799,66 @@ button{
   }
 }
 
+
+/* UPCOMING / PAST */
+.period-section{
+  margin-bottom:28px;
+}
+.period-section + .period-section{
+  margin-top:34px;
+}
+.period-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 4px 14px;
+}
+.period-title{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin:0;
+  color:#171c31;
+  font-size:22px;
+  font-weight:800;
+}
+.period-title em{
+  color:#806bea;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:22px;
+  font-style:normal;
+  font-weight:400;
+}
+.period-count{
+  color:#9a9ead;
+  font-size:10px;
+  font-weight:800;
+}
+.period-section.past{
+  opacity:.88;
+}
+.period-section.past .period-title em{
+  color:#9da1b0;
+}
+.period-empty{
+  padding:24px 18px;
+  border:1px solid rgba(255,255,255,.92);
+  border-radius:24px;
+  background:rgba(255,255,255,.70);
+  color:#9297a7;
+  text-align:center;
+  font-size:11px;
+  box-shadow:var(--shadow);
+}
+@media(max-width:640px){
+  .period-section{margin-bottom:22px}
+  .period-section + .period-section{margin-top:28px}
+  .period-head{margin-bottom:10px}
+  .period-title{font-size:18px;gap:7px}
+  .period-title em{font-size:20px}
+}
+
 /* ======================================================
    LIST / MONTH VIEW
 ====================================================== */
@@ -3510,13 +3570,26 @@ function renderCalendar(){
       );
 
 
-  if(!filtered.length){
+  const today =
+    calendarDateString(
+      new Date()
+    );
+
+
+  const valid =
+    filtered.filter(
+      item =>
+        item.event_date
+    );
+
+
+  if(!valid.length){
 
     container.innerHTML =
     `
-      <section class="month">
+      <section class="period-section">
 
-        <div class="empty">
+        <div class="period-empty">
           등록된 일정이 없습니다.
         </div>
 
@@ -3527,95 +3600,183 @@ function renderCalendar(){
   }
 
 
-  const groups = {};
+  const upcoming =
+    valid
+      .filter(
+        item =>
+          item.event_date >= today
+      )
+      .sort(
+        (a,b) =>
+          String(a.event_date)
+            .localeCompare(
+              String(b.event_date)
+            )
+      );
 
 
-  filtered.forEach(item => {
+  const past =
+    valid
+      .filter(
+        item =>
+          item.event_date < today
+      )
+      .sort(
+        (a,b) =>
+          String(b.event_date)
+            .localeCompare(
+              String(a.event_date)
+            )
+      );
 
-    if(!item.event_date){
-      return;
+
+  function renderPeriod(
+    title,
+    english,
+    list,
+    isPast = false
+  ){
+
+    if(!list.length){
+
+      return `
+        <section class="period-section ${isPast ? 'past' : ''}">
+
+          <div class="period-head">
+
+            <h2 class="period-title">
+              ${title}
+              <em>${english}</em>
+            </h2>
+
+            <span class="period-count">
+              0
+            </span>
+
+          </div>
+
+          <div class="period-empty">
+            ${
+              isPast
+              ? '아직 지난 일정이 없어요 :)'
+              : '예정된 일정이 없어요 ㅠㅠ'
+            }
+          </div>
+
+        </section>
+      `;
     }
 
 
-    const key =
-      item.event_date
-        .slice(0,7);
+    const groups = {};
 
 
-    if(!groups[key]){
-      groups[key] = [];
-    }
+    list.forEach(item => {
+
+      const key =
+        item.event_date
+          .slice(0,7);
 
 
-    groups[key]
-      .push(item);
-  });
+      if(!groups[key]){
+        groups[key] = [];
+      }
 
 
-  container.innerHTML = '';
+      groups[key]
+        .push(item);
+    });
 
 
-  Object
-    .keys(groups)
-    .sort()
-    .forEach(monthKey => {
+    const monthHtml =
+      Object
+        .keys(groups)
+        .sort(
+          isPast
+          ? (a,b) => b.localeCompare(a)
+          : (a,b) => a.localeCompare(b)
+        )
+        .map(monthKey => {
+
+          const [
+            year,
+            month
+          ] =
+            monthKey.split('-');
 
 
-      const [
-        year,
-        month
-      ] =
-        monthKey.split('-');
+          return `
+            <section class="month">
+
+              <div class="month-head">
+
+                <h2>
+                  ${monthName(month)}
+                  ${year}
+                </h2>
+
+                <span>
+                  ${month}
+                </span>
+
+              </div>
 
 
-      const section =
-        document
-          .createElement(
-            'section'
-          );
+              <div class="event-list">
+
+                ${
+                  groups[monthKey]
+                    .map(
+                      createEventHtml
+                    )
+                    .join('')
+                }
+
+              </div>
+
+            </section>
+          `;
+        })
+        .join('');
 
 
-      section.className =
-        'month';
+    return `
+      <section class="period-section ${isPast ? 'past' : ''}">
 
+        <div class="period-head">
 
-      section.innerHTML =
-      `
-        <div class="month-head">
-
-          <h2>
-
-            ${monthName(month)}
-            ${year}
-
+          <h2 class="period-title">
+            ${title}
+            <em>${english}</em>
           </h2>
 
-          <span>
-            ${month}
+          <span class="period-count">
+            ${list.length}개의 일정
           </span>
 
         </div>
 
+        ${monthHtml}
 
-        <div class="event-list">
-
-          ${
-            groups[monthKey]
-              .map(
-                createEventHtml
-              )
-              .join('')
-          }
-
-        </div>
-      `;
+      </section>
+    `;
+  }
 
 
-      container
-        .appendChild(section);
-    });
+  container.innerHTML =
+    renderPeriod(
+      '다가오는 일정',
+      'Upcoming',
+      upcoming,
+      false
+    ) +
+    renderPeriod(
+      '지난 일정',
+      'Past',
+      past,
+      true
+    );
 }
-
 
 function createEventHtml(item){
 
