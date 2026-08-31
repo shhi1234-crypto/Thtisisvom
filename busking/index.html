@@ -63,6 +63,56 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 @media(max-width:760px){
 .header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1,.detail h1{font-size:54px}.card{grid-template-columns:60px minmax(0,1fr) 72px;gap:9px;padding:10px}.thumb{width:72px;height:58px}.detail{padding:17px}.detail-image{height:220px}.setlist-cta{min-height:82px;padding:15px 17px;border-radius:19px}.setlist-cta strong{font-size:17px}.setlist-cta>span{width:38px;height:38px}.detail-meta{grid-template-columns:1fr}.board,.run-order{padding:15px}.section-head{align-items:flex-start;flex-direction:column}.section-head .primary{width:100%}.board-summary{grid-template-columns:1fr 1fr}.schedule-strip{grid-template-columns:1fr}.slot-table{overflow:visible}.slot-head{display:none}.slot-row{min-width:0;grid-template-columns:38px minmax(0,1fr);gap:5px 7px;padding:6px 8px}.slot-row>div:nth-child(1){grid-column:1}.slot-member,.slot-empty-text{grid-column:2}.slot-row>.song-stack{grid-column:1/-1;padding-top:2px}.slot-row>.slot-actions{grid-column:1/-1;justify-content:flex-start}.song-line{width:100%;flex-wrap:nowrap}.song-name{flex:1;min-width:0}.song-artist{display:none}.song-tools{margin-left:0;flex:0 0 auto}.yt{min-width:116px;height:25px;padding:0 12px}.order-list{overflow:visible}.order-item{min-width:0;grid-template-columns:22px 28px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:3px 6px;padding:7px}.drag-handle{grid-column:1;grid-row:1/3}.order-num{grid-column:2;grid-row:1/3}.order-member{grid-column:3;grid-row:1}.order-song{grid-column:3/5;grid-row:2}.order-fallback{grid-column:4;grid-row:1;justify-self:end}.order-fallback .yt{min-width:110px}.extra-row{grid-template-columns:26px minmax(0,1fr) auto}.extra-row .order-song{grid-column:2}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}
 }
+
+/* V10 · 일정/컨텐츠 진입 분리 */
+.detail-choice{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:18px 0 24px;
+}
+.detail-choice a{
+  min-height:92px;
+  padding:18px 16px;
+  border:1px solid rgba(111,88,190,.16);
+  border-radius:22px;
+  background:rgba(255,255,255,.78);
+  box-shadow:0 10px 30px rgba(92,76,150,.07);
+  text-decoration:none;
+  color:inherit;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:10px;
+}
+.detail-choice a.active{
+  background:linear-gradient(135deg,rgba(236,230,255,.95),rgba(232,250,246,.9));
+  border-color:rgba(116,88,202,.28);
+}
+.detail-choice strong{font-size:17px;line-height:1.25}
+.detail-choice small{font-size:12px;line-height:1.45;color:#777}
+.content-intro{
+  margin:22px 0 28px;
+  padding:24px 22px;
+  border-radius:26px;
+  background:linear-gradient(135deg,rgba(244,240,255,.9),rgba(238,252,248,.86));
+  border:1px solid rgba(111,88,190,.12);
+}
+.content-intro .intro-kicker{font-size:11px;font-weight:800;letter-spacing:.12em;color:#7a69b7}
+.content-intro h2{margin:7px 0 10px;font-size:25px}
+.content-intro p{margin:0;color:#666;line-height:1.75;font-size:14px}
+.content-intro-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:17px}
+.content-intro-grid div{padding:13px 10px;border-radius:16px;background:rgba(255,255,255,.72);text-align:center}
+.content-intro-grid strong{display:block;font-size:13px;margin-bottom:4px}
+.content-intro-grid small{font-size:11px;color:#777;line-height:1.35}
+@media(max-width:560px){
+  .detail-choice{gap:9px}
+  .detail-choice a{min-height:96px;padding:16px 13px;border-radius:19px}
+  .detail-choice strong{font-size:16px}
+  .content-intro{padding:21px 17px}
+  .content-intro-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
@@ -277,6 +327,16 @@ function partLabel(part){return settings.section_count===2?`${part}부`:'공연'
 function renderBuskingList(){
   const list=events.filter(e=>e.event_type==='BUSKING');
   page.innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>VOM 버스킹 일정과 셋리스트를 확인할 수 있습니다.</p></section>
+  <section class="content-intro">
+    <div class="intro-kicker">ABOUT BUSKING</div>
+    <h2>VOM 버스킹은요</h2>
+    <p>연습실을 벗어나 관객과 더 가까운 곳에서 함께 노래하는 VOM의 야외 공연 컨텐츠입니다. 정해진 형식에 얽매이기보다 각자의 곡을 준비하고, 함께 무대를 채워갑니다.</p>
+    <div class="content-intro-grid">
+      <div><strong>함께 만드는 무대</strong><small>개인곡부터 듀엣까지 자유롭게</small></div>
+      <div><strong>관객과 가까이</strong><small>거리에서 바로 만나는 라이브</small></div>
+      <div><strong>셋리스트 운영</strong><small>참가자별 곡과 공연 순서를 한눈에</small></div>
+    </div>
+  </section>
   <div class="list">${list.length?list.map(row=>{
     const l=loc(row),img=row.image_url||l?.image_url||'',d=new Date(row.event_date+'T00:00:00');
     return `<article class="card" onclick="location.href='/busking/?id=${row.id}'">
@@ -297,6 +357,16 @@ function renderDetail(id){
     <section class="detail">
       <div class="type">BUSKING</div>
       <h1>${esc(row.title||'')}</h1>
+      <div class="detail-choice">
+        <a class="active" href="/busking/?id=${row.id}">
+          <strong>일정 자세히 보기</strong>
+          <small>날짜 · 장소 · 안내 · 셋리스트</small>
+        </a>
+        <a href="/busking/">
+          <strong>컨텐츠 소개 보기</strong>
+          <small>VOM 버스킹이 어떤 활동인지</small>
+        </a>
+      </div>
       ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
       <div class="detail-meta">
         <div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div>
