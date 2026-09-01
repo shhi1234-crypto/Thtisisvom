@@ -873,7 +873,7 @@ button{
   display:grid;
 
   grid-template-columns:
-    repeat(3,1fr);
+    repeat(4,1fr);
 
   gap:8px;
 }
@@ -2473,6 +2473,21 @@ button{
 
 
         <button
+          id="type-openmic"
+          class="type-option"
+          onclick="setEventType('OPEN MIC')"
+          type="button"
+        >
+          OPEN MIC
+
+          <span>
+            대관공연
+          </span>
+
+        </button>
+
+
+        <button
           id="type-other"
           class="type-option"
           onclick="setEventType('OTHER')"
@@ -4026,23 +4041,48 @@ function createEventHtml(item){
 }
 
 
+function isOpenMicEvent(item){
+  if(!item) return false;
+  const type = String(item.event_type || '');
+  const title = String(item.title || '').toUpperCase();
+  return type === 'OPEN MIC' ||
+    (type === 'OTHER' && (title.includes('OPEN MIC') || title.includes('대관공연')));
+}
+
+
 function openEventDetail(id){
   const item = events.find(row => String(row.id) === String(id));
   if(!item) return;
 
   const type = String(item.event_type || 'OTHER');
+  const openMic = isOpenMicEvent(item);
 
-  if(type !== 'VOM LIVE' && type !== 'BUSKING'){
+  if(type !== 'VOM LIVE' && type !== 'BUSKING' && !openMic){
     window.location.href = `/schedule/?id=${encodeURIComponent(id)}`;
     return;
   }
 
-  const isLive = type === 'VOM LIVE';
-  const detailHref = isLive
-    ? `/live/?id=${encodeURIComponent(id)}`
-    : `/busking/?id=${encodeURIComponent(id)}`;
-  const introHref = isLive ? '/live/' : '/busking/';
-  const introName = isLive ? '봄라이브' : '버스킹';
+  const contentType = openMic ? 'OPEN MIC' : type;
+  const detailHref =
+    contentType === 'VOM LIVE'
+      ? `/live/?id=${encodeURIComponent(id)}`
+      : contentType === 'BUSKING'
+        ? `/busking/?id=${encodeURIComponent(id)}`
+        : `/openmic/?id=${encodeURIComponent(id)}`;
+
+  const introHref =
+    contentType === 'VOM LIVE'
+      ? '/live/'
+      : contentType === 'BUSKING'
+        ? '/busking/'
+        : '/openmic/';
+
+  const introName =
+    contentType === 'VOM LIVE'
+      ? '봄라이브'
+      : contentType === 'BUSKING'
+        ? '버스킹'
+        : '대관공연';
 
   let overlay = document.getElementById('entryChoiceOverlay');
   if(!overlay){
@@ -4071,14 +4111,17 @@ function openEventDetail(id){
     document.body.appendChild(overlay);
   }
 
-  document.getElementById('entryChoiceType').textContent = type;
+  document.getElementById('entryChoiceType').textContent = contentType;
   document.getElementById('entryChoiceTitle').textContent = item.title || '';
   document.getElementById('entryDetailLink').href = detailHref;
   document.getElementById('entryIntroLink').href = introHref;
-  document.getElementById('entryIntroCopy').textContent = `${introName}가 어떤 컨텐츠인지 먼저 알아보기`;
+  document.getElementById('entryIntroCopy').textContent =
+    `${introName}이 어떤 컨텐츠인지 먼저 알아보기`;
+
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
+
 
 function closeEntryChoice(){
   const overlay = document.getElementById('entryChoiceOverlay');
@@ -4315,6 +4358,15 @@ function setEventType(type){
   }
 
 
+  if(type === 'OPEN MIC'){
+
+    document
+      .getElementById('type-openmic')
+      .classList
+      .add('active');
+  }
+
+
   if(type === 'OTHER'){
 
     document
@@ -4385,6 +4437,19 @@ function updatePresetCopy(){
       '등록해둔 버스킹 장소를 선택하세요.';
   }
 
+  else if(
+    currentEventType ===
+    'OPEN MIC'
+  ){
+
+    title.textContent =
+      '공연장';
+
+
+    help.textContent =
+      '대관공연 장소를 선택하세요.';
+  }
+
   else{
 
     title.textContent =
@@ -4424,6 +4489,15 @@ function updateTitlePlaceholder(){
       '예: BUSKING @한강';
   }
 
+  else if(
+    currentEventType ===
+    'OPEN MIC'
+  ){
+
+    input.placeholder =
+      '예: VOM OPEN MIC #02';
+  }
+
   else{
 
     input.placeholder =
@@ -4448,11 +4522,13 @@ function populatePresets(
 
 
   const list =
-    presets.filter(
-      item =>
-        item.location_type ===
-        currentEventType
-    );
+    presets.filter(item => {
+      if(currentEventType === 'OPEN MIC'){
+        return item.location_type === 'OPEN MIC' ||
+               item.location_type === 'OTHER';
+      }
+      return item.location_type === currentEventType;
+    });
 
 
   select.innerHTML = '';
@@ -5329,8 +5405,9 @@ function editEvent(id){
 
 
   currentEventType =
-    item.event_type ||
-    'OTHER';
+    isOpenMicEvent(item)
+    ? 'OPEN MIC'
+    : (item.event_type || 'OTHER');
 
 
   document
@@ -5376,6 +5453,20 @@ function editEvent(id){
     document
       .getElementById(
         'type-busking'
+      )
+      .classList
+      .add('active');
+  }
+
+
+  else if(
+    currentEventType ===
+    'OPEN MIC'
+  ){
+
+    document
+      .getElementById(
+        'type-openmic'
       )
       .classList
       .add('active');
