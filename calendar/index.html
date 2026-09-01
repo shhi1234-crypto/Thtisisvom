@@ -1162,6 +1162,7 @@ button{
 }
 .delete-preset:hover{background:#ffe4e9}
 
+.ordinal-je{display:inline-block;margin-right:.20em;}
 /* 제목 손글씨는 그대로 유지. 회차 표기(제1회 등)는 JS에서 '제 1회'로만 간격 처리 */
 
 .add-preset{
@@ -5381,7 +5382,7 @@ function escapeHtml(value){
 
 
 function formatMixedTitle(value){
-  return escapeHtml(value ?? '').replace(/제(?=[0-9])/g,'제&nbsp;');
+  return escapeHtml(value ?? '').replace(/제(?=[0-9])/g,'<span class="ordinal-je">제</span>');
 }
 
 
