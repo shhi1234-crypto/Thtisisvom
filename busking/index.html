@@ -633,6 +633,12 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
   }
 }
 
+
+.host-note{margin-top:16px;padding:18px 19px;border-radius:19px;border:1px solid rgba(116,94,221,.14);background:linear-gradient(135deg,#f3efff,#eef9f7)}
+.host-note-label{color:#735fd3;font-size:9px;font-weight:900;letter-spacing:1.35px}
+.host-note-title{margin-top:5px;font-size:13px;font-weight:850;color:#282d40}
+.host-note-body{margin-top:9px;color:#5f6577;font-size:11px;line-height:1.9}
+
 </style>
 </head>
 <body>
@@ -998,6 +1004,7 @@ function renderDetail(id){
         <div class="info"><small>PLACE</small><strong>${esc(l?.name||row.location||'장소 미정')}</strong></div>
       </div>
       ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}
+      ${row.host_note?`<div class="host-note"><div class="host-note-label">HOST NOTE</div><div class="host-note-title">주최자 안내</div><div class="host-note-body">${esc(row.host_note).replace(/\n/g,'<br>')}</div></div>`:''}
       ${setlistExists
         ? `<a class="setlist-cta" href="/busking/setlist/?id=${row.id}"><div><strong>셋리스트 보기</strong><small>참가자 편성 · 개인곡 · 최종 공연 순서</small></div><span>→</span></a>`
         : adminMode
