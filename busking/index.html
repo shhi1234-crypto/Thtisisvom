@@ -191,6 +191,248 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
   .intro-process article{min-height:auto}
 }
 
+
+/* ===== VOM LIVE STYLE UNIFIED CONTENT PAGE ===== */
+.u-hero{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:45px;
+  align-items:center;
+  padding:72px 0 70px;
+}
+.u-label{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:21px;
+  margin-bottom:16px;
+}
+.u-title{
+  margin:0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:86px;
+  line-height:.92;
+  font-weight:400;
+  color:#11172a;
+}
+.u-subtitle{
+  margin-top:38px;
+  font-size:21px;
+  line-height:1.55;
+  font-weight:800;
+  letter-spacing:-.03em;
+}
+.u-copy{
+  margin-top:28px;
+  max-width:650px;
+  color:#74798b;
+  font-size:13px;
+  line-height:2;
+}
+.u-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:25px;
+}
+.u-tags span{
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(91,80,130,.08);
+  color:#75798a;
+  font-size:10px;
+}
+.u-visual{
+  min-height:397px;
+  padding:40px 36px;
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 83% 14%,rgba(81,193,205,.28),transparent 30%),
+    linear-gradient(145deg,#24365f,#323a77 64%,#7654cb);
+  box-shadow:0 24px 56px rgba(37,42,89,.14);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  color:white;
+}
+.u-visual .script{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:42px;
+  line-height:1.05;
+  color:#eee7ff;
+}
+.u-visual p{
+  margin:0;
+  color:#efeaff;
+  font-size:12px;
+  line-height:1.75;
+  font-weight:700;
+}
+.u-section{margin-top:54px}
+.u-kicker{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:20px;
+}
+.u-section-title{
+  margin:7px 0 24px;
+  font-size:28px;
+  letter-spacing:-.04em;
+}
+.u-process{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.u-process-card{
+  min-height:202px;
+  padding:27px 25px;
+  border-radius:23px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 12px 33px rgba(31,37,74,.055);
+}
+.u-process-num{
+  font-family:"Nanum Pen Script",cursive;
+  color:#816cf0;
+  font-size:26px;
+}
+.u-process-card h3{
+  margin:30px 0 9px;
+  font-size:15px;
+}
+.u-process-card p{
+  margin:0;
+  color:#848899;
+  font-size:10px;
+  line-height:1.7;
+}
+.u-lists{margin-top:76px}
+.u-list-section{margin-top:46px}
+.u-list-section:first-child{margin-top:0}
+.u-list-head{margin-bottom:20px}
+.u-list-kicker{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:20px;
+}
+.u-list-head h2{
+  margin:6px 0 0;
+  font-size:27px;
+  letter-spacing:-.04em;
+}
+.u-list-head p{
+  margin:10px 0 0;
+  color:#85899a;
+  font-size:11px;
+}
+.u-list{display:grid;gap:12px}
+.u-card{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr) 130px;
+  align-items:center;
+  gap:17px;
+  min-height:115px;
+  padding:15px 16px;
+  border-radius:23px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 10px 30px rgba(31,37,74,.05);
+  cursor:pointer;
+  transition:.18s;
+}
+.u-card:hover{transform:translateY(-2px)}
+.u-date{
+  height:83px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(145deg,#765eea,#6f8ee6);
+  color:white;
+}
+.u-date strong{
+  display:block;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:31px;
+  line-height:.95;
+}
+.u-date small{
+  display:block;
+  margin-top:5px;
+  font-size:8px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.u-type{
+  color:#806bf0;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.10em;
+}
+.u-card h3{
+  margin:6px 0 8px;
+  font-size:18px;
+  letter-spacing:-.025em;
+}
+.u-meta{
+  color:#818596;
+  font-size:10px;
+}
+.u-more{
+  margin-top:9px;
+  color:#745fd7;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:16px;
+}
+.u-side{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.u-image{
+  height:82px;
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(135deg,#eee8ff,#e3f4f2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.u-image img{width:100%;height:100%;object-fit:cover}
+.u-image-empty{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:18px;
+  color:#9a8bb7;
+}
+.u-empty{
+  min-height:100px;
+  border-radius:22px;
+  background:rgba(255,255,255,.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#9a9dad;
+  font-size:11px;
+}
+@media(max-width:850px){
+  .u-hero{grid-template-columns:1fr;gap:28px;padding:48px 0 55px}
+  .u-title{font-size:70px}
+  .u-visual{min-height:300px}
+  .u-process{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .u-title{font-size:58px}
+  .u-subtitle{font-size:18px;margin-top:27px}
+  .u-copy{font-size:12px}
+  .u-visual{min-height:270px;padding:30px 25px}
+  .u-visual .script{font-size:34px}
+  .u-process{grid-template-columns:1fr}
+  .u-process-card{min-height:auto}
+  .u-card{grid-template-columns:64px minmax(0,1fr) 76px;gap:10px;padding:12px}
+  .u-date{height:68px}
+  .u-date strong{font-size:26px}
+  .u-card h3{font-size:15px}
+  .u-image{height:67px}
+}
+
 </style>
 </head>
 <body>
@@ -405,98 +647,138 @@ function canEditSlotSongs(slot){const m=memberById(slot.member_id);return !(m&&i
 function partForPosition(pos){return settings.section_count===2&&pos>settings.part1_capacity?2:1}
 function partLabel(part){return settings.section_count===2?`${part}부`:'공연'}
 
+
+function uToday(){
+  const n=new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+function uWeekEn(date){
+  return ['SUN','MON','TUE','WED','THU','FRI','SAT'][date.getDay()];
+}
+
 function renderBuskingIntro(){
-  document.title='버스킹 소개 · VOM';
+  renderBuskingList();
+}
+
+function renderBuskingList(){
+  document.title='BUSKING · Voice of Melody';
+
+  const today=uToday();
+  const list=events.filter(e=>e.event_type==='BUSKING');
+  const upcoming=list
+    .filter(e=>String(e.event_date||'')>=today)
+    .sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
+  const past=list
+    .filter(e=>String(e.event_date||'')<today)
+    .sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date)));
+
+  const card=(row,isPast)=>{
+    const l=loc(row);
+    const img=row.image_url||l?.image_url||'';
+    const d=new Date(row.event_date+'T00:00:00');
+    return `
+      <article class="u-card" onclick="location.href='/busking/?id=${row.id}'">
+        <div class="u-date">
+          <div>
+            <strong>${String(d.getDate()).padStart(2,'0')}</strong>
+            <small>${uWeekEn(d)}</small>
+          </div>
+        </div>
+        <div>
+          <div class="u-type">BUSKING</div>
+          <h3>${esc(row.title||'')}</h3>
+          <div class="u-meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div>
+          <div class="u-more">${isPast?'기록 보기 →':'자세히 보기 →'}</div>
+        </div>
+        <div class="u-side">
+          <div class="u-image">
+            ${img?`<img src="${attr(img)}" alt="">`:`<div class="u-image-empty">BUSKING</div>`}
+          </div>
+        </div>
+      </article>`;
+  };
 
   page.innerHTML=`
-    <a class="back" href="/busking/">← BUSKING</a>
+    <section class="u-hero">
+      <div>
+        <div class="u-label">VOM on Street</div>
+        <h1 class="u-title">BUSKING</h1>
+        <div class="u-subtitle">
+          준비한 노래를 거리로,<br>
+          관객과 바로 만나는 무대.
+        </div>
+        <div class="u-copy">
+          VOM BUSKING은 연습실에서 준비한 노래를 실제 관객 앞에서 들려주는 야외 라이브입니다.
+          개인곡을 중심으로 듀엣과 단체곡을 더하고, 참가자들이 함께 셋리스트를 완성합니다.
+          <br><br>
+          완벽하게 짜인 공연보다 직접 준비하고 함께 무대에 서는 경험,
+          그리고 현장에서 생기는 반응과 분위기를 즐기는 데 의미를 둡니다.
+        </div>
+        <div class="u-tags">
+          <span>개인곡</span>
+          <span>듀엣 가능</span>
+          <span>단체곡 가능</span>
+          <span>셋리스트 운영</span>
+          <span>야외 라이브</span>
+        </div>
+      </div>
 
-    <section class="hero">
-      <div class="eyebrow">VOM ON STREET</div>
-      <h1>Busking</h1>
-      <p>준비한 노래를 연습실 밖으로 꺼내, 관객과 직접 만나는 VOM의 야외 라이브.</p>
+      <div class="u-visual">
+        <div class="script">Take it<br>outside.<br>Sing it live.</div>
+        <p>연습실에서 준비한 한 곡을,<br>거리의 진짜 관객에게 들려주는 경험.</p>
+      </div>
     </section>
 
-    <section class="intro-editorial">
-      <div class="intro-kicker">ABOUT BUSKING</div>
-      <h2>거리에서 완성되는 VOM의 무대</h2>
-      <p>
-        버스킹은 각자 준비한 노래를 실제 관객 앞에서 들려주는 자리입니다.
-        개인곡을 중심으로 듀엣과 단체곡을 더하고, 참가자들이 함께 셋리스트를 만들어
-        하나의 공연으로 완성합니다. 정형화된 공연보다는 현장의 분위기와 반응까지 함께 즐기는 데 더 가깝습니다.
-      </p>
-
-      <div class="intro-process">
-        <article>
-          <div class="num">01 · PREPARE</div>
-          <h3>각자의 곡을 준비</h3>
-          <p>개인곡을 중심으로 원하는 곡을 준비하고, 필요하면 듀엣이나 단체곡을 함께 구성합니다.</p>
+    <section class="u-section">
+      <div class="u-kicker">How it works</div>
+      <h2 class="u-section-title">진행 방식</h2>
+      <div class="u-process">
+        <article class="u-process-card">
+          <div class="u-process-num">01</div>
+          <h3>개인곡 준비</h3>
+          <p>각자 부르고 싶은 곡을 준비해 자신의 무대를 구성합니다.</p>
         </article>
-
-        <article>
-          <div class="num">02 · BUILD</div>
-          <h3>함께 셋리스트 완성</h3>
-          <p>참가자별 곡과 공연 순서를 조율해 한 회차의 흐름을 만듭니다.</p>
+        <article class="u-process-card">
+          <div class="u-process-num">02</div>
+          <h3>듀엣 & 단체곡</h3>
+          <p>참가자끼리 원하는 조합으로 듀엣과 단체곡을 추가할 수 있습니다.</p>
         </article>
-
-        <article>
-          <div class="num">03 · LIVE</div>
-          <h3>관객과 바로 만나는 무대</h3>
-          <p>거리라는 열린 공간에서 관객의 반응을 직접 느끼며 라이브를 진행합니다.</p>
+        <article class="u-process-card">
+          <div class="u-process-num">03</div>
+          <h3>셋리스트 편성</h3>
+          <p>등록된 곡을 기준으로 회차별 공연 순서와 흐름을 구성합니다.</p>
+        </article>
+        <article class="u-process-card">
+          <div class="u-process-num">04</div>
+          <h3>거리에서 LIVE</h3>
+          <p>관객과 가까운 공간에서 현장의 반응까지 함께 즐깁니다.</p>
         </article>
       </div>
     </section>
 
-    <section class="intro-point">
-      <strong>완벽한 공연보다, 같이 무대에 서는 경험.</strong>
-      <span>
-        버스킹 경험이 많지 않아도 괜찮습니다.
-        잘 짜인 무대를 보여주는 것보다 직접 준비하고, 함께 서보고,
-        현장에서 생기는 순간까지 즐기는 것이 VOM 버스킹의 핵심입니다.
-      </span>
+    <section class="u-lists">
+      <div class="u-list-section">
+        <div class="u-list-head">
+          <div class="u-list-kicker">Upcoming</div>
+          <h2>다가오는 BUSKING</h2>
+        </div>
+        <div class="u-list">
+          ${upcoming.length?upcoming.map(e=>card(e,false)).join(''):`<div class="u-empty">예정된 BUSKING이 없습니다.</div>`}
+        </div>
+      </div>
+
+      <div class="u-list-section">
+        <div class="u-list-head">
+          <div class="u-list-kicker">Archive</div>
+          <h2>지난 BUSKING</h2>
+          <p>지난 버스킹 일정과 셋리스트 기록을 확인할 수 있습니다.</p>
+        </div>
+        <div class="u-list">
+          ${past.length?past.map(e=>card(e,true)).join(''):`<div class="u-empty">아직 지난 BUSKING이 없습니다.</div>`}
+        </div>
+      </div>
     </section>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 32px;">
-      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/busking/">
-        <div>
-          <strong>버스킹 일정 보기</strong>
-          <small>다가오는 일정과 지난 버스킹 확인</small>
-        </div>
-        <span>→</span>
-      </a>
-
-      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/calendar/">
-        <div>
-          <strong>전체 캘린더 보기</strong>
-          <small>VOM의 모든 일정 확인</small>
-        </div>
-        <span>→</span>
-      </a>
-    </div>
   `;
-}
-
-function renderBuskingList(){
-  const list=events.filter(e=>e.event_type==='BUSKING');
-  page.innerHTML=`<section class="hero"><div class="eyebrow">VOM on Street</div><h1>Busking</h1><p>VOM 버스킹 일정과 셋리스트를 확인할 수 있습니다.</p></section>
-  <section class="content-intro">
-    <div class="intro-kicker">ABOUT BUSKING</div>
-    <h2>VOM 버스킹은요</h2>
-    <p>연습실을 벗어나 관객과 더 가까운 곳에서 함께 노래하는 VOM의 야외 공연 컨텐츠입니다. 정해진 형식에 얽매이기보다 각자의 곡을 준비하고, 함께 무대를 채워갑니다.</p>
-    <div class="content-intro-grid">
-      <div><strong>함께 만드는 무대</strong><small>개인곡부터 듀엣까지 자유롭게</small></div>
-      <div><strong>관객과 가까이</strong><small>거리에서 바로 만나는 라이브</small></div>
-      <div><strong>셋리스트 운영</strong><small>참가자별 곡과 공연 순서를 한눈에</small></div>
-    </div>
-  </section>
-  <div class="list">${list.length?list.map(row=>{
-    const l=loc(row),img=row.image_url||l?.image_url||'',d=new Date(row.event_date+'T00:00:00');
-    return `<article class="card" onclick="location.href='/busking/?id=${row.id}'">
-      <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${week(row.event_date)}</small></div></div>
-      <div><div class="type">BUSKING</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">상세 보기 →</div></div>
-      <div class="thumb">${img?`<img src="${attr(img)}" alt="">`:'VOM'}</div>
-    </article>`;
-  }).join(''):'<div class="empty">등록된 버스킹 일정이 없습니다.</div>'}</div>`;
 }
 
 function renderDetail(id){
