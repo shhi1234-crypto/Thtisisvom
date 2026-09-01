@@ -2172,6 +2172,52 @@ button{
   .schedule-setlist-cta strong{font-size:10.5px}
 }
 
+
+/* V5 · 일정 카드 진입 선택 */
+.entry-choice-overlay{
+  position:fixed; inset:0; z-index:10050;
+  background:rgba(24,22,35,.34);
+  backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px;
+}
+.entry-choice-overlay.open{display:flex}
+.entry-choice-modal{
+  width:min(520px,100%);
+  padding:24px;
+  border-radius:28px;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 24px 70px rgba(53,45,89,.20);
+  border:1px solid rgba(115,91,190,.14);
+}
+.entry-choice-head{margin-bottom:17px}
+.entry-choice-type{font-size:11px;font-weight:800;letter-spacing:.13em;color:#7864bd}
+.entry-choice-title{margin:5px 0 0;font-size:23px;line-height:1.3}
+.entry-choice-buttons{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.entry-choice-btn{
+  min-height:112px;padding:18px 16px;border-radius:21px;
+  border:1px solid rgba(111,88,190,.15);
+  background:#fff;color:inherit;text-decoration:none;
+  display:flex;flex-direction:column;justify-content:space-between;
+  cursor:pointer;text-align:left;
+}
+.entry-choice-btn.primary{
+  background:linear-gradient(135deg,rgba(237,231,255,.96),rgba(231,250,247,.92));
+  border-color:rgba(112,88,201,.26);
+}
+.entry-choice-btn strong{font-size:17px}
+.entry-choice-btn small{font-size:12px;line-height:1.45;color:#777}
+.entry-choice-close{
+  width:100%;margin-top:12px;padding:11px;border:0;background:transparent;
+  color:#888;cursor:pointer;font-size:13px
+}
+@media(max-width:520px){
+  .entry-choice-modal{padding:19px;border-radius:24px}
+  .entry-choice-buttons{gap:8px}
+  .entry-choice-btn{min-height:106px;padding:16px 13px}
+  .entry-choice-btn strong{font-size:15px}
+}
+
 </style>
 </head>
 
@@ -3981,40 +4027,63 @@ function createEventHtml(item){
 
 
 function openEventDetail(id){
+  const item = events.find(row => String(row.id) === String(id));
+  if(!item) return;
 
-  const item =
-    events.find(
-      row =>
-        String(row.id) ===
-        String(id)
-    );
+  const type = String(item.event_type || 'OTHER');
 
-
-  if(!item){
+  if(type !== 'VOM LIVE' && type !== 'BUSKING'){
+    window.location.href = `/schedule/?id=${encodeURIComponent(id)}`;
     return;
   }
 
+  const isLive = type === 'VOM LIVE';
+  const detailHref = isLive
+    ? `/live/?id=${encodeURIComponent(id)}`
+    : `/busking/?id=${encodeURIComponent(id)}`;
+  const introHref = isLive ? '/live/' : '/busking/';
+  const introName = isLive ? '봄라이브' : '버스킹';
 
-  if(item.event_type === 'VOM LIVE'){
-
-    window.location.href =
-      `/live/?id=${encodeURIComponent(id)}`;
-
-    return;
+  let overlay = document.getElementById('entryChoiceOverlay');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'entryChoiceOverlay';
+    overlay.className = 'entry-choice-overlay';
+    overlay.innerHTML = `
+      <div class="entry-choice-modal" onclick="event.stopPropagation()">
+        <div class="entry-choice-head">
+          <div class="entry-choice-type" id="entryChoiceType"></div>
+          <h3 class="entry-choice-title" id="entryChoiceTitle"></h3>
+        </div>
+        <div class="entry-choice-buttons">
+          <a class="entry-choice-btn primary" id="entryDetailLink">
+            <strong>일정 자세히 보기</strong>
+            <small>이번 일정의 날짜 · 장소 · 참가자 · 셋리스트</small>
+          </a>
+          <a class="entry-choice-btn" id="entryIntroLink">
+            <strong>컨텐츠 소개 보기</strong>
+            <small id="entryIntroCopy"></small>
+          </a>
+        </div>
+        <button class="entry-choice-close" type="button" onclick="closeEntryChoice()">닫기</button>
+      </div>`;
+    overlay.addEventListener('click', closeEntryChoice);
+    document.body.appendChild(overlay);
   }
 
+  document.getElementById('entryChoiceType').textContent = type;
+  document.getElementById('entryChoiceTitle').textContent = item.title || '';
+  document.getElementById('entryDetailLink').href = detailHref;
+  document.getElementById('entryIntroLink').href = introHref;
+  document.getElementById('entryIntroCopy').textContent = `${introName}가 어떤 컨텐츠인지 먼저 알아보기`;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
 
-  if(item.event_type === 'BUSKING'){
-
-    window.location.href =
-      `/busking/?id=${encodeURIComponent(id)}`;
-
-    return;
-  }
-
-
-  window.location.href =
-    `/schedule/?id=${encodeURIComponent(id)}`;
+function closeEntryChoice(){
+  const overlay = document.getElementById('entryChoiceOverlay');
+  if(overlay) overlay.classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 
