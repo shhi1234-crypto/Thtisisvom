@@ -3125,7 +3125,6 @@ async function saveResults(){
     return;
   }
 
-
   const eventId =
     Number(
       document
@@ -3135,109 +3134,132 @@ async function saveResults(){
         .value
     );
 
-
   const people =
     readEditor();
 
-
   if(!members.length){
-
     alert(
       'MEMBERS 명단을 불러오지 못했습니다.'
     );
-
     return;
   }
 
-
   if(!people.length){
-
     alert(
       '참석자를 한 명 이상 입력해주세요.'
     );
-
     return;
   }
-
 
   const duplicateCheck =
     new Set();
 
-
   for(const person of people){
-
     const key =
-      String(
-        person.member_id
-      );
-
+      String(person.member_id);
 
     if(duplicateCheck.has(key)){
-
       alert(
         `같은 멤버가 두 번 선택되어 있습니다: ${person.name}`
       );
-
       return;
     }
 
-
-    duplicateCheck.add(
-      key
-    );
+    duplicateCheck.add(key);
   }
-
-
-  /*
-     live_participants는 기존 RLS 정책상 INSERT가 막혀 있을 수 있음.
-     결과 수정에서는 참석자 명단을 삭제/재생성하지 않고,
-     기존 참석자와 동일한 명단인지 확인한 뒤 live_results만 수정함.
-     이렇게 해야 기존 참석자 삭제 후 재삽입 실패로 데이터가 사라지는 상황을 방지할 수 있음.
-  */
-
-  const storedPeople =
-    getParticipants(eventId);
-
-  const personKey = person => {
-    const memberId =
-      String(person?.member_id ?? '').trim();
-
-    if(memberId){
-      return `id:${memberId}`;
-    }
-
-    return `name:${normalizeName(person?.name)}`;
-  };
-
-  const editorKeys =
-    people
-      .map(personKey)
-      .sort();
-
-  const storedKeys =
-    storedPeople
-      .map(personKey)
-      .sort();
-
-  const sameParticipants =
-    editorKeys.length === storedKeys.length &&
-    editorKeys.every(
-      (key,index) =>
-        key === storedKeys[index]
-    );
-
-  if(!sameParticipants){
-    alert(
-      '참석자 명단은 이 화면에서 변경할 수 없습니다.\n' +
-      '현재 Supabase 정책상 기존 참석자 기록은 유지하고, 득표수와 1·2·3위만 수정할 수 있습니다.'
-    );
-    return;
-  }
-
 
   try{
 
-    /* 투표 결과 + 직접 지정 순위만 저장 */
+    /*
+       이 결과 입력창이 VOM LIVE 실제 참석자 명단의 입력/수정 창임.
+       기존 행을 먼저 지우지 않고 새 참석자를 먼저 추가한 뒤,
+       추가가 모두 성공한 경우에만 빠진 참석자를 삭제하여
+       RLS/네트워크 오류로 기존 참석자 전체가 사라지는 상황을 방지함.
+    */
+
+    const existingRows =
+      participants.filter(
+        person =>
+          String(person.event_id) ===
+          String(eventId)
+      );
+
+    const personKey = person => {
+      const memberId =
+        String(person?.member_id ?? '').trim();
+
+      if(memberId){
+        return `id:${memberId}`;
+      }
+
+      return `name:${normalizeName(person?.name)}`;
+    };
+
+    const existingKeySet =
+      new Set(
+        existingRows.map(personKey)
+      );
+
+    const editorKeySet =
+      new Set(
+        people.map(personKey)
+      );
+
+    const toInsert =
+      people.filter(
+        person =>
+          !existingKeySet.has(
+            personKey(person)
+          )
+      );
+
+    for(const person of toInsert){
+      const { error:insertError } =
+        await db
+          .from('live_participants')
+          .insert({
+            event_id:eventId,
+            member_id:person.member_id,
+            name:person.name
+          });
+
+      if(insertError){
+        throw insertError;
+      }
+    }
+
+    const toDelete =
+      existingRows.filter(
+        person =>
+          !editorKeySet.has(
+            personKey(person)
+          )
+      );
+
+    for(const person of toDelete){
+      let query =
+        db
+          .from('live_participants')
+          .delete()
+          .eq('event_id',eventId);
+
+      if(person.id != null){
+        query = query.eq('id',person.id);
+      }else if(person.member_id != null && String(person.member_id).trim() !== ''){
+        query = query.eq('member_id',person.member_id);
+      }else{
+        query = query.eq('name',person.name);
+      }
+
+      const { error:deleteError } =
+        await query;
+
+      if(deleteError){
+        throw deleteError;
+      }
+    }
+
+    /* 투표 결과 + 직접 지정 순위 저장 */
 
     const voteResults =
       people.map(
@@ -3249,7 +3271,6 @@ async function saveResults(){
         })
       );
 
-
     const {
       error:resultError
     } =
@@ -3258,60 +3279,41 @@ async function saveResults(){
         .upsert(
           {
             event_id:eventId,
-
-            participant_count:
-              people.length,
-
-            results:
-              voteResults,
-
-            updated_at:
-              new Date()
-                .toISOString()
+            participant_count:people.length,
+            results:voteResults,
+            updated_at:new Date().toISOString()
           },
           {
-            onConflict:
-              'event_id'
+            onConflict:'event_id'
           }
         );
-
 
     if(resultError){
       throw resultError;
     }
 
-
     closeResultEditor();
 
-
     await loadAllData();
-
 
     const params =
       new URLSearchParams(
         window.location.search
       );
 
-
     if(params.get('id')){
-
       renderDetail(
         params.get('id')
       );
-
     }else{
-
       renderMain();
     }
-
 
     alert(
       'VOM LIVE 결과가 저장되었습니다.'
     );
 
-
   }catch(error){
-
     alert(
       '결과를 저장하지 못했습니다.\n' +
       error.message
