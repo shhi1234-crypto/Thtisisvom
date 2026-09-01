@@ -420,6 +420,22 @@ a{color:inherit}
   color:#725ed1;
 }
 
+.activity-intro-link{
+  margin-top:16px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:#745fd4;
+  font-size:11px;
+  font-weight:800;
+}
+.activity-sub{
+  margin-top:3px;
+  color:#8b8e9d;
+  font-size:10px;
+  font-weight:700;
+}
+
 .activity h3{
   margin:0 0 8px;
   font-size:21px;
@@ -906,10 +922,11 @@ a{color:inherit}
           <p>
             서로의 노래를 가까이에서 듣고 즐기는 VOM의 정기 라이브 컨텐츠.
           </p>
+          <div class="activity-intro-link">봄라이브 소개 보기 →</div>
         </div>
       </a>
 
-      <a class="activity" href="/busking/">
+      <a class="activity" href="/busking/?intro=1">
         <div class="activity-top">
           <div class="activity-icon">🎤</div>
           <div class="activity-arrow">→</div>
@@ -919,19 +936,22 @@ a{color:inherit}
           <p>
             연습실을 벗어나 거리에서 관객과 직접 만나는 라이브 무대.
           </p>
+          <div class="activity-intro-link">버스킹 소개 보기 →</div>
         </div>
       </a>
 
-      <a class="activity" href="/openmic/">
+      <a class="activity" href="/OPENMIC/?intro=1">
         <div class="activity-top">
           <div class="activity-icon">🏆</div>
           <div class="activity-arrow">→</div>
         </div>
         <div>
           <h3>OPEN MIC</h3>
+          <div class="activity-sub">대관공연</div>
           <p>
             대관한 공연장에서 회차별 컨셉과 프로그램으로 만드는 정식 공연.
           </p>
+          <div class="activity-intro-link">대관공연 소개 보기 →</div>
         </div>
       </a>
 
@@ -945,6 +965,7 @@ a{color:inherit}
           <p>
             공연 외에도 회식, MT, 이벤트처럼 음악을 넘어 함께 쌓는 시간.
           </p>
+          <div class="activity-intro-link">VOM 이벤트 보기 →</div>
         </div>
       </a>
     </div>
@@ -1099,7 +1120,7 @@ a{color:inherit}
     <a href="/calendar/">CALENDAR <span>→</span></a>
     <a href="/live/">VOM LIVE <span>→</span></a>
     <a href="/busking/">BUSKING <span>→</span></a>
-    <a href="/openmic/">OPEN MIC <span>→</span></a>
+    <a href="/OPENMIC/">OPEN MIC <span>→</span></a>
     <a href="/members/">MEMBERS <span>→</span></a>
     <a href="/event/">EVENT <span>→</span></a>
     <a href="/qna/">Q&A <span>→</span></a>
