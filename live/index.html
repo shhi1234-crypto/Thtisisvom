@@ -2263,7 +2263,7 @@ async function renderDetail(id){
   const top3 =
     ranking.filter(
       row =>
-        row.rank <= 3
+        [1,2,3].includes(Number(row.rank))
     );
 
 
@@ -2277,8 +2277,7 @@ async function renderDetail(id){
   const nonTop =
     ranking.filter(
       row =>
-        row.rank > 3 ||
-        !row.rank
+        ![1,2,3].includes(Number(row.rank))
     );
 
 
