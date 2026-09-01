@@ -185,34 +185,39 @@ button{
 .hero-title{
   position:relative;
   display:inline-block;
-  margin:16px 0 6px;
+  margin:18px 0 10px;
   font-family:"Nanum Pen Script",cursive;
-  font-size:118px;
-  line-height:.78;
-  font-weight:400;
-  letter-spacing:.035em;
+  font-size:154px;
+  line-height:.72;
+  font-weight:700;
+  letter-spacing:.025em;
   text-transform:uppercase;
   color:#11172a;
-  transform:rotate(-1deg);
-  text-shadow:0 1px 0 rgba(255,255,255,.45);
+  transform:rotate(-1deg) scaleX(1.05);
+  transform-origin:left center;
+  text-shadow:
+    .8px 0 0 #11172a,
+    -.8px 0 0 #11172a,
+    0 .8px 0 #11172a,
+    0 -.8px 0 #11172a;
 }
 .hero-title::before{
   content:"✦";
   position:absolute;
-  left:-26px;
-  top:10px;
+  left:-30px;
+  top:8px;
   font-family:"Noto Sans KR",sans-serif;
-  font-size:20px;
+  font-size:23px;
   color:#9a88ec;
   transform:rotate(-18deg);
 }
 .hero-title::after{
   content:"♡";
   position:absolute;
-  right:-28px;
-  top:-9px;
+  right:-34px;
+  top:-16px;
   font-family:"Noto Sans KR",sans-serif;
-  font-size:27px;
+  font-size:32px;
   font-weight:700;
   color:#9b8aee;
   transform:rotate(12deg);
@@ -1454,6 +1459,23 @@ function formatHomeNewsDate(value){
   .hero-script{
     margin-top:22px;
     font-size:26px;
+  }
+}
+
+
+/* V6.1 · HERO SIZE UP */
+@media(min-width:721px){
+  .hero-title{
+    font-size:154px !important;
+    font-weight:700 !important;
+  }
+}
+@media(max-width:720px){
+  .hero-title{
+    font-size:104px !important;
+    line-height:.75 !important;
+    font-weight:700 !important;
+    transform:rotate(-1deg) scaleX(1.03) !important;
   }
 }
 
