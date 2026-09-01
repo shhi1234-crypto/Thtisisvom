@@ -1501,6 +1501,14 @@ function formatHomeNewsDate(value){
   }
 }
 
+
+.openmic-rank-month{
+  font-size:20px !important;
+  line-height:1;
+  white-space:nowrap;
+  letter-spacing:-.03em;
+}
+
 </style>
 </head>
 
@@ -2153,7 +2161,7 @@ async function loadOpenMicRanking(){
           href="/OPENMIC/?id=${row.event_id || ''}"
           class="rank-row rank-1"
         >
-          <div class="rank-number">1</div>
+          <div class="rank-number openmic-rank-month">${row.month ? `${row.month}월` : 'OPEN'}</div>
           <div>
             <div class="rank-name">${escapeHtml(name)}</div>
             <div class="rank-detail openmic-month">${escapeHtml(monthText)}</div>
