@@ -374,7 +374,7 @@ button{
 
 .ranking-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns:repeat(3,1fr);
   gap:13px;
 }
 
@@ -385,6 +385,13 @@ button{
   border-radius:24px;
   color:white;
   box-shadow:0 16px 45px rgba(31,37,80,.11);
+}
+
+.openmic-shell{
+  background:
+    radial-gradient(circle at 92% 4%,rgba(255,215,130,.34),transparent 34%),
+    radial-gradient(circle at 7% 100%,rgba(238,132,191,.32),transparent 40%),
+    linear-gradient(135deg,#47253e,#653452 58%,#74445f);
 }
 
 .ear-shell{
@@ -1468,6 +1475,43 @@ function formatHomeNewsDate(value){
     <div class="ranking-grid">
 
       <div
+        class="rank-shell openmic-shell rank-link-shell"
+        role="link"
+        tabindex="0"
+        onclick="if(event.target.closest('.rank-row')) return; window.location.href='/openmic/?ranking=winner';"
+        onkeydown="if(event.key==='Enter'){window.location.href='/openmic/?ranking=winner';}"
+      >
+
+        <div class="rank-head">
+
+          <div>
+            <div class="rank-kicker">
+              OPEN MIC · WINNERS
+            </div>
+
+            <h2 class="rank-title">
+              대관공연
+            </h2>
+          </div>
+
+          <div class="rank-icon">
+            🏆
+          </div>
+
+        </div>
+
+        <div id="openMicHall" class="rank-list">
+
+          <div class="rank-empty">
+            우승 기록을 불러오는 중...
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div
         class="rank-shell ear-shell rank-link-shell"
         role="link"
         tabindex="0"
@@ -1835,6 +1879,7 @@ async function start(){
   loadHomeBirthday();
 
   await Promise.all([
+    loadOpenMicRanking(),
     loadEarShare(),
     loadPointRanking(),
     loadHomeEvents(),
@@ -1895,6 +1940,90 @@ async function loadHomeBirthday(){
     }
   }
   box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span>${birthdayHtml}`;
+}
+
+
+function normalizeName(value){
+  return String(value || '').replace(/\s+/g,'').toLowerCase();
+}
+
+
+/* OPEN MIC WINNERS */
+
+async function loadOpenMicRanking(){
+
+  const box =
+    document.getElementById('openMicHall');
+
+  if(!box) return;
+
+  const {data,error} =
+    await db
+      .from('open_mic_winners')
+      .select('*')
+      .order('created_at',{ascending:true});
+
+  if(error){
+
+    console.error('OPEN MIC WINNERS:',error);
+
+    box.innerHTML =
+      `<div class="rank-empty">
+        아직 대관공연 우승 기록이 없습니다.
+      </div>`;
+
+    return;
+  }
+
+  const grouped = new Map();
+
+  (data || []).forEach(row => {
+    const key = String(row.member_id || normalizeName(row.member_name || ''));
+    if(!key) return;
+
+    if(!grouped.has(key)){
+      grouped.set(key,{
+        member_id:row.member_id || '',
+        name:row.member_name || '',
+        wins:0
+      });
+    }
+
+    grouped.get(key).wins += 1;
+  });
+
+  const list =
+    [...grouped.values()]
+      .sort((a,b) =>
+        b.wins - a.wins ||
+        String(a.name).localeCompare(String(b.name),'ko')
+      )
+      .slice(0,3);
+
+  if(!list.length){
+
+    box.innerHTML =
+      `<div class="rank-empty">
+        아직 대관공연 우승 기록이 없습니다.
+      </div>`;
+
+    return;
+  }
+
+  box.innerHTML =
+    list.map((row,index) => `
+      <a
+        href="/openmic/?ranking=winner"
+        class="rank-row rank-${index+1}"
+      >
+        <div class="rank-number">${index+1}</div>
+        <div>
+          <div class="rank-name">${escapeHtml(row.name || '이름 미등록')}</div>
+          <div class="rank-detail">대관공연 우승 ${row.wins}회</div>
+        </div>
+        <div class="rank-score">${row.wins}<small>WIN</small></div>
+      </a>
+    `).join('');
 }
 
 
@@ -2259,6 +2388,15 @@ function getScheduleHref(row){
 
   if(row.event_type === 'BUSKING'){
     return `/busking/?id=${encodeURIComponent(row.id)}`;
+  }
+
+  const title = String(row.title || '').toUpperCase();
+  if(
+    row.event_type === 'OPEN MIC' ||
+    (row.event_type === 'OTHER' &&
+      (title.includes('OPEN MIC') || title.includes('대관공연')))
+  ){
+    return `/openmic/?id=${encodeURIComponent(row.id)}`;
   }
 
   return `/schedule/?id=${encodeURIComponent(row.id)}`;
