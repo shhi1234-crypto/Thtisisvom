@@ -29,6 +29,212 @@
 
 .profile-edit{display:inline-flex;align-items:center;gap:5px;max-width:100%;border:0;background:none;padding:0;color:inherit;cursor:pointer;text-align:left}.profile-edit .value{min-width:0;overflow:hidden;text-overflow:ellipsis}.profile-edit .pencil{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f1effb;color:#7763d7;font-size:10px;font-weight:800}.profile-edit:hover .pencil{background:#e9e4fb}.profile-static{display:block;overflow:hidden;text-overflow:ellipsis}.profile-note{margin:0 0 12px;color:#85899a;font-size:10px;line-height:1.65}.song-btn{min-height:29px;padding:0 9px;border:0;border-radius:9px;background:#eeeaff;color:#6657c5;font-size:10px;font-weight:800;cursor:pointer}.c-song{width:78px;text-align:center}
 .song-list{display:grid;gap:7px}.member-song-row{padding:11px 12px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.member-song-row strong{display:block;font-size:12px}.member-song-row small{display:block;margin-top:3px;color:#777c8d;font-size:10px}.member-song-actions{display:flex;gap:5px;align-items:center}.yt-btn{padding:7px 9px;border-radius:9px;background:#171b2a;color:#fff;font-size:9px;font-weight:800}.mini{padding:7px 9px;border:0;border-radius:9px;background:#eeeaff;color:#6556c2;font-size:9px;font-weight:800;cursor:pointer}.mini.danger{background:#fff0f2;color:#a74f62}.song-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.song-form h3{margin:0 0 8px;font-size:13px}.song-note{margin:0 0 12px;color:#85899a;font-size:10px;line-height:1.6}
+
+/* AGE / REGION VIEW */
+#panel-age,
+#panel-region{
+  padding-top:2px;
+}
+
+.age-card{
+  min-height:150px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(134,220,211,.18),transparent 36%),
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(248,246,255,.86));
+}
+.age-card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
+}
+.age-label{
+  color:#8b80bd;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+.age-card h3{
+  margin:2px 0 0;
+  color:#252b41;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:38px;
+  font-weight:400;
+  line-height:.9;
+}
+.age-card h3 small{
+  margin-left:2px;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:10px;
+  font-weight:800;
+}
+.age-count{
+  padding:6px 9px;
+  border-radius:999px;
+  background:#eeeaff;
+  color:#6d59d4;
+  font-size:10px;
+  font-weight:900;
+}
+
+#regionGrid{
+  grid-template-columns:repeat(3,1fr);
+}
+.region-stat-card{
+  min-height:168px;
+  padding:18px;
+  border:1px solid rgba(255,255,255,.96);
+  border-radius:19px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(134,220,211,.20),transparent 38%),
+    linear-gradient(145deg,rgba(255,255,255,.94),rgba(248,246,255,.86));
+  box-shadow:0 11px 30px rgba(31,37,74,.055);
+  color:var(--ink);
+  cursor:pointer;
+  text-align:left;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.region-stat-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 16px 35px rgba(31,37,74,.09);
+}
+.region-stat-card.top-region{
+  background:
+    radial-gradient(circle at 92% 8%,rgba(123,224,211,.34),transparent 38%),
+    radial-gradient(circle at 2% 100%,rgba(166,115,242,.22),transparent 42%),
+    linear-gradient(145deg,rgba(255,255,255,.96),rgba(244,241,255,.9));
+}
+.region-stat-card.selected{
+  border-color:rgba(118,95,227,.35);
+  box-shadow:0 16px 38px rgba(91,73,177,.13);
+}
+.region-stat-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.region-rank{
+  display:block;
+  margin-bottom:5px;
+  color:#948ab9;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1px;
+}
+.region-stat-head h3{
+  margin:0;
+  font-size:17px;
+  font-weight:900;
+}
+.region-number{
+  display:flex;
+  align-items:flex-end;
+  gap:2px;
+  color:#705bd8;
+}
+.region-number strong{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:39px;
+  font-weight:400;
+  line-height:.8;
+}
+.region-number small{
+  margin-bottom:2px;
+  font-size:9px;
+  font-weight:900;
+}
+.region-bar{
+  height:7px;
+  margin-top:23px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#eeedf4;
+}
+.region-bar i{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#846ce8,#7ebfd0);
+}
+.region-stat-foot{
+  margin-top:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  color:#858a9b;
+  font-size:9px;
+  font-weight:700;
+}
+.region-stat-foot span:last-child{
+  color:#7664d8;
+}
+.region-detail{
+  margin-top:14px;
+  padding:20px;
+  border-radius:20px;
+  background:rgba(255,255,255,.80);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 11px 30px rgba(31,37,74,.05);
+}
+.region-detail-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.region-detail-head span{
+  color:#8e85b3;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1.5px;
+}
+.region-detail-head h3{
+  margin:3px 0 0;
+  font-size:19px;
+}
+.region-detail-head>strong{
+  color:#705bd8;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:31px;
+  font-weight:400;
+}
+.region-member-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+.region-person{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 11px;
+  border-radius:12px;
+  background:#f4f2fa;
+  font-size:11px;
+  font-weight:800;
+}
+.region-person small{
+  color:#8475ce;
+  font-size:8px;
+  font-weight:800;
+}
+
+@media(max-width:760px){
+  #regionGrid{grid-template-columns:1fr 1fr}
+  .region-stat-card{min-height:150px;padding:15px}
+  .region-number strong{font-size:34px}
+}
+@media(max-width:440px){
+  #regionGrid{grid-template-columns:1fr}
+  .region-stat-card{min-height:142px}
+}
+
 </style>
 </head>
 <body>
@@ -96,6 +302,28 @@ async function start(){await checkAdmin();await Promise.all([load(),loadMemberSo
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
 async function load(){const {data,error}=await db.from('members').select('*');if(error){console.error(error);members=[]}else members=(data||[]).sort((a,b)=>ord(a)-ord(b)||String(a.name||'').localeCompare(String(b.name||''),'ko'))}function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
+
+function setView(view){
+  const allowed=['all','birthday','age','region'];
+  const next=allowed.includes(view)?view:'all';
+
+  document.querySelectorAll('.tab[data-view]').forEach(btn=>{
+    btn.classList.toggle('active',btn.dataset.view===next);
+  });
+
+  document.querySelectorAll('.panel').forEach(panel=>{
+    panel.classList.remove('active');
+  });
+
+  const target=document.getElementById(`panel-${next}`);
+  if(target) target.classList.add('active');
+
+  if(next==='birthday') birthdayView();
+  if(next==='age') ageView();
+  if(next==='region') regionView();
+}
+
+
 function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>모임장 <b>${leader}명</b></span><span>운영진 <b>${staff}명</b></span><span>이번 달 생일 <b>${b}명</b></span>`}
 function birthdayNow(){
   const box=document.getElementById('birthdayNow');if(!box)return;
@@ -170,8 +398,97 @@ async function savePublicProfile(){
   closeProfileEditor();await load();render();
 }
 function birthdayView(){const g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;(g[b.month]??=[]).push({...m,_d:b.day})});document.getElementById('birthdayGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(mon=>`<div class="group-card"><h3>${mon}월</h3><div class="chips">${g[mon].sort((a,b)=>a._d-b._d).map(m=>`<span class="chip">${m._d}일 · ${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">생일 정보가 없습니다.</div>'}
-function ageView(){const y=new Date().getFullYear(),g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;const a=y-b.year;(g[a]??=[]).push(m)});document.getElementById('ageGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(a=>`<div class="group-card"><h3>${a}세</h3><div class="chips">${g[a].map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">나이 정보가 없습니다.</div>'}
-function regionView(){const g={};members.forEach(m=>(g[reg(m)]??=[]).push(m));document.getElementById('regionGrid').innerHTML=Object.keys(g).sort((a,b)=>g[b].length-g[a].length||a.localeCompare(b,'ko')).map(r=>`<div class="group-card region-card" onclick="showRegion('${r.replace(/'/g,"\\'")}')"><h3>${esc(r)}</h3><div class="region-count">${g[r].length}명</div></div>`).join('');document.getElementById('regionPeople').innerHTML=''}function showRegion(r){const list=members.filter(m=>reg(m)===r);document.getElementById('regionPeople').innerHTML=`<div class="group-card"><h3>${esc(r)} 멤버</h3><div class="chips">${list.map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`}
+function ageView(){
+  const y=new Date().getFullYear(),g={};
+  members.forEach(m=>{
+    const b=parseBirth(birth(m));
+    if(!b)return;
+    const a=y-b.year;
+    (g[a]??=[]).push(m);
+  });
+
+  const ages=Object.keys(g).map(Number).sort((a,b)=>a-b);
+  document.getElementById('ageGrid').innerHTML=
+    ages.map(a=>`
+      <div class="group-card age-card">
+        <div class="age-card-top">
+          <div>
+            <span class="age-label">AGE</span>
+            <h3>${a}<small>세</small></h3>
+          </div>
+          <span class="age-count">${g[a].length}명</span>
+        </div>
+        <div class="chips">
+          ${g[a].map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}
+        </div>
+      </div>
+    `).join('') || '<div class="empty">나이 정보가 없습니다.</div>';
+}
+
+function regionView(){
+  const g={};
+  members.forEach(m=>{
+    const r=reg(m).trim() || '기타';
+    (g[r]??=[]).push(m);
+  });
+
+  const regions=Object.keys(g).sort((a,b)=>g[b].length-g[a].length||a.localeCompare(b,'ko'));
+  const max=Math.max(1,...regions.map(r=>g[r].length));
+  const total=Math.max(1,members.length);
+
+  document.getElementById('regionGrid').innerHTML=
+    regions.map((r,i)=>{
+      const count=g[r].length;
+      const pct=Math.round((count/total)*100);
+      const width=Math.max(12,(count/max)*100);
+      return `
+        <button class="region-stat-card ${i===0?'top-region':''}" onclick="showRegion(${JSON.stringify(r).replace(/"/g,'&quot;')},this)">
+          <div class="region-stat-head">
+            <div>
+              <span class="region-rank">${String(i+1).padStart(2,'0')}</span>
+              <h3>${esc(r)}</h3>
+            </div>
+            <div class="region-number"><strong>${count}</strong><small>명</small></div>
+          </div>
+          <div class="region-bar"><i style="width:${width}%"></i></div>
+          <div class="region-stat-foot">
+            <span>전체 멤버의 ${pct}%</span>
+            <span>멤버 보기 →</span>
+          </div>
+        </button>
+      `;
+    }).join('') || '<div class="empty">지역 정보가 없습니다.</div>';
+
+  const people=document.getElementById('regionPeople');
+  if(people) people.innerHTML='';
+}
+
+function showRegion(r,card){
+  document.querySelectorAll('.region-stat-card').forEach(el=>el.classList.remove('selected'));
+  if(card) card.classList.add('selected');
+
+  const list=members.filter(m=>(reg(m).trim()||'기타')===r);
+  document.getElementById('regionPeople').innerHTML=`
+    <div class="region-detail">
+      <div class="region-detail-head">
+        <div>
+          <span>REGION MEMBERS</span>
+          <h3>${esc(r)}</h3>
+        </div>
+        <strong>${list.length}명</strong>
+      </div>
+      <div class="region-member-list">
+        ${list.map(m=>`
+          <span class="region-person">
+            ${esc(m.name)}
+            <small>${role(m)==='모임장'?'모임장':role(m)==='운영진'?'운영진':'멤버'}</small>
+          </span>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function parseBirth(v){const d=String(v||'').replace(/\D/g,'');if(d.length===8)return{year:+d.slice(0,4),month:+d.slice(4,6),day:+d.slice(6,8)};const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?{year:+m[1],month:+m[2],day:+m[3]}:null}function fmt(v){return v?String(v).slice(0,10).replaceAll('-','.'):'-'}
 function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}function closeEditor(){memberOverlay.classList.remove('open')}
 function existingKey(record,keys){return keys.find(k=>record&&Object.prototype.hasOwnProperty.call(record,k))||null}
