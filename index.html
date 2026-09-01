@@ -183,30 +183,78 @@ button{
 }
 
 .hero-title{
-  margin:18px 0 0;
+  position:relative;
+  display:inline-block;
+  margin:18px 0 10px;
   font-family:"Nanum Pen Script",cursive;
-  font-size:clamp(120px,17vw,190px);
-  font-weight:400;
-  line-height:.68;
-  letter-spacing:-7px;
+  font-size:154px;
+  line-height:.72;
+  font-weight:700;
+  letter-spacing:.025em;
+  text-transform:uppercase;
+  color:#11172a;
+  transform:rotate(-1deg) scaleX(1.05);
+  transform-origin:left center;
+  text-shadow:
+    .8px 0 0 #11172a,
+    -.8px 0 0 #11172a,
+    0 .8px 0 #11172a,
+    0 -.8px 0 #11172a;
 }
+.hero-title::before{
+  content:"✦";
+  position:absolute;
+  left:-30px;
+  top:8px;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:23px;
+  color:#9a88ec;
+  transform:rotate(-18deg);
+}
+.hero-title::after{
+  content:"♡";
+  position:absolute;
+  right:-34px;
+  top:-16px;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:32px;
+  font-weight:700;
+  color:#9b8aee;
+  transform:rotate(12deg);
+}
+
 
 .hero-brand{
-  margin:18px 0 0 7px;
+  margin-top:22px;
   font-size:13px;
-  font-weight:700;
-  letter-spacing:9px;
+  font-weight:800;
+  letter-spacing:.46em;
+  color:#171c31;
 }
 
+
 .hero-script{
-  margin:31px 0 0 7px;
+  position:relative;
+  display:inline-block;
+  margin-top:28px;
   font-family:"Nanum Pen Script",cursive;
-  font-size:30px;
-  background:linear-gradient(90deg,#906ce3,#679fea,#79b9b2);
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
+  font-size:31px;
+  line-height:1.1;
+  color:#8874ec;
+  letter-spacing:.015em;
 }
+.hero-script::after{
+  content:"";
+  position:absolute;
+  right:6px;
+  bottom:-7px;
+  width:38%;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#9b8aee,rgba(155,138,238,.15));
+  transform:rotate(-2deg);
+}
+
 
 .hero-copy{
   margin:24px 0 0 7px;
@@ -460,6 +508,18 @@ button{
 
 .rank-row.rank-1 .rank-number{
   color:#ffe78e;
+}
+
+/* HOME ranking preview emphasis */
+.ear-shell .rank-row.ear-chaser{
+  opacity:.48;
+  transform:scale(.985);
+  filter:saturate(.72);
+  background:rgba(255,255,255,.045);
+}
+.ear-shell .rank-row.ear-chaser .rank-name,
+.ear-shell .rank-row.ear-chaser .rank-score{
+  opacity:.86;
 }
 
 .rank-name{
@@ -1386,6 +1446,51 @@ function formatHomeNewsDate(value){
   white-space:nowrap;
 }
 
+
+@media(max-width:720px){
+  .hero-title{
+    font-size:82px;
+    letter-spacing:.025em;
+    margin-top:12px;
+  }
+  .hero-title::before{
+    left:-16px;
+    top:7px;
+    font-size:14px;
+  }
+  .hero-title::after{
+    right:-18px;
+    top:-7px;
+    font-size:20px;
+  }
+  .hero-brand{
+    margin-top:18px;
+    font-size:10px;
+    letter-spacing:.36em;
+  }
+  .hero-script{
+    margin-top:22px;
+    font-size:26px;
+  }
+}
+
+
+/* V6.1 · HERO SIZE UP */
+@media(min-width:721px){
+  .hero-title{
+    font-size:154px !important;
+    font-weight:700 !important;
+  }
+}
+@media(max-width:720px){
+  .hero-title{
+    font-size:104px !important;
+    line-height:.75 !important;
+    font-weight:700 !important;
+    transform:rotate(-1deg) scaleX(1.03) !important;
+  }
+}
+
 </style>
 </head>
 
@@ -1957,15 +2062,19 @@ async function loadOpenMicRanking(){
 
   if(!box) return;
 
-  const {data,error} =
-    await db
-      .from('open_mic_winners')
-      .select('*')
-      .order('created_at',{ascending:true});
+  const [winnerResponse,eventResponse] =
+    await Promise.all([
+      db
+        .from('open_mic_winners')
+        .select('*'),
+      db
+        .from('events')
+        .select('id,event_date,title,event_type')
+    ]);
 
-  if(error){
+  if(winnerResponse.error){
 
-    console.error('OPEN MIC WINNERS:',error);
+    console.error('OPEN MIC WINNERS:',winnerResponse.error);
 
     box.innerHTML =
       `<div class="rank-empty">
@@ -1975,28 +2084,36 @@ async function loadOpenMicRanking(){
     return;
   }
 
-  const grouped = new Map();
+  if(eventResponse.error){
+    console.error('OPEN MIC EVENTS:',eventResponse.error);
+  }
 
-  (data || []).forEach(row => {
-    const key = String(row.member_id || normalizeName(row.member_name || ''));
-    if(!key) return;
-
-    if(!grouped.has(key)){
-      grouped.set(key,{
-        member_id:row.member_id || '',
-        name:row.member_name || '',
-        wins:0
-      });
-    }
-
-    grouped.get(key).wins += 1;
-  });
+  const eventMap =
+    new Map(
+      (eventResponse.data || [])
+        .map(event => [String(event.id),event])
+    );
 
   const list =
-    [...grouped.values()]
+    (winnerResponse.data || [])
+      .map(row => {
+        const event = eventMap.get(String(row.event_id));
+        const date = String(event?.event_date || '');
+        const month = date
+          ? Number(date.slice(5,7))
+          : null;
+
+        return {
+          ...row,
+          event,
+          date,
+          month
+        };
+      })
+      .filter(row => row.name !== null || row.member_name || row.member_id)
       .sort((a,b) =>
-        b.wins - a.wins ||
-        String(a.name).localeCompare(String(b.name),'ko')
+        String(b.date).localeCompare(String(a.date)) ||
+        String(a.member_name || '').localeCompare(String(b.member_name || ''),'ko')
       )
       .slice(0,3);
 
@@ -2011,19 +2128,30 @@ async function loadOpenMicRanking(){
   }
 
   box.innerHTML =
-    list.map((row,index) => `
-      <a
-        href="/OPENMIC/?ranking=winner"
-        class="rank-row rank-${index+1}"
-      >
-        <div class="rank-number">${index+1}</div>
-        <div>
-          <div class="rank-name">${escapeHtml(row.name || '이름 미등록')}</div>
-          <div class="rank-detail">대관공연 우승 ${row.wins}회</div>
-        </div>
-        <div class="rank-score">${row.wins}<small>WIN</small></div>
-      </a>
-    `).join('');
+    list.map(row => {
+      const name =
+        String(row.member_name || '').trim() ||
+        '이름 미등록';
+
+      const monthText =
+        row.month
+        ? `${row.month}월 대관공연 1등`
+        : '대관공연 1등';
+
+      return `
+        <a
+          href="/OPENMIC/?id=${row.event_id || ''}"
+          class="rank-row rank-1"
+        >
+          <div class="rank-number">1</div>
+          <div>
+            <div class="rank-name">${escapeHtml(name)}</div>
+            <div class="rank-detail">${escapeHtml(monthText)}</div>
+          </div>
+          <div class="rank-score">🏆</div>
+        </a>
+      `;
+    }).join('');
 }
 
 
@@ -2056,9 +2184,18 @@ async function loadEarShare(){
     return;
   }
 
-  const list =
+  const source =
     (data || [])
-      .filter(row => Number(row.rank) <= 3);
+      .filter(row => [1,2].includes(Number(row.rank)));
+
+  const first =
+    source.find(row => Number(row.rank) === 1);
+
+  const second =
+    source.find(row => Number(row.rank) === 2);
+
+  const list =
+    [first,second].filter(Boolean);
 
   if(!list.length){
 
@@ -2088,7 +2225,7 @@ function createEarRow(row){
   return `
     <a
       href="/live/?id=${row.event_id || ''}"
-      class="rank-row rank-${rank}"
+      class="rank-row rank-${rank}${rank===2?' ear-chaser':''}"
     >
 
       <div class="rank-number">
@@ -2149,7 +2286,13 @@ async function loadPointRanking(){
 
   const list =
     (data || [])
-      .filter(row => Number(row.rank) <= 3);
+      .filter(row => [1,2,3].includes(Number(row.rank)))
+      .sort((a,b) =>
+        Number(a.rank) - Number(b.rank) ||
+        Number(b.total_points || 0) - Number(a.total_points || 0) ||
+        String(a.name || '').localeCompare(String(b.name || ''),'ko')
+      )
+      .slice(0,3);
 
   if(!list.length){
 
