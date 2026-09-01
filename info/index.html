@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INFO · Voice of Melody</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" href="/favicon.png?v=3">
+<link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --ink:#15192b;
+  --muted:#74798d;
+  --soft:#9296a7;
+  --line:rgba(84,75,120,.12);
+  --purple:#8976ee;
+  --purple2:#aa9af6;
+  --mint:#bfece5;
+  --pink:#f3d8e8;
+  --card:rgba(255,255,255,.76);
+  --shadow:0 18px 55px rgba(48,42,78,.08);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:"Noto Sans KR",sans-serif;
+  background:
+    radial-gradient(circle at 91% 4%,rgba(166,231,227,.44),transparent 30%),
+    radial-gradient(circle at 8% 17%,rgba(224,211,255,.34),transparent 31%),
+    radial-gradient(circle at 72% 72%,rgba(243,216,232,.28),transparent 27%),
+    #fbfafd;
+  padding-bottom:98px;
+}
+
+a{color:inherit}
+
+/* HEADER */
+.header{
+  height:70px;
+  padding:0 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(251,250,253,.64);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.42);
+}
+
+.brand{
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  line-height:1;
+}
+
+.brand strong{
+  font-size:26px;
+  letter-spacing:.08em;
+  font-weight:800;
+}
+
+.brand small{
+  margin-top:7px;
+  font-size:7px;
+  font-weight:800;
+  letter-spacing:.42em;
+}
+
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:11px;
+}
+
+.admin-badge{
+  display:none;
+  align-items:center;
+  gap:7px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(137,118,238,.10);
+  border:1px solid rgba(137,118,238,.18);
+  color:#6e58d6;
+  font-size:9px;
+  font-weight:800;
+}
+
+.admin-badge.show{display:flex}
+
+.admin-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#8871ea;
+}
+
+.menu-btn{
+  width:46px;height:46px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.85);
+  background:rgba(255,255,255,.72);
+  font-size:19px;
+  cursor:pointer;
+}
+
+/* PAGE */
+.page{
+  width:min(1160px,calc(100% - 40px));
+  margin:0 auto;
+}
+
+/* HERO */
+.hero{
+  min-height:640px;
+  display:grid;
+  grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr);
+  gap:70px;
+  align-items:center;
+  padding:72px 0 78px;
+}
+
+.hero-kicker{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  color:#6f7385;
+  font-size:13px;
+}
+
+.hero-kicker::before{
+  content:"";
+  width:44px;
+  height:1px;
+  background:#585c70;
+}
+
+.hero-title{
+  margin:20px 0 4px;
+  font-size:clamp(82px,9vw,148px);
+  line-height:.76;
+  font-family:"Nanum Pen Script",cursive;
+  font-weight:700;
+  letter-spacing:.03em;
+  transform:rotate(-1deg);
+}
+
+.hero-brand{
+  margin-top:24px;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.48em;
+}
+
+.hero-script{
+  position:relative;
+  display:inline-block;
+  margin-top:28px;
+  color:#8872ea;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:34px;
+}
+
+.hero-script::after{
+  content:"";
+  position:absolute;
+  right:7px;
+  bottom:-6px;
+  width:37%;
+  height:3px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#9885ef,rgba(152,133,239,.10));
+  transform:rotate(-2deg);
+}
+
+.hero-copy{
+  margin-top:32px;
+  max-width:640px;
+  font-size:21px;
+  line-height:1.7;
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+
+.hero-copy strong{
+  color:#745fd7;
+}
+
+.hero-subcopy{
+  margin-top:17px;
+  max-width:600px;
+  color:#74788b;
+  font-size:14px;
+  line-height:1.9;
+}
+
+.hero-tags{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:25px;
+}
+
+.hero-tag{
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.08em;
+}
+
+.hero-visual{
+  position:relative;
+  min-height:470px;
+  border-radius:42px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.92);
+  background:
+    radial-gradient(circle at 24% 23%,rgba(221,209,255,.80),transparent 30%),
+    radial-gradient(circle at 78% 22%,rgba(183,235,228,.76),transparent 27%),
+    radial-gradient(circle at 67% 78%,rgba(246,218,233,.75),transparent 27%),
+    rgba(255,255,255,.54);
+  box-shadow:0 28px 75px rgba(55,47,88,.11);
+}
+
+.visual-word{
+  position:absolute;
+  left:50%;
+  top:45%;
+  transform:translate(-50%,-50%) rotate(-4deg);
+  font-family:"Nanum Pen Script",cursive;
+  font-size:94px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.visual-note{
+  position:absolute;
+  color:#8873e7;
+  font-family:"Nanum Pen Script",cursive;
+}
+
+.visual-note.one{left:12%;top:15%;font-size:31px;transform:rotate(-12deg)}
+.visual-note.two{right:11%;top:20%;font-size:42px;transform:rotate(10deg)}
+.visual-note.three{left:17%;bottom:14%;font-size:36px;transform:rotate(8deg)}
+.visual-note.four{right:14%;bottom:14%;font-size:28px;transform:rotate(-7deg)}
+
+.visual-caption{
+  position:absolute;
+  left:50%;
+  bottom:46px;
+  transform:translateX(-50%);
+  width:80%;
+  text-align:center;
+  color:#707486;
+  font-size:12px;
+  line-height:1.7;
+}
+
+/* SECTION */
+.section{
+  padding:74px 0;
+  border-top:1px solid rgba(72,64,101,.08);
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  gap:30px;
+  align-items:end;
+  margin-bottom:30px;
+}
+
+.kicker{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.18em;
+  color:#806bdc;
+  margin-bottom:7px;
+}
+
+.section-title{
+  margin:0;
+  font-size:42px;
+  letter-spacing:-.045em;
+}
+
+.section-copy{
+  max-width:520px;
+  color:#74788a;
+  font-size:13px;
+  line-height:1.9;
+}
+
+/* VALUES */
+.value-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.value-card{
+  min-height:220px;
+  padding:27px;
+  border-radius:27px;
+  background:rgba(255,255,255,.70);
+  border:1px solid var(--line);
+  box-shadow:0 12px 36px rgba(51,43,82,.045);
+}
+
+.value-no{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:33px;
+  color:#9481ea;
+}
+
+.value-card h3{
+  margin:18px 0 9px;
+  font-size:21px;
+}
+
+.value-card p{
+  margin:0;
+  color:#777b8d;
+  line-height:1.8;
+  font-size:13px;
+}
+
+/* FEE FEATURE */
+.fee-banner{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:30px;
+  align-items:center;
+  padding:34px 38px;
+  border-radius:31px;
+  background:
+    linear-gradient(135deg,rgba(236,229,255,.92),rgba(229,248,244,.90));
+  border:1px solid rgba(130,107,218,.12);
+}
+
+.fee-title{
+  margin:0 0 7px;
+  font-size:25px;
+}
+
+.fee-copy{
+  margin:0;
+  color:#717587;
+  font-size:13px;
+  line-height:1.8;
+}
+
+.fee-badge{
+  padding:15px 19px;
+  border-radius:999px;
+  background:rgba(255,255,255,.73);
+  border:1px solid rgba(119,97,204,.14);
+  color:#745fd4;
+  font-weight:800;
+  font-size:11px;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+
+/* ACTIVITIES */
+.activity-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.activity{
+  min-height:246px;
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border-radius:26px;
+  background:rgba(255,255,255,.70);
+  border:1px solid var(--line);
+  text-decoration:none;
+  transition:.18s ease;
+}
+
+.activity:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+}
+
+.activity-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.activity-icon{
+  font-size:25px;
+}
+
+.activity-arrow{
+  width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:#f5f2fd;
+  color:#725ed1;
+}
+
+.activity h3{
+  margin:0 0 8px;
+  font-size:21px;
+}
+
+.activity p{
+  margin:0;
+  color:#777b8d;
+  font-size:12px;
+  line-height:1.75;
+}
+
+/* NUMBERS */
+.people-wrap{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:14px;
+}
+
+.people-card{
+  min-height:260px;
+  padding:32px;
+  border-radius:30px;
+  background:rgba(255,255,255,.74);
+  border:1px solid var(--line);
+}
+
+.people-card.main{
+  background:
+    radial-gradient(circle at 88% 7%,rgba(183,236,227,.54),transparent 30%),
+    radial-gradient(circle at 10% 95%,rgba(226,212,255,.62),transparent 35%),
+    rgba(255,255,255,.72);
+}
+
+.people-label{
+  font-size:10px;
+  letter-spacing:.16em;
+  font-weight:800;
+  color:#7e69d6;
+}
+
+.people-number{
+  margin-top:18px;
+  font-size:78px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.07em;
+}
+
+.people-unit{
+  font-size:15px;
+  margin-left:5px;
+  color:#767a8c;
+}
+
+.people-desc{
+  margin-top:16px;
+  color:#777b8e;
+  font-size:12px;
+  line-height:1.75;
+}
+
+.people-mini{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:20px;
+}
+
+.mini-stat{
+  padding:17px;
+  border-radius:20px;
+  background:rgba(255,255,255,.68);
+  border:1px solid var(--line);
+}
+
+.mini-stat strong{
+  display:block;
+  font-size:25px;
+}
+
+.mini-stat small{
+  display:block;
+  margin-top:4px;
+  color:#838697;
+  font-size:9px;
+}
+
+/* STORY */
+.story{
+  position:relative;
+  padding-left:25px;
+}
+
+.story::before{
+  content:"";
+  position:absolute;
+  left:6px;
+  top:8px;
+  bottom:8px;
+  width:1px;
+  background:linear-gradient(#a493ef,#cdece6,#efd7e5);
+}
+
+.story-item{
+  position:relative;
+  display:grid;
+  grid-template-columns:130px 1fr;
+  gap:28px;
+  padding:0 0 34px 15px;
+}
+
+.story-item:last-child{padding-bottom:0}
+
+.story-item::before{
+  content:"";
+  position:absolute;
+  left:-24px;
+  top:7px;
+  width:11px;height:11px;
+  border-radius:50%;
+  background:#8d79e7;
+  box-shadow:0 0 0 5px rgba(141,121,231,.10);
+}
+
+.story-date{
+  font-size:11px;
+  font-weight:800;
+  color:#7965d0;
+  letter-spacing:.08em;
+}
+
+.story-item h3{
+  margin:0 0 8px;
+  font-size:18px;
+}
+
+.story-item p{
+  margin:0;
+  color:#777b8d;
+  line-height:1.8;
+  font-size:12px;
+}
+
+/* LAST */
+.closing{
+  padding:92px 0 106px;
+  text-align:center;
+}
+
+.closing-script{
+  font-family:"Nanum Pen Script",cursive;
+  color:#846fe2;
+  font-size:29px;
+}
+
+.closing h2{
+  margin:12px 0 0;
+  font-size:43px;
+  letter-spacing:-.045em;
+}
+
+.closing p{
+  margin:18px auto 0;
+  max-width:650px;
+  color:#777b8d;
+  font-size:13px;
+  line-height:1.9;
+}
+
+.closing-links{
+  display:flex;
+  justify-content:center;
+  gap:9px;
+  margin-top:27px;
+  flex-wrap:wrap;
+}
+
+.closing-links a{
+  padding:13px 18px;
+  border-radius:999px;
+  text-decoration:none;
+  background:rgba(255,255,255,.76);
+  border:1px solid var(--line);
+  font-size:11px;
+  font-weight:700;
+}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(28,28,43,.34);
+  backdrop-filter:blur(12px);
+}
+
+.overlay.open{display:flex}
+
+.menu-card{
+  width:min(430px,100%);
+  max-height:calc(100vh - 36px);
+  overflow:auto;
+  padding:25px;
+  border-radius:28px;
+  background:#fff;
+}
+
+.modal-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.modal-top h2{
+  margin:0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:36px;
+  font-weight:400;
+}
+
+.close{
+  width:42px;height:42px;
+  border:0;border-radius:50%;
+  background:#f1f0f6;
+  cursor:pointer;
+}
+
+.menu-card a{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 3px;
+  border-bottom:1px solid #efedf4;
+  text-decoration:none;
+  font-size:13px;
+}
+
+/* BOTTOM */
+.bottom{
+  position:fixed;
+  left:50%;
+  bottom:13px;
+  transform:translateX(-50%);
+  z-index:80;
+  width:min(590px,calc(100% - 24px));
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  padding:8px;
+  border-radius:23px;
+  background:rgba(255,255,255,.90);
+  box-shadow:0 15px 50px rgba(42,37,72,.14);
+  backdrop-filter:blur(18px);
+}
+
+.bottom a,.bottom button{
+  border:0;
+  background:transparent;
+  text-decoration:none;
+  color:#7d8090;
+  text-align:center;
+  font-size:8px;
+  padding:4px;
+  cursor:pointer;
+}
+
+.bottom .nav-icon{
+  display:block;
+  font-size:16px;
+  margin-bottom:2px;
+}
+
+.bottom a.active{color:#745ed4;font-weight:800}
+
+/* MOBILE */
+@media(max-width:900px){
+  .hero{
+    grid-template-columns:1fr;
+    gap:34px;
+    padding-top:48px;
+  }
+  .hero-visual{min-height:390px}
+  .activity-grid{grid-template-columns:1fr 1fr}
+  .value-grid{grid-template-columns:1fr}
+  .people-wrap{grid-template-columns:1fr}
+}
+
+@media(max-width:620px){
+  .header{height:62px;padding:0 15px}
+  .brand strong{font-size:21px}
+  .menu-btn{width:41px;height:41px}
+  .page{width:min(100% - 24px,1160px)}
+  .hero{min-height:auto;padding:42px 0 56px}
+  .hero-title{font-size:92px}
+  .hero-brand{font-size:9px;letter-spacing:.34em}
+  .hero-script{font-size:28px}
+  .hero-copy{font-size:19px}
+  .hero-subcopy{font-size:12px}
+  .hero-visual{min-height:300px;border-radius:30px}
+  .visual-word{font-size:70px}
+  .visual-caption{bottom:30px;font-size:10px}
+  .section{padding:55px 0}
+  .section-head{display:block}
+  .section-title{font-size:32px}
+  .section-copy{margin-top:12px}
+  .activity-grid{grid-template-columns:1fr}
+  .activity{min-height:190px}
+  .fee-banner{grid-template-columns:1fr;padding:25px}
+  .fee-badge{justify-self:start}
+  .people-number{font-size:65px}
+  .story-item{grid-template-columns:1fr;gap:7px;padding-left:12px}
+  .closing{padding:70px 0 85px}
+  .closing h2{font-size:34px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <a href="/" class="brand">
+    <strong>VOM</strong>
+    <small>VOICE OF MELODY</small>
+  </a>
+
+  <div class="header-right">
+    <div id="adminBadge" class="admin-badge">
+      <span class="admin-dot"></span>
+      ADMIN MODE
+    </div>
+
+    <button class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">
+      ☰
+    </button>
+  </div>
+</header>
+
+
+<main class="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="hero-kicker">
+        우리가 음악을 즐기는 방식
+      </div>
+
+      <h1 class="hero-title">VOM</h1>
+
+      <div class="hero-brand">
+        VOICE OF MELODY
+      </div>
+
+      <div class="hero-script">
+        Sing Together, Stay Together.
+      </div>
+
+      <div class="hero-copy">
+        혼자 좋아하던 음악을,<br>
+        <strong>함께 즐기는 순간으로.</strong>
+      </div>
+
+      <div class="hero-subcopy">
+        같이 부르고, 듣고, 무대에 서고, 놀다 보면<br>
+        음악은 조금 더 재미있고 오래 기억에 남습니다.<br>
+        정해진 방식보다는 자유롭게, 부담보다는 하고 싶은 만큼.<br>
+        VOM은 음악을 좋아하는 사람들이 함께 만들어가는 모임입니다.
+      </div>
+
+      <div class="hero-tags">
+        <span class="hero-tag">FREE</span>
+        <span class="hero-tag">TOGETHER</span>
+        <span class="hero-tag">NO MEMBERSHIP FEE</span>
+        <span class="hero-tag">SINCE 2026.05.01</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="visual-note one">♪</div>
+      <div class="visual-note two">♡</div>
+      <div class="visual-note three">✦</div>
+      <div class="visual-note four">♫</div>
+
+      <div class="visual-word">
+        together
+      </div>
+
+      <div class="visual-caption">
+        노래 한 곡으로 시작해서,<br>
+        같이 기억할 순간을 만들어가는 곳.
+      </div>
+    </div>
+  </section>
+
+
+  <!-- VALUES -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">WHAT IS VOM</div>
+        <h2 class="section-title">VOM은 이런 모임이에요.</h2>
+      </div>
+
+      <div class="section-copy">
+        잘해야만 참여할 수 있는 곳보다, 음악을 좋아한다면 자연스럽게 함께할 수 있는 곳을 지향합니다.
+      </div>
+    </div>
+
+    <div class="value-grid">
+      <article class="value-card">
+        <div class="value-no">01</div>
+        <h3>혼자보다 같이</h3>
+        <p>
+          혼자 듣던 노래도 같이 부르고, 같이 듣고,
+          같이 무대에 서면 전혀 다른 기억이 됩니다.
+        </p>
+      </article>
+
+      <article class="value-card">
+        <div class="value-no">02</div>
+        <h3>하고 싶은 만큼 자유롭게</h3>
+        <p>
+          무대가 좋으면 무대에, 친목이 좋으면 친목에.
+          모든 활동을 똑같이 해야 하는 방식이 아닙니다.
+        </p>
+      </article>
+
+      <article class="value-card">
+        <div class="value-no">03</div>
+        <h3>음악으로 만나, 사람으로 남기</h3>
+        <p>
+          노래는 시작점이고 결국 남는 건 사람과 기억.
+          VOM은 그 과정을 오래 이어가는 모임입니다.
+        </p>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- FEE -->
+  <section class="section">
+    <div class="fee-banner">
+      <div>
+        <div class="kicker">NO MEMBERSHIP FEE</div>
+        <h2 class="fee-title">정기 회비 없이, 참여하는 활동의 비용만 함께.</h2>
+        <p class="fee-copy">
+          매달 고정적으로 내는 회비는 없습니다.
+          연습실, 공연장, 행사처럼 실제로 참여하는 활동에 필요한 비용만 해당 참가자끼리 나눕니다.
+        </p>
+      </div>
+
+      <div class="fee-badge">
+        정기 회비 0원
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ACTIVITIES -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">WHAT WE DO</div>
+        <h2 class="section-title">같이 즐기는 방법은 다양하게.</h2>
+      </div>
+
+      <div class="section-copy">
+        한 가지 방식으로 정해두기보다, 음악으로 할 수 있는 여러 활동을 직접 만들어갑니다.
+      </div>
+    </div>
+
+    <div class="activity-grid">
+      <a class="activity" href="/live/">
+        <div class="activity-top">
+          <div class="activity-icon">🎙</div>
+          <div class="activity-arrow">→</div>
+        </div>
+        <div>
+          <h3>VOM LIVE</h3>
+          <p>
+            서로의 노래를 가까이에서 듣고 즐기는 VOM의 정기 라이브 컨텐츠.
+          </p>
+        </div>
+      </a>
+
+      <a class="activity" href="/busking/">
+        <div class="activity-top">
+          <div class="activity-icon">🎤</div>
+          <div class="activity-arrow">→</div>
+        </div>
+        <div>
+          <h3>BUSKING</h3>
+          <p>
+            연습실을 벗어나 거리에서 관객과 직접 만나는 라이브 무대.
+          </p>
+        </div>
+      </a>
+
+      <a class="activity" href="/openmic/">
+        <div class="activity-top">
+          <div class="activity-icon">🏆</div>
+          <div class="activity-arrow">→</div>
+        </div>
+        <div>
+          <h3>OPEN MIC</h3>
+          <p>
+            대관한 공연장에서 회차별 컨셉과 프로그램으로 만드는 정식 공연.
+          </p>
+        </div>
+      </a>
+
+      <a class="activity" href="/event/">
+        <div class="activity-top">
+          <div class="activity-icon">✦</div>
+          <div class="activity-arrow">→</div>
+        </div>
+        <div>
+          <h3>TOGETHER</h3>
+          <p>
+            공연 외에도 회식, MT, 이벤트처럼 음악을 넘어 함께 쌓는 시간.
+          </p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- PEOPLE -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">VOM PEOPLE</div>
+        <h2 class="section-title">함께 만드는 사람들.</h2>
+      </div>
+
+      <div class="section-copy">
+        숫자는 계속 바뀌지만, VOM의 컨텐츠는 참여하는 사람들이 직접 채워갑니다.
+      </div>
+    </div>
+
+    <div class="people-wrap">
+      <article class="people-card main">
+        <div class="people-label">ACTIVE MEMBERS</div>
+
+        <div class="people-number">
+          <span id="memberCount">-</span><span class="people-unit">명</span>
+        </div>
+
+        <div class="people-desc">
+          현재 VOM에서 함께 활동하고 있는 멤버 수입니다.
+        </div>
+
+        <div class="people-mini">
+          <div class="mini-stat">
+            <strong id="staffCount">-</strong>
+            <small>운영진</small>
+          </div>
+
+          <div class="mini-stat">
+            <strong id="helperCount">-</strong>
+            <small>헬퍼</small>
+          </div>
+        </div>
+      </article>
+
+      <article class="people-card">
+        <div class="people-label">SINCE</div>
+
+        <div class="people-number" style="font-size:52px">
+          2026.05.01
+        </div>
+
+        <div class="people-desc">
+          Voice of Melody가 시작된 날.<br><br>
+          규모를 키우는 것보다,
+          같이 즐길 수 있는 좋은 순간을 계속 만드는 것을 더 중요하게 생각합니다.
+        </div>
+      </article>
+    </div>
+  </section>
+
+
+  <!-- STORY -->
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <div class="kicker">OUR STORY</div>
+        <h2 class="section-title">VOM의 이야기는 진행 중.</h2>
+      </div>
+
+      <div class="section-copy">
+        완성된 모임에 들어오는 방식보다, 멤버들이 직접 다음 이야기를 만들어가는 방식에 가깝습니다.
+      </div>
+    </div>
+
+    <div class="story">
+      <div class="story-item">
+        <div class="story-date">2026.05.01</div>
+        <div>
+          <h3>Voice of Melody 시작</h3>
+          <p>
+            음악을 좋아하는 사람들이 같이 즐길 수 있는 순간을 만들기 위해 VOM이 시작되었습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="story-item">
+        <div class="story-date">VOM LIVE</div>
+        <div>
+          <h3>서로의 노래를 듣는 시간</h3>
+          <p>
+            연습실에서 시작한 작은 라이브가 VOM의 정기 컨텐츠로 이어지고 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="story-item">
+        <div class="story-date">BUSKING</div>
+        <div>
+          <h3>우리의 무대를 거리로</h3>
+          <p>
+            직접 준비한 곡을 사람들 앞에서 들려주며 새로운 경험을 함께 쌓습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="story-item">
+        <div class="story-date">OPEN MIC</div>
+        <div>
+          <h3>더 큰 무대도 함께</h3>
+          <p>
+            대관공연과 여러 이벤트까지, 하고 싶은 음악 활동을 하나씩 현실로 만들어갑니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CLOSE -->
+  <section class="closing">
+    <div class="closing-script">Voice of Melody</div>
+
+    <h2>
+      노래로 만났지만,<br>
+      결국 사람으로 남는 곳.
+    </h2>
+
+    <p>
+      듣는 사람도, 부르는 사람도, 처음인 사람도 자연스럽게 섞일 수 있도록.<br>
+      VOM은 앞으로도 같이 해서 더 재미있는 순간을 만들어갑니다.
+    </p>
+
+    <div class="closing-links">
+      <a href="/calendar/">일정 보러가기 →</a>
+      <a href="/members/">멤버 보기 →</a>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- MENU -->
+<div id="menuOverlay" class="overlay">
+  <div class="menu-card">
+    <div class="modal-top">
+      <h2>VOM Menu</h2>
+      <button class="close" onclick="closeMenu()">✕</button>
+    </div>
+
+    <a href="/">HOME <span>→</span></a>
+    <a href="/info/">INFO <span>→</span></a>
+    <a href="/calendar/">CALENDAR <span>→</span></a>
+    <a href="/live/">VOM LIVE <span>→</span></a>
+    <a href="/busking/">BUSKING <span>→</span></a>
+    <a href="/openmic/">OPEN MIC <span>→</span></a>
+    <a href="/members/">MEMBERS <span>→</span></a>
+    <a href="/event/">EVENT <span>→</span></a>
+    <a href="/qna/">Q&A <span>→</span></a>
+  </div>
+</div>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom">
+  <a href="/">
+    <span class="nav-icon">⌂</span>
+    HOME
+  </a>
+
+  <a href="/calendar/">
+    <span class="nav-icon">◫</span>
+    CALENDAR
+  </a>
+
+  <a href="/members/">
+    <span class="nav-icon">♙</span>
+    MEMBERS
+  </a>
+
+  <a href="/event/">
+    <span class="nav-icon">✦</span>
+    EVENT
+  </a>
+
+  <button onclick="openMenu()">
+    <span class="nav-icon">☰</span>
+    MENU
+  </button>
+</nav>
+
+
+<script>
+const SUPABASE_URL =
+  'https://aqfmhqultzpakfqwzulj.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+let adminMode = false;
+
+
+async function start(){
+
+  await checkAdmin();
+
+  await loadPeople();
+}
+
+
+async function checkAdmin(){
+
+  const { data } =
+    await db.auth.getSession();
+
+  const session =
+    data.session;
+
+  if(!session){
+    setAdmin(false);
+    return;
+  }
+
+
+  const { data:admin } =
+    await db
+      .from('admins')
+      .select('user_id')
+      .eq(
+        'user_id',
+        session.user.id
+      )
+      .maybeSingle();
+
+
+  setAdmin(
+    !!admin
+  );
+}
+
+
+function setAdmin(active){
+
+  adminMode =
+    active;
+
+
+  document
+    .getElementById('adminBadge')
+    .classList
+    .toggle(
+      'show',
+      active
+    );
+}
+
+
+function memberStatus(row){
+
+  return String(
+    row.status ??
+    row.activity_status ??
+    row.active_status ??
+    ''
+  ).trim();
+}
+
+
+function isActiveMember(row){
+
+  const status =
+    memberStatus(row);
+
+  if(!status){
+    return true;
+  }
+
+
+  const normalized =
+    status
+      .replace(/\s+/g,'')
+      .toLowerCase();
+
+
+  return ![
+    '탈퇴',
+    '비활동',
+    'inactive',
+    'withdrawn'
+  ].includes(normalized);
+}
+
+
+async function loadPeople(){
+
+  const memberEl =
+    document.getElementById(
+      'memberCount'
+    );
+
+  const staffEl =
+    document.getElementById(
+      'staffCount'
+    );
+
+  const helperEl =
+    document.getElementById(
+      'helperCount'
+    );
+
+
+  try{
+
+    const {data,error} =
+      await db
+        .from('members')
+        .select('*');
+
+
+    if(error){
+      throw error;
+    }
+
+
+    const active =
+      (data || [])
+        .filter(
+          isActiveMember
+        );
+
+
+    const staff =
+      active.filter(
+        row =>
+          String(
+            row.role || ''
+          ).trim() ===
+          '운영진'
+      );
+
+
+    const helper =
+      active.filter(
+        row =>
+          String(
+            row.role || ''
+          ).trim() ===
+          '헬퍼'
+      );
+
+
+    memberEl.textContent =
+      active.length;
+
+
+    staffEl.textContent =
+      staff.length;
+
+
+    helperEl.textContent =
+      helper.length;
+
+  }catch(error){
+
+    console.error(
+      'INFO PEOPLE:',
+      error
+    );
+
+
+    memberEl.textContent =
+      '-';
+
+
+    staffEl.textContent =
+      '-';
+
+
+    helperEl.textContent =
+      '-';
+  }
+}
+
+
+function openMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .add('open');
+
+
+  document.body.style.overflow =
+    'hidden';
+}
+
+
+function closeMenu(){
+
+  document
+    .getElementById('menuOverlay')
+    .classList
+    .remove('open');
+
+
+  document.body.style.overflow =
+    '';
+}
+
+
+document
+  .getElementById('menuOverlay')
+  .addEventListener(
+    'click',
+    event => {
+
+      if(
+        event.target.id ===
+        'menuOverlay'
+      ){
+        closeMenu();
+      }
+    }
+  );
+
+
+start();
+</script>
+
+</body>
+</html>
