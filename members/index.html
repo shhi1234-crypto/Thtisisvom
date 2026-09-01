@@ -350,7 +350,27 @@ const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k]
 async function start(){await checkAdmin();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
-async function load(){const {data,error}=await db.from('members').select('*');if(error){console.error(error);members=[]}else members=(data||[]).sort((a,b)=>ord(a)-ord(b)||String(a.name||'').localeCompare(String(b.name||''),'ko'))}function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
+function rolePriority(m){
+  const r=role(m);
+  if(r==='모임장') return 0;
+  if(r==='운영진') return 1;
+  if(r==='헬퍼') return 2;
+  return 3;
+}
+
+async function load(){
+  const {data,error}=await db.from('members').select('*');
+  if(error){
+    console.error(error);
+    members=[];
+  }else{
+    members=(data||[]).sort((a,b)=>
+      rolePriority(a)-rolePriority(b) ||
+      ord(a)-ord(b) ||
+      String(a.name||'').localeCompare(String(b.name||''),'ko')
+    );
+  }
+}function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
 
 function setView(view){
   const allowed=['all','birthday','age','region'];
