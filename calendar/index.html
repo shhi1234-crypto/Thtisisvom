@@ -2168,6 +2168,12 @@ button{
   .schedule-setlist-cta strong{font-size:10.5px}
 }
 
+
+.host-note{margin-top:16px;padding:18px 19px;border-radius:19px;border:1px solid rgba(116,94,221,.14);background:linear-gradient(135deg,#f3efff,#eef9f7)}
+.host-note-label{color:#735fd3;font-size:9px;font-weight:900;letter-spacing:1.35px}
+.host-note-title{margin-top:5px;font-size:13px;font-weight:850;color:#282d40}
+.host-note-body{margin-top:9px;color:#5f6577;font-size:11px;line-height:1.9}
+
 </style>
 </head>
 
@@ -2602,6 +2608,11 @@ button{
         ></textarea>
 
       </div>
+        <div class="field">
+          <label>HOST NOTE · 주최자 안내</label>
+          <textarea id="eventHostNote" class="text-area" placeholder="이번 일정의 주제, 선곡 방향, 듀엣 구성, 준비사항 등 참가자가 꼭 알아야 할 내용을 적어주세요."></textarea>
+          <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">공지를 반복해서 올리지 않아도 되도록 일정 상세에 계속 표시됩니다.</div>
+        </div>
 
     </section>
 
@@ -4006,6 +4017,12 @@ async function openScheduleDetail(item){
 
       ${setlistCta}
 
+      ${
+        item.host_note
+        ? `<div class="host-note"><div class="host-note-label">HOST NOTE</div><div class="host-note-title">주최자 안내</div><div class="host-note-body">${escapeHtml(item.host_note).replace(/\n/g,'<br>')}</div></div>`
+        : ''
+      }
+
       <div class="schedule-detail-admin">
 
         <button
@@ -4867,6 +4884,7 @@ function clearForm(){
       'eventDescription'
     )
     .value = '';
+    document.getElementById('eventHostNote').value = '';
 
 
   document
@@ -5044,6 +5062,9 @@ async function saveEvent(){
           )
           .value
           .trim(),
+       host_note:
+        document.getElementById('eventHostNote').value.trim(),
+
 
       location_id:
         preset.id,
@@ -5255,6 +5276,7 @@ function editEvent(id){
     )
     .value =
     item.description || '';
+    document.getElementById('eventHostNote').value = item.host_note || '';
 
 
   document
