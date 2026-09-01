@@ -144,7 +144,7 @@ header{
     <a href="/calendar/">CALENDAR <span>→</span></a>
     <a href="/live/">VOM LIVE <span>→</span></a>
     <a href="/busking/">BUSKING <span>→</span></a>
-    <a href="/openmic/">OPEN MIC <span>→</span></a>
+    <a href="/OPENMIC/">OPEN MIC <span>→</span></a>
   </div>
 </div>
 
@@ -167,8 +167,9 @@ async function start(){
   await checkAdmin();
   await loadAll();
   const p=new URLSearchParams(location.search);
-  const ranking=p.get('ranking'),id=p.get('id');
-  if(ranking==='winner') renderRanking();
+  const ranking=p.get('ranking'),id=p.get('id'),intro=p.get('intro');
+  if(intro==='1') renderOpenMicIntro();
+  else if(ranking==='winner') renderRanking();
   else if(id) await renderDetail(id);
   else renderMain();
 }
@@ -223,6 +224,52 @@ async function setlistExists(id){
   return !!data;
 }
 
+function renderOpenMicIntro(){
+  document.title='대관공연 소개 · VOM';
+  page.classList.toggle('admin-mode',adminMode);
+  page.innerHTML=`
+    <a class="back" href="/OPENMIC/">← OPEN MIC</a>
+    <section class="hero">
+      <div class="kicker">ABOUT OPEN MIC</div>
+      <h1>Open Mic</h1>
+      <p>공연장을 직접 대관해 하나의 공연을 함께 만드는 VOM의 정식 무대 컨텐츠입니다.</p>
+    </section>
+
+    <section class="intro">
+      <div class="kicker">VOM STAGE</div>
+      <h2>대관공연은요</h2>
+      <p>
+        연습실이나 거리보다 한 단계 더 큰 무대에서 준비한 곡을 관객에게 선보이는 공연입니다.
+        회차마다 주제와 프로그램을 정하고, 참가자들이 각자의 무대를 준비해 하나의 공연으로 완성합니다.
+      </p>
+      <div class="intro-grid">
+        <div><strong>정식 공연장</strong><small>대관한 무대에서 관객과 함께</small></div>
+        <div><strong>회차별 컨셉</strong><small>주제와 프로그램을 정해 하나의 공연으로</small></div>
+        <div><strong>우승 기록</strong><small>회차별 우승자를 남기고 누적 기록</small></div>
+      </div>
+    </section>
+
+    <section class="intro" style="margin-top:12px;">
+      <div class="kicker">HOW IT WORKS</div>
+      <h2>이런 식으로 진행돼요</h2>
+      <p>
+        공연 일정이 열리면 참가자를 모집하고, 회차 컨셉에 맞춰 곡과 순서를 준비합니다.
+        공연이 끝난 뒤에는 우승 결과와 기록도 남겨서 다음 공연에서도 이어서 볼 수 있습니다.
+      </p>
+    </section>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 32px;">
+      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/">
+        <div><strong>대관공연 일정 보기</strong><small>다가오는 공연과 지난 회차 확인</small></div><span>→</span>
+      </a>
+      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/?ranking=winner">
+        <div><strong>우승 기록 보기</strong><small>누적 우승 기록 확인</small></div><span>→</span>
+      </a>
+    </div>
+  `;
+}
+
+
 function renderMain(){
   document.title='VOM OPEN MIC';
   page.classList.toggle('admin-mode',adminMode);
@@ -244,11 +291,11 @@ function renderMain(){
         <div><strong>우승 기록</strong><small>대관공연의 우승자를 기록하고 누적</small></div>
       </div>
     </section>
-    <div class="section-head"><h2>대관공연 일정</h2><a href="/openmic/?ranking=winner" style="font-size:11px;text-decoration:none;color:#715bc7">우승 기록 보기 →</a></div>
+    <div class="section-head"><h2>대관공연 일정</h2><a href="/OPENMIC/?ranking=winner" style="font-size:11px;text-decoration:none;color:#715bc7">우승 기록 보기 →</a></div>
     <div class="list">
       ${list.length?list.map(row=>{
         const d=parseDate(row.event_date),l=loc(row),img=row.image_url||l?.image_url||'',ws=getWinners(row.id);
-        return `<a class="card" href="/openmic/?id=${row.id}">
+        return `<a class="card" href="/OPENMIC/?id=${row.id}">
           <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${d.getMonth()+1}월 · ${week(row.event_date)}</small></div></div>
           <div><div class="type">OPEN MIC</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">${ws.length?'🏆 '+ws.map(x=>esc(x.member_name)).join(' · ')+' 우승':'상세 보기 →'}</div></div>
           <div class="thumb">${img?`<img src="${attr(img)}" alt="">`:'OPEN MIC'}</div>
@@ -264,7 +311,7 @@ async function renderDetail(id){
   document.title=`${row.title||'OPEN MIC'} · VOM`;
   page.classList.toggle('admin-mode',adminMode);
   page.innerHTML=`
-    <a class="back" href="/openmic/">← OPEN MIC</a>
+    <a class="back" href="/OPENMIC/">← OPEN MIC</a>
     <section class="detail">
       <div class="type">OPEN MIC</div>
       <h1 class="detail-title">${esc(row.title||'')}</h1>
