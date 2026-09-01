@@ -279,6 +279,20 @@
   }
 }
 
+
+.profile-placeholder,
+.profile-edit.profile-placeholder .value{
+  color:#b7b4c5 !important;
+  font-size:9px !important;
+  font-weight:600 !important;
+}
+.profile-edit.profile-placeholder{
+  opacity:.82;
+}
+.profile-edit.profile-placeholder:hover{
+  opacity:1;
+}
+
 </style>
 </head>
 <body>
@@ -287,7 +301,7 @@
 <main id="page" class="page">
 <section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div><div id="birthdayNow" class="birthday-now"></div></section>
 <div class="toolbar"><div class="tabs"><button class="tab active" data-view="all" onclick="setView('all')">전체 명단</button><button class="tab" data-view="birthday" onclick="setView('birthday')">생일</button><button class="tab" data-view="age" onclick="setView('age')">나이별</button><button class="tab" data-view="region" onclick="setView('region')">지역별</button></div><button class="add-btn" onclick="openEditor()">＋ 멤버 추가</button></div>
-<section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">순서</th><th class="c-name">이름</th><th class="c-role">구분</th><th class="c-date">가입일</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th><th class="c-status">상태</th><th class="c-song">곡</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">가입순서</th><th class="c-name">이름</th><th class="c-role">구분</th><th class="c-date">가입일</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th><th class="c-status">상태</th><th class="c-song">곡</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section id="panel-birthday" class="panel"><div id="birthdayGrid" class="group-grid"></div></section>
 <section id="panel-age" class="panel"><div id="ageGrid" class="group-grid"></div></section>
 <section id="panel-region" class="panel"><div id="regionGrid" class="group-grid"></div><div id="regionPeople" style="margin-top:11px"></div></section>
@@ -450,8 +464,16 @@ function table(){
 function canEditPublicProfile(m){return !['모임장','운영진'].includes(role(m))||adminMode}
 function profileCell(m,type){
   const value=type==='singer'?sing(m):job(m);
-  if(!canEditPublicProfile(m))return `<span class="profile-static">${esc(value)}</span>`;
-  return `<button class="profile-edit" onclick="event.stopPropagation();openProfileEditor('${String(m.id).replace(/'/g,"\'")}')"><span class="value">${esc(value)}</span><span class="pencil">✎</span></button>`;
+  const empty=!value || value==='-';
+  const placeholder=type==='singer'?'최애 가수를 적어주세요!':'직업을 적어주세요!';
+  const display=empty?placeholder:value;
+  const cls=empty?'profile-placeholder':'';
+
+  if(!canEditPublicProfile(m)){
+    return `<span class="profile-static ${cls}">${esc(display)}</span>`;
+  }
+
+  return `<button class="profile-edit ${cls}" onclick="event.stopPropagation();openProfileEditor('${String(m.id).replace(/'/g,"\'")}')"><span class="value">${esc(display)}</span><span class="pencil">✎</span></button>`;
 }
 function openProfileEditor(id){
   const m=members.find(x=>String(x.id)===String(id));if(!m)return;
