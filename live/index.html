@@ -305,6 +305,68 @@ button{
   line-height:1.7;
 }
 
+
+/* =========================================
+   EAR SHARE GUIDE
+========================================= */
+
+.ear-guide{
+  display:grid;
+  grid-template-columns:1.05fr 1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+}
+
+.ear-guide-main,
+.ear-guide-card{
+  padding:22px;
+  border-radius:22px;
+  background:rgba(255,255,255,.80);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 13px 35px rgba(31,37,74,.06);
+}
+
+.ear-guide-main{
+  background:
+    radial-gradient(circle at 90% 10%,rgba(108,214,222,.18),transparent 35%),
+    linear-gradient(145deg,rgba(255,255,255,.92),rgba(244,241,255,.88));
+}
+
+.ear-guide-kicker{
+  color:#7862df;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.2px;
+}
+
+.ear-guide-main h3,
+.ear-guide-card h3{
+  margin:8px 0 7px;
+  font-size:15px;
+}
+
+.ear-guide-main p,
+.ear-guide-card p{
+  margin:0;
+  color:#6f7587;
+  font-size:10.5px;
+  line-height:1.8;
+}
+
+.ear-formula{
+  margin-top:14px;
+  padding:11px 13px;
+  border-radius:14px;
+  background:#f2effc;
+  color:#6652c8;
+  font-size:11px;
+  font-weight:800;
+}
+
+@media(max-width:760px){
+  .ear-guide{grid-template-columns:1fr;}
+}
+
 /* =========================================
    PROCESS
 ========================================= */
@@ -1884,6 +1946,42 @@ function renderMain(){
           Sound System
         </div>
 
+      </div>
+
+    </section>
+
+
+    <section class="section">
+
+      <div class="section-head">
+        <div class="kicker">
+          Ear Share
+        </div>
+        <h2 class="section-title">
+          귀점유율은 이렇게 계산됩니다
+        </h2>
+        <div class="section-copy">
+          한 번의 높은 득표보다, 여러 회차에서 꾸준히 선택받는 기록을 보여주는 지표입니다.
+        </div>
+      </div>
+
+      <div class="ear-guide">
+        <div class="ear-guide-main">
+          <div class="ear-guide-kicker">EAR SHARE</div>
+          <h3>누적 득표를 누적 참가 인원으로 나눕니다.</h3>
+          <p>참여한 봄라이브에서 받은 표는 계속 누적되고, 각 회차의 전체 참가 인원도 함께 누적됩니다.</p>
+          <div class="ear-formula">귀점유율 = 누적 득표수 ÷ 누적 참가 인원 × 100</div>
+        </div>
+        <div class="ear-guide-card">
+          <div class="ear-guide-kicker">WHY CUMULATIVE?</div>
+          <h3>한 번 잘했다고 순위가 고정되지 않습니다.</h3>
+          <p>다음 회차에 참가하면 분모도 함께 늘어납니다. 이후에도 계속 표를 받아야 높은 귀점유율을 유지할 수 있습니다.</p>
+        </div>
+        <div class="ear-guide-card">
+          <div class="ear-guide-kicker">EXAMPLE</div>
+          <h3>꾸준히 귀를 사로잡는 사람이 유리합니다.</h3>
+          <p>예를 들어 첫 회차에서 5표를 받아도, 다음 회차에서 표를 받지 못하면 누적 귀점유율은 낮아집니다. 반복해서 선택받을수록 기록이 강해집니다.</p>
+        </div>
       </div>
 
     </section>
