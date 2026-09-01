@@ -873,7 +873,7 @@ button{
   display:grid;
 
   grid-template-columns:
-    repeat(4,1fr);
+    repeat(3,1fr);
 
   gap:8px;
 }
@@ -1104,9 +1104,32 @@ button{
 
   grid-template-columns:
     minmax(0,1fr)
+    42px
     108px;
 
   gap:8px;
+}
+
+.delete-preset{
+  min-height:44px;
+  border:0;
+  border-radius:14px;
+  background:#fff0f2;
+  color:#d65a70;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  font-weight:500;
+  transition:.15s;
+}
+
+.delete-preset:hover{
+  background:#ffe4e9;
+}
+
+.delete-preset:disabled{
+  opacity:.35;
+  cursor:default;
 }
 
 .add-preset{
@@ -1746,10 +1769,36 @@ button{
   }
 
   .preset-row{
-    grid-template-columns:1fr;
+    grid-template-columns:minmax(0,1fr) 42px;
   }
 
-  .add-preset{
+  .preset-row .add-preset{
+    grid-column:1 / -1;
+  }
+
+  .delete-preset{
+  min-height:44px;
+  border:0;
+  border-radius:14px;
+  background:#fff0f2;
+  color:#d65a70;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  font-weight:500;
+  transition:.15s;
+}
+
+.delete-preset:hover{
+  background:#ffe4e9;
+}
+
+.delete-preset:disabled{
+  opacity:.35;
+  cursor:default;
+}
+
+.add-preset{
     min-height:44px;
   }
 
@@ -1797,66 +1846,6 @@ button{
     width:67px;
     height:56px;
   }
-}
-
-
-/* UPCOMING / PAST */
-.period-section{
-  margin-bottom:28px;
-}
-.period-section + .period-section{
-  margin-top:34px;
-}
-.period-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:12px;
-  margin:0 4px 14px;
-}
-.period-title{
-  display:flex;
-  align-items:baseline;
-  gap:10px;
-  margin:0;
-  color:#171c31;
-  font-size:22px;
-  font-weight:800;
-}
-.period-title em{
-  color:#806bea;
-  font-family:"Nanum Pen Script",cursive;
-  font-size:22px;
-  font-style:normal;
-  font-weight:400;
-}
-.period-count{
-  color:#9a9ead;
-  font-size:10px;
-  font-weight:800;
-}
-.period-section.past{
-  opacity:.88;
-}
-.period-section.past .period-title em{
-  color:#9da1b0;
-}
-.period-empty{
-  padding:24px 18px;
-  border:1px solid rgba(255,255,255,.92);
-  border-radius:24px;
-  background:rgba(255,255,255,.70);
-  color:#9297a7;
-  text-align:center;
-  font-size:11px;
-  box-shadow:var(--shadow);
-}
-@media(max-width:640px){
-  .period-section{margin-bottom:22px}
-  .period-section + .period-section{margin-top:28px}
-  .period-head{margin-bottom:10px}
-  .period-title{font-size:18px;gap:7px}
-  .period-title em{font-size:20px}
 }
 
 /* ======================================================
@@ -2172,52 +2161,6 @@ button{
   .schedule-setlist-cta strong{font-size:10.5px}
 }
 
-
-/* V5 · 일정 카드 진입 선택 */
-.entry-choice-overlay{
-  position:fixed; inset:0; z-index:10050;
-  background:rgba(24,22,35,.34);
-  backdrop-filter:blur(8px);
-  display:none; align-items:center; justify-content:center;
-  padding:20px;
-}
-.entry-choice-overlay.open{display:flex}
-.entry-choice-modal{
-  width:min(520px,100%);
-  padding:24px;
-  border-radius:28px;
-  background:rgba(255,255,255,.96);
-  box-shadow:0 24px 70px rgba(53,45,89,.20);
-  border:1px solid rgba(115,91,190,.14);
-}
-.entry-choice-head{margin-bottom:17px}
-.entry-choice-type{font-size:11px;font-weight:800;letter-spacing:.13em;color:#7864bd}
-.entry-choice-title{margin:5px 0 0;font-size:23px;line-height:1.3}
-.entry-choice-buttons{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.entry-choice-btn{
-  min-height:112px;padding:18px 16px;border-radius:21px;
-  border:1px solid rgba(111,88,190,.15);
-  background:#fff;color:inherit;text-decoration:none;
-  display:flex;flex-direction:column;justify-content:space-between;
-  cursor:pointer;text-align:left;
-}
-.entry-choice-btn.primary{
-  background:linear-gradient(135deg,rgba(237,231,255,.96),rgba(231,250,247,.92));
-  border-color:rgba(112,88,201,.26);
-}
-.entry-choice-btn strong{font-size:17px}
-.entry-choice-btn small{font-size:12px;line-height:1.45;color:#777}
-.entry-choice-close{
-  width:100%;margin-top:12px;padding:11px;border:0;background:transparent;
-  color:#888;cursor:pointer;font-size:13px
-}
-@media(max-width:520px){
-  .entry-choice-modal{padding:19px;border-radius:24px}
-  .entry-choice-buttons{gap:8px}
-  .entry-choice-btn{min-height:106px;padding:16px 13px}
-  .entry-choice-btn strong{font-size:15px}
-}
-
 </style>
 </head>
 
@@ -2473,21 +2416,6 @@ button{
 
 
         <button
-          id="type-openmic"
-          class="type-option"
-          onclick="setEventType('OPEN MIC')"
-          type="button"
-        >
-          OPEN MIC
-
-          <span>
-            대관공연
-          </span>
-
-        </button>
-
-
-        <button
           id="type-other"
           class="type-option"
           onclick="setEventType('OTHER')"
@@ -2534,6 +2462,17 @@ button{
           class="pretty-select"
           onchange="presetChanged()"
         ></select>
+
+        <button
+          id="deletePresetButton"
+          class="delete-preset"
+          onclick="deleteSelectedPreset()"
+          type="button"
+          title="선택한 항목 삭제"
+          aria-label="선택한 항목 삭제"
+        >
+          ×
+        </button>
 
 
         <button
@@ -3631,26 +3570,13 @@ function renderCalendar(){
       );
 
 
-  const today =
-    calendarDateString(
-      new Date()
-    );
-
-
-  const valid =
-    filtered.filter(
-      item =>
-        item.event_date
-    );
-
-
-  if(!valid.length){
+  if(!filtered.length){
 
     container.innerHTML =
     `
-      <section class="period-section">
+      <section class="month">
 
-        <div class="period-empty">
+        <div class="empty">
           등록된 일정이 없습니다.
         </div>
 
@@ -3661,182 +3587,95 @@ function renderCalendar(){
   }
 
 
-  const upcoming =
-    valid
-      .filter(
-        item =>
-          item.event_date >= today
-      )
-      .sort(
-        (a,b) =>
-          String(a.event_date)
-            .localeCompare(
-              String(b.event_date)
-            )
-      );
+  const groups = {};
 
 
-  const past =
-    valid
-      .filter(
-        item =>
-          item.event_date < today
-      )
-      .sort(
-        (a,b) =>
-          String(b.event_date)
-            .localeCompare(
-              String(a.event_date)
-            )
-      );
+  filtered.forEach(item => {
 
-
-  function renderPeriod(
-    title,
-    english,
-    list,
-    isPast = false
-  ){
-
-    if(!list.length){
-
-      return `
-        <section class="period-section ${isPast ? 'past' : ''}">
-
-          <div class="period-head">
-
-            <h2 class="period-title">
-              ${title}
-              <em>${english}</em>
-            </h2>
-
-            <span class="period-count">
-              0
-            </span>
-
-          </div>
-
-          <div class="period-empty">
-            ${
-              isPast
-              ? '아직 지난 일정이 없어요 :)'
-              : '예정된 일정이 없어요 ㅠㅠ'
-            }
-          </div>
-
-        </section>
-      `;
+    if(!item.event_date){
+      return;
     }
 
 
-    const groups = {};
+    const key =
+      item.event_date
+        .slice(0,7);
 
 
-    list.forEach(item => {
-
-      const key =
-        item.event_date
-          .slice(0,7);
+    if(!groups[key]){
+      groups[key] = [];
+    }
 
 
-      if(!groups[key]){
-        groups[key] = [];
-      }
+    groups[key]
+      .push(item);
+  });
 
 
-      groups[key]
-        .push(item);
-    });
+  container.innerHTML = '';
 
 
-    const monthHtml =
-      Object
-        .keys(groups)
-        .sort(
-          isPast
-          ? (a,b) => b.localeCompare(a)
-          : (a,b) => a.localeCompare(b)
-        )
-        .map(monthKey => {
-
-          const [
-            year,
-            month
-          ] =
-            monthKey.split('-');
+  Object
+    .keys(groups)
+    .sort()
+    .forEach(monthKey => {
 
 
-          return `
-            <section class="month">
-
-              <div class="month-head">
-
-                <h2>
-                  ${String(year).slice(-2)}년 ${Number(month)}월
-                </h2>
-
-                <span>
-                  ${month}
-                </span>
-
-              </div>
+      const [
+        year,
+        month
+      ] =
+        monthKey.split('-');
 
 
-              <div class="event-list">
-
-                ${
-                  groups[monthKey]
-                    .map(
-                      createEventHtml
-                    )
-                    .join('')
-                }
-
-              </div>
-
-            </section>
-          `;
-        })
-        .join('');
+      const section =
+        document
+          .createElement(
+            'section'
+          );
 
 
-    return `
-      <section class="period-section ${isPast ? 'past' : ''}">
+      section.className =
+        'month';
 
-        <div class="period-head">
 
-          <h2 class="period-title">
-            ${title}
-            <em>${english}</em>
+      section.innerHTML =
+      `
+        <div class="month-head">
+
+          <h2>
+
+            ${monthName(month)}
+            ${year}
+
           </h2>
 
-          <span class="period-count">
-            ${list.length}개의 일정
+          <span>
+            ${month}
           </span>
 
         </div>
 
-        ${monthHtml}
 
-      </section>
-    `;
-  }
+        <div class="event-list">
+
+          ${
+            groups[monthKey]
+              .map(
+                createEventHtml
+              )
+              .join('')
+          }
+
+        </div>
+      `;
 
 
-  container.innerHTML =
-    renderPeriod(
-      '다가오는 일정',
-      'Upcoming',
-      upcoming,
-      false
-    ) +
-    renderPeriod(
-      '지난 일정',
-      'Past',
-      past,
-      true
-    );
+      container
+        .appendChild(section);
+    });
 }
+
 
 function createEventHtml(item){
 
@@ -4041,92 +3880,41 @@ function createEventHtml(item){
 }
 
 
-function isOpenMicEvent(item){
-  if(!item) return false;
-  const type = String(item.event_type || '');
-  const title = String(item.title || '').toUpperCase();
-  return type === 'OPEN MIC' ||
-    (type === 'OTHER' && (title.includes('OPEN MIC') || title.includes('대관공연')));
-}
-
-
 function openEventDetail(id){
-  const item = events.find(row => String(row.id) === String(id));
-  if(!item) return;
 
-  const type = String(item.event_type || 'OTHER');
-  const openMic = isOpenMicEvent(item);
+  const item =
+    events.find(
+      row =>
+        String(row.id) ===
+        String(id)
+    );
 
-  if(type !== 'VOM LIVE' && type !== 'BUSKING' && !openMic){
-    window.location.href = `/schedule/?id=${encodeURIComponent(id)}`;
+
+  if(!item){
     return;
   }
 
-  const contentType = openMic ? 'OPEN MIC' : type;
-  const detailHref =
-    contentType === 'VOM LIVE'
-      ? `/live/?id=${encodeURIComponent(id)}`
-      : contentType === 'BUSKING'
-        ? `/busking/?id=${encodeURIComponent(id)}`
-        : `/OPENMIC/?id=${encodeURIComponent(id)}`;
 
-  const introHref =
-    contentType === 'VOM LIVE'
-      ? '/live/'
-      : contentType === 'BUSKING'
-        ? '/busking/?intro=1'
-        : '/OPENMIC/?intro=1';
+  if(item.event_type === 'VOM LIVE'){
 
-  const introName =
-    contentType === 'VOM LIVE'
-      ? '봄라이브'
-      : contentType === 'BUSKING'
-        ? '버스킹'
-        : '대관공연';
+    window.location.href =
+      `/live/?id=${encodeURIComponent(id)}`;
 
-  let overlay = document.getElementById('entryChoiceOverlay');
-  if(!overlay){
-    overlay = document.createElement('div');
-    overlay.id = 'entryChoiceOverlay';
-    overlay.className = 'entry-choice-overlay';
-    overlay.innerHTML = `
-      <div class="entry-choice-modal" onclick="event.stopPropagation()">
-        <div class="entry-choice-head">
-          <div class="entry-choice-type" id="entryChoiceType"></div>
-          <h3 class="entry-choice-title" id="entryChoiceTitle"></h3>
-        </div>
-        <div class="entry-choice-buttons">
-          <a class="entry-choice-btn primary" id="entryDetailLink">
-            <strong>일정 자세히 보기</strong>
-            <small>이번 일정의 날짜 · 장소 · 참가자 · 셋리스트</small>
-          </a>
-          <a class="entry-choice-btn" id="entryIntroLink">
-            <strong>컨텐츠 소개 보기</strong>
-            <small id="entryIntroCopy"></small>
-          </a>
-        </div>
-        <button class="entry-choice-close" type="button" onclick="closeEntryChoice()">닫기</button>
-      </div>`;
-    overlay.addEventListener('click', closeEntryChoice);
-    document.body.appendChild(overlay);
+    return;
   }
 
-  document.getElementById('entryChoiceType').textContent = contentType;
-  document.getElementById('entryChoiceTitle').textContent = item.title || '';
-  document.getElementById('entryDetailLink').href = detailHref;
-  document.getElementById('entryIntroLink').href = introHref;
-  document.getElementById('entryIntroCopy').textContent =
-    `${introName}이 어떤 컨텐츠인지 먼저 알아보기`;
 
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
+  if(item.event_type === 'BUSKING'){
+
+    window.location.href =
+      `/busking/?id=${encodeURIComponent(id)}`;
+
+    return;
+  }
 
 
-function closeEntryChoice(){
-  const overlay = document.getElementById('entryChoiceOverlay');
-  if(overlay) overlay.classList.remove('open');
-  document.body.style.overflow = '';
+  window.location.href =
+    `/schedule/?id=${encodeURIComponent(id)}`;
 }
 
 
@@ -4358,15 +4146,6 @@ function setEventType(type){
   }
 
 
-  if(type === 'OPEN MIC'){
-
-    document
-      .getElementById('type-openmic')
-      .classList
-      .add('active');
-  }
-
-
   if(type === 'OTHER'){
 
     document
@@ -4437,19 +4216,6 @@ function updatePresetCopy(){
       '등록해둔 버스킹 장소를 선택하세요.';
   }
 
-  else if(
-    currentEventType ===
-    'OPEN MIC'
-  ){
-
-    title.textContent =
-      '공연장';
-
-
-    help.textContent =
-      '대관공연 장소를 선택하세요.';
-  }
-
   else{
 
     title.textContent =
@@ -4489,15 +4255,6 @@ function updateTitlePlaceholder(){
       '예: BUSKING @한강';
   }
 
-  else if(
-    currentEventType ===
-    'OPEN MIC'
-  ){
-
-    input.placeholder =
-      '예: VOM OPEN MIC #02';
-  }
-
   else{
 
     input.placeholder =
@@ -4522,13 +4279,11 @@ function populatePresets(
 
 
   const list =
-    presets.filter(item => {
-      if(currentEventType === 'OPEN MIC'){
-        return item.location_type === 'OPEN MIC' ||
-               item.location_type === 'OTHER';
-      }
-      return item.location_type === currentEventType;
-    });
+    presets.filter(
+      item =>
+        item.location_type ===
+        currentEventType
+    );
 
 
   select.innerHTML = '';
@@ -4592,10 +4347,14 @@ function populatePresets(
     select.value =
       preferredId;
   }
+
+  updateDeletePresetButton();
 }
 
 
 function presetChanged(){
+
+  updateDeletePresetButton();
 
   const preset =
     getSelectedPreset();
@@ -4624,6 +4383,66 @@ function getSelectedPreset(){
       String(item.id) ===
       String(id)
   );
+}
+
+
+function updateDeletePresetButton(){
+  const button = document.getElementById('deletePresetButton');
+  if(!button) return;
+  button.disabled = !getSelectedPreset();
+}
+
+
+async function deleteSelectedPreset(){
+  if(!adminMode){
+    return;
+  }
+
+  const preset = getSelectedPreset();
+  if(!preset){
+    return;
+  }
+
+  const { data:usedEvents, error:usedError } = await db
+    .from('events')
+    .select('id,title')
+    .eq('location_id',preset.id)
+    .limit(5);
+
+  if(usedError){
+    alert('항목 사용 여부를 확인하지 못했습니다.\n' + usedError.message);
+    return;
+  }
+
+  if((usedEvents || []).length){
+    const names = usedEvents
+      .map(item => item.title || `일정 #${item.id}`)
+      .join(', ');
+
+    alert(
+      `현재 일정에서 사용 중인 항목이라 삭제할 수 없습니다.\n\n${names}\n\n해당 일정의 장소를 먼저 다른 항목으로 변경해주세요.`
+    );
+    return;
+  }
+
+  if(!confirm(`「${preset.name}」 항목을 삭제할까요?`)){
+    return;
+  }
+
+  const { error } = await db
+    .from('locations')
+    .delete()
+    .eq('id',preset.id);
+
+  if(error){
+    alert('항목을 삭제하지 못했습니다.\n' + error.message);
+    return;
+  }
+
+  presets = presets.filter(item => String(item.id) !== String(preset.id));
+  selectedImageUrl = '';
+  populatePresets();
+  presetChanged();
 }
 
 
@@ -5405,9 +5224,8 @@ function editEvent(id){
 
 
   currentEventType =
-    isOpenMicEvent(item)
-    ? 'OPEN MIC'
-    : (item.event_type || 'OTHER');
+    item.event_type ||
+    'OTHER';
 
 
   document
@@ -5453,20 +5271,6 @@ function editEvent(id){
     document
       .getElementById(
         'type-busking'
-      )
-      .classList
-      .add('active');
-  }
-
-
-  else if(
-    currentEventType ===
-    'OPEN MIC'
-  ){
-
-    document
-      .getElementById(
-        'type-openmic'
       )
       .classList
       .add('active');
