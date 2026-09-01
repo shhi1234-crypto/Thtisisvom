@@ -2196,14 +2196,15 @@ async function loadEarShare(){
     (data || [])
       .filter(row => [1,2].includes(Number(row.rank)));
 
+  /* 1위/2위가 공동순위인 경우 해당 순위 인원을 모두 표시 */
   const first =
-    source.find(row => Number(row.rank) === 1);
+    source.filter(row => Number(row.rank) === 1);
 
   const second =
-    source.find(row => Number(row.rank) === 2);
+    source.filter(row => Number(row.rank) === 2);
 
   const list =
-    [first,second].filter(Boolean);
+    [...first,...second];
 
   if(!list.length){
 
@@ -2338,7 +2339,7 @@ function createPointRow(row){
 
   return `
     <a
-      href="/live/"
+      href="/live/?ranking=point"
       class="rank-row rank-${rank}"
     >
 
