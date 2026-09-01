@@ -3537,127 +3537,84 @@ function formatPoint(value){
 }
 
 
-function calculateRankingFromPeople(
-  people,
-  options = {}
-){
+function calculateRankingFromPeople(people, options = {}){
+  const total = people.length;
 
-  const total =
-    people.length;
-
-
-  const sorted =
-    [...people]
-      .map(
-        person => ({
-          ...person,
-          votes:Number(person.votes || 0),
-          rank:
-            [1,2,3].includes(Number(person.rank))
-            ? Number(person.rank)
-            : null
-        })
-      );
-
+  const sorted = [...people].map(person => ({
+    ...person,
+    votes: Number(person.votes || 0),
+    rank: [1,2,3].includes(Number(person.rank)) ? Number(person.rank) : null
+  }));
 
   if(options.legacyAuto){
-
-    const positive =
-      sorted
-        .filter(
-          row => row.votes > 0
-        )
-        .sort(
-          (a,b) => {
-            if(b.votes !== a.votes){
-              return b.votes - a.votes;
-            }
-
-            return a.name.localeCompare(
-              b.name,
-              'ko'
-            );
-          }
-        );
-
+    const positive = sorted
+      .filter(row => row.votes > 0)
+      .sort((a,b) => {
+        if(b.votes !== a.votes) return b.votes - a.votes;
+        return a.name.localeCompare(b.name, 'ko');
+      });
 
     let lastVotes = null;
     let currentRank = 0;
 
-
-    positive.forEach(
-      row => {
-
-        if(
-          lastVotes === null ||
-          row.votes !== lastVotes
-        ){
-          currentRank += 1;
-          lastVotes = row.votes;
-        }
-
-
-        row.rank =
-          currentRank <= 3
-          ? currentRank
-          : null;
+    positive.forEach((row,index) => {
+      if(lastVotes === null || row.votes !== lastVotes){
+        currentRank = index + 1;
+        lastVotes = row.votes;
       }
-    );
+      row.rank = currentRank <= 3 ? currentRank : null;
+    });
   }
 
+  const groups = [1,2,3]
+    .map(enteredRank => ({
+      enteredRank,
+      rows: sorted.filter(row => row.rank === enteredRank)
+    }))
+    .filter(group => group.rows.length > 0);
 
-  sorted.forEach(
-    row => {
+  let occupiedBefore = 0;
 
-      row.earShare =
-        total > 0
-        ? row.votes / total * 100
-        : 0;
+  groups.forEach(group => {
+    const actualRank = occupiedBefore + 1;
+    group.rows.forEach(row => {
+      row.rank = actualRank <= 3 ? actualRank : null;
+    });
+    occupiedBefore += group.rows.length;
+  });
 
-      const tieCount =
-        row.rank !== null
-        ? sorted.filter(other => other.rank === row.rank).length
-        : 0;
+  sorted.forEach(row => {
+    row.earShare = total > 0 ? row.votes / total * 100 : 0;
 
-      row.tied = tieCount > 1;
-      row.tieCount = tieCount || 1;
-      row.bonusPoints =
-        row.rank !== null
-        ? rankBonus(row.rank) / row.tieCount
-        : 0;
-      row.points = 5 + row.bonusPoints;
+    if(row.rank === null){
+      row.tied = false;
+      row.tieCount = 1;
+      row.bonusPoints = 0;
+      row.points = 5;
+      return;
     }
-  );
 
+    const tieCount = sorted.filter(other => other.rank === row.rank).length;
+    let occupiedBonus = 0;
 
-  return sorted.sort(
-    (a,b) => {
-
-      const aRank =
-        a.rank ?? 99;
-
-      const bRank =
-        b.rank ?? 99;
-
-
-      if(aRank !== bRank){
-        return aRank - bRank;
-      }
-
-
-      if(b.votes !== a.votes){
-        return b.votes - a.votes;
-      }
-
-
-      return a.name.localeCompare(
-        b.name,
-        'ko'
-      );
+    for(let offset = 0; offset < tieCount; offset += 1){
+      occupiedBonus += rankBonus(row.rank + offset);
     }
-  );
+
+    row.tied = tieCount > 1;
+    row.tieCount = tieCount;
+    row.bonusPoints = occupiedBonus / tieCount;
+    row.points = 5 + row.bonusPoints;
+  });
+
+  return sorted.sort((a,b) => {
+    const aRank = a.rank ?? 99;
+    const bRank = b.rank ?? 99;
+    if(aRank !== bRank) return aRank - bRank;
+    if(b.votes !== a.votes) return b.votes - a.votes;
+    return a.name.localeCompare(b.name, 'ko');
+  });
 }
-
 
 /* =========================================
    DATA HELPERS
