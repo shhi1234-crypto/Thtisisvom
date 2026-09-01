@@ -3375,18 +3375,56 @@ async function saveResults(){
       }
     });
 
+    /*
+       화면에 표시/저장하는 순위는 투표 결과 그대로 유지함.
+       예) 공동 1등 다음 득표 그룹은 화면상 '2등' 그대로 표시.
+
+       포인트만 공동순위가 실제 순위 자리를 점유하는 방식으로 계산함.
+       예) 공동 1등 2명 + 공동 2등 2명
+           공동 1등: 1·2위 보너스 공유
+           공동 2등: 포인트 계산상 3·4위 몫 공유
+       단, 저장되는 rank 값은 1 / 2 그대로임.
+    */
+    const pointStartByRank = {};
+
+    [1,2,3].forEach(r => {
+      if(!rankCounts[r]) return;
+
+      let extraBefore = 0;
+
+      for(let previousRank = 1; previousRank < r; previousRank += 1){
+        if(rankCounts[previousRank] > 1){
+          extraBefore += rankCounts[previousRank] - 1;
+        }
+      }
+
+      pointStartByRank[r] = r + extraBefore;
+    });
+
     const voteResults =
       people.map(
         person => {
           const r = [1,2,3].includes(Number(person.rank)) ? Number(person.rank) : null;
           const tieCount = r ? (rankCounts[r] || 1) : 1;
-          const bonusPoints = r ? rankBonus(r) / tieCount : 0;
+          const pointStartRank = r ? pointStartByRank[r] : null;
+
+          let bonusPool = 0;
+
+          if(r){
+            for(let offset = 0; offset < tieCount; offset += 1){
+              bonusPool += rankBonus(pointStartRank + offset);
+            }
+          }
+
+          const bonusPoints = r ? bonusPool / tieCount : 0;
+
           return {
             member_id:person.member_id,
             name:person.name,
             votes:person.votes,
             rank:r,
             tie_count:tieCount,
+            point_start_rank:pointStartRank,
             bonus_points:bonusPoints,
             total_points:5 + bonusPoints
           };
@@ -3546,6 +3584,11 @@ function calculateRankingFromPeople(people, options = {}){
     rank: [1,2,3].includes(Number(person.rank)) ? Number(person.rank) : null
   }));
 
+  /*
+     득표수 자동 순위는 '표시 순위' 기준으로 계산함.
+     공동 1등이 여러 명이어도 다음 득표 그룹은 화면상 2등으로 표시.
+     실제 포인트 점유 순위는 아래 pointRank에서 별도로 계산함.
+  */
   if(options.legacyAuto){
     const positive = sorted
       .filter(row => row.votes > 0)
@@ -3555,32 +3598,40 @@ function calculateRankingFromPeople(people, options = {}){
       });
 
     let lastVotes = null;
-    let currentRank = 0;
+    let displayRank = 0;
 
-    positive.forEach((row,index) => {
+    positive.forEach(row => {
       if(lastVotes === null || row.votes !== lastVotes){
-        currentRank = index + 1;
+        displayRank += 1;
         lastVotes = row.votes;
       }
-      row.rank = currentRank <= 3 ? currentRank : null;
+
+      row.rank = displayRank <= 3 ? displayRank : null;
     });
   }
 
-  const groups = [1,2,3]
-    .map(enteredRank => ({
-      enteredRank,
-      rows: sorted.filter(row => row.rank === enteredRank)
-    }))
-    .filter(group => group.rows.length > 0);
+  const rankCounts = {};
 
-  let occupiedBefore = 0;
+  sorted.forEach(row => {
+    if(row.rank !== null){
+      rankCounts[row.rank] = (rankCounts[row.rank] || 0) + 1;
+    }
+  });
 
-  groups.forEach(group => {
-    const actualRank = occupiedBefore + 1;
-    group.rows.forEach(row => {
-      row.rank = actualRank <= 3 ? actualRank : null;
-    });
-    occupiedBefore += group.rows.length;
+  const pointStartByRank = {};
+
+  [1,2,3].forEach(r => {
+    if(!rankCounts[r]) return;
+
+    let extraBefore = 0;
+
+    for(let previousRank = 1; previousRank < r; previousRank += 1){
+      if(rankCounts[previousRank] > 1){
+        extraBefore += rankCounts[previousRank] - 1;
+      }
+    }
+
+    pointStartByRank[r] = r + extraBefore;
   });
 
   sorted.forEach(row => {
@@ -3589,20 +3640,24 @@ function calculateRankingFromPeople(people, options = {}){
     if(row.rank === null){
       row.tied = false;
       row.tieCount = 1;
+      row.pointRank = null;
       row.bonusPoints = 0;
       row.points = 5;
       return;
     }
 
-    const tieCount = sorted.filter(other => other.rank === row.rank).length;
+    const tieCount = rankCounts[row.rank] || 1;
+    const pointRank = pointStartByRank[row.rank];
+
     let occupiedBonus = 0;
 
     for(let offset = 0; offset < tieCount; offset += 1){
-      occupiedBonus += rankBonus(row.rank + offset);
+      occupiedBonus += rankBonus(pointRank + offset);
     }
 
     row.tied = tieCount > 1;
     row.tieCount = tieCount;
+    row.pointRank = pointRank;
     row.bonusPoints = occupiedBonus / tieCount;
     row.points = 5 + row.bonusPoints;
   });
