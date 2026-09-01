@@ -190,6 +190,248 @@ header{
   .intro-process article{min-height:auto}
 }
 
+
+/* ===== VOM LIVE STYLE UNIFIED CONTENT PAGE ===== */
+.u-hero{
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  gap:45px;
+  align-items:center;
+  padding:72px 0 70px;
+}
+.u-label{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:21px;
+  margin-bottom:16px;
+}
+.u-title{
+  margin:0;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:86px;
+  line-height:.92;
+  font-weight:400;
+  color:#11172a;
+}
+.u-subtitle{
+  margin-top:38px;
+  font-size:21px;
+  line-height:1.55;
+  font-weight:800;
+  letter-spacing:-.03em;
+}
+.u-copy{
+  margin-top:28px;
+  max-width:650px;
+  color:#74798b;
+  font-size:13px;
+  line-height:2;
+}
+.u-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:25px;
+}
+.u-tags span{
+  padding:9px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(91,80,130,.08);
+  color:#75798a;
+  font-size:10px;
+}
+.u-visual{
+  min-height:397px;
+  padding:40px 36px;
+  border-radius:34px;
+  background:
+    radial-gradient(circle at 83% 14%,rgba(81,193,205,.28),transparent 30%),
+    linear-gradient(145deg,#24365f,#323a77 64%,#7654cb);
+  box-shadow:0 24px 56px rgba(37,42,89,.14);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  color:white;
+}
+.u-visual .script{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:42px;
+  line-height:1.05;
+  color:#eee7ff;
+}
+.u-visual p{
+  margin:0;
+  color:#efeaff;
+  font-size:12px;
+  line-height:1.75;
+  font-weight:700;
+}
+.u-section{margin-top:54px}
+.u-kicker{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:20px;
+}
+.u-section-title{
+  margin:7px 0 24px;
+  font-size:28px;
+  letter-spacing:-.04em;
+}
+.u-process{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+}
+.u-process-card{
+  min-height:202px;
+  padding:27px 25px;
+  border-radius:23px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 12px 33px rgba(31,37,74,.055);
+}
+.u-process-num{
+  font-family:"Nanum Pen Script",cursive;
+  color:#816cf0;
+  font-size:26px;
+}
+.u-process-card h3{
+  margin:30px 0 9px;
+  font-size:15px;
+}
+.u-process-card p{
+  margin:0;
+  color:#848899;
+  font-size:10px;
+  line-height:1.7;
+}
+.u-lists{margin-top:76px}
+.u-list-section{margin-top:46px}
+.u-list-section:first-child{margin-top:0}
+.u-list-head{margin-bottom:20px}
+.u-list-kicker{
+  font-family:"Nanum Pen Script",cursive;
+  color:#806bf0;
+  font-size:20px;
+}
+.u-list-head h2{
+  margin:6px 0 0;
+  font-size:27px;
+  letter-spacing:-.04em;
+}
+.u-list-head p{
+  margin:10px 0 0;
+  color:#85899a;
+  font-size:11px;
+}
+.u-list{display:grid;gap:12px}
+.u-card{
+  display:grid;
+  grid-template-columns:76px minmax(0,1fr) 130px;
+  align-items:center;
+  gap:17px;
+  min-height:115px;
+  padding:15px 16px;
+  border-radius:23px;
+  background:rgba(255,255,255,.84);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 10px 30px rgba(31,37,74,.05);
+  cursor:pointer;
+  transition:.18s;
+}
+.u-card:hover{transform:translateY(-2px)}
+.u-date{
+  height:83px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(145deg,#765eea,#6f8ee6);
+  color:white;
+}
+.u-date strong{
+  display:block;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:31px;
+  line-height:.95;
+}
+.u-date small{
+  display:block;
+  margin-top:5px;
+  font-size:8px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.u-type{
+  color:#806bf0;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.10em;
+}
+.u-card h3{
+  margin:6px 0 8px;
+  font-size:18px;
+  letter-spacing:-.025em;
+}
+.u-meta{
+  color:#818596;
+  font-size:10px;
+}
+.u-more{
+  margin-top:9px;
+  color:#745fd7;
+  font-family:"Nanum Pen Script",cursive;
+  font-size:16px;
+}
+.u-side{display:flex;flex-direction:column;align-items:stretch;gap:5px}
+.u-image{
+  height:82px;
+  border-radius:18px;
+  overflow:hidden;
+  background:linear-gradient(135deg,#eee8ff,#e3f4f2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.u-image img{width:100%;height:100%;object-fit:cover}
+.u-image-empty{
+  font-family:"Nanum Pen Script",cursive;
+  font-size:18px;
+  color:#9a8bb7;
+}
+.u-empty{
+  min-height:100px;
+  border-radius:22px;
+  background:rgba(255,255,255,.72);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#9a9dad;
+  font-size:11px;
+}
+@media(max-width:850px){
+  .u-hero{grid-template-columns:1fr;gap:28px;padding:48px 0 55px}
+  .u-title{font-size:70px}
+  .u-visual{min-height:300px}
+  .u-process{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .u-title{font-size:58px}
+  .u-subtitle{font-size:18px;margin-top:27px}
+  .u-copy{font-size:12px}
+  .u-visual{min-height:270px;padding:30px 25px}
+  .u-visual .script{font-size:34px}
+  .u-process{grid-template-columns:1fr}
+  .u-process-card{min-height:auto}
+  .u-card{grid-template-columns:64px minmax(0,1fr) 76px;gap:10px;padding:12px}
+  .u-date{height:68px}
+  .u-date strong{font-size:26px}
+  .u-card h3{font-size:15px}
+  .u-image{height:67px}
+}
+
 </style>
 </head>
 <body>
@@ -302,111 +544,141 @@ async function setlistExists(id){
   return !!data;
 }
 
+
+function uToday(){
+  const n=new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+function uWeekEn(date){
+  return ['SUN','MON','TUE','WED','THU','FRI','SAT'][date.getDay()];
+}
+
 function renderOpenMicIntro(){
-  document.title='대관공연 소개 · VOM';
-  page.classList.toggle('admin-mode',adminMode);
-
-  page.innerHTML=`
-    <a class="back" href="/OPENMIC/">← OPEN MIC</a>
-
-    <section class="hero">
-      <div class="kicker">VOM STAGE · OPEN MIC</div>
-      <h1>Open Mic</h1>
-      <p>한 회차의 컨셉부터 무대 구성까지 직접 만들어가는 VOM의 대관공연.</p>
-    </section>
-
-    <section class="intro-editorial">
-      <div class="kicker">ABOUT OPEN MIC</div>
-      <h2>우리가 직접 만드는 하나의 공연</h2>
-      <p>
-        OPEN MIC는 공연장을 대관해 회차별 주제와 프로그램을 정하고,
-        참가자들이 각자의 무대를 준비해 하나의 공연으로 완성하는 VOM의 정식 공연 컨텐츠입니다.
-        연습실과 버스킹에서 쌓은 경험을 더 큰 무대에서 보여주고,
-        관객과 함께 하나의 공연을 만들어가는 데 의미를 둡니다.
-      </p>
-
-      <div class="intro-process">
-        <article>
-          <div class="num">01 · CONCEPT</div>
-          <h3>회차별 컨셉 구성</h3>
-          <p>각 공연마다 하나의 주제와 흐름을 정해 그 회차만의 분위기를 만듭니다.</p>
-        </article>
-
-        <article>
-          <div class="num">02 · STAGE</div>
-          <h3>각자의 무대를 준비</h3>
-          <p>참가자별 곡과 무대를 준비하고 전체 프로그램 안에서 하나의 공연으로 연결합니다.</p>
-        </article>
-
-        <article>
-          <div class="num">03 · RECORD</div>
-          <h3>공연의 결과까지 기록</h3>
-          <p>회차별 우승 결과와 기록을 남겨 다음 공연에서도 이어서 볼 수 있습니다.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="intro-point">
-      <strong>한 사람의 무대가 모여, 하나의 공연이 되는 순간.</strong>
-      <span>
-        OPEN MIC는 단순히 곡을 순서대로 부르는 자리가 아니라,
-        참가자들이 각자의 무대를 준비하고 하나의 프로그램 안에서 서로의 무대를 연결해
-        완성도 있는 공연을 함께 만드는 자리입니다.
-      </span>
-    </section>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 32px;">
-      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/">
-        <div>
-          <strong>대관공연 일정 보기</strong>
-          <small>다가오는 공연과 지난 회차 확인</small>
-        </div>
-        <span>→</span>
-      </a>
-
-      <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/?ranking=winner">
-        <div>
-          <strong>우승 기록 보기</strong>
-          <small>누적 우승 기록 확인</small>
-        </div>
-        <span>→</span>
-      </a>
-    </div>
-  `;
+  renderMain();
 }
 
 function renderMain(){
-  document.title='VOM OPEN MIC';
+  document.title='VOM OPEN MIC · Voice of Melody';
   page.classList.toggle('admin-mode',adminMode);
-  const today=new Date();today.setHours(0,0,0,0);
-  const list=[...events].sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date)));
+
+  const today=uToday();
+  const list=[...events];
+  const upcoming=list
+    .filter(e=>String(e.event_date||'')>=today)
+    .sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
+  const past=list
+    .filter(e=>String(e.event_date||'')<today)
+    .sort((a,b)=>String(b.event_date).localeCompare(String(a.event_date)));
+
+  const card=(row,isPast)=>{
+    const l=loc(row);
+    const img=row.image_url||l?.image_url||'';
+    const d=parseDate(row.event_date);
+    const ws=getWinners(row.id);
+    return `
+      <article class="u-card" onclick="location.href='/OPENMIC/?id=${row.id}'">
+        <div class="u-date">
+          <div>
+            <strong>${String(d.getDate()).padStart(2,'0')}</strong>
+            <small>${uWeekEn(d)}</small>
+          </div>
+        </div>
+        <div>
+          <div class="u-type">OPEN MIC</div>
+          <h3>${esc(row.title||'')}</h3>
+          <div class="u-meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div>
+          ${ws.length?`<div style="margin-top:7px;font-size:10px;color:#8a75df">🏆 ${ws.map(x=>esc(x.member_name)).join(' · ')}</div>`:''}
+          <div class="u-more">${isPast?'결과 & 기록 보기 →':'자세히 보기 →'}</div>
+        </div>
+        <div class="u-side">
+          <div class="u-image">
+            ${img?`<img src="${attr(img)}" alt="">`:`<div class="u-image-empty">OPEN MIC</div>`}
+          </div>
+        </div>
+      </article>`;
+  };
+
   page.innerHTML=`
-    <section class="hero">
-      <div class="kicker">VOM STAGE · OPEN MIC</div>
-      <h1>Open Mic</h1>
-      <p>VOM이 직접 대관한 무대에서 관객과 함께 만드는 공연입니다.</p>
-    </section>
-    <section class="intro">
-      <div class="kicker">ABOUT OPEN MIC</div>
-      <h2>대관공연은요</h2>
-      <p>연습실이나 거리보다 한 단계 더 큰 무대에서 준비한 곡을 관객에게 선보이는 VOM의 공연 컨텐츠입니다. 회차별 컨셉과 프로그램을 만들고, 공연 결과와 우승 기록도 함께 남깁니다.</p>
-      <div class="intro-grid">
-        <div><strong>정식 공연 무대</strong><small>대관한 공연장에서 관객과 함께</small></div>
-        <div><strong>회차별 컨셉</strong><small>테마와 프로그램을 정해 하나의 공연으로</small></div>
-        <div><strong>우승 기록</strong><small>대관공연의 우승자를 기록하고 누적</small></div>
+    <section class="u-hero">
+      <div>
+        <div class="u-label">VOM Stage · Open Mic</div>
+        <h1 class="u-title">OPEN MIC</h1>
+        <div class="u-subtitle">
+          한 사람의 무대가 모여,<br>
+          하나의 공연이 되는 순간.
+        </div>
+        <div class="u-copy">
+          VOM OPEN MIC는 공연장을 직접 대관해 회차별 주제와 프로그램을 만들고,
+          참가자들이 각자의 무대를 준비해 하나의 공연으로 완성하는 VOM의 정식 공연 컨텐츠입니다.
+          <br><br>
+          연습실과 버스킹에서 쌓은 경험을 더 큰 무대에서 보여주고,
+          공연의 결과와 우승 기록까지 다음 회차로 이어갑니다.
+        </div>
+        <div class="u-tags">
+          <span>정식 공연장</span>
+          <span>회차별 컨셉</span>
+          <span>셋리스트</span>
+          <span>관객 참여</span>
+          <span>우승 기록</span>
+        </div>
+      </div>
+
+      <div class="u-visual">
+        <div class="script">Build it.<br>Own the stage.<br>Remember it.</div>
+        <p>각자의 무대를 연결해,<br>하나의 공연으로 완성합니다.</p>
       </div>
     </section>
-    <div class="section-head"><h2>대관공연 일정</h2><a href="/OPENMIC/?ranking=winner" style="font-size:11px;text-decoration:none;color:#715bc7">우승 기록 보기 →</a></div>
-    <div class="list">
-      ${list.length?list.map(row=>{
-        const d=parseDate(row.event_date),l=loc(row),img=row.image_url||l?.image_url||'',ws=getWinners(row.id);
-        return `<a class="card" href="/OPENMIC/?id=${row.id}">
-          <div class="datebox"><div><strong>${String(d.getDate()).padStart(2,'0')}</strong><small>${d.getMonth()+1}월 · ${week(row.event_date)}</small></div></div>
-          <div><div class="type">OPEN MIC</div><h3>${esc(row.title||'')}</h3><div class="meta">${esc(makeTime(row)||'시간 미정')} · ${esc(l?.name||row.location||'장소 미정')}</div><div class="hint">${ws.length?'🏆 '+ws.map(x=>esc(x.member_name)).join(' · ')+' 우승':'상세 보기 →'}</div></div>
-          <div class="thumb">${img?`<img src="${attr(img)}" alt="">`:'OPEN MIC'}</div>
-        </a>`;
-      }).join(''):'<div class="empty">등록된 대관공연이 없습니다.</div>'}
-    </div>`;
+
+    <section class="u-section">
+      <div class="u-kicker">How it works</div>
+      <h2 class="u-section-title">진행 방식</h2>
+      <div class="u-process">
+        <article class="u-process-card">
+          <div class="u-process-num">01</div>
+          <h3>회차별 컨셉</h3>
+          <p>매 공연마다 하나의 주제와 흐름을 정해 회차만의 색을 만듭니다.</p>
+        </article>
+        <article class="u-process-card">
+          <div class="u-process-num">02</div>
+          <h3>개인 무대 준비</h3>
+          <p>참가자별 곡과 무대를 준비해 전체 프로그램 안에 연결합니다.</p>
+        </article>
+        <article class="u-process-card">
+          <div class="u-process-num">03</div>
+          <h3>하나의 공연 완성</h3>
+          <p>각자의 무대를 셋리스트로 묶어 관객과 함께 공연을 완성합니다.</p>
+        </article>
+        <article class="u-process-card">
+          <div class="u-process-num">04</div>
+          <h3>결과 & 기록</h3>
+          <p>회차별 우승자와 공연 기록을 남겨 다음 공연까지 이어갑니다.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="u-lists">
+      <div class="u-list-section">
+        <div class="u-list-head">
+          <div class="u-list-kicker">Upcoming</div>
+          <h2>다가오는 OPEN MIC</h2>
+        </div>
+        <div class="u-list">
+          ${upcoming.length?upcoming.map(e=>card(e,false)).join(''):`<div class="u-empty">예정된 OPEN MIC가 없습니다.</div>`}
+        </div>
+      </div>
+
+      <div class="u-list-section">
+        <div class="u-list-head">
+          <div class="u-list-kicker">Archive</div>
+          <h2>지난 OPEN MIC</h2>
+          <p>지난 대관공연의 일정, 셋리스트와 우승 기록을 확인할 수 있습니다.</p>
+        </div>
+        <div class="u-list">
+          ${past.length?past.map(e=>card(e,true)).join(''):`<div class="u-empty">아직 지난 OPEN MIC가 없습니다.</div>`}
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 async function renderDetail(id){
