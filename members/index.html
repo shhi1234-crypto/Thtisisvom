@@ -235,6 +235,50 @@
   .region-stat-card{min-height:142px}
 }
 
+
+.member-modal-actions{
+  margin-top:15px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+}
+.member-modal-actions .save{
+  margin-top:0;
+  min-width:120px;
+}
+.delete-member-btn{
+  min-height:42px;
+  padding:0 15px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  border:1px solid #f1cfd6;
+  border-radius:12px;
+  background:#fff4f6;
+  color:#b24f65;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+}
+.delete-member-btn:hover{
+  background:#ffe9ee;
+}
+.delete-member-btn:disabled{
+  opacity:.55;
+  cursor:wait;
+}
+@media(max-width:440px){
+  .member-modal-actions{
+    flex-direction:column-reverse;
+    align-items:stretch;
+  }
+  .member-modal-actions .save,
+  .delete-member-btn{
+    width:100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -254,7 +298,12 @@
 <div class="field-wrap"><label>생년월일 (8자리)</label><input id="fBirth" class="field" inputmode="numeric" maxlength="8" placeholder="19990101"></div><div class="field-wrap"><label>지역</label><input id="fRegion" class="field"></div>
 <div class="field-wrap"><label>성별</label><select id="fGender" class="field"><option value="">-</option><option>남</option><option>여</option></select></div><div class="field-wrap"><label>직업</label><input id="fJob" class="field"></div>
 <div class="field-wrap"><label>좋아하는 가수</label><input id="fSinger" class="field"></div><div class="field-wrap"><label>전화번호</label><input id="fPhone" class="field"></div>
-<div class="field-wrap"><label>가입순서</label><input id="fOrder" class="field" type="number" min="1"></div><div class="field-wrap full"><label>메모</label><textarea id="fMemo" class="field"></textarea></div></div><button class="save" onclick="saveMember()">저장</button></div></div>
+<div class="field-wrap"><label>가입순서</label><input id="fOrder" class="field" type="number" min="1"></div><div class="field-wrap full"><label>메모</label><textarea id="fMemo" class="field"></textarea></div></div>
+<div class="member-modal-actions">
+  <button id="deleteMemberButton" class="delete-member-btn" onclick="deleteMember()" type="button">멤버 삭제</button>
+  <button class="save" onclick="saveMember()" type="button">저장</button>
+</div>
+</div></div>
 <div id="profileOverlay" class="overlay"><div class="modal" style="width:min(470px,100%)">
 <div class="modal-head"><h2 id="profileTitle">Profile</h2><button class="close" onclick="closeProfileEditor()">✕</button></div>
 <p class="profile-note">좋아하는 가수와 직업만 수정합니다. 다른 멤버 정보는 변경되지 않습니다.</p>
@@ -490,7 +539,46 @@ function showRegion(r,card){
 }
 
 function parseBirth(v){const d=String(v||'').replace(/\D/g,'');if(d.length===8)return{year:+d.slice(0,4),month:+d.slice(4,6),day:+d.slice(6,8)};const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?{year:+m[1],month:+m[2],day:+m[3]}:null}function fmt(v){return v?String(v).slice(0,10).replaceAll('-','.'):'-'}
-function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}function closeEditor(){memberOverlay.classList.remove('open')}
+function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';const deleteBtn=document.getElementById('deleteMemberButton');if(deleteBtn)deleteBtn.style.display=m?.id?'inline-flex':'none';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}
+function closeEditor(){memberOverlay.classList.remove('open')}
+
+async function deleteMember(){
+  if(!adminMode)return;
+
+  const id=memberId.value;
+  if(!id)return;
+
+  const m=members.find(x=>String(x.id)===String(id));
+  if(!m)return;
+
+  const ok=confirm(`${m.name} 멤버를 삭제할까요?\n\n삭제하면 멤버 명단에서 완전히 제거됩니다.`);
+  if(!ok)return;
+
+  const btn=document.getElementById('deleteMemberButton');
+  if(btn){
+    btn.disabled=true;
+    btn.textContent='삭제 중...';
+  }
+
+  const {error}=await db.from('members').delete().eq('id',id);
+
+  if(btn){
+    btn.disabled=false;
+    btn.textContent='멤버 삭제';
+  }
+
+  if(error){
+    alert('삭제 실패\n'+error.message);
+    return;
+  }
+
+  closeEditor();
+  await load();
+  render();
+  fillMemberNameOptions();
+}
+
+
 function existingKey(record,keys){return keys.find(k=>record&&Object.prototype.hasOwnProperty.call(record,k))||null}
 function putExisting(payload,record,keys,value){const k=existingKey(record,keys);if(k)payload[k]=value}
 async function saveMember(){
