@@ -183,78 +183,30 @@ button{
 }
 
 .hero-title{
-  position:relative;
-  display:inline-block;
-  margin:18px 0 10px;
+  margin:18px 0 0;
   font-family:"Nanum Pen Script",cursive;
-  font-size:154px;
-  line-height:.72;
-  font-weight:700;
-  letter-spacing:.025em;
-  text-transform:uppercase;
-  color:#11172a;
-  transform:rotate(-1deg) scaleX(1.05);
-  transform-origin:left center;
-  text-shadow:
-    .8px 0 0 #11172a,
-    -.8px 0 0 #11172a,
-    0 .8px 0 #11172a,
-    0 -.8px 0 #11172a;
+  font-size:clamp(120px,17vw,190px);
+  font-weight:400;
+  line-height:.68;
+  letter-spacing:-7px;
 }
-.hero-title::before{
-  content:"✦";
-  position:absolute;
-  left:-30px;
-  top:8px;
-  font-family:"Noto Sans KR",sans-serif;
-  font-size:23px;
-  color:#9a88ec;
-  transform:rotate(-18deg);
-}
-.hero-title::after{
-  content:"♡";
-  position:absolute;
-  right:-34px;
-  top:-16px;
-  font-family:"Noto Sans KR",sans-serif;
-  font-size:32px;
-  font-weight:700;
-  color:#9b8aee;
-  transform:rotate(12deg);
-}
-
 
 .hero-brand{
-  margin-top:22px;
+  margin:18px 0 0 7px;
   font-size:13px;
-  font-weight:800;
-  letter-spacing:.46em;
-  color:#171c31;
+  font-weight:700;
+  letter-spacing:9px;
 }
-
 
 .hero-script{
-  position:relative;
-  display:inline-block;
-  margin-top:28px;
+  margin:31px 0 0 7px;
   font-family:"Nanum Pen Script",cursive;
-  font-size:31px;
-  line-height:1.1;
-  color:#8874ec;
-  letter-spacing:.015em;
+  font-size:30px;
+  background:linear-gradient(90deg,#906ce3,#679fea,#79b9b2);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
 }
-.hero-script::after{
-  content:"";
-  position:absolute;
-  right:6px;
-  bottom:-7px;
-  width:38%;
-  height:3px;
-  border-radius:999px;
-  background:linear-gradient(90deg,#9b8aee,rgba(155,138,238,.15));
-  transform:rotate(-2deg);
-}
-
 
 .hero-copy{
   margin:24px 0 0 7px;
@@ -1434,51 +1386,6 @@ function formatHomeNewsDate(value){
   white-space:nowrap;
 }
 
-
-@media(max-width:720px){
-  .hero-title{
-    font-size:82px;
-    letter-spacing:.025em;
-    margin-top:12px;
-  }
-  .hero-title::before{
-    left:-16px;
-    top:7px;
-    font-size:14px;
-  }
-  .hero-title::after{
-    right:-18px;
-    top:-7px;
-    font-size:20px;
-  }
-  .hero-brand{
-    margin-top:18px;
-    font-size:10px;
-    letter-spacing:.36em;
-  }
-  .hero-script{
-    margin-top:22px;
-    font-size:26px;
-  }
-}
-
-
-/* V6.1 · HERO SIZE UP */
-@media(min-width:721px){
-  .hero-title{
-    font-size:154px !important;
-    font-weight:700 !important;
-  }
-}
-@media(max-width:720px){
-  .hero-title{
-    font-size:104px !important;
-    line-height:.75 !important;
-    font-weight:700 !important;
-    transform:rotate(-1deg) scaleX(1.03) !important;
-  }
-}
-
 </style>
 </head>
 
@@ -1571,8 +1478,8 @@ function formatHomeNewsDate(value){
         class="rank-shell openmic-shell rank-link-shell"
         role="link"
         tabindex="0"
-        onclick="if(event.target.closest('.rank-row')) return; window.location.href='/openmic/?ranking=winner';"
-        onkeydown="if(event.key==='Enter'){window.location.href='/openmic/?ranking=winner';}"
+        onclick="if(event.target.closest('.rank-row')) return; window.location.href='/OPENMIC/?ranking=winner';"
+        onkeydown="if(event.key==='Enter'){window.location.href='/OPENMIC/?ranking=winner';}"
       >
 
         <div class="rank-head">
@@ -2106,7 +2013,7 @@ async function loadOpenMicRanking(){
   box.innerHTML =
     list.map((row,index) => `
       <a
-        href="/openmic/?ranking=winner"
+        href="/OPENMIC/?ranking=winner"
         class="rank-row rank-${index+1}"
       >
         <div class="rank-number">${index+1}</div>
@@ -2489,7 +2396,7 @@ function getScheduleHref(row){
     (row.event_type === 'OTHER' &&
       (title.includes('OPEN MIC') || title.includes('대관공연')))
   ){
-    return `/openmic/?id=${encodeURIComponent(row.id)}`;
+    return `/OPENMIC/?id=${encodeURIComponent(row.id)}`;
   }
 
   return `/schedule/?id=${encodeURIComponent(row.id)}`;
