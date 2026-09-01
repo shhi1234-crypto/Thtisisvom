@@ -58,6 +58,7 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 
 .schedule-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 12px}.schedule-step{padding:10px 12px;border-radius:13px;background:#f7f6fb;border:1px solid rgba(28,34,65,.05)}.schedule-step small{display:block;color:#9296a5;font-size:8px;font-weight:800}.schedule-step strong{display:block;margin-top:3px;font-size:11px}.schedule-step.live{background:linear-gradient(145deg,#f0ecff,#eef7ff)}.schedule-step.live strong{color:#6654c7}.personal-order-title{margin-top:8px;color:#777c8d;font-size:9px;font-weight:800}.extra-block{margin-top:12px;padding:11px;border:1px dashed rgba(102,85,200,.22);border-radius:14px;background:#fbfaff}.extra-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.extra-head strong{font-size:11px;color:#6654c7}.extra-head small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.extra-list{display:grid;gap:5px;margin-top:8px}.extra-row{display:grid;grid-template-columns:28px 110px minmax(0,1fr) auto;gap:7px;align-items:center;padding:6px 8px;border-radius:11px;background:#fff}.extra-row .extra-tag{font-size:8px;font-weight:900;color:#6654c7}.time-block-head strong{font-size:10px}.time-note{font-size:8px;color:#9a9dab;font-weight:700}.time-block-head{flex-wrap:wrap}.block-time-controls{margin-left:auto;display:flex;align-items:center;gap:4px}.block-time-controls button{width:26px;height:26px;border:0;border-radius:8px;background:#fff;color:#6654c7;font-size:13px;font-weight:900;cursor:pointer}.block-time-controls b{min-width:42px;text-align:center;color:#6654c7;font-size:9px}.timeline-buffer{margin:10px 0 0;padding:8px 10px;border-radius:10px;background:#f7f6fb;color:#85899a;font-size:9px;font-weight:700}.timeline-buffer.warn{background:#fff2f3;color:#a95568}.timeline-buffer.good{background:#eef8f3;color:#4f806e}
 
+.setup-time-controls{display:flex;align-items:center;gap:4px;margin-top:7px}.setup-time-controls button,.break-controls button{width:25px;height:25px;border:0;border-radius:8px;background:#fff;color:#6654c7;font-size:13px;font-weight:900;cursor:pointer}.setup-time-controls b,.break-controls b{min-width:38px;text-align:center;color:#6654c7;font-size:9px}.break-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:7px 0 2px;padding:9px 11px;border-radius:11px;background:linear-gradient(90deg,#fff7e8,#fffdf8);border:1px solid rgba(191,139,58,.13);color:#9b6f2b;font-size:9px;font-weight:800}.break-row strong{font-size:10px}.break-controls{display:flex;align-items:center;gap:4px}.break-remove{width:auto!important;padding:0 8px!important;color:#b35b68!important;background:#fff0f2!important}.add-break-row{display:flex;justify-content:flex-end;margin:5px 0 1px}.add-break-btn{min-height:28px;padding:0 10px;border:1px dashed rgba(102,85,200,.25);border-radius:9px;background:#fbfaff;color:#6654c7;font-size:9px;font-weight:800;cursor:pointer}.block-time-controls .song-pull-note{min-width:0;color:#969aaa;font-size:8px;font-weight:700;margin-right:3px}
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal,.menu-card{width:min(650px,100%);max-height:calc(100vh - 30px);overflow:auto;padding:22px;border-radius:24px;background:#fff;box-shadow:0 28px 80px rgba(20,25,55,.22)}.menu-card{width:min(390px,100%)}.modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-top h3{margin:0;font-family:"Nanum Pen Script";font-size:34px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:51px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:13px}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #dddde7;border-radius:12px;background:#fff;outline:none}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field-wrap label{display:block;margin-bottom:5px;color:#777c8d;font-size:9px;font-weight:800}.full{grid-column:1/-1}.modal-note{margin:-4px 0 13px;color:#85899a;font-size:10px;line-height:1.65}.song-library{display:grid;gap:7px}.song-choice{padding:11px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}.song-choice strong{font-size:12px}.song-choice small{display:block;margin-top:3px;color:#7e8292;font-size:10px}
 
 /* SETLIST PAGE UI */
@@ -361,68 +362,111 @@ function clockToMinutes(v){if(!v)return null;const [h,m]=String(v).slice(0,5).sp
 function minutesToClock(v){if(v===null||Number.isNaN(v))return '미정';v=((v%1440)+1440)%1440;return `${String(Math.floor(v/60)).padStart(2,'0')}:${String(v%60).padStart(2,'0')}`}
 function plannedBaseSongCount(){return Number(settings.max_participants||5)*Number(settings.max_songs_per_member||5)}
 function plannedRunMinutes(){return plannedBaseSongCount()*5}
+function getSetupMinutes(){
+  const raw=Number(settings.song_slot_plan?.__setup_minutes);
+  return Number.isFinite(raw)?Math.max(0,Math.min(120,Math.round(raw/5)*5)):15;
+}
+function getCleanupMinutes(){return 15}
+function ensurePlanMeta(){if(!settings.song_slot_plan||typeof settings.song_slot_plan!=='object'||Array.isArray(settings.song_slot_plan))settings.song_slot_plan={}}
+async function savePlanMeta(){
+  ensurePlanMeta();
+  const {error}=await db.from('busking_setlist_settings').update({song_slot_plan:settings.song_slot_plan,updated_at:new Date().toISOString()}).eq('event_id',Number(currentEventId));
+  if(error)throw error;
+}
+async function changeSetupMinutes(delta){
+  if(!adminMode)return;
+  ensurePlanMeta();
+  settings.song_slot_plan.__setup_minutes=Math.max(0,Math.min(120,getSetupMinutes()+Number(delta||0)));
+  try{await savePlanMeta();renderDetail(currentEventId)}catch(error){alert('준비시간 저장 실패\n'+error.message)}
+}
 function operationTimes(event){
   const eventStart=clockToMinutes(event?.start_time);
   let eventEnd=clockToMinutes(event?.end_time);
   if(eventStart===null)return {setupStart:null,liveStart:null,liveEnd:null,cleanupEnd:null};
   if(eventEnd!==null&&eventEnd<eventStart)eventEnd+=1440;
-  const liveStart=eventStart+15;
-  const cleanupEnd=eventEnd!==null?eventEnd:liveStart+plannedRunMinutes()+15;
-  const liveEnd=Math.max(liveStart,cleanupEnd-15);
+  const liveStart=eventStart+getSetupMinutes();
+  const cleanupEnd=eventEnd!==null?eventEnd:liveStart+plannedRunMinutes()+getCleanupMinutes();
+  const liveEnd=Math.max(liveStart,cleanupEnd-getCleanupMinutes());
   return {setupStart:eventStart,liveStart,liveEnd,cleanupEnd};
 }
 function partSongOffset(part){return settings.section_count===2&&Number(part)===2?settings.part1_capacity*settings.max_songs_per_member:0}
-function blockKey(part,blockNo){return `${Number(part)}-${Number(blockNo)}`}
-function defaultBlockMinutes(blockLength=6){return Math.max(5,Math.ceil(Number(blockLength||1))*5)}
-function blockMinutes(part,blockNo,blockLength=6){
-  // V9.4부터 사용자가 직접 조정한 시간만 저장값으로 인정.
-  // 이전 버전에서 잘못 저장된 25분 등의 값은 무시하고 6곡=30분을 기본값으로 사용한다.
-  const touched=settings.song_slot_plan?.__block_minutes_v2===true;
-  const raw=Number(settings.song_slot_plan?.__block_minutes?.[blockKey(part,blockNo)]);
-  if(touched&&Number.isFinite(raw)&&raw>=5)return Math.max(5,Math.min(120,Math.round(raw/5)*5));
-  return defaultBlockMinutes(blockLength);
-}
 function partPlannedSongCount(part){
   if(settings.section_count===1)return Number(settings.max_participants||0)*Number(settings.max_songs_per_member||0);
   const people=Number(part)===1?Number(settings.part1_capacity||0):Number(settings.part2_capacity||0);
   return people*Number(settings.max_songs_per_member||0);
 }
-function partConfiguredMinutes(part){
-  const songs=partPlannedSongCount(part);let total=0,blockNo=1;
-  for(let i=0;i<songs;i+=6){total+=blockMinutes(part,blockNo,Math.min(6,songs-i));blockNo++}
+function defaultBlockSongCounts(total){
+  const out=[];let left=Math.max(0,Number(total||0));
+  while(left>0){const n=Math.min(6,left);out.push(n);left-=n}
+  return out;
+}
+function getBlockSongCounts(part,totalOverride=null){
+  const total=totalOverride===null?partPlannedSongCount(part):Number(totalOverride||0);
+  const raw=settings.song_slot_plan?.__block_song_counts?.[String(Number(part))];
+  if(Array.isArray(raw)){
+    const arr=raw.map(Number).filter(n=>Number.isInteger(n)&&n>0);
+    if(arr.length&&arr.reduce((a,b)=>a+b,0)===total)return arr;
+  }
+  return defaultBlockSongCounts(total);
+}
+function setBlockSongCounts(part,counts){
+  ensurePlanMeta();
+  if(!settings.song_slot_plan.__block_song_counts||typeof settings.song_slot_plan.__block_song_counts!=='object')settings.song_slot_plan.__block_song_counts={};
+  settings.song_slot_plan.__block_song_counts[String(Number(part))]=counts.map(Number).filter(n=>n>0);
+}
+function breakKey(part,afterBlock){return `${Number(part)}-${Number(afterBlock)}`}
+function getBreakMinutes(part,afterBlock){
+  const raw=Number(settings.song_slot_plan?.__breaks?.[breakKey(part,afterBlock)]);
+  return Number.isFinite(raw)&&raw>0?Math.max(5,Math.min(120,Math.round(raw/5)*5)):0;
+}
+function allBreakMinutesForPart(part,blockLimit=Infinity){
+  const counts=getBlockSongCounts(part);let total=0;
+  for(let i=1;i<=Math.min(counts.length,blockLimit);i++)total+=getBreakMinutes(part,i);
   return total;
 }
+async function setBreakMinutes(part,afterBlock,minutes){
+  if(!adminMode)return;
+  ensurePlanMeta();
+  if(!settings.song_slot_plan.__breaks||typeof settings.song_slot_plan.__breaks!=='object')settings.song_slot_plan.__breaks={};
+  const key=breakKey(part,afterBlock),next=Math.max(0,Math.min(120,Math.round(Number(minutes||0)/5)*5));
+  if(next<5)delete settings.song_slot_plan.__breaks[key]; else settings.song_slot_plan.__breaks[key]=next;
+  try{await savePlanMeta();renderPerformanceOrder()}catch(error){alert('쉬는시간 저장 실패\n'+error.message)}
+}
+async function changeBreakMinutes(part,afterBlock,delta){const current=getBreakMinutes(part,afterBlock);await setBreakMinutes(part,afterBlock,current+Number(delta||0))}
+async function addBreak(part,afterBlock){if(getBreakMinutes(part,afterBlock)>0)return;await setBreakMinutes(part,afterBlock,5)}
+async function removeBreak(part,afterBlock){await setBreakMinutes(part,afterBlock,0)}
+function partConfiguredMinutes(part){return partPlannedSongCount(part)*5+allBreakMinutesForPart(part)}
 function previousConfiguredMinutes(part,blockNo){
   let total=0;
   const parts=settings.section_count===2?[1,2]:[1];
-  for(const p of parts){
-    if(p===Number(part))break;
-    total+=partConfiguredMinutes(p);
-  }
-  const songs=partPlannedSongCount(part);
-  for(let i=0,b=1;i<songs&&b<Number(blockNo);i+=6,b++)total+=blockMinutes(part,b,Math.min(6,songs-i));
+  for(const p of parts){if(p===Number(part))break;total+=partConfiguredMinutes(p)}
+  const counts=getBlockSongCounts(part);
+  for(let i=0;i<Math.min(counts.length,Math.max(0,Number(blockNo)-1));i++)total+=counts[i]*5+getBreakMinutes(part,i+1);
   return total;
 }
 function blockTimeLabel(event,part,blockNo,blockLength=6){
   const t=operationTimes(event);if(t.liveStart===null)return '시간 미정';
   const a=t.liveStart+previousConfiguredMinutes(part,blockNo);
-  const b=a+blockMinutes(part,blockNo,blockLength);
+  const b=a+Number(blockLength||0)*5;
   return `${minutesToClock(a)}–${minutesToClock(b)}`;
 }
 function configuredPerformanceMinutes(){return (settings.section_count===2?[1,2]:[1]).reduce((sum,p)=>sum+partConfiguredMinutes(p),0)}
 function performanceWindowMinutes(event){return configuredPerformanceMinutes()}
-async function changeBlockMinutes(part,blockNo,blockLength,delta){
+async function changeBlockSongCount(part,blockIndex,delta){
   if(!adminMode)return;
-  const key=blockKey(part,blockNo);
-  const current=blockMinutes(part,blockNo,blockLength);
-  const next=Math.max(5,Math.min(120,current+Number(delta||0)));
-  if(!settings.song_slot_plan||typeof settings.song_slot_plan!=='object')settings.song_slot_plan={};
-  if(!settings.song_slot_plan.__block_minutes||typeof settings.song_slot_plan.__block_minutes!=='object')settings.song_slot_plan.__block_minutes={};
-  settings.song_slot_plan.__block_minutes[key]=next;
-  settings.song_slot_plan.__block_minutes_v2=true;
-  const {error}=await db.from('busking_setlist_settings').update({song_slot_plan:settings.song_slot_plan,updated_at:new Date().toISOString()}).eq('event_id',Number(currentEventId));
-  if(error){alert('시간 설정 저장 실패\n'+error.message);return}
-  renderPerformanceOrder();
+  const counts=getBlockSongCounts(part),i=Number(blockIndex);
+  if(i<0||i>=counts.length)return;
+  if(Number(delta)>0){
+    if(i>=counts.length-1)return;
+    counts[i]+=1;counts[i+1]-=1;
+    if(counts[i+1]<=0)counts.splice(i+1,1);
+  }else if(Number(delta)<0){
+    if(counts[i]<=1)return;
+    counts[i]-=1;
+    if(i===counts.length-1)counts.push(1);else counts[i+1]+=1;
+  }else return;
+  setBlockSongCounts(part,counts);
+  try{await savePlanMeta();renderPerformanceOrder()}catch(error){alert('구간 편성 저장 실패\n'+error.message)}
 }
 function timelineStatus(event){
   const t=operationTimes(event);if(t.liveStart===null||t.liveEnd===null)return '';
@@ -461,7 +505,13 @@ function renderDetail(id){
   if(!row){page.innerHTML='<div class="empty">일정을 찾을 수 없습니다.</div>';return}
   const l=loc(row),img=row.image_url||l?.image_url||'';
   const eventType=String(row.event_type||'OTHER');
-  const backHref=eventType==='BUSKING'?`/busking/?id=${row.id}`:eventType==='VOM LIVE'?`/live/?id=${row.id}`:`/schedule/?id=${row.id}`;
+  const backHref=eventType==='BUSKING'
+    ? `/busking/?id=${row.id}`
+    : eventType==='VOM LIVE'
+      ? `/live/?id=${row.id}`
+      : eventType==='OPEN MIC'
+        ? `/openmic/?id=${row.id}`
+        : `/schedule/?id=${row.id}`;
   const backLabel=eventType==='OTHER'?'일정':eventType;
   document.title=`${row.title||'SETLIST'} · SETLIST · VOM`;
 
@@ -505,7 +555,7 @@ function renderDetail(id){
         <div><h2>Final Setlist</h2><p>현장에서 바로 볼 수 있는 최종 공연 순서입니다.</p></div>
         ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
-      <div class="order-help">시작 후 15분은 준비 및 여유시간, 종료 전 15분은 정리시간으로 확보합니다. 기본은 6곡당 30분이며, 관리자는 각 구간을 5분 단위로 늘리거나 줄일 수 있습니다. 한 구간을 조정하면 뒤 구간 시간도 자동으로 함께 이동합니다.</div>
+      <div class="order-help">준비시간은 5분 단위로 설정할 수 있고, 종료 전 15분은 정리시간으로 확보합니다. 공연 구간은 1곡당 5분 기준입니다. 구간의 ＋/−를 누르면 5분만 바뀌는 것이 아니라 다음 구간의 곡을 1곡씩 당겨오거나 넘기며 실제 곡 수와 시간이 함께 바뀝니다. 구간 사이에는 쉬는시간도 5분 단위로 추가할 수 있습니다.</div>
       ${renderOperationSchedule(row)}
       <div id="performanceOrder"></div>
     </section>`;
@@ -531,10 +581,11 @@ function renderOperationSchedule(row){
   const t=operationTimes(row);
   if(t.setupStart===null)return '';
   const label=String(row?.event_type||'PERFORMANCE');
+  const setup=getSetupMinutes();
   return `<div class="schedule-strip">
-    <div class="schedule-step"><small>SETUP · 준비 및 여유시간 15분</small><strong>${minutesToClock(t.setupStart)}–${minutesToClock(t.liveStart)}</strong></div>
+    <div class="schedule-step"><small>SETUP · 준비 및 여유시간 ${setup}분</small><strong>${minutesToClock(t.setupStart)}–${minutesToClock(t.liveStart)}</strong>${adminMode?`<div class="setup-time-controls"><button onclick="changeSetupMinutes(-5)" title="준비시간 5분 줄이기">−</button><b>${setup}분</b><button onclick="changeSetupMinutes(5)" title="준비시간 5분 늘리기">＋</button></div>`:''}</div>
     <div class="schedule-step live"><small>${esc(label)} · 공연 가능 시간</small><strong>${minutesToClock(t.liveStart)}–${minutesToClock(t.liveEnd)}</strong></div>
-    <div class="schedule-step"><small>CLEANUP · 15MIN</small><strong>${minutesToClock(t.liveEnd)}–${minutesToClock(t.cleanupEnd)}</strong></div>
+    <div class="schedule-step"><small>CLEANUP · ${getCleanupMinutes()}MIN</small><strong>${minutesToClock(t.liveEnd)}–${minutesToClock(t.cleanupEnd)}</strong></div>
   </div>`;
 }
 
@@ -638,13 +689,15 @@ function buildRandomPlanForPositions(positions,maxSongs){
 
 function buildCompleteSongPlan(){
   const full={};
-  const timeMeta=settings.song_slot_plan?.__block_minutes;
+  const oldMeta=settings.song_slot_plan&&typeof settings.song_slot_plan==='object'
+    ? Object.fromEntries(Object.entries(settings.song_slot_plan).filter(([key])=>String(key).startsWith('__')))
+    : {};
   const parts=settings.section_count===2?[1,2]:[1];
   parts.forEach(part=>{
     const partial=buildRandomPlanForPositions(partPositions(part),settings.max_songs_per_member);
     Object.entries(partial).forEach(([pos,arr])=>full[pos]=arr);
   });
-  if(timeMeta&&typeof timeMeta==='object')full.__block_minutes={...timeMeta};
+  Object.assign(full,oldMeta);
   return full;
 }
 
@@ -675,7 +728,7 @@ function renderSongDraw(){
     <div class="song-draw-top">
       <div>
         <div class="song-draw-title">곡 순서 사전 추첨</div>
-        <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하고, 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 관리하며, 최종 셋리스트에서 구간별 시간을 5분 단위로 조정할 수 있습니다. · ${totalPerPart}</div>
+        <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하고, 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 시작하며, 최종 셋리스트에서 5분을 조정할 때마다 곡도 1곡씩 다음 구간과 함께 이동합니다. · ${totalPerPart}</div>
       </div>
       ${adminMode?`<div class="song-draw-actions">
         <button class="secondary" onclick="openDirectSong()">＋ 직접 추가</button>
@@ -905,21 +958,32 @@ function renderPerformanceOrder(){
         planned.push({sequence:(settings.song_slot_plan?.__manual_order_v2===true&&saved)?Number(saved.sequence_no):planSeq,planSeq,pos,songIndex,slot,ss,saved});
       }
     });
-    // 기본은 추첨된 전체 자리(planSeq)를 그대로 사용한다.
-    // 관리자가 V9.4 이후 직접 최종 순서를 바꾼 경우에만 저장된 sequence_no를 적용한다.
     if(settings.song_slot_plan?.__manual_order_v2===true){
       planned.sort((a,b)=>Number(a.sequence)-Number(b.sequence)||Number(a.planSeq)-Number(b.planSeq));
     }else{
       planned.sort((a,b)=>Number(a.planSeq)-Number(b.planSeq));
       planned.forEach(item=>item.sequence=item.planSeq);
     }
+
     html+=`<div><div class="performance-part-title">${partLabel(part)}</div>`;
-    for(let i=0;i<planned.length;i+=6){
-      const block=planned.slice(i,i+6),blockNo=Math.floor(i/6)+1;
-      const mins=blockMinutes(part,blockNo,block.length);
+    const counts=getBlockSongCounts(part,planned.length);
+    let cursor=0;
+    counts.forEach((count,index)=>{
+      const block=planned.slice(cursor,cursor+count),blockNo=index+1;
+      cursor+=count;
+      const mins=block.length*5;
       const time=blockTimeLabel(row,part,blockNo,block.length);
-      html+=`<div class="time-block"><div class="time-block-head compact"><div class="time-block-label"><strong>${time}</strong><span>· ${blockNo}구간 · ${block.length}곡 · ${mins}분</span></div>${adminMode?`<div class="block-time-controls"><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},-5)" title="5분 줄이기">−</button><b>${mins}분</b><button onclick="changeBlockMinutes(${part},${blockNo},${block.length},5)" title="5분 늘리기">＋</button></div>`:''}</div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
-    }
+      const canPullNext=index<counts.length-1;
+      const canPush=block.length>1;
+      html+=`<div class="time-block"><div class="time-block-head compact"><div class="time-block-label"><strong>${time}</strong><span>· ${blockNo}구간 · ${block.length}곡 · ${mins}분</span></div>${adminMode?`<div class="block-time-controls"><span class="song-pull-note">5분 = 1곡</span><button onclick="changeBlockSongCount(${part},${index},-1)" title="이 구간에서 1곡을 다음 구간으로 넘기기" ${canPush?'':'disabled'}>−</button><b>${mins}분</b><button onclick="changeBlockSongCount(${part},${index},1)" title="다음 구간에서 1곡 당겨오기" ${canPullNext?'':'disabled'}>＋</button></div>`:''}</div><div class="order-list" data-part="${part}" data-block="${blockNo}">${block.map(createPlannedOrderItem).join('')}</div></div>`;
+      const breakMins=getBreakMinutes(part,blockNo);
+      if(breakMins>0){
+        const breakStart=operationTimes(row).liveStart+previousConfiguredMinutes(part,blockNo)+mins;
+        html+=`<div class="break-row"><div><strong>쉬는시간</strong> · ${minutesToClock(breakStart)}–${minutesToClock(breakStart+breakMins)}</div>${adminMode?`<div class="break-controls"><button onclick="changeBreakMinutes(${part},${blockNo},-5)">−</button><b>${breakMins}분</b><button onclick="changeBreakMinutes(${part},${blockNo},5)">＋</button><button class="break-remove" onclick="removeBreak(${part},${blockNo})">삭제</button></div>`:`<span>${breakMins}분</span>`}</div>`;
+      }else if(adminMode){
+        html+=`<div class="add-break-row"><button class="add-break-btn" onclick="addBreak(${part},${blockNo})">＋ 이 구간 뒤 쉬는시간</button></div>`;
+      }
+    });
     const direct=directSongsForPart(part);
     if(direct.length){
       html+=`<div class="time-block"><div class="time-block-head"><strong>직접 추가곡</strong> <span>${direct.length}곡 · 현재 일정 전용</span></div><div class="order-list">${direct.map((song,idx)=>createDirectOrderItem(song,idx+1)).join('')}</div></div>`;
