@@ -174,7 +174,43 @@ function ageView(){const y=new Date().getFullYear(),g={};members.forEach(m=>{con
 function regionView(){const g={};members.forEach(m=>(g[reg(m)]??=[]).push(m));document.getElementById('regionGrid').innerHTML=Object.keys(g).sort((a,b)=>g[b].length-g[a].length||a.localeCompare(b,'ko')).map(r=>`<div class="group-card region-card" onclick="showRegion('${r.replace(/'/g,"\\'")}')"><h3>${esc(r)}</h3><div class="region-count">${g[r].length}명</div></div>`).join('');document.getElementById('regionPeople').innerHTML=''}function showRegion(r){const list=members.filter(m=>reg(m)===r);document.getElementById('regionPeople').innerHTML=`<div class="group-card"><h3>${esc(r)} 멤버</h3><div class="chips">${list.map(m=>`<span class="chip">${esc(m.name)}</span>`).join('')}</div></div>`}
 function parseBirth(v){const d=String(v||'').replace(/\D/g,'');if(d.length===8)return{year:+d.slice(0,4),month:+d.slice(4,6),day:+d.slice(6,8)};const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?{year:+m[1],month:+m[2],day:+m[3]}:null}function fmt(v){return v?String(v).slice(0,10).replaceAll('-','.'):'-'}
 function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}function closeEditor(){memberOverlay.classList.remove('open')}
-async function saveMember(){if(!adminMode)return;const id=memberId.value,b=fBirth.value.replace(/\D/g,'');if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}const p={name:fName.value.trim(),role:fRole.value,status:fStatus.value,join_date:fJoinDate.value||null,birth_date:b?`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}`:null,region:fRegion.value.trim(),gender:fGender.value,job:fJob.value.trim(),favorite_artist:fSinger.value.trim(),phone:fPhone.value.trim(),join_order:Number(fOrder.value)||null,memo:fMemo.value.trim()};if(!p.name){alert('이름을 입력해주세요.');return}const q=id?db.from('members').update(p).eq('id',id):db.from('members').insert(p);const {error}=await q;if(error){alert('저장 실패\n'+error.message);return}closeEditor();await load();render()}
+function existingKey(record,keys){return keys.find(k=>record&&Object.prototype.hasOwnProperty.call(record,k))||null}
+function putExisting(payload,record,keys,value){const k=existingKey(record,keys);if(k)payload[k]=value}
+async function saveMember(){
+  if(!adminMode)return;
+  const id=memberId.value,b=fBirth.value.replace(/\D/g,'');
+  if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}
+  const name=fName.value.trim();
+  if(!name){alert('이름을 입력해주세요.');return}
+
+  const current=id?members.find(m=>String(m.id)===String(id)):null;
+  const schemaSource=current||members[0]||null;
+  const p={};
+
+  if(schemaSource){
+    putExisting(p,schemaSource,['name'],name);
+    putExisting(p,schemaSource,['role','member_role','type'],fRole.value);
+    putExisting(p,schemaSource,['status','activity_status','active_status'],fStatus.value);
+    putExisting(p,schemaSource,['join_date','joined_at'],fJoinDate.value||null);
+    putExisting(p,schemaSource,['birth_date','birthday','birth'],b?`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}`:null);
+    putExisting(p,schemaSource,['region','area','location'],fRegion.value.trim());
+    putExisting(p,schemaSource,['gender','sex'],fGender.value);
+    putExisting(p,schemaSource,['job','occupation'],fJob.value.trim());
+    putExisting(p,schemaSource,['favorite_singer','favorite_artist','singer'],fSinger.value.trim());
+    putExisting(p,schemaSource,['phone','phone_number'],fPhone.value.trim());
+    putExisting(p,schemaSource,['join_order','join_sequence','member_order','order_no','sequence','join_number'],Number(fOrder.value)||null);
+    putExisting(p,schemaSource,['memo','note','notes'],fMemo.value.trim());
+  }else{
+    p.name=name;
+    p.role=fRole.value;
+  }
+
+  if(!Object.keys(p).length){alert('저장 가능한 멤버 컬럼을 찾지 못했습니다.');return}
+  const q=id?db.from('members').update(p).eq('id',id):db.from('members').insert(p);
+  const {error}=await q;
+  if(error){alert('저장 실패\n'+error.message);return}
+  closeEditor();await load();render();
+}
 
 function openMemberSongs(id){
   const m=members.find(x=>String(x.id)===String(id));if(!m)return;
