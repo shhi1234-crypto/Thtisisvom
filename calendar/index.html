@@ -1101,19 +1101,49 @@ button{
 
 .preset-row{
   display:grid;
-
-  grid-template-columns:
-    minmax(0,1fr)
-    42px
-    108px;
-
+  grid-template-columns:minmax(0,1fr) 108px;
   gap:8px;
 }
 
-.delete-preset{
-  min-height:44px;
-  border:0;
+.preset-manager{
+  display:grid;
+  gap:7px;
+  margin-top:10px;
+}
+.preset-manage-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 38px;
+  align-items:center;
+  gap:7px;
+  min-height:45px;
+  padding:5px 6px 5px 13px;
+  border:1px solid #e5e2ec;
   border-radius:14px;
+  background:#fff;
+}
+.preset-manage-row.active{
+  border-color:#9b88ef;
+  box-shadow:0 0 0 3px rgba(128,105,233,.07);
+}
+.preset-pick{
+  min-width:0;
+  border:0;
+  background:none;
+  padding:0;
+  text-align:left;
+  cursor:pointer;
+  color:#34384a;
+  font-size:12px;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.delete-preset{
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:10px;
   background:#fff0f2;
   color:#d65a70;
   cursor:pointer;
@@ -1122,14 +1152,18 @@ button{
   font-weight:500;
   transition:.15s;
 }
+.delete-preset:hover{background:#ffe4e9}
 
-.delete-preset:hover{
-  background:#ffe4e9;
-}
-
-.delete-preset:disabled{
-  opacity:.35;
-  cursor:default;
+/* 손글씨 제목 안 숫자는 정보용 고딕으로 분리 */
+.mixed-num{
+  display:inline-block;
+  margin:0 .055em;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:.78em;
+  font-weight:800;
+  line-height:1;
+  letter-spacing:-.02em;
+  vertical-align:.08em;
 }
 
 .add-preset{
@@ -1769,34 +1803,8 @@ button{
   }
 
   .preset-row{
-    grid-template-columns:minmax(0,1fr) 42px;
+    grid-template-columns:minmax(0,1fr) 108px;
   }
-
-  .preset-row .add-preset{
-    grid-column:1 / -1;
-  }
-
-  .delete-preset{
-  min-height:44px;
-  border:0;
-  border-radius:14px;
-  background:#fff0f2;
-  color:#d65a70;
-  cursor:pointer;
-  font-size:18px;
-  line-height:1;
-  font-weight:500;
-  transition:.15s;
-}
-
-.delete-preset:hover{
-  background:#ffe4e9;
-}
-
-.delete-preset:disabled{
-  opacity:.35;
-  cursor:default;
-}
 
 .add-preset{
     min-height:44px;
@@ -2464,18 +2472,6 @@ button{
         ></select>
 
         <button
-          id="deletePresetButton"
-          class="delete-preset"
-          onclick="deleteSelectedPreset()"
-          type="button"
-          title="선택한 항목 삭제"
-          aria-label="선택한 항목 삭제"
-        >
-          ×
-        </button>
-
-
-        <button
           class="add-preset"
           onclick="toggleNewPreset()"
           type="button"
@@ -2484,6 +2480,8 @@ button{
         </button>
 
       </div>
+
+      <div id="presetManager" class="preset-manager"></div>
 
 
       <div
@@ -3357,7 +3355,7 @@ function renderRealCalendar(){
                     }
                   "
                 >
-                  ${escapeHtml(item.title || item.event_type || '일정')}
+                  ${formatMixedTitle(item.title || item.event_type || '일정')}
                 </div>
               `)
               .join('')
@@ -3504,7 +3502,7 @@ function renderSelectedCalendarDate(){
                     </div>
 
                     <div class="selected-date-title">
-                      ${escapeHtml(item.title || '')}
+                      ${formatMixedTitle(item.title || '')}
                     </div>
 
                     <div class="selected-date-time">
@@ -3995,7 +3993,7 @@ async function openScheduleDetail(item){
       </div>
 
       <h3 class="schedule-detail-title">
-        ${escapeHtml(item.title || '')}
+        ${formatMixedTitle(item.title || '')}
       </h3>
 
       <div class="schedule-detail-meta">
@@ -4270,138 +4268,84 @@ function updateTitlePlaceholder(){
 function populatePresets(
   preferredId = null
 ){
-
-  const select =
-    document
-      .getElementById(
-        'presetSelect'
-      );
-
-
-  const list =
-    presets.filter(
-      item =>
-        item.location_type ===
-        currentEventType
-    );
-
+  const select = document.getElementById('presetSelect');
+  const list = presets.filter(item => item.location_type === currentEventType);
+  const currentBefore = preferredId ?? select.value;
 
   select.innerHTML = '';
 
-
   if(!list.length){
-
-    const option =
-      document
-        .createElement(
-          'option'
-        );
-
-
+    const option = document.createElement('option');
     option.value = '';
-
-
-    option.textContent =
-      '등록된 항목 없음';
-
-
-    select
-      .appendChild(option);
-
-
+    option.textContent = '등록된 항목 없음';
+    select.appendChild(option);
+    renderPresetManager();
     return;
   }
 
-
   list.forEach(item => {
-
-    const option =
-      document
-        .createElement(
-          'option'
-        );
-
-
-    option.value =
-      item.id;
-
-
-    option.textContent =
-      item.name;
-
-
-    select
-      .appendChild(option);
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = item.name;
+    select.appendChild(option);
   });
 
-
-  if(
-    preferredId &&
-    list.some(
-      item =>
-        String(item.id) ===
-        String(preferredId)
-    )
-  ){
-
-    select.value =
-      preferredId;
+  if(currentBefore && list.some(item => String(item.id) === String(currentBefore))){
+    select.value = currentBefore;
   }
 
-  updateDeletePresetButton();
+  renderPresetManager();
 }
 
-
 function presetChanged(){
-
-  updateDeletePresetButton();
-
-  const preset =
-    getSelectedPreset();
-
-
-  selectedImageUrl =
-    preset?.image_url || '';
-
-
+  const preset = getSelectedPreset();
+  selectedImageUrl = preset?.image_url || '';
+  renderPresetManager();
   renderImageLibrary();
 }
 
-
 function getSelectedPreset(){
-
-  const id =
-    document
-      .getElementById(
-        'presetSelect'
-      )
-      .value;
-
-
-  return presets.find(
-    item =>
-      String(item.id) ===
-      String(id)
-  );
+  const id = document.getElementById('presetSelect').value;
+  return presets.find(item => String(item.id) === String(id));
 }
 
+function renderPresetManager(){
+  const box = document.getElementById('presetManager');
+  if(!box) return;
 
-function updateDeletePresetButton(){
-  const button = document.getElementById('deletePresetButton');
-  if(!button) return;
-  button.disabled = !getSelectedPreset();
-}
+  const list = presets.filter(item => item.location_type === currentEventType);
+  const selectedId = document.getElementById('presetSelect')?.value || '';
 
-
-async function deleteSelectedPreset(){
-  if(!adminMode){
+  if(!adminMode || !list.length){
+    box.innerHTML = '';
     return;
   }
 
-  const preset = getSelectedPreset();
-  if(!preset){
-    return;
-  }
+  box.innerHTML = list.map(item => `
+    <div class="preset-manage-row ${String(item.id)===String(selectedId)?'active':''}">
+      <button class="preset-pick" type="button" onclick="selectPresetById('${escapeJs(String(item.id))}')">
+        ${escapeHtml(item.name || '이름 없음')}
+      </button>
+      <button class="delete-preset" type="button"
+        onclick="deletePresetById('${escapeJs(String(item.id))}')"
+        title="${escapeAttribute(item.name || '')} 삭제"
+        aria-label="${escapeAttribute(item.name || '')} 삭제">×</button>
+    </div>
+  `).join('');
+}
+
+function selectPresetById(id){
+  const select = document.getElementById('presetSelect');
+  if(!select) return;
+  select.value = id;
+  presetChanged();
+}
+
+async function deletePresetById(id){
+  if(!adminMode) return;
+
+  const preset = presets.find(item => String(item.id) === String(id));
+  if(!preset) return;
 
   const { data:usedEvents, error:usedError } = await db
     .from('events')
@@ -4415,36 +4359,25 @@ async function deleteSelectedPreset(){
   }
 
   if((usedEvents || []).length){
-    const names = usedEvents
-      .map(item => item.title || `일정 #${item.id}`)
-      .join(', ');
-
-    alert(
-      `현재 일정에서 사용 중인 항목이라 삭제할 수 없습니다.\n\n${names}\n\n해당 일정의 장소를 먼저 다른 항목으로 변경해주세요.`
-    );
+    const names = usedEvents.map(item => item.title || `일정 #${item.id}`).join(', ');
+    alert(`현재 일정에서 사용 중인 항목이라 삭제할 수 없습니다.\n\n${names}\n\n해당 일정의 장소를 먼저 다른 항목으로 변경해주세요.`);
     return;
   }
 
-  if(!confirm(`「${preset.name}」 항목을 삭제할까요?`)){
-    return;
-  }
+  if(!confirm(`「${preset.name}」 항목을 삭제할까요?`)) return;
 
-  const { error } = await db
-    .from('locations')
-    .delete()
-    .eq('id',preset.id);
-
+  const { error } = await db.from('locations').delete().eq('id',preset.id);
   if(error){
     alert('항목을 삭제하지 못했습니다.\n' + error.message);
     return;
   }
 
+  const wasSelected = String(document.getElementById('presetSelect')?.value || '') === String(preset.id);
   presets = presets.filter(item => String(item.id) !== String(preset.id));
-  selectedImageUrl = '';
+  if(wasSelected) selectedImageUrl = '';
   populatePresets();
   presetChanged();
 }
-
 
 function toggleNewPreset(){
 
@@ -5482,6 +5415,11 @@ function escapeHtml(value){
 
 
   return div.innerHTML;
+}
+
+
+function formatMixedTitle(value){
+  return escapeHtml(value ?? '').replace(/([0-9]+)/g,'<span class="mixed-num">$1</span>');
 }
 
 
