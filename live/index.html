@@ -2135,11 +2135,14 @@ function createLiveCard(
     );
 
 
-  const winner =
-    ranked.find(
+  const winners =
+    ranked.filter(
       row =>
         row.rank === 1
     );
+
+  const winner =
+    winners[0] || null;
 
 
   let mini = '';
@@ -2162,8 +2165,9 @@ function createLiveCard(
           ? `
             ·
             <strong>
-              1위 ${escapeHtml(winner.name)}
-              ${winner.votes}표
+              ${winners.length > 1
+                ? `공동 1위 ${winners.length}명 · 각 ${winner.votes}표`
+                : `1위 ${escapeHtml(winner.name)} ${winner.votes}표`}
             </strong>
           `
 
@@ -2365,11 +2369,14 @@ async function renderDetail(id){
     );
 
 
-  const winner =
-    ranking.find(
+  const winners =
+    ranking.filter(
       row =>
         row.rank === 1
     );
+
+  const winner =
+    winners[0] || null;
 
 
   const nonTop =
@@ -2541,16 +2548,18 @@ async function renderDetail(id){
 
                   ? `
                     <div class="winner-rank">
-                      ${winner.tied ? 'Joint 1st' : '1st Place'}
+                      ${winners.length > 1 ? 'JOINT WINNERS' : '1st Place'}
                     </div>
 
                     <div class="winner-name">
-                      ${escapeHtml(winner.name)}
+                      ${winners.length > 1
+                        ? winners.map(row => escapeHtml(row.name)).join(' · ')
+                        : escapeHtml(winner.name)}
                     </div>
 
                     <div class="winner-votes">
 
-                      ${winner.votes}표
+                      ${winners.length > 1 ? `공동 1위 ${winners.length}명 · 각 ` : ''}${winner.votes}표
 
                       ·
 
@@ -2559,7 +2568,7 @@ async function renderDetail(id){
 
                       ·
 
-                      +${winner.points}P
+                      ${winners.length > 1 ? '각 ' : ''}+${formatPoint(winner.points)}P
 
                     </div>
                   `
