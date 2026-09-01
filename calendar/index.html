@@ -398,6 +398,14 @@ button{
    MONTH
 ====================================================== */
 
+.schedule-period{margin-bottom:42px}
+.schedule-period + .schedule-period{margin-top:52px}
+.schedule-period-head{display:flex;align-items:flex-end;justify-content:space-between;margin:4px 2px 18px;padding-bottom:12px;border-bottom:1px solid rgba(128,112,220,.14)}
+.schedule-period-kicker{display:block;margin-bottom:4px;color:#7b67e8;font-size:10px;font-weight:800;letter-spacing:.12em}
+.schedule-period-head h2{margin:0;color:#171b32;font-size:27px;font-weight:800}
+.past-period{opacity:.9}
+.past-period .event-card{opacity:.88}
+
 .month{
   margin-bottom:17px;
 
@@ -1154,17 +1162,7 @@ button{
 }
 .delete-preset:hover{background:#ffe4e9}
 
-/* 손글씨 느낌은 유지하고 숫자 앞뒤만 아주 살짝 띄워 가독성 확보 */
-.mixed-num{
-  display:inline;
-  margin:0;
-  font-family:inherit;
-  font-size:1em;
-  font-weight:700;
-  line-height:inherit;
-  letter-spacing:inherit;
-  vertical-align:baseline;
-}
+/* 제목 손글씨는 그대로 유지. 회차 표기(제1회 등)는 JS에서 '제 1회'로만 간격 처리 */
 
 .add-preset{
   border:0;
@@ -3260,7 +3258,7 @@ function renderRealCalendar(){
   document
     .getElementById('monthNavTitle')
     .textContent =
-    `${calendarYear}.${String(calendarMonth + 1).padStart(2,'0')}`;
+    `${String(calendarYear).slice(-2)}년 ${calendarMonth + 1}월`;
 
 
   const firstDay =
@@ -3585,93 +3583,76 @@ function renderCalendar(){
   }
 
 
-  const groups = {};
+  const today = calendarDateString(new Date());
+
+  const upcoming = filtered
+    .filter(item => item.event_date && item.event_date >= today)
+    .sort((a,b) => String(a.event_date).localeCompare(String(b.event_date)));
+
+  const past = filtered
+    .filter(item => item.event_date && item.event_date < today)
+    .sort((a,b) => String(b.event_date).localeCompare(String(a.event_date)));
 
 
-  filtered.forEach(item => {
+  function renderScheduleGroup(title, list, isPast = false){
 
-    if(!item.event_date){
-      return;
-    }
-
-
-    const key =
-      item.event_date
-        .slice(0,7);
-
-
-    if(!groups[key]){
-      groups[key] = [];
-    }
-
-
-    groups[key]
-      .push(item);
-  });
-
-
-  container.innerHTML = '';
-
-
-  Object
-    .keys(groups)
-    .sort()
-    .forEach(monthKey => {
-
-
-      const [
-        year,
-        month
-      ] =
-        monthKey.split('-');
-
-
-      const section =
-        document
-          .createElement(
-            'section'
-          );
-
-
-      section.className =
-        'month';
-
-
-      section.innerHTML =
-      `
-        <div class="month-head">
-
-          <h2>
-
-            ${monthName(month)}
-            ${year}
-
-          </h2>
-
-          <span>
-            ${month}
-          </span>
-
-        </div>
-
-
-        <div class="event-list">
-
-          ${
-            groups[monthKey]
-              .map(
-                createEventHtml
-              )
-              .join('')
-          }
-
-        </div>
+    if(!list.length){
+      return `
+        <section class="schedule-period ${isPast ? 'past-period' : 'upcoming-period'}">
+          <div class="schedule-period-head">
+            <div>
+              <span class="schedule-period-kicker">${isPast ? 'PAST' : 'UPCOMING'}</span>
+              <h2>${title}</h2>
+            </div>
+          </div>
+          <div class="empty" style="margin-top:14px;">
+            ${isPast ? '지난 일정이 없습니다.' : '다가오는 일정이 없습니다.'}
+          </div>
+        </section>
       `;
+    }
 
+    const groups = {};
 
-      container
-        .appendChild(section);
+    list.forEach(item => {
+      const key = item.event_date.slice(0,7);
+      if(!groups[key]) groups[key] = [];
+      groups[key].push(item);
     });
+
+    const monthKeys = Object.keys(groups).sort((a,b) => isPast ? b.localeCompare(a) : a.localeCompare(b));
+
+    return `
+      <section class="schedule-period ${isPast ? 'past-period' : 'upcoming-period'}">
+        <div class="schedule-period-head">
+          <div>
+            <span class="schedule-period-kicker">${isPast ? 'PAST' : 'UPCOMING'}</span>
+            <h2>${title}</h2>
+          </div>
+        </div>
+
+        ${monthKeys.map(monthKey => {
+          const [year, month] = monthKey.split('-');
+          return `
+            <section class="month">
+              <div class="month-head">
+                <h2>${String(year).slice(-2)}년 ${Number(month)}월</h2>
+                <span>${month}</span>
+              </div>
+              <div class="event-list">
+                ${groups[monthKey].map(createEventHtml).join('')}
+              </div>
+            </section>
+          `;
+        }).join('')}
+      </section>
+    `;
+  }
+
+
+  container.innerHTML =
+    renderScheduleGroup('다가오는 일정', upcoming, false) +
+    renderScheduleGroup('지난 일정', past, true);
 }
 
 
@@ -5376,26 +5357,7 @@ function formatTime(value){
 
 
 function monthName(month){
-
-  const names = {
-
-    '01':'January',
-    '02':'February',
-    '03':'March',
-    '04':'April',
-    '05':'May',
-    '06':'June',
-    '07':'July',
-    '08':'August',
-    '09':'September',
-    '10':'October',
-    '11':'November',
-    '12':'December'
-
-  };
-
-
-  return names[month] || month;
+  return `${Number(month)}월`;
 }
 
 
@@ -5419,7 +5381,7 @@ function escapeHtml(value){
 
 
 function formatMixedTitle(value){
-  return escapeHtml(value ?? '').replace(/([0-9]+)/g,'<span class="mixed-num">$1</span>');
+  return escapeHtml(value ?? '').replace(/제(?=[0-9])/g,'제&nbsp;');
 }
 
 
