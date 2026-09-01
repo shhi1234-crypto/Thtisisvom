@@ -4068,14 +4068,14 @@ function openEventDetail(id){
       ? `/live/?id=${encodeURIComponent(id)}`
       : contentType === 'BUSKING'
         ? `/busking/?id=${encodeURIComponent(id)}`
-        : `/openmic/?id=${encodeURIComponent(id)}`;
+        : `/OPENMIC/?id=${encodeURIComponent(id)}`;
 
   const introHref =
     contentType === 'VOM LIVE'
       ? '/live/'
       : contentType === 'BUSKING'
-        ? '/busking/'
-        : '/openmic/';
+        ? '/busking/?intro=1'
+        : '/OPENMIC/?intro=1';
 
   const introName =
     contentType === 'VOM LIVE'
