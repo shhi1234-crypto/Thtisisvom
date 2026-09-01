@@ -719,7 +719,7 @@ textarea.field{
       <div class="point-ledger-head">
         <div>
           <h3>개인별 누적 포인트</h3>
-          <p>참석 +5P · 1위 +45P · 2위 +30P · 3위 +15P 기준으로 누적됩니다.</p>
+          <p>참석 +5P와 순위권 보상 포인트를 합산하여 누적됩니다.</p>
         </div>
       </div>
       <div id="pointLedger" class="point-ledger-list">
@@ -989,11 +989,12 @@ async function loadPointLedger(){
     const first=Number(row.first_place_count||0);
     const second=Number(row.second_place_count||0);
     const third=Number(row.third_place_count||0);
+    const totalPoints=Number(row.total_points||0);
+    const attendancePoints=attendance*5;
+    const rankingPoints=Math.max(0,totalPoints-attendancePoints);
     const parts=[];
-    if(attendance>0)parts.push(`<span class="point-source">참석 ${attendance}회 · +${attendance*5}P</span>`);
-    if(first>0)parts.push(`<span class="point-source">1위 ${first}회 · +${first*45}P</span>`);
-    if(second>0)parts.push(`<span class="point-source">2위 ${second}회 · +${second*30}P</span>`);
-    if(third>0)parts.push(`<span class="point-source">3위 ${third}회 · +${third*15}P</span>`);
+    if(attendance>0)parts.push(`<span class="point-source">참석 ${attendance}회 · +${formatPoint(attendancePoints)}P</span>`);
+    if(rankingPoints>0)parts.push(`<span class="point-source">순위권 보상 · +${formatPoint(rankingPoints)}P</span>`);
     return `<div class="point-person">
       <div class="point-person-name">${escapeHtml(row.name||'')}</div>
       <div class="point-person-breakdown">${parts.length?parts.join(''):'<span>세부 기록 없음</span>'}</div>
@@ -1450,6 +1451,11 @@ function formatDate(value){
   return value
     ? String(value).slice(0,10).replaceAll('-','.')
     : '-';
+}
+
+function formatPoint(value){
+  const n=Number(value||0);
+  return Number.isInteger(n) ? String(n) : String(Math.round(n*10)/10);
 }
 
 function escapeHtml(value){
