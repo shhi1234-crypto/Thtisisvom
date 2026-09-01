@@ -753,8 +753,16 @@ button{
   font-size:10px;
 }
 
+.point-breakdown{
+  display:block;
+  margin-top:4px;
+  color:#7762de;
+  font-size:9px;
+  font-weight:700;
+}
+
 .rank-points{
-  min-width:53px;
+  min-width:68px;
   text-align:right;
   color:#725bdd;
   font-weight:700;
@@ -859,7 +867,7 @@ button{
 
 .person-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 90px 37px;
+  grid-template-columns:minmax(0,1fr) 78px 82px 37px;
   gap:7px;
 }
 
@@ -1238,8 +1246,8 @@ button{
 
     <div class="editor-help">
       MEMBERS에 등록된 실제 참석자를 선택하고 받은 표를 입력하세요.
-      참석자 수는 자동으로 계산되고,
-      공동 순위 · TOP 3 · 포인트 · 귀점유율도 자동 계산됩니다.
+      1위 · 2위 · 3위는 득표수와 별도로 직접 지정합니다.
+      공동 순위는 같은 순위를 여러 명에게 지정할 수 있으며, 미지정자는 순위 포인트를 받지 않습니다.
     </div>
 
     <div
@@ -1258,7 +1266,7 @@ button{
     <div class="preview-box">
 
       <strong>
-        자동 계산 미리보기
+        결과 · 포인트 미리보기
       </strong>
 
       <div
@@ -2513,10 +2521,13 @@ async function renderDetail(id){
 
                               <div class="rank-ear">
                                 ${row.votes}표 · 귀점유율 ${row.earShare.toFixed(1)}%
+                                <span class="point-breakdown">
+                                  참석 +5P + ${row.rank}위 +${rankBonus(row.rank)}P
+                                </span>
                               </div>
 
                               <div class="rank-points">
-                                +${row.points}P
+                                총 +${row.points}P
                               </div>
 
                             </div>
@@ -2569,7 +2580,7 @@ async function renderDetail(id){
 
                               ·
 
-                              +5P
+                              참석 +5P
 
                             </span>
                           `
@@ -2722,7 +2733,8 @@ function openResultEditor(
         addPersonRow(
           memberId,
           vote?.votes || 0,
-          person.name
+          person.name,
+          vote?.rank ?? ''
         );
       }
     );
@@ -2757,7 +2769,8 @@ function closeResultEditor(){
 function addPersonRow(
   memberId = '',
   votes = '',
-  legacyName = ''
+  legacyName = '',
+  rank = ''
 ){
 
   const row =
@@ -2796,6 +2809,17 @@ function addPersonRow(
       value="${escapeAttribute(votes)}"
       oninput="updatePreview()"
     >
+
+    <select
+      class="field person-rank"
+      onchange="updatePreview()"
+      aria-label="순위"
+    >
+      <option value=""${rank === '' || rank == null ? ' selected' : ''}>순위 -</option>
+      <option value="1"${Number(rank) === 1 ? ' selected' : ''}>1위</option>
+      <option value="2"${Number(rank) === 2 ? ' selected' : ''}>2위</option>
+      <option value="3"${Number(rank) === 3 ? ' selected' : ''}>3위</option>
+    </select>
 
     <button
       class="remove-person"
@@ -2971,7 +2995,19 @@ function readEditor(){
               )
               .value || 0
           )
-        )
+        ),
+
+      rank:
+        (() => {
+          const value =
+            row.querySelector(
+              '.person-rank'
+            )?.value || '';
+
+          return [1,2,3].includes(Number(value))
+            ? Number(value)
+            : null;
+        })()
     };
   })
   .filter(
@@ -3010,10 +3046,27 @@ function updatePreview(){
     );
 
 
-  const top3 =
+  const duplicateRanks =
+    [1,2,3]
+      .filter(
+        rank =>
+          ranking.filter(
+            row => row.rank === rank
+          ).length > 1
+      );
+
+
+  const ranked =
     ranking.filter(
       row =>
-        row.rank <= 3
+        [1,2,3].includes(row.rank)
+    );
+
+
+  const unranked =
+    ranking.filter(
+      row =>
+        ![1,2,3].includes(row.rank)
     );
 
 
@@ -3023,26 +3076,41 @@ function updatePreview(){
     <br>
 
     ${
-      top3
-        .map(
-          row =>
-            `${
-              row.tied
-              ? `공동 ${row.rank}위`
-              : `${row.rank}위`
+      ranked.length
+      ? ranked
+          .map(
+            row => {
+              const bonus =
+                rankBonus(row.rank);
+
+              return `${
+                row.tied
+                ? `공동 ${row.rank}위`
+                : `${row.rank}위`
+              }
+              ${escapeHtml(row.name)}
+              · ${row.votes}표
+              · ${row.earShare.toFixed(1)}%
+              <br>
+              <span style="color:#725bdd;font-weight:700;">
+                참석 +5P + ${row.rank}위 +${bonus}P = 총 +${row.points}P
+              </span>`;
             }
-            ${escapeHtml(row.name)}
-            · ${row.votes}표
-            · ${row.earShare.toFixed(1)}%
-            · +${row.points}P`
-        )
-        .join('<br>')
+          )
+          .join('<br>')
+      : '순위 미지정'
     }
 
-    <br>
-
-    그 외 참석자
-    +5P
+    ${
+      unranked.length
+      ? `<br><br>${unranked
+          .map(
+            row =>
+              `${escapeHtml(row.name)} · ${row.votes}표 · ${row.earShare.toFixed(1)}% · 참석 +5P`
+          )
+          .join('<br>')}`
+      : ''
+    }
   `;
 }
 
@@ -3120,58 +3188,64 @@ async function saveResults(){
   }
 
 
+  /*
+     live_participants는 기존 RLS 정책상 INSERT가 막혀 있을 수 있음.
+     결과 수정에서는 참석자 명단을 삭제/재생성하지 않고,
+     기존 참석자와 동일한 명단인지 확인한 뒤 live_results만 수정함.
+     이렇게 해야 기존 참석자 삭제 후 재삽입 실패로 데이터가 사라지는 상황을 방지할 수 있음.
+  */
+
+  const storedPeople =
+    getParticipants(eventId);
+
+  const personKey = person => {
+    const memberId =
+      String(person?.member_id ?? '').trim();
+
+    if(memberId){
+      return `id:${memberId}`;
+    }
+
+    return `name:${normalizeName(person?.name)}`;
+  };
+
+  const editorKeys =
+    people
+      .map(personKey)
+      .sort();
+
+  const storedKeys =
+    storedPeople
+      .map(personKey)
+      .sort();
+
+  const sameParticipants =
+    editorKeys.length === storedKeys.length &&
+    editorKeys.every(
+      (key,index) =>
+        key === storedKeys[index]
+    );
+
+  if(!sameParticipants){
+    alert(
+      '참석자 명단은 이 화면에서 변경할 수 없습니다.\n' +
+      '현재 Supabase 정책상 기존 참석자 기록은 유지하고, 득표수와 1·2·3위만 수정할 수 있습니다.'
+    );
+    return;
+  }
+
+
   try{
 
-    /* 기존 참석자 삭제 */
-
-    const {
-      error:deleteError
-    } =
-      await db
-        .from('live_participants')
-        .delete()
-        .eq(
-          'event_id',
-          eventId
-        );
-
-
-    if(deleteError){
-      throw deleteError;
-    }
-
-
-    /* 새 참석자 저장 */
-
-    const {
-      error:participantError
-    } =
-      await db
-        .from('live_participants')
-        .insert(
-          people.map(
-            person => ({
-              event_id:eventId,
-              member_id:person.member_id,
-              name:person.name
-            })
-          )
-        );
-
-
-    if(participantError){
-      throw participantError;
-    }
-
-
-    /* 투표 결과 저장 */
+    /* 투표 결과 + 직접 지정 순위만 저장 */
 
     const voteResults =
       people.map(
         person => ({
           member_id:person.member_id,
           name:person.name,
-          votes:person.votes
+          votes:person.votes,
+          rank:person.rank
         })
       );
 
@@ -3261,6 +3335,13 @@ function calculateRanking(
     );
 
 
+  const hasExplicitRanking =
+    votes.some(
+      item =>
+        [1,2,3].includes(item.rank)
+    );
+
+
   const merged =
     people.map(
       person => {
@@ -3290,20 +3371,46 @@ function calculateRanking(
           votes:
             Number(
               found?.votes || 0
-            )
+            ),
+          rank:
+            found?.rank ?? null
         };
       }
     );
 
 
   return calculateRankingFromPeople(
-    merged
+    merged,
+    {
+      legacyAuto:
+        !hasExplicitRanking &&
+        votes.length > 0
+    }
   );
 }
 
 
+function rankBonus(rank){
+
+  if(rank === 1){
+    return 45;
+  }
+
+  if(rank === 2){
+    return 30;
+  }
+
+  if(rank === 3){
+    return 15;
+  }
+
+  return 0;
+}
+
+
 function calculateRankingFromPeople(
-  people
+  people,
+  options = {}
 ){
 
   const total =
@@ -3312,43 +3419,66 @@ function calculateRankingFromPeople(
 
   const sorted =
     [...people]
-      .sort(
-        (a,b) => {
-
-          if(b.votes !== a.votes){
-            return b.votes - a.votes;
-          }
-
-          return a.name.localeCompare(
-            b.name,
-            'ko'
-          );
-        }
+      .map(
+        person => ({
+          ...person,
+          votes:Number(person.votes || 0),
+          rank:
+            [1,2,3].includes(Number(person.rank))
+            ? Number(person.rank)
+            : null
+        })
       );
 
 
-  let lastVotes = null;
-  let currentRank = 0;
+  if(options.legacyAuto){
+
+    const positive =
+      sorted
+        .filter(
+          row => row.votes > 0
+        )
+        .sort(
+          (a,b) => {
+            if(b.votes !== a.votes){
+              return b.votes - a.votes;
+            }
+
+            return a.name.localeCompare(
+              b.name,
+              'ko'
+            );
+          }
+        );
+
+
+    let lastVotes = null;
+    let currentRank = 0;
+
+
+    positive.forEach(
+      row => {
+
+        if(
+          lastVotes === null ||
+          row.votes !== lastVotes
+        ){
+          currentRank += 1;
+          lastVotes = row.votes;
+        }
+
+
+        row.rank =
+          currentRank <= 3
+          ? currentRank
+          : null;
+      }
+    );
+  }
 
 
   sorted.forEach(
     row => {
-
-      if(
-        lastVotes === null ||
-        row.votes !== lastVotes
-      ){
-
-        currentRank += 1;
-
-        lastVotes =
-          row.votes;
-      }
-
-
-      row.rank =
-        currentRank;
-
 
       row.earShare =
         total > 0
@@ -3356,26 +3486,8 @@ function calculateRankingFromPeople(
         : 0;
 
 
-      if(row.rank === 1){
-
-        row.points =
-          55;
-
-      }else if(row.rank === 2){
-
-        row.points =
-          40;
-
-      }else if(row.rank === 3){
-
-        row.points =
-          25;
-
-      }else{
-
-        row.points =
-          5;
-      }
+      row.points =
+        5 + rankBonus(row.rank);
     }
   );
 
@@ -3384,6 +3496,7 @@ function calculateRankingFromPeople(
     row => {
 
       row.tied =
+        row.rank !== null &&
         sorted.filter(
           other =>
             other.rank === row.rank
@@ -3392,7 +3505,32 @@ function calculateRankingFromPeople(
   );
 
 
-  return sorted;
+  return sorted.sort(
+    (a,b) => {
+
+      const aRank =
+        a.rank ?? 99;
+
+      const bRank =
+        b.rank ?? 99;
+
+
+      if(aRank !== bRank){
+        return aRank - bRank;
+      }
+
+
+      if(b.votes !== a.votes){
+        return b.votes - a.votes;
+      }
+
+
+      return a.name.localeCompare(
+        b.name,
+        'ko'
+      );
+    }
+  );
 }
 
 
@@ -3424,10 +3562,37 @@ function getParticipants(
   eventId
 ){
 
-  return participants.filter(
-    person =>
-      String(person.event_id) ===
-      String(eventId)
+  const saved =
+    participants.filter(
+      person =>
+        String(person.event_id) ===
+        String(eventId)
+    );
+
+
+  if(saved.length){
+    return saved;
+  }
+
+
+  /*
+     이전 결과 수정 중 live_participants DELETE 후 INSERT가 RLS로 막힌 경우를 대비한 복구 fallback.
+     live_results.results에 남아 있는 member_id / name을 참석자 명단으로 사용함.
+  */
+  const result =
+    getResult(eventId);
+
+  const fallback =
+    normalizeResultArray(
+      result?.results
+    );
+
+  return fallback.map(
+    row => ({
+      event_id:Number(eventId),
+      member_id:row.member_id,
+      name:row.name
+    })
   );
 }
 
@@ -3513,7 +3678,14 @@ function normalizeResultArray(
       votes:
         Number(
           item?.votes ?? 0
+        ),
+
+      rank:
+        [1,2,3].includes(
+          Number(item?.rank)
         )
+        ? Number(item.rank)
+        : null
     })
   );
 }
