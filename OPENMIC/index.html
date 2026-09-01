@@ -112,6 +112,84 @@ header{
   .card{grid-template-columns:66px 1fr 76px;gap:10px;padding:12px}.datebox{min-height:64px}.thumb{height:64px}.card h3{font-size:15px}
   .detail{padding:18px}.detail-meta{grid-template-columns:1fr}.detail-image{height:260px}
 }
+
+/* V1.2 · polished content intro */
+.intro-editorial{
+  margin-top:18px;
+  padding:30px 28px;
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(247,235,244,.94),rgba(231,249,246,.92));
+  border:1px solid rgba(111,88,190,.12);
+}
+.intro-editorial .kicker{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+  color:#7764cf;
+}
+.intro-editorial h2{
+  margin:8px 0 10px;
+  font-size:30px;
+  letter-spacing:-.035em;
+}
+.intro-editorial p{
+  margin:0;
+  max-width:900px;
+  color:#6f7384;
+  line-height:1.85;
+  font-size:14px;
+}
+.intro-process{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+.intro-process article{
+  min-height:150px;
+  padding:18px;
+  border-radius:19px;
+  background:rgba(255,255,255,.74);
+  border:1px solid rgba(100,90,140,.08);
+}
+.intro-process .num{
+  font-size:10px;
+  font-weight:800;
+  color:#8a75df;
+  letter-spacing:.12em;
+}
+.intro-process h3{
+  margin:10px 0 6px;
+  font-size:16px;
+}
+.intro-process p{
+  font-size:11px;
+  line-height:1.65;
+}
+.intro-point{
+  margin-top:12px;
+  padding:22px 24px;
+  border-radius:24px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(100,90,140,.10);
+}
+.intro-point strong{
+  display:block;
+  font-size:18px;
+  margin-bottom:7px;
+}
+.intro-point span{
+  color:#74788a;
+  font-size:12px;
+  line-height:1.8;
+}
+@media(max-width:680px){
+  .intro-editorial{padding:23px 18px}
+  .intro-editorial h2{font-size:25px}
+  .intro-process{grid-template-columns:1fr}
+  .intro-process article{min-height:auto}
+}
+
 </style>
 </head>
 <body>
@@ -227,48 +305,75 @@ async function setlistExists(id){
 function renderOpenMicIntro(){
   document.title='대관공연 소개 · VOM';
   page.classList.toggle('admin-mode',adminMode);
+
   page.innerHTML=`
     <a class="back" href="/OPENMIC/">← OPEN MIC</a>
+
     <section class="hero">
-      <div class="kicker">ABOUT OPEN MIC</div>
+      <div class="kicker">VOM STAGE · OPEN MIC</div>
       <h1>Open Mic</h1>
-      <p>공연장을 직접 대관해 하나의 공연을 함께 만드는 VOM의 정식 무대 컨텐츠입니다.</p>
+      <p>한 회차의 컨셉부터 무대 구성까지 직접 만들어가는 VOM의 대관공연.</p>
     </section>
 
-    <section class="intro">
-      <div class="kicker">VOM STAGE</div>
-      <h2>대관공연은요</h2>
+    <section class="intro-editorial">
+      <div class="kicker">ABOUT OPEN MIC</div>
+      <h2>우리가 직접 만드는 하나의 공연</h2>
       <p>
-        연습실이나 거리보다 한 단계 더 큰 무대에서 준비한 곡을 관객에게 선보이는 공연입니다.
-        회차마다 주제와 프로그램을 정하고, 참가자들이 각자의 무대를 준비해 하나의 공연으로 완성합니다.
+        OPEN MIC는 공연장을 대관해 회차별 주제와 프로그램을 정하고,
+        참가자들이 각자의 무대를 준비해 하나의 공연으로 완성하는 VOM의 정식 공연 컨텐츠입니다.
+        연습실과 버스킹에서 쌓은 경험을 더 큰 무대에서 보여주고,
+        관객과 함께 하나의 공연을 만들어가는 데 의미를 둡니다.
       </p>
-      <div class="intro-grid">
-        <div><strong>정식 공연장</strong><small>대관한 무대에서 관객과 함께</small></div>
-        <div><strong>회차별 컨셉</strong><small>주제와 프로그램을 정해 하나의 공연으로</small></div>
-        <div><strong>우승 기록</strong><small>회차별 우승자를 남기고 누적 기록</small></div>
+
+      <div class="intro-process">
+        <article>
+          <div class="num">01 · CONCEPT</div>
+          <h3>회차별 컨셉 구성</h3>
+          <p>각 공연마다 하나의 주제와 흐름을 정해 그 회차만의 분위기를 만듭니다.</p>
+        </article>
+
+        <article>
+          <div class="num">02 · STAGE</div>
+          <h3>각자의 무대를 준비</h3>
+          <p>참가자별 곡과 무대를 준비하고 전체 프로그램 안에서 하나의 공연으로 연결합니다.</p>
+        </article>
+
+        <article>
+          <div class="num">03 · RECORD</div>
+          <h3>공연의 결과까지 기록</h3>
+          <p>회차별 우승 결과와 기록을 남겨 다음 공연에서도 이어서 볼 수 있습니다.</p>
+        </article>
       </div>
     </section>
 
-    <section class="intro" style="margin-top:12px;">
-      <div class="kicker">HOW IT WORKS</div>
-      <h2>이런 식으로 진행돼요</h2>
-      <p>
-        공연 일정이 열리면 참가자를 모집하고, 회차 컨셉에 맞춰 곡과 순서를 준비합니다.
-        공연이 끝난 뒤에는 우승 결과와 기록도 남겨서 다음 공연에서도 이어서 볼 수 있습니다.
-      </p>
+    <section class="intro-point">
+      <strong>한 사람의 무대가 모여, 하나의 공연이 되는 순간.</strong>
+      <span>
+        OPEN MIC는 단순히 곡을 순서대로 부르는 자리가 아니라,
+        참가자들이 각자의 무대를 준비하고 하나의 프로그램 안에서 서로의 무대를 연결해
+        완성도 있는 공연을 함께 만드는 자리입니다.
+      </span>
     </section>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 32px;">
       <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/">
-        <div><strong>대관공연 일정 보기</strong><small>다가오는 공연과 지난 회차 확인</small></div><span>→</span>
+        <div>
+          <strong>대관공연 일정 보기</strong>
+          <small>다가오는 공연과 지난 회차 확인</small>
+        </div>
+        <span>→</span>
       </a>
+
       <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/OPENMIC/?ranking=winner">
-        <div><strong>우승 기록 보기</strong><small>누적 우승 기록 확인</small></div><span>→</span>
+        <div>
+          <strong>우승 기록 보기</strong>
+          <small>누적 우승 기록 확인</small>
+        </div>
+        <span>→</span>
       </a>
     </div>
   `;
 }
-
 
 function renderMain(){
   document.title='VOM OPEN MIC';
