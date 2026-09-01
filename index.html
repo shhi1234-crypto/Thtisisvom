@@ -1590,6 +1590,42 @@ function formatHomeNewsDate(value){
   }
 }
 
+
+/* HERO INFO CTA — expanded */
+.info-link{
+  width:min(360px,100%);
+  min-height:66px;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-radius:999px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:.2px;
+}
+.info-link::after{
+  content:"ABOUT VOM";
+  margin-left:auto;
+  margin-right:18px;
+  color:#7b6ae4;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.3px;
+}
+@media(max-width:760px){
+  .info-link{
+    width:min(290px,100%);
+    min-height:58px;
+    padding:0 21px;
+    font-size:13px;
+  }
+  .info-link::after{
+    margin-right:12px;
+    font-size:9px;
+  }
+}
+
 </style>
 </head>
 
@@ -1844,33 +1880,6 @@ function formatHomeNewsDate(value){
       <strong>COMING SOON</strong>
       <small>준비중</small>
     </div>
-
-  </section>
-
-
-  <!-- ABOUT VOM -->
-
-  <section class="section about-wide-section">
-
-    <a href="/info/" class="about about-wide">
-
-      <div class="about-script">
-        Voice<br>
-        of Melody
-      </div>
-
-      <div class="about-wide-copy">
-        <p>
-          같은 노래를 좋아하는 사람들이 만나<br>
-          함께 더 좋은 순간을 만들어갑니다.
-        </p>
-
-        <div class="about-link">
-          ABOUT VOM →
-        </div>
-      </div>
-
-    </a>
 
   </section>
 
