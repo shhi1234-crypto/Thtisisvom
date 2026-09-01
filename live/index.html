@@ -2166,7 +2166,7 @@ function createLiveCard(
             ·
             <strong>
               ${winners.length > 1
-                ? `공동 1위 ${winners.length}명 · 각 ${winner.votes}표`
+                ? `공동 1위 ${winners.map(row => escapeHtml(row.name)).join(' · ')} · 각 ${winner.votes}표`
                 : `1위 ${escapeHtml(winner.name)} ${winner.votes}표`}
             </strong>
           `
