@@ -719,7 +719,7 @@ textarea.field{
       <div class="point-ledger-head">
         <div>
           <h3>개인별 누적 포인트</h3>
-          <p>참석 +5P와 순위권 보상 포인트를 합산하여 누적됩니다.</p>
+          <p>봄라이브 참석 및 순위권 기록에 따라 포인트가 누적됩니다.</p>
         </div>
       </div>
       <div id="pointLedger" class="point-ledger-list">
@@ -967,42 +967,160 @@ async function loadPointLedger(){
   const box=document.getElementById('pointLedger');
   if(!box)return;
 
-  const {data,error}=await db
-    .from('live_point_hall_of_fame')
-    .select('*')
-    .order('total_points',{ascending:false});
+  const [pointResponse,resultResponse]=await Promise.all([
+    db
+      .from('live_point_hall_of_fame')
+      .select('*')
+      .order('total_points',{ascending:false}),
 
-  if(error){
-    console.error('POINT LEDGER:',error);
+    db
+      .from('live_results')
+      .select('event_id,results')
+  ]);
+
+  if(pointResponse.error){
+    console.error('POINT LEDGER:',pointResponse.error);
     box.innerHTML='<div class="point-empty">포인트 기록을 불러오지 못했습니다.</div>';
     return;
   }
 
-  const list=(data||[]).filter(row=>Number(row.total_points||0)>0);
+  if(resultResponse.error){
+    console.error('LIVE RESULTS:',resultResponse.error);
+  }
+
+  const detailMap=new Map();
+
+  function memberKey(row){
+    const id=String(row?.member_id??'').trim();
+    if(id)return `id:${id}`;
+    return `name:${String(row?.name??'').trim().toLowerCase()}`;
+  }
+
+  (resultResponse.data||[]).forEach(eventResult=>{
+    const rows=Array.isArray(eventResult.results)?eventResult.results:[];
+
+    const rankCounts={};
+
+    rows.forEach(item=>{
+      const r=Number(item?.rank);
+      if([1,2,3].includes(r)){
+        rankCounts[r]=(rankCounts[r]||0)+1;
+      }
+    });
+
+    const pointStartByRank={};
+
+    [1,2,3].forEach(r=>{
+      if(!rankCounts[r])return;
+
+      let extraBefore=0;
+
+      for(let previousRank=1;previousRank<r;previousRank+=1){
+        if(rankCounts[previousRank]>1){
+          extraBefore+=rankCounts[previousRank]-1;
+        }
+      }
+
+      pointStartByRank[r]=r+extraBefore;
+    });
+
+    rows.forEach(item=>{
+      const key=memberKey(item);
+      if(!key)return;
+
+      if(!detailMap.has(key)){
+        detailMap.set(key,{
+          attendance:0,
+          categories:new Map()
+        });
+      }
+
+      const detail=detailMap.get(key);
+      detail.attendance+=1;
+
+      const r=Number(item?.rank);
+
+      if(![1,2,3].includes(r)){
+        return;
+      }
+
+      const tieCount=rankCounts[r]||1;
+      const pointStartRank=pointStartByRank[r]||r;
+
+      let bonusPool=0;
+
+      for(let offset=0;offset<tieCount;offset+=1){
+        const occupiedRank=pointStartRank+offset;
+        bonusPool+=
+          occupiedRank===1?45:
+          occupiedRank===2?30:
+          occupiedRank===3?15:
+          0;
+      }
+
+      const bonusPoints=bonusPool/tieCount;
+      const joint=tieCount>1;
+      const categoryKey=`${r}-${joint?'joint':'single'}`;
+      const label=joint?`봄라 공동 ${r}등`:`봄라 ${r}등`;
+
+      if(!detail.categories.has(categoryKey)){
+        detail.categories.set(categoryKey,{
+          rank:r,
+          joint,
+          label,
+          count:0,
+          points:0
+        });
+      }
+
+      const category=detail.categories.get(categoryKey);
+      category.count+=1;
+      category.points+=bonusPoints;
+    });
+  });
+
+  const list=(pointResponse.data||[]).filter(row=>Number(row.total_points||0)>0);
+
   if(!list.length){
     box.innerHTML='<div class="point-empty">아직 누적된 VOM POINT 기록이 없습니다.</div>';
     return;
   }
 
   box.innerHTML=list.map(row=>{
-    const attendance=Number(row.attendance_count||0);
-    const first=Number(row.first_place_count||0);
-    const second=Number(row.second_place_count||0);
-    const third=Number(row.third_place_count||0);
-    const totalPoints=Number(row.total_points||0);
-    const attendancePoints=attendance*5;
-    const rankingPoints=Math.max(0,totalPoints-attendancePoints);
+    const viewAttendance=Number(row.attendance_count||0);
+    const detail=
+      detailMap.get(memberKey(row))||
+      detailMap.get(`name:${String(row.name||'').trim().toLowerCase()}`);
+
+    const attendance=detail?.attendance||viewAttendance;
     const parts=[];
-    if(attendance>0)parts.push(`<span class="point-source">참석 ${attendance}회 · +${formatPoint(attendancePoints)}P</span>`);
-    if(rankingPoints>0)parts.push(`<span class="point-source">순위권 보상 · +${formatPoint(rankingPoints)}P</span>`);
+
+    if(attendance>0){
+      parts.push(
+        `<span class="point-source">봄라이브 참석 ${attendance}회 · +${formatPoint(attendance*5)}P</span>`
+      );
+    }
+
+    const categories=detail
+      ? [...detail.categories.values()].sort((a,b)=>{
+          if(a.rank!==b.rank)return a.rank-b.rank;
+          return Number(a.joint)-Number(b.joint);
+        })
+      : [];
+
+    categories.forEach(category=>{
+      parts.push(
+        `<span class="point-source">${category.label} ${category.count}회 · +${formatPoint(category.points)}P</span>`
+      );
+    });
+
     return `<div class="point-person">
       <div class="point-person-name">${escapeHtml(row.name||'')}</div>
       <div class="point-person-breakdown">${parts.length?parts.join(''):'<span>세부 기록 없음</span>'}</div>
-      <div class="point-total">${Number(row.total_points||0)}P</div>
+      <div class="point-total">${formatPoint(row.total_points||0)}P</div>
     </div>`;
   }).join('');
 }
-
 
 /* LOAD */
 async function loadCampaigns(){
