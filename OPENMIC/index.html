@@ -91,7 +91,11 @@ header{
 .action-btn{padding:12px 15px;border:0;border-radius:14px;background:#eeeafd;color:#6551bf;font-weight:700;cursor:pointer}
 .ranking-list{display:grid;gap:10px}
 .rank-row{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;padding:16px 18px;border-radius:19px;background:#fff;border:1px solid var(--line)}
-.rank-no{font-family:"Nanum Pen Script";font-size:27px}.rank-name{font-weight:700}.rank-detail{font-size:10px;color:#8a8d9b}.rank-score{font-weight:800}.rank-score small{margin-left:4px;font-size:9px;color:#999}
+.rank-no{font-family:"Nanum Pen Script";font-size:25px;color:#725bd0;white-space:nowrap}
+.rank-name{font-weight:800;font-size:15px}
+.rank-detail{font-size:10px;color:#8a8d9b;font-weight:700}
+.rank-score{display:flex;align-items:center;gap:7px;font-weight:900;color:#725bd0;white-space:nowrap}
+.rank-score strong{font-size:13px}.rank-score small{font-size:15px;color:#999}
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(28,28,43,.35);backdrop-filter:blur(12px)}
 .overlay.open{display:flex}
 .modal{width:min(520px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:25px;border-radius:28px;background:#fff}
@@ -750,32 +754,25 @@ function renderRanking(){
   const eventMap=new Map(events.map(e=>[String(e.id),e]));
 
   const winnerRows=winners
-    .map(w=>({
-      ...w,
-      event:eventMap.get(String(w.event_id))
-    }))
-    .filter(w=>w.event);
+    .map(w=>{
+      const event=eventMap.get(String(w.event_id));
+      const date=String(event?.event_date||'');
+      const month=date?Number(date.slice(5,7)):null;
 
-  const latestDate=winnerRows
-    .map(w=>String(w.event?.event_date||''))
-    .filter(Boolean)
-    .sort((a,b)=>b.localeCompare(a))[0]||'';
+      return {
+        ...w,
+        event,
+        date,
+        month
+      };
+    })
+    .filter(w=>w.event)
+    .sort((a,b)=>
+      String(b.date).localeCompare(String(a.date)) ||
+      String(a.member_name||'').localeCompare(String(b.member_name||''),'ko')
+    );
 
-  const latestMonth=latestDate
-    ? Number(latestDate.slice(5,7))
-    : 8;
-
-  const latestEventIds=new Set(
-    winnerRows
-      .filter(w=>String(w.event?.event_date||'')===latestDate)
-      .map(w=>String(w.event_id))
-  );
-
-  const latestWinners=winnerRows
-    .filter(w=>latestEventIds.has(String(w.event_id)))
-    .sort((a,b)=>String(a.member_name||'').localeCompare(String(b.member_name||''),'ko'));
-
-  document.title=`${latestMonth}월 대관 우승자 · VOM`;
+  document.title='대관공연 우승자 · VOM';
 
   page.classList.toggle('admin-mode',adminMode);
 
@@ -784,14 +781,14 @@ function renderRanking(){
 
     <section class="hero">
       <div class="kicker">OPEN MIC · WINNERS</div>
-      <h1 class="ranking-title">${latestMonth}월 대관 우승자</h1>
-      <p>가장 최근 VOM 대관공연의 우승 결과를 확인합니다.</p>
+      <h1 class="ranking-title">대관공연 우승자</h1>
+      <p>회차별 VOM 대관공연 우승 결과를 확인합니다.</p>
     </section>
 
     <div class="ranking-summary">
       <div>
         <small>NEXT OPEN MIC</small>
-        <strong>다음 대관 예정 · 12월</strong>
+        <strong>다음 대관공연 예정 · 12월</strong>
       </div>
       <div style="font-family:'Nanum Pen Script';font-size:30px;color:#7560d5">December</div>
     </div>
@@ -802,18 +799,18 @@ function renderRanking(){
 
     <div class="ranking-list">
       ${
-        latestWinners.length
-        ? latestWinners.map((x,i)=>`
+        winnerRows.length
+        ? winnerRows.map(x=>`
           <div class="rank-row">
-            <div class="rank-no">${i+1}</div>
+            <div class="rank-no">${x.month?`${x.month}월`:'OPEN'}</div>
             <div>
               <div class="rank-name">${esc(x.member_name||'')}</div>
-              <div class="rank-detail">${latestMonth}월 대관공연 우승</div>
+              <div class="rank-detail">${x.month?`${x.month}월 1등`:'대관공연 1등'}</div>
             </div>
-            <div class="rank-score">🏆</div>
+            <div class="rank-score"><strong>${x.month?`${x.month}월 1등`:'1등'}</strong><small>🏆</small></div>
           </div>
         `).join('')
-        : `<div class="empty">아직 ${latestMonth}월 대관공연 우승 결과가 없습니다.</div>`
+        : `<div class="empty">아직 대관공연 우승 결과가 없습니다.</div>`
       }
     </div>`;
 }
