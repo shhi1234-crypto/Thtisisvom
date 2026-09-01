@@ -1509,6 +1509,87 @@ function formatHomeNewsDate(value){
   letter-spacing:-.03em;
 }
 
+
+.quick .quick-coming{
+  min-height:128px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border-right:1px solid var(--line);
+  border-top:1px solid var(--line);
+  color:#a4a8b6;
+  background:rgba(255,255,255,.22);
+  cursor:default;
+  user-select:none;
+}
+.quick .quick-coming .quick-icon{
+  color:#aaa0d8;
+  opacity:.72;
+}
+.quick .quick-coming strong{
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.3px;
+}
+.quick .quick-coming small{
+  margin-top:4px;
+  color:#a4a8b6;
+  font-size:8px;
+  letter-spacing:1px;
+}
+
+.about-wide-section{
+  margin-top:48px;
+}
+.about-wide{
+  min-height:235px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:40px;
+  padding:34px 40px;
+}
+.about-wide .about-script{
+  position:relative;
+  z-index:2;
+  font-size:50px;
+  line-height:.95;
+}
+.about-wide-copy{
+  position:relative;
+  z-index:2;
+  width:min(440px,48%);
+  align-self:flex-end;
+}
+.about-wide-copy p{
+  margin:0;
+}
+.about-wide-copy .about-link{
+  margin-top:16px;
+}
+
+@media(max-width:700px){
+  .quick .quick-coming{
+    min-height:96px;
+  }
+  .about-wide-section{
+    margin-top:17px;
+  }
+  .about-wide{
+    min-height:205px;
+    display:block;
+    padding:25px;
+  }
+  .about-wide .about-script{
+    font-size:39px;
+  }
+  .about-wide-copy{
+    width:100%;
+    margin-top:28px;
+  }
+}
+
 </style>
 </head>
 
@@ -1758,43 +1839,27 @@ function formatHomeNewsDate(value){
       <small>QUESTION</small>
     </a>
 
+    <div class="quick-coming" aria-disabled="true">
+      <div class="quick-icon">＋</div>
+      <strong>COMING SOON</strong>
+      <small>준비중</small>
+    </div>
+
   </section>
 
 
-  <!-- NOTICE -->
+  <!-- ABOUT VOM -->
 
-  <section class="section">
+  <section class="section about-wide-section">
 
-    <div class="section-head">
+    <a href="/info/" class="about about-wide">
 
-      <h2 class="section-title">
-        새 소식
-        <em>New</em>
-      </h2>
-
-      <a href="/calendar/" class="more">
-        전체 일정 →
-      </a>
-
-    </div>
-
-
-    <div class="middle">
-
-      <div id="homeNews" class="notice">
-        <div class="notice-empty">
-          새로운 소식을 불러오는 중...
-        </div>
+      <div class="about-script">
+        Voice<br>
+        of Melody
       </div>
 
-
-      <a href="/info/" class="about">
-
-        <div class="about-script">
-          Voice<br>
-          of Melody
-        </div>
-
+      <div class="about-wide-copy">
         <p>
           같은 노래를 좋아하는 사람들이 만나<br>
           함께 더 좋은 순간을 만들어갑니다.
@@ -1803,10 +1868,9 @@ function formatHomeNewsDate(value){
         <div class="about-link">
           ABOUT VOM →
         </div>
+      </div>
 
-      </a>
-
-    </div>
+    </a>
 
   </section>
 
