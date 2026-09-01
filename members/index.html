@@ -43,7 +43,7 @@
 <section id="panel-region" class="panel"><div id="regionGrid" class="group-grid"></div><div id="regionPeople" style="margin-top:11px"></div></section>
 </main>
 <div id="memberOverlay" class="overlay"><div class="modal"><div class="modal-head"><h2>Member</h2><button class="close" onclick="closeEditor()">✕</button></div><input id="memberId" type="hidden"><div class="form-grid">
-<div class="field-wrap"><label>이름</label><input id="fName" class="field"></div><div class="field-wrap"><label>역할</label><select id="fRole" class="field"><option>운영진</option><option>헬퍼</option><option>모임원</option></select></div>
+<div class="field-wrap"><label>이름</label><input id="fName" class="field"></div><div class="field-wrap"><label>역할</label><select id="fRole" class="field"><option>모임장</option><option>운영진</option><option>헬퍼</option><option>모임원</option></select></div>
 <div class="field-wrap"><label>활동상태</label><select id="fStatus" class="field"><option>활동중</option><option>비활동</option></select></div><div class="field-wrap"><label>가입일</label><input id="fJoinDate" class="field" type="date"></div>
 <div class="field-wrap"><label>생년월일 (8자리)</label><input id="fBirth" class="field" inputmode="numeric" maxlength="8" placeholder="19990101"></div><div class="field-wrap"><label>지역</label><input id="fRegion" class="field"></div>
 <div class="field-wrap"><label>성별</label><select id="fGender" class="field"><option value="">-</option><option>남</option><option>여</option></select></div><div class="field-wrap"><label>직업</label><input id="fJob" class="field"></div>
@@ -91,12 +91,12 @@
 <nav class="bottom"><a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/" class="active"><span class="nav-icon">♙</span>MEMBERS</a><a href="/event/"><span class="nav-icon">✦</span>EVENT</a><button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button></nav>
 <script>
 const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null;
-const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const role=m=>String(pick(m,'role','member_role','type')||'모임원');const stat=m=>String(pick(m,'status','activity_status','active_status')||'활동중');const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
+const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>String(pick(m,'status','activity_status','active_status')||'활동중');const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
 async function start(){await checkAdmin();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
 async function load(){const {data,error}=await db.from('members').select('*');if(error){console.error(error);members=[]}else members=(data||[]).sort((a,b)=>ord(a)-ord(b)||String(a.name||'').localeCompare(String(b.name||''),'ko'))}function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
-function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>운영진 <b>${staff}명</b></span><span>이번 달 생일 <b>${b}명</b></span>`}
+function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>모임장 <b>${leader}명</b></span><span>운영진 <b>${staff}명</b></span><span>이번 달 생일 <b>${b}명</b></span>`}
 function birthdayNow(){
   const box=document.getElementById('birthdayNow');if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
@@ -123,7 +123,7 @@ function table(){
   }
 
   box.innerHTML=members.map(m=>{
-    const staff=role(m)==='운영진';
+    const staff=['모임장','운영진'].includes(role(m));
     const active=stat(m)==='활동중';
     const o=ord(m);
     const gender=gen(m);
@@ -150,7 +150,7 @@ function table(){
   }).join('');
 }
 
-function canEditPublicProfile(m){return role(m)!=='운영진'||adminMode}
+function canEditPublicProfile(m){return !['모임장','운영진'].includes(role(m))||adminMode}
 function profileCell(m,type){
   const value=type==='singer'?sing(m):job(m);
   if(!canEditPublicProfile(m))return `<span class="profile-static">${esc(value)}</span>`;
@@ -164,7 +164,7 @@ function openProfileEditor(id){
 function closeProfileEditor(){profileOverlay.classList.remove('open');currentProfileMember=null}
 async function savePublicProfile(){
   if(!currentProfileMember)return;
-  if(role(currentProfileMember)==='운영진'&&!adminMode)return;
+  if(['모임장','운영진'].includes(role(currentProfileMember))&&!adminMode)return;
   const {error}=await db.rpc('update_member_public_profile',{p_member_id:String(currentProfileMember.id),p_favorite_singer:profileSinger.value.trim(),p_job:profileJob.value.trim()});
   if(error){alert('저장 실패\n'+error.message);return}
   closeProfileEditor();await load();render();
@@ -178,7 +178,7 @@ async function saveMember(){if(!adminMode)return;const id=memberId.value,b=fBirt
 
 function openMemberSongs(id){
   const m=members.find(x=>String(x.id)===String(id));if(!m)return;
-  if(role(m)==='운영진'&&!adminMode){
+  if(['모임장','운영진'].includes(role(m))&&!adminMode){
     return;
   }
   currentSongMember=m;memberSongsTitle.textContent=`${m.name} · Songs`;resetMemberSongForm();renderMemberSongs();memberSongsOverlay.classList.add('open')
