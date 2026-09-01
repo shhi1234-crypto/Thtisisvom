@@ -293,6 +293,34 @@
   opacity:1;
 }
 
+
+.c-status{display:none!important}
+.song-btn{
+  min-height:31px !important;
+  padding:0 12px !important;
+  border:1px solid rgba(116,93,224,.13) !important;
+  border-radius:999px !important;
+  background:linear-gradient(135deg,#f2efff,#ece9ff) !important;
+  color:#6857c8 !important;
+  font-size:8px !important;
+  font-weight:900 !important;
+  letter-spacing:.7px;
+  white-space:nowrap;
+  transition:transform .15s ease,box-shadow .15s ease,background .15s ease;
+}
+.song-btn:hover{
+  transform:translateY(-1px);
+  background:linear-gradient(135deg,#ece7ff,#e5e1ff) !important;
+  box-shadow:0 7px 16px rgba(95,76,183,.12);
+}
+.setlist-arrow{
+  margin-left:4px;
+  font-size:10px;
+}
+.c-song{
+  width:112px !important;
+}
+
 </style>
 </head>
 <body>
@@ -301,7 +329,7 @@
 <main id="page" class="page">
 <section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div><div id="birthdayNow" class="birthday-now"></div></section>
 <div class="toolbar"><div class="tabs"><button class="tab active" data-view="all" onclick="setView('all')">전체 명단</button><button class="tab" data-view="birthday" onclick="setView('birthday')">생일</button><button class="tab" data-view="age" onclick="setView('age')">나이별</button><button class="tab" data-view="region" onclick="setView('region')">지역별</button></div><button class="add-btn" onclick="openEditor()">＋ 멤버 추가</button></div>
-<section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">가입순서</th><th class="c-name">이름</th><th class="c-role">구분</th><th class="c-date">가입일</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th><th class="c-status">상태</th><th class="c-song">곡</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+<section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">가입순서</th><th class="c-name">이름</th><th class="c-role">구분</th><th class="c-date">가입일</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th><th class="c-song">곡</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section id="panel-birthday" class="panel"><div id="birthdayGrid" class="group-grid"></div></section>
 <section id="panel-age" class="panel"><div id="ageGrid" class="group-grid"></div></section>
 <section id="panel-region" class="panel"><div id="regionGrid" class="group-grid"></div><div id="regionPeople" style="margin-top:11px"></div></section>
@@ -429,7 +457,7 @@ function birthdayNow(){
 function table(){
   const box=document.getElementById('rows');
   if(!members.length){
-    box.innerHTML='<tr><td colspan="9"><div class="empty">등록된 멤버가 없습니다.</div></td></tr>';
+    box.innerHTML='<tr><td colspan="8"><div class="empty">등록된 멤버가 없습니다.</div></td></tr>';
     return;
   }
 
@@ -455,8 +483,8 @@ function table(){
       <td class="c-region">${esc(reg(m))}</td>
       <td class="c-singer">${profileCell(m,'singer')}</td>
       <td class="c-job">${profileCell(m,'job')}</td>
-      <td class="c-status"><span class="status-pill ${active?'active':'inactive'}">${esc(stat(m))}</span></td>
-      <td class="c-song">${staff&&!adminMode?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">곡 관리</button>`}</td>
+      
+      <td class="c-song">${staff&&!adminMode?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">MY SETLIST <span class="setlist-arrow">→</span></button>`}</td>
     </tr>`;
   }).join('');
 }
