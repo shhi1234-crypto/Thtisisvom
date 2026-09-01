@@ -2619,12 +2619,12 @@ async function renderDetail(id){
                               <div class="rank-ear">
                                 ${row.votes}표 · 귀점유율 ${row.earShare.toFixed(1)}%
                                 <span class="point-breakdown">
-                                  참석 +5P + ${row.rank}위 +${rankBonus(row.rank)}P
+                                  참석 +5P + ${row.rank}위 +${formatPoint(row.bonusPoints)}P
                                 </span>
                               </div>
 
                               <div class="rank-points">
-                                총 +${row.points}P
+                                총 +${formatPoint(row.points)}P
                               </div>
 
                             </div>
@@ -3178,7 +3178,7 @@ function updatePreview(){
           .map(
             row => {
               const bonus =
-                rankBonus(row.rank);
+                row.bonusPoints;
 
               return `${
                 row.tied
@@ -3190,7 +3190,7 @@ function updatePreview(){
               · ${row.earShare.toFixed(1)}%
               <br>
               <span style="color:#725bdd;font-weight:700;">
-                참석 +5P + ${row.rank}위 +${bonus}P = 총 +${row.points}P
+                참석 +5P + ${row.rank}위 +${bonus}P = 총 +${formatPoint(row.points)}P
               </span>`;
             }
           )
@@ -3358,14 +3358,30 @@ async function saveResults(){
 
     /* 투표 결과 + 직접 지정 순위 저장 */
 
+    const rankCounts = {};
+    people.forEach(person => {
+      if([1,2,3].includes(Number(person.rank))){
+        const r = Number(person.rank);
+        rankCounts[r] = (rankCounts[r] || 0) + 1;
+      }
+    });
+
     const voteResults =
       people.map(
-        person => ({
-          member_id:person.member_id,
-          name:person.name,
-          votes:person.votes,
-          rank:person.rank
-        })
+        person => {
+          const r = [1,2,3].includes(Number(person.rank)) ? Number(person.rank) : null;
+          const tieCount = r ? (rankCounts[r] || 1) : 1;
+          const bonusPoints = r ? rankBonus(r) / tieCount : 0;
+          return {
+            member_id:person.member_id,
+            name:person.name,
+            votes:person.votes,
+            rank:r,
+            tie_count:tieCount,
+            bonus_points:bonusPoints,
+            total_points:5 + bonusPoints
+          };
+        }
       );
 
     const {
@@ -3506,6 +3522,11 @@ function rankBonus(rank){
   return 0;
 }
 
+function formatPoint(value){
+  const n = Number(value || 0);
+  return Number.isInteger(n) ? String(n) : String(Math.round(n * 10) / 10);
+}
+
 
 function calculateRankingFromPeople(
   people,
@@ -3584,22 +3605,18 @@ function calculateRankingFromPeople(
         ? row.votes / total * 100
         : 0;
 
+      const tieCount =
+        row.rank !== null
+        ? sorted.filter(other => other.rank === row.rank).length
+        : 0;
 
-      row.points =
-        5 + rankBonus(row.rank);
-    }
-  );
-
-
-  sorted.forEach(
-    row => {
-
-      row.tied =
-        row.rank !== null &&
-        sorted.filter(
-          other =>
-            other.rank === row.rank
-        ).length > 1;
+      row.tied = tieCount > 1;
+      row.tieCount = tieCount || 1;
+      row.bonusPoints =
+        row.rank !== null
+        ? rankBonus(row.rank) / row.tieCount
+        : 0;
+      row.points = 5 + row.bonusPoints;
     }
   );
 
