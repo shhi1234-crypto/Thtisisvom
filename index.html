@@ -466,9 +466,9 @@ button{
 
 .rank-kicker{
   color:rgba(255,255,255,.57);
-  font-size:7px;
+  font-size:9px;
   font-weight:700;
-  letter-spacing:1.2px;
+  letter-spacing:1.1px;
 }
 
 .rank-title{
@@ -533,7 +533,15 @@ button{
 .rank-detail{
   margin-top:1px;
   color:rgba(255,255,255,.48);
-  font-size:6px;
+  font-size:9px;
+  line-height:1.35;
+}
+
+.openmic-month{
+  margin-top:3px;
+  color:rgba(255,255,255,.72);
+  font-size:12px;
+  font-weight:700;
 }
 
 .rank-score{
@@ -2135,8 +2143,8 @@ async function loadOpenMicRanking(){
 
       const monthText =
         row.month
-        ? `${row.month}월 대관공연 1등`
-        : '대관공연 1등';
+        ? `${row.month}월 1등`
+        : '1등';
 
       return `
         <a
@@ -2146,7 +2154,7 @@ async function loadOpenMicRanking(){
           <div class="rank-number">1</div>
           <div>
             <div class="rank-name">${escapeHtml(name)}</div>
-            <div class="rank-detail">${escapeHtml(monthText)}</div>
+            <div class="rank-detail openmic-month">${escapeHtml(monthText)}</div>
           </div>
           <div class="rank-score">🏆</div>
         </a>
