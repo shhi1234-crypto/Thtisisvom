@@ -432,6 +432,206 @@ header{
   .u-image{height:67px}
 }
 
+
+/* VOM LIVE exact size/spacing match */
+.u-hero{
+  display:grid !important;
+  grid-template-columns:1.05fr .95fr !important;
+  gap:45px !important;
+  align-items:center !important;
+  padding:72px 0 70px !important;
+}
+.u-label{
+  color:#7461dc !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:22px !important;
+  margin-bottom:0 !important;
+}
+.u-title{
+  margin:8px 0 0 !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:clamp(86px,13vw,145px) !important;
+  font-weight:400 !important;
+  line-height:.72 !important;
+  letter-spacing:normal !important;
+}
+.u-subtitle{
+  margin-top:22px !important;
+  font-size:20px !important;
+  font-weight:700 !important;
+  letter-spacing:-.7px !important;
+  line-height:1.55 !important;
+}
+.u-copy{
+  max-width:530px !important;
+  margin-top:20px !important;
+  color:#62697d !important;
+  font-size:13px !important;
+  line-height:1.9 !important;
+}
+.u-tags{
+  display:flex !important;
+  flex-wrap:wrap !important;
+  gap:7px !important;
+  margin-top:25px !important;
+}
+.u-visual{
+  min-height:360px !important;
+  position:relative !important;
+  overflow:hidden !important;
+  padding:32px !important;
+  border-radius:31px !important;
+  color:white !important;
+  background:
+    radial-gradient(circle at 80% 15%,rgba(124,225,218,.52),transparent 34%),
+    radial-gradient(circle at 12% 90%,rgba(171,112,245,.70),transparent 42%),
+    linear-gradient(145deg,#1d2b51,#363b7c) !important;
+  box-shadow:0 25px 65px rgba(28,35,75,.15) !important;
+}
+.u-visual .script{
+  position:relative !important;
+  z-index:2 !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:50px !important;
+  line-height:.88 !important;
+  color:#e2d9ff !important;
+}
+.u-section{
+  margin-top:52px !important;
+}
+.u-kicker{
+  color:#7461dc !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:22px !important;
+}
+.u-section-title{
+  margin:2px 0 18px !important;
+  font-size:25px !important;
+  letter-spacing:-1px !important;
+}
+.u-process{
+  display:grid !important;
+  grid-template-columns:repeat(4,1fr) !important;
+  gap:12px !important;
+}
+.u-process-card{
+  min-height:185px !important;
+  padding:22px !important;
+  border-radius:22px !important;
+  background:rgba(255,255,255,.78) !important;
+  border:1px solid rgba(255,255,255,.95) !important;
+  box-shadow:0 13px 35px rgba(31,37,74,.06) !important;
+}
+.u-process-num{
+  color:#8069e8 !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:35px !important;
+}
+.u-process-card h3{
+  margin:22px 0 8px !important;
+}
+.u-lists{
+  margin-top:52px !important;
+}
+.u-list-section{
+  margin-top:52px !important;
+}
+.u-list-section:first-child{
+  margin-top:0 !important;
+}
+.u-list-kicker{
+  color:#7461dc !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:22px !important;
+}
+.u-list-head h2{
+  margin:2px 0 0 !important;
+  font-size:25px !important;
+  letter-spacing:-1px !important;
+}
+.u-list{
+  display:grid !important;
+  gap:12px !important;
+  margin-top:18px !important;
+}
+.u-card{
+  display:grid !important;
+  grid-template-columns:76px minmax(0,1fr) 130px !important;
+  align-items:center !important;
+  gap:17px !important;
+  min-height:115px !important;
+  padding:15px 16px !important;
+  border-radius:23px !important;
+  background:rgba(255,255,255,.83) !important;
+  border:1px solid rgba(255,255,255,.96) !important;
+  box-shadow:0 10px 30px rgba(31,37,74,.05) !important;
+}
+.u-date{
+  min-height:76px !important;
+  height:auto !important;
+  border-radius:18px !important;
+  color:white !important;
+  background:linear-gradient(145deg,#8068e8,#7598eb) !important;
+}
+.u-type{
+  color:#7762de !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:17px !important;
+  letter-spacing:normal !important;
+}
+.u-meta{
+  color:#73798c !important;
+  font-size:10px !important;
+  line-height:1.7 !important;
+}
+.u-more{
+  margin-top:6px !important;
+  color:#7562db !important;
+  font-family:"Nanum Pen Script",cursive !important;
+  font-size:15px !important;
+}
+.u-side{
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:flex-end !important;
+  gap:6px !important;
+}
+.u-image{
+  width:130px !important;
+  height:78px !important;
+  border-radius:16px !important;
+  overflow:hidden !important;
+  background:linear-gradient(145deg,#e9e4ff,#e1eff5) !important;
+}
+@media(max-width:850px){
+  .u-hero{
+    grid-template-columns:1fr !important;
+  }
+  .u-process{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
+@media(max-width:600px){
+  .u-hero{
+    padding:45px 0 48px !important;
+  }
+  .u-title{
+    font-size:clamp(74px,24vw,108px) !important;
+  }
+  .u-process{
+    grid-template-columns:1fr !important;
+  }
+  .u-card{
+    grid-template-columns:64px minmax(0,1fr) 76px !important;
+    gap:10px !important;
+    padding:12px !important;
+  }
+  .u-image{
+    width:76px !important;
+    height:67px !important;
+  }
+}
+
 </style>
 </head>
 <body>
