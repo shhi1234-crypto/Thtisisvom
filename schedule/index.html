@@ -24,7 +24,7 @@ linear-gradient(180deg,#faf8fb,#f8f7fb 60%,#fbfafc)}
 .thumb{width:110px;height:74px;border-radius:14px;overflow:hidden;background:linear-gradient(145deg,#ece7ff,#e2f1f4);display:grid;place-items:center;color:#9990ba;font-family:"Nanum Pen Script",cursive;font-size:18px}.thumb img{width:100%;height:100%;object-fit:cover}
 .detail{padding:23px;border-radius:24px;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.96);box-shadow:0 14px 38px rgba(31,37,74,.06)}
 .detail-image{width:100%;height:320px;margin:18px 0;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,#ece7ff,#e2f1f4);display:grid;place-items:center;color:#938ab5;font-family:"Nanum Pen Script",cursive;font-size:30px}.detail-image img{width:100%;height:100%;object-fit:cover}
-.detail h1{margin:4px 0 7px;font-family:"Nanum Pen Script",cursive;font-size:50px;font-weight:400}.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.info{padding:14px;border-radius:14px;background:#f6f5fa}.info small{display:block;color:#9296a5;font-size:8px;font-weight:800}.info strong{display:block;margin-top:4px;font-size:11px}
+.detail h1{margin:4px 0 7px;font-family:"Nanum Pen Script",cursive;font-size:50px;font-weight:400}.mixed-num{display:inline-block;margin:0 .055em;font-family:"Noto Sans KR",sans-serif;font-size:.78em;font-weight:800;line-height:1;letter-spacing:-.02em;vertical-align:.08em}.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}.info{padding:14px;border-radius:14px;background:#f6f5fa}.info small{display:block;color:#9296a5;font-size:8px;font-weight:800}.info strong{display:block;margin-top:4px;font-size:11px}
 .desc{margin-top:14px;padding:15px;border-radius:15px;background:#f7f6fb;color:#676d7e;font-size:11px;line-height:1.9}
 .empty{padding:45px 15px;text-align:center;color:#9498a7;font-size:11px}
 .overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(24,29,54,.34);backdrop-filter:blur(14px)}.overlay.open{display:flex}.menu-card{width:min(390px,100%);padding:22px;border-radius:24px;background:#fff}.menu-top{display:flex;align-items:center;justify-content:space-between}.menu-top h3{font-family:"Nanum Pen Script",cursive;font-size:32px;font-weight:400;margin:0}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:12px}
@@ -99,7 +99,7 @@ async function start(){
      : '';
 
  document.getElementById('page').innerHTML=`<a class="back" href="/calendar/">← CALENDAR</a>
- <section class="detail"><div class="type">${esc(row.event_type||'OTHER')}</div><h1>${esc(row.title||'')}</h1>
+ <section class="detail"><div class="type">${esc(row.event_type||'OTHER')}</div><h1>${mixedTitle(row.title||'')}</h1>
  ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">VOM Schedule</div>`}
  <div class="detail-meta"><div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div><div class="info"><small>TIME</small><strong>${esc(makeTime(row)||'시간 미정')}</strong></div><div class="info"><small>PLACE</small><strong>${esc(place?.name||row.location||'장소 미정')}</strong></div></div>
  ${row.description?`<div class="desc">${esc(row.description).replace(/\n/g,'<br>')}</div>`:''}
@@ -119,6 +119,7 @@ function formatDate(v){
 function week(v){
   return ['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(v+'T00:00:00').getDay()];
 }
+function mixedTitle(v){return esc(v).replace(/([0-9]+)/g,'<span class="mixed-num">$1</span>')}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function openMenu(){document.getElementById('menuOverlay').classList.add('open')}
