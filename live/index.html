@@ -1244,6 +1244,12 @@ button{
   .detail-choice strong{font-size:16px}
 }
 
+
+.host-note{margin-top:16px;padding:18px 19px;border-radius:19px;border:1px solid rgba(116,94,221,.14);background:linear-gradient(135deg,#f3efff,#eef9f7)}
+.host-note-label{color:#735fd3;font-size:9px;font-weight:900;letter-spacing:1.35px}
+.host-note-title{margin-top:5px;font-size:13px;font-weight:850;color:#282d40}
+.host-note-body{margin-top:9px;color:#5f6577;font-size:11px;line-height:1.9}
+
 </style>
 </head>
 
@@ -2494,6 +2500,12 @@ async function renderDetail(id){
         </div>
 
       </div>
+
+      ${
+        event.host_note
+        ? `<div class="host-note"><div class="host-note-label">HOST NOTE</div><div class="host-note-title">주최자 안내</div><div class="host-note-body">${escapeHtml(event.host_note).replace(/\n/g,'<br>')}</div></div>`
+        : ''
+      }
 
 
       ${
