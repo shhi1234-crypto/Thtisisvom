@@ -491,7 +491,7 @@ button{
 .rank-row{
   min-height:48px;
   display:grid;
-  grid-template-columns:31px minmax(0,1fr) auto;
+  grid-template-columns:38px minmax(0,1fr) auto;
   align-items:center;
   gap:8px;
   padding:6px 10px;
@@ -502,7 +502,9 @@ button{
 
 .rank-number{
   font-family:"Nanum Pen Script",cursive;
-  font-size:18px;
+  font-size:25px;
+  line-height:1;
+  font-weight:700;
   color:#e2dcff;
 }
 
@@ -1371,13 +1373,13 @@ function formatHomeNewsDate(value){
 
   .rank-row{
     min-height:41px;
-    grid-template-columns:27px minmax(0,1fr) auto;
+    grid-template-columns:34px minmax(0,1fr) auto;
     padding:4px 9px;
     border-radius:12px;
   }
 
   .rank-number{
-    font-size:16px;
+    font-size:22px;
   }
 
   .rank-name{
@@ -2323,18 +2325,7 @@ function createPointRow(row){
   const rank =
     Number(row.rank);
 
-  const attendance =
-    Number(row.attendance_count || 0);
-
-  const first =
-    Number(row.first_place_count || 0);
-
-  let detail =
-    `참석 ${attendance}회`;
-
-  if(first){
-    detail += ` · 1위 ${first}회`;
-  }
+  const detail = '포인트';
 
   return `
     <a
