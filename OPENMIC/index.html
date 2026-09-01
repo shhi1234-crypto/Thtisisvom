@@ -411,6 +411,30 @@ header{
   color:#9a9dad;
   font-size:11px;
 }
+
+.ranking-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin:6px 0 18px;padding:15px 18px;border-radius:18px;
+  background:linear-gradient(135deg,#f1edff,#eaf8f6);border:1px solid var(--line)
+}
+.ranking-summary small{display:block;font-size:9px;letter-spacing:.12em;color:#8b7fc0;font-weight:800}
+.ranking-summary strong{display:block;margin-top:3px;font-size:16px}
+.ranking-admin{
+  display:none;margin:0 0 14px;justify-content:flex-end
+}
+.admin-mode .ranking-admin{display:flex}
+.ranking-add{
+  border:0;border-radius:14px;padding:11px 14px;
+  background:#ece8ff;color:#6652c6;font-weight:800;font-size:11px;cursor:pointer
+}
+.event-picker-list{display:grid;gap:9px;margin-top:16px}
+.event-pick{
+  width:100%;border:1px solid var(--line);background:#faf9fd;border-radius:16px;
+  padding:13px 14px;text-align:left;cursor:pointer;color:var(--ink)
+}
+.event-pick strong{display:block;font-size:13px}
+.event-pick small{display:block;margin-top:3px;color:#8a8d9b;font-size:10px}
+
 @media(max-width:850px){
   .u-hero{grid-template-columns:1fr;gap:28px;padding:48px 0 55px}
   .u-title{font-size:70px}
@@ -432,206 +456,6 @@ header{
   .u-image{height:67px}
 }
 
-
-/* VOM LIVE exact size/spacing match */
-.u-hero{
-  display:grid !important;
-  grid-template-columns:1.05fr .95fr !important;
-  gap:45px !important;
-  align-items:center !important;
-  padding:72px 0 70px !important;
-}
-.u-label{
-  color:#7461dc !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:22px !important;
-  margin-bottom:0 !important;
-}
-.u-title{
-  margin:8px 0 0 !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:clamp(86px,13vw,145px) !important;
-  font-weight:400 !important;
-  line-height:.72 !important;
-  letter-spacing:normal !important;
-}
-.u-subtitle{
-  margin-top:22px !important;
-  font-size:20px !important;
-  font-weight:700 !important;
-  letter-spacing:-.7px !important;
-  line-height:1.55 !important;
-}
-.u-copy{
-  max-width:530px !important;
-  margin-top:20px !important;
-  color:#62697d !important;
-  font-size:13px !important;
-  line-height:1.9 !important;
-}
-.u-tags{
-  display:flex !important;
-  flex-wrap:wrap !important;
-  gap:7px !important;
-  margin-top:25px !important;
-}
-.u-visual{
-  min-height:360px !important;
-  position:relative !important;
-  overflow:hidden !important;
-  padding:32px !important;
-  border-radius:31px !important;
-  color:white !important;
-  background:
-    radial-gradient(circle at 80% 15%,rgba(124,225,218,.52),transparent 34%),
-    radial-gradient(circle at 12% 90%,rgba(171,112,245,.70),transparent 42%),
-    linear-gradient(145deg,#1d2b51,#363b7c) !important;
-  box-shadow:0 25px 65px rgba(28,35,75,.15) !important;
-}
-.u-visual .script{
-  position:relative !important;
-  z-index:2 !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:50px !important;
-  line-height:.88 !important;
-  color:#e2d9ff !important;
-}
-.u-section{
-  margin-top:52px !important;
-}
-.u-kicker{
-  color:#7461dc !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:22px !important;
-}
-.u-section-title{
-  margin:2px 0 18px !important;
-  font-size:25px !important;
-  letter-spacing:-1px !important;
-}
-.u-process{
-  display:grid !important;
-  grid-template-columns:repeat(4,1fr) !important;
-  gap:12px !important;
-}
-.u-process-card{
-  min-height:185px !important;
-  padding:22px !important;
-  border-radius:22px !important;
-  background:rgba(255,255,255,.78) !important;
-  border:1px solid rgba(255,255,255,.95) !important;
-  box-shadow:0 13px 35px rgba(31,37,74,.06) !important;
-}
-.u-process-num{
-  color:#8069e8 !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:35px !important;
-}
-.u-process-card h3{
-  margin:22px 0 8px !important;
-}
-.u-lists{
-  margin-top:52px !important;
-}
-.u-list-section{
-  margin-top:52px !important;
-}
-.u-list-section:first-child{
-  margin-top:0 !important;
-}
-.u-list-kicker{
-  color:#7461dc !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:22px !important;
-}
-.u-list-head h2{
-  margin:2px 0 0 !important;
-  font-size:25px !important;
-  letter-spacing:-1px !important;
-}
-.u-list{
-  display:grid !important;
-  gap:12px !important;
-  margin-top:18px !important;
-}
-.u-card{
-  display:grid !important;
-  grid-template-columns:76px minmax(0,1fr) 130px !important;
-  align-items:center !important;
-  gap:17px !important;
-  min-height:115px !important;
-  padding:15px 16px !important;
-  border-radius:23px !important;
-  background:rgba(255,255,255,.83) !important;
-  border:1px solid rgba(255,255,255,.96) !important;
-  box-shadow:0 10px 30px rgba(31,37,74,.05) !important;
-}
-.u-date{
-  min-height:76px !important;
-  height:auto !important;
-  border-radius:18px !important;
-  color:white !important;
-  background:linear-gradient(145deg,#8068e8,#7598eb) !important;
-}
-.u-type{
-  color:#7762de !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:17px !important;
-  letter-spacing:normal !important;
-}
-.u-meta{
-  color:#73798c !important;
-  font-size:10px !important;
-  line-height:1.7 !important;
-}
-.u-more{
-  margin-top:6px !important;
-  color:#7562db !important;
-  font-family:"Nanum Pen Script",cursive !important;
-  font-size:15px !important;
-}
-.u-side{
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:flex-end !important;
-  gap:6px !important;
-}
-.u-image{
-  width:130px !important;
-  height:78px !important;
-  border-radius:16px !important;
-  overflow:hidden !important;
-  background:linear-gradient(145deg,#e9e4ff,#e1eff5) !important;
-}
-@media(max-width:850px){
-  .u-hero{
-    grid-template-columns:1fr !important;
-  }
-  .u-process{
-    grid-template-columns:repeat(2,1fr) !important;
-  }
-}
-@media(max-width:600px){
-  .u-hero{
-    padding:45px 0 48px !important;
-  }
-  .u-title{
-    font-size:clamp(74px,24vw,108px) !important;
-  }
-  .u-process{
-    grid-template-columns:1fr !important;
-  }
-  .u-card{
-    grid-template-columns:64px minmax(0,1fr) 76px !important;
-    gap:10px !important;
-    padding:12px !important;
-  }
-  .u-image{
-    width:76px !important;
-    height:67px !important;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -644,6 +468,19 @@ header{
 </header>
 
 <main id="page" class="page"><div class="empty">대관공연을 불러오는 중...</div></main>
+
+<div id="winnerEventPickerOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-top">
+      <h2>대관공연 결과 추가</h2>
+      <button class="close" onclick="closeWinnerEventPicker()">✕</button>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:#858899;line-height:1.65">
+      결과를 입력하거나 수정할 대관공연을 선택합니다.
+    </div>
+    <div id="winnerEventPickerList" class="event-picker-list"></div>
+  </div>
+</div>
 
 <div id="winnerOverlay" class="overlay">
   <div class="modal">
@@ -910,27 +747,106 @@ async function renderDetail(id){
 }
 
 function renderRanking(){
-  document.title='대관공연 우승 기록 · VOM';
-  const map=new Map();
-  winners.forEach(w=>{
-    const key=String(w.member_id||w.member_name||'');
-    if(!key)return;
-    if(!map.has(key))map.set(key,{name:w.member_name||'',wins:0});
-    map.get(key).wins++;
-  });
-  const list=[...map.values()].sort((a,b)=>b.wins-a.wins||a.name.localeCompare(b.name,'ko'));
-  let lastWins=null,rank=0;
-  const ranked=list.map((x,i)=>{if(x.wins!==lastWins){rank=i+1;lastWins=x.wins}return{...x,rank}});
+  const eventMap=new Map(events.map(e=>[String(e.id),e]));
+
+  const winnerRows=winners
+    .map(w=>({
+      ...w,
+      event:eventMap.get(String(w.event_id))
+    }))
+    .filter(w=>w.event);
+
+  const latestDate=winnerRows
+    .map(w=>String(w.event?.event_date||''))
+    .filter(Boolean)
+    .sort((a,b)=>b.localeCompare(a))[0]||'';
+
+  const latestMonth=latestDate
+    ? Number(latestDate.slice(5,7))
+    : 8;
+
+  const latestEventIds=new Set(
+    winnerRows
+      .filter(w=>String(w.event?.event_date||'')===latestDate)
+      .map(w=>String(w.event_id))
+  );
+
+  const latestWinners=winnerRows
+    .filter(w=>latestEventIds.has(String(w.event_id)))
+    .sort((a,b)=>String(a.member_name||'').localeCompare(String(b.member_name||''),'ko'));
+
+  document.title=`${latestMonth}월 대관 우승자 · VOM`;
+
+  page.classList.toggle('admin-mode',adminMode);
+
   page.innerHTML=`
     <a class="back" href="/">← HOME</a>
+
     <section class="hero">
       <div class="kicker">OPEN MIC · WINNERS</div>
-      <h1 class="ranking-title">대관공연 우승 기록</h1>
-      <p>VOM 대관공연에서 기록된 우승 횟수를 기준으로 확인합니다.</p>
+      <h1 class="ranking-title">${latestMonth}월 대관 우승자</h1>
+      <p>가장 최근 VOM 대관공연의 우승 결과를 확인합니다.</p>
     </section>
+
+    <div class="ranking-summary">
+      <div>
+        <small>NEXT OPEN MIC</small>
+        <strong>다음 대관 예정 · 12월</strong>
+      </div>
+      <div style="font-family:'Nanum Pen Script';font-size:30px;color:#7560d5">December</div>
+    </div>
+
+    <div class="ranking-admin">
+      <button class="ranking-add" onclick="openWinnerEventPicker()">＋ 대관공연 결과 추가하기</button>
+    </div>
+
     <div class="ranking-list">
-      ${ranked.length?ranked.map(x=>`<div class="rank-row"><div class="rank-no">${x.rank}</div><div><div class="rank-name">${esc(x.name)}</div><div class="rank-detail">누적 대관공연 우승</div></div><div class="rank-score">${x.wins}<small>WIN</small></div></div>`).join(''):'<div class="empty">아직 대관공연 우승 기록이 없습니다.</div>'}
+      ${
+        latestWinners.length
+        ? latestWinners.map((x,i)=>`
+          <div class="rank-row">
+            <div class="rank-no">${i+1}</div>
+            <div>
+              <div class="rank-name">${esc(x.member_name||'')}</div>
+              <div class="rank-detail">${latestMonth}월 대관공연 우승</div>
+            </div>
+            <div class="rank-score">🏆</div>
+          </div>
+        `).join('')
+        : `<div class="empty">아직 ${latestMonth}월 대관공연 우승 결과가 없습니다.</div>`
+      }
     </div>`;
+}
+
+function openWinnerEventPicker(){
+  if(!adminMode)return;
+
+  const list=document.getElementById('winnerEventPickerList');
+  const sorted=[...events].sort((a,b)=>String(b.event_date||'').localeCompare(String(a.event_date||'')));
+
+  list.innerHTML=sorted.length
+    ? sorted.map(event=>{
+        const ws=getWinners(event.id);
+        const month=event.event_date?Number(String(event.event_date).slice(5,7)):null;
+        return `
+          <button class="event-pick" onclick="chooseWinnerEvent(${Number(event.id)})">
+            <strong>${esc(event.title||`${month||''}월 대관공연`)}</strong>
+            <small>${esc(event.event_date||'날짜 미정')}${ws.length?` · 현재 우승자 ${ws.map(w=>esc(w.member_name)).join(' · ')}`:' · 결과 미입력'}</small>
+          </button>
+        `;
+      }).join('')
+    : '<div class="empty">등록된 대관공연이 없습니다.</div>';
+
+  winnerEventPickerOverlay.classList.add('open');
+}
+
+function closeWinnerEventPicker(){
+  winnerEventPickerOverlay.classList.remove('open');
+}
+
+function chooseWinnerEvent(eventId){
+  closeWinnerEventPicker();
+  openWinnerEditor(eventId);
 }
 
 function openWinnerEditor(eventId){
@@ -964,7 +880,10 @@ async function saveWinners(){
   const ins=await db.from('open_mic_winners').insert(payload);
   if(ins.error){alert('우승 결과 저장에 실패했습니다.');console.error(ins.error);return}
   winners=winners.filter(x=>String(x.event_id)!==String(eventId)).concat(payload);
-  closeWinnerEditor();await renderDetail(eventId);
+  closeWinnerEditor();
+  const params=new URLSearchParams(location.search);
+  if(params.get('ranking')==='winner') renderRanking();
+  else await renderDetail(eventId);
 }
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}
 start();
