@@ -113,6 +113,84 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
   .content-intro-grid{grid-template-columns:1fr}
 }
 
+
+/* V10.3 · polished content intro */
+.intro-editorial{
+  margin-top:18px;
+  padding:30px 28px;
+  border-radius:28px;
+  background:linear-gradient(135deg,rgba(244,239,255,.92),rgba(233,250,246,.90));
+  border:1px solid rgba(111,88,190,.12);
+}
+.intro-editorial .intro-kicker{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+  color:#7764cf;
+}
+.intro-editorial h2{
+  margin:8px 0 10px;
+  font-size:30px;
+  letter-spacing:-.035em;
+}
+.intro-editorial p{
+  margin:0;
+  max-width:850px;
+  color:#6f7384;
+  line-height:1.85;
+  font-size:14px;
+}
+.intro-process{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:20px;
+}
+.intro-process article{
+  min-height:150px;
+  padding:18px;
+  border-radius:19px;
+  background:rgba(255,255,255,.72);
+  border:1px solid rgba(100,90,140,.08);
+}
+.intro-process .num{
+  font-size:10px;
+  font-weight:800;
+  color:#8a75df;
+  letter-spacing:.12em;
+}
+.intro-process h3{
+  margin:10px 0 6px;
+  font-size:16px;
+}
+.intro-process p{
+  font-size:11px;
+  line-height:1.65;
+}
+.intro-point{
+  margin-top:12px;
+  padding:22px 24px;
+  border-radius:24px;
+  background:rgba(255,255,255,.76);
+  border:1px solid rgba(100,90,140,.10);
+}
+.intro-point strong{
+  display:block;
+  font-size:18px;
+  margin-bottom:7px;
+}
+.intro-point span{
+  color:#74788a;
+  font-size:12px;
+  line-height:1.8;
+}
+@media(max-width:680px){
+  .intro-editorial{padding:23px 18px}
+  .intro-editorial h2{font-size:25px}
+  .intro-process{grid-template-columns:1fr}
+  .intro-process article{min-height:auto}
+}
+
 </style>
 </head>
 <body>
@@ -329,47 +407,53 @@ function partLabel(part){return settings.section_count===2?`${part}부`:'공연'
 
 function renderBuskingIntro(){
   document.title='버스킹 소개 · VOM';
+
   page.innerHTML=`
     <a class="back" href="/busking/">← BUSKING</a>
+
     <section class="hero">
-      <div class="eyebrow">ABOUT BUSKING</div>
+      <div class="eyebrow">VOM ON STREET</div>
       <h1>Busking</h1>
-      <p>거리에서 관객과 직접 만나며 함께 무대를 만드는 VOM의 야외 라이브 컨텐츠입니다.</p>
+      <p>준비한 노래를 연습실 밖으로 꺼내, 관객과 직접 만나는 VOM의 야외 라이브.</p>
     </section>
 
-    <section class="content-intro" style="margin-top:18px;">
-      <div class="intro-kicker">VOM ON STREET</div>
-      <h2>VOM 버스킹은요</h2>
+    <section class="intro-editorial">
+      <div class="intro-kicker">ABOUT BUSKING</div>
+      <h2>거리에서 완성되는 VOM의 무대</h2>
       <p>
-        연습실에서 준비한 노래를 실제 관객 앞에서 들려주는 자리입니다.
-        잘 짜인 공연만을 목표로 하기보다, 각자 준비한 곡을 나누고 듀엣이나 단체곡을 섞어
-        하나의 무대를 함께 완성해가는 방식입니다.
+        버스킹은 각자 준비한 노래를 실제 관객 앞에서 들려주는 자리입니다.
+        개인곡을 중심으로 듀엣과 단체곡을 더하고, 참가자들이 함께 셋리스트를 만들어
+        하나의 공연으로 완성합니다. 정형화된 공연보다는 현장의 분위기와 반응까지 함께 즐기는 데 더 가깝습니다.
       </p>
 
-      <div class="content-intro-grid">
-        <div>
-          <strong>개인곡 + 듀엣</strong>
-          <small>각자의 곡을 중심으로 자유롭게 구성</small>
-        </div>
-        <div>
-          <strong>관객과 가까운 무대</strong>
-          <small>거리에서 바로 반응을 느끼는 라이브</small>
-        </div>
-        <div>
-          <strong>회차별 셋리스트</strong>
-          <small>참가자와 곡 순서를 함께 편성</small>
-        </div>
+      <div class="intro-process">
+        <article>
+          <div class="num">01 · PREPARE</div>
+          <h3>각자의 곡을 준비</h3>
+          <p>개인곡을 중심으로 원하는 곡을 준비하고, 필요하면 듀엣이나 단체곡을 함께 구성합니다.</p>
+        </article>
+
+        <article>
+          <div class="num">02 · BUILD</div>
+          <h3>함께 셋리스트 완성</h3>
+          <p>참가자별 곡과 공연 순서를 조율해 한 회차의 흐름을 만듭니다.</p>
+        </article>
+
+        <article>
+          <div class="num">03 · LIVE</div>
+          <h3>관객과 바로 만나는 무대</h3>
+          <p>거리라는 열린 공간에서 관객의 반응을 직접 느끼며 라이브를 진행합니다.</p>
+        </article>
       </div>
     </section>
 
-    <section class="content-intro" style="margin-top:12px;">
-      <div class="intro-kicker">HOW IT WORKS</div>
-      <h2>이런 식으로 진행돼요</h2>
-      <p>
-        버스킹 일정이 열리면 참가자를 모집하고, 각자 부를 곡을 등록한 뒤 셋리스트를 구성합니다.
-        개인곡뿐 아니라 참가자끼리 듀엣이나 단체곡을 추가할 수 있고,
-        실제 공연 전에는 최종 순서까지 홈페이지에서 확인할 수 있습니다.
-      </p>
+    <section class="intro-point">
+      <strong>완벽한 공연보다, 같이 무대에 서는 경험.</strong>
+      <span>
+        버스킹 경험이 많지 않아도 괜찮습니다.
+        잘 짜인 무대를 보여주는 것보다 직접 준비하고, 함께 서보고,
+        현장에서 생기는 순간까지 즐기는 것이 VOM 버스킹의 핵심입니다.
+      </span>
     </section>
 
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 32px;">
@@ -380,6 +464,7 @@ function renderBuskingIntro(){
         </div>
         <span>→</span>
       </a>
+
       <a class="setlist-cta" style="flex:1;min-width:220px;margin:0;" href="/calendar/">
         <div>
           <strong>전체 캘린더 보기</strong>
@@ -390,7 +475,6 @@ function renderBuskingIntro(){
     </div>
   `;
 }
-
 
 function renderBuskingList(){
   const list=events.filter(e=>e.event_type==='BUSKING');
