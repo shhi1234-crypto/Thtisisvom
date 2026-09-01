@@ -4,22 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#f7f5fa">
-<link rel="icon" type="image/png" href="/favicon.png?v=3">
-<link rel="shortcut icon" type="image/png" href="/favicon.png?v=3">
 <title>EVENT · Voice of Melody</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-function syncAdminMenuUI(){
- const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');
- if(a)a.style.display=adminMode?'none':'block';
- if(l)l.style.display=adminMode?'block':'none';
-}
-setTimeout(syncAdminMenuUI,0);
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
@@ -251,6 +242,35 @@ button{color:inherit}
   font-size:31px;
   font-weight:400;
 }
+
+
+/* VOM POINT LEDGER / EXCHANGE */
+.point-ledger-wrap{
+  margin-top:18px;
+  padding:18px;
+  border-radius:24px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.96);
+  box-shadow:0 12px 34px rgba(31,37,74,.055);
+}
+.point-ledger-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.point-ledger-head h3{margin:0;font-size:17px}
+.point-ledger-head p{margin:4px 0 0;color:#858a99;font-size:10px;line-height:1.65}
+.point-ledger-list{display:grid;gap:8px}
+.point-person{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.8fr) auto;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;background:#f7f6fb}
+.point-person-name{font-size:13px;font-weight:800;color:#202539}
+.point-person-breakdown{display:flex;flex-wrap:wrap;gap:6px;color:#777d8f;font-size:9px;line-height:1.5}
+.point-source{padding:5px 8px;border-radius:999px;background:#eeebfa;color:#6b5acb;font-weight:800}
+.point-total{white-space:nowrap;color:#6a58d1;font-family:"Nanum Pen Script",cursive;font-size:25px}
+.point-empty{padding:20px;text-align:center;color:#9195a4;font-size:10px}
+.exchange-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.exchange-card{padding:18px;border-radius:19px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.96)}
+.exchange-card strong{display:block;color:#6d59d5;font-family:"Nanum Pen Script",cursive;font-size:31px;font-weight:400}
+.exchange-card span{display:block;margin-top:2px;font-size:11px;font-weight:800;color:#252a3b}
+.exchange-card p{min-height:28px;margin:8px 0 0;color:#989cab;font-size:9px;line-height:1.55}
+.exchange-note{margin-top:10px;padding:11px 13px;border-radius:14px;background:#f0eef9;color:#7166a6;font-size:10px;font-weight:700}
+@media(max-width:760px){.point-person{grid-template-columns:1fr auto}.point-person-breakdown{grid-column:1/-1}.exchange-grid{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:440px){.exchange-grid{grid-template-columns:1fr}.point-ledger-head{align-items:flex-start;flex-direction:column}}
 
 .toolbar{
   display:flex;
@@ -515,19 +535,6 @@ textarea.field{
   line-height:1.7;
 }
 
-.period-result{margin-top:20px;padding:18px;border-radius:18px;background:#f8f7fc;border:1px solid #efedf6}
-.period-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px}
-.period-result-head h3{margin:0;font-size:15px}
-.period-result-head span{color:#8a8e9d;font-size:9px;font-weight:700}
-.period-rank-list{display:grid;gap:7px}
-.period-rank-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:9px 11px;border-radius:13px;background:#fff}
-.period-rank-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}
-.period-rank-name{font-size:12px;font-weight:800}
-.period-rank-sub{margin-top:2px;color:#858999;font-size:9px}
-.period-rank-score{text-align:right;color:#6d58d5;font-size:15px;font-weight:800}
-.period-rank-score small{margin-left:2px;font-size:9px}
-.period-empty{padding:20px 10px;text-align:center;color:#9296a5;font-size:10px;line-height:1.7}
-
 .menu-card{
   width:min(400px,100%);
   padding:24px;
@@ -700,6 +707,45 @@ textarea.field{
   <section class="section">
     <div class="section-head">
       <div>
+        <div class="kicker">Point Archive</div>
+        <h2 class="section-title">VOM POINT 기록</h2>
+        <div class="section-copy">
+          멤버별 누적 포인트와 어떤 활동으로 포인트를 받았는지 확인할 수 있습니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="point-ledger-wrap">
+      <div class="point-ledger-head">
+        <div>
+          <h3>개인별 누적 포인트</h3>
+          <p>참석 +5P · 1위 +45P · 2위 +30P · 3위 +15P 기준으로 누적됩니다.</p>
+        </div>
+      </div>
+      <div id="pointLedger" class="point-ledger-list">
+        <div class="point-empty">포인트 기록을 불러오는 중...</div>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:22px">
+      <div>
+        <div class="kicker">Exchange</div>
+        <h2 class="section-title">POINT 전환</h2>
+        <div class="section-copy">보유 포인트를 VOM 활동 혜택으로 전환하는 기준입니다.</div>
+      </div>
+    </div>
+
+    <div class="exchange-grid">
+      <article class="exchange-card"><strong>100P</strong><span>전환 혜택</span><p>—</p></article>
+      <article class="exchange-card"><strong>200P</strong><span>전환 혜택</span><p>—</p></article>
+      <article class="exchange-card"><strong>500P</strong><span>전환 혜택</span><p>—</p></article>
+    </div>
+    <div class="exchange-note">POINT 전환 혜택과 사용 기준은 현재 운영진 협의 중입니다.</div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
         <div class="kicker">Campaigns</div>
         <h2 class="section-title">기간제 이벤트</h2>
       </div>
@@ -817,22 +863,10 @@ textarea.field{
     <button id="logoutButton" class="logout" onclick="adminLogout()">
       관리자 모드 종료 <span style="float:right">→</span>
     </button>
-  
-<button id="adminLoginButton" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid rgba(28,34,65,.08);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
-<button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
-</div>
+  </div>
 </div>
 
 
-
-<div id="loginOverlay" class="overlay"><div class="menu-card" style="width:min(410px,100%)">
-<div class="modal-top"><h2 style="margin:0">Admin Mode</h2><button class="close" onclick="closeAdminLogin()">✕</button></div>
-<p style="color:#777d8f;font-size:11px">VOM 운영진 전용입니다.</p>
-<input id="adminEmail" type="email" placeholder="운영진 이메일" style="width:100%;height:46px;padding:0 12px;border:1px solid #dddde7;border-radius:12px">
-<input id="adminPassword" type="password" placeholder="비밀번호" style="width:100%;height:46px;margin-top:8px;padding:0 12px;border:1px solid #dddde7;border-radius:12px" onkeydown="if(event.key==='Enter')adminLogin()">
-<button onclick="adminLogin()" style="width:100%;height:47px;margin-top:12px;border:0;border-radius:13px;color:#fff;background:linear-gradient(135deg,#8268eb,#6f83ec);font-weight:700">관리자 모드 시작</button>
-<div id="loginMessage" style="min-height:18px;margin-top:9px;color:#d24f68;font-size:11px;text-align:center"></div>
-</div></div>
 <nav class="bottom">
   <a href="/">
     <span class="nav-icon">⌂</span>
@@ -875,7 +909,10 @@ let currentCampaignType='POINT';
 /* START */
 async function start(){
   await checkAdmin();
-  await loadCampaigns();
+  await Promise.all([
+    loadCampaigns(),
+    loadPointLedger()
+  ]);
 }
 
 
@@ -898,7 +935,7 @@ async function checkAdmin(){
   setAdmin(!!admin);
 }
 
-function setAdmin(active){ setTimeout(syncAdminMenuUI,0);
+function setAdmin(active){
   adminMode=active;
 
   document
@@ -922,6 +959,47 @@ async function adminLogout(){
   setAdmin(false);
   closeMenu();
   renderCampaigns();
+}
+
+
+/* POINT LEDGER */
+async function loadPointLedger(){
+  const box=document.getElementById('pointLedger');
+  if(!box)return;
+
+  const {data,error}=await db
+    .from('live_point_hall_of_fame')
+    .select('*')
+    .order('total_points',{ascending:false});
+
+  if(error){
+    console.error('POINT LEDGER:',error);
+    box.innerHTML='<div class="point-empty">포인트 기록을 불러오지 못했습니다.</div>';
+    return;
+  }
+
+  const list=(data||[]).filter(row=>Number(row.total_points||0)>0);
+  if(!list.length){
+    box.innerHTML='<div class="point-empty">아직 누적된 VOM POINT 기록이 없습니다.</div>';
+    return;
+  }
+
+  box.innerHTML=list.map(row=>{
+    const attendance=Number(row.attendance_count||0);
+    const first=Number(row.first_place_count||0);
+    const second=Number(row.second_place_count||0);
+    const third=Number(row.third_place_count||0);
+    const parts=[];
+    if(attendance>0)parts.push(`<span class="point-source">참석 ${attendance}회 · +${attendance*5}P</span>`);
+    if(first>0)parts.push(`<span class="point-source">1위 ${first}회 · +${first*45}P</span>`);
+    if(second>0)parts.push(`<span class="point-source">2위 ${second}회 · +${second*30}P</span>`);
+    if(third>0)parts.push(`<span class="point-source">3위 ${third}회 · +${third*15}P</span>`);
+    return `<div class="point-person">
+      <div class="point-person-name">${escapeHtml(row.name||'')}</div>
+      <div class="point-person-breakdown">${parts.length?parts.join(''):'<span>세부 기록 없음</span>'}</div>
+      <div class="point-total">${Number(row.total_points||0)}P</div>
+    </div>`;
+  }).join('');
 }
 
 
@@ -1275,7 +1353,7 @@ async function deleteCampaign(id){
 
 
 /* DETAIL */
-async function openDetail(id){
+function openDetail(id){
   const item=campaigns.find(row=>String(row.id)===String(id));
 
   if(!item){
@@ -1316,252 +1394,22 @@ async function openDetail(id){
           : ''
         }
 
-        <span class="tag">${typeLabel} 자동 집계</span>
+        ${
+          item.campaign_type==='EAR'
+          ? `<span class="tag">귀점유율 집계</span>`
+          : ''
+        }
       </div>
 
-      <div id="periodResult" class="period-result">
-        <div class="period-empty">기간 내 VOM LIVE 기록을 집계하는 중...</div>
+      <div class="detail-note">
+        현재 페이지는 이벤트의 생성·기간·조건·보상을 관리합니다.
+        특정 기간의 실제 귀점유율/POINT 자동 집계는 다음 단계에서
+        LIVE 기록의 member_id와 날짜를 연결해 붙일 수 있습니다.
       </div>
     </div>
   `;
 
   document.getElementById('detailOverlay').classList.add('open');
-  await renderPeriodResult(item);
-}
-
-async function renderPeriodResult(item){
-  const box=document.getElementById('periodResult');
-  if(!box){
-    return;
-  }
-
-  try{
-    const {data:eventData,error:eventError}=await db
-      .from('events')
-      .select('id,event_date,title,event_type')
-      .eq('event_type','VOM LIVE')
-      .gte('event_date',item.start_date)
-      .lte('event_date',item.end_date)
-      .order('event_date',{ascending:true});
-
-    if(eventError){
-      throw eventError;
-    }
-
-    const liveEvents=eventData||[];
-    const eventIds=liveEvents.map(row=>row.id);
-
-    if(!eventIds.length){
-      box.innerHTML=`<div class="period-empty">이 이벤트 기간에는 VOM LIVE 일정이 없습니다.</div>`;
-      return;
-    }
-
-    const [participantResponse,resultResponse,memberResponse]=await Promise.all([
-      db.from('live_participants').select('*').in('event_id',eventIds),
-      db.from('live_results').select('*').in('event_id',eventIds),
-      db.from('members').select('id,name')
-    ]);
-
-    if(participantResponse.error){throw participantResponse.error;}
-    if(resultResponse.error){throw resultResponse.error;}
-    if(memberResponse.error){throw memberResponse.error;}
-
-    const participants=participantResponse.data||[];
-    const results=resultResponse.data||[];
-    const members=memberResponse.data||[];
-    const memberMap=new Map(members.map(row=>[String(row.id),row]));
-    const rows=new Map();
-
-    function getRow(memberId,name){
-      const key=memberId!==null&&memberId!==undefined&&memberId!==''
-        ? `id:${String(memberId)}`
-        : `name:${normalizeName(name)}`;
-
-      if(!rows.has(key)){
-        const member=memberId!==null&&memberId!==undefined&&memberId!==''
-          ? memberMap.get(String(memberId))
-          : null;
-
-        rows.set(key,{
-          member_id:memberId??null,
-          name:String(member?.name||name||'이름 미상').trim(),
-          attendance:0,
-          votes:0,
-          denominator:0,
-          points:0,
-          first:0,
-          second:0,
-          third:0
-        });
-      }
-
-      return rows.get(key);
-    }
-
-    liveEvents.forEach(eventRow=>{
-      const eventPeople=participants.filter(row=>String(row.event_id)===String(eventRow.id));
-      const result=results.find(row=>String(row.event_id)===String(eventRow.id));
-      const voteItems=normalizeCampaignResultArray(result?.results);
-
-      const merged=eventPeople.map(person=>{
-        const found=voteItems.find(vote=>
-          (
-            person.member_id && vote.member_id &&
-            String(person.member_id)===String(vote.member_id)
-          ) || normalizeName(person.name)===normalizeName(vote.name)
-        );
-
-        return {
-          member_id:person.member_id||found?.member_id||null,
-          name:person.name||found?.name||'',
-          votes:Number(found?.votes||0)
-        };
-      });
-
-      const ranked=rankCampaignPeople(merged);
-      const participantCount=Number(result?.participant_count||eventPeople.length||0);
-
-      ranked.forEach(person=>{
-        const row=getRow(person.member_id,person.name);
-        row.attendance+=1;
-        row.votes+=Number(person.votes||0);
-        row.denominator+=participantCount;
-        row.points+=5;
-
-        if(person.rank===1){row.points+=50;row.first+=1;}
-        else if(person.rank===2){row.points+=35;row.second+=1;}
-        else if(person.rank===3){row.points+=20;row.third+=1;}
-      });
-    });
-
-    let list=[...rows.values()];
-
-    list.forEach(row=>{
-      row.ear_share=row.denominator>0
-        ? row.votes/row.denominator*100
-        : 0;
-    });
-
-    if(item.campaign_type==='EAR'){
-      list.sort((a,b)=>b.ear_share-a.ear_share||b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
-    }else if(item.campaign_type==='MISSION'){
-      list.sort((a,b)=>b.attendance-a.attendance||b.points-a.points||a.name.localeCompare(b.name,'ko'));
-    }else{
-      list.sort((a,b)=>b.points-a.points||b.first-a.first||a.name.localeCompare(b.name,'ko'));
-    }
-
-    assignCompetitionRank(list,item.campaign_type);
-
-    const title=
-      item.campaign_type==='EAR'?'기간 귀점유율 순위':
-      item.campaign_type==='MISSION'?'기간 LIVE 참여 순위':
-      '기간 VOM POINT 순위';
-
-    box.innerHTML=`
-      <div class="period-result-head">
-        <h3>${title}</h3>
-        <span>VOM LIVE ${liveEvents.length}회 집계</span>
-      </div>
-      ${
-        list.length
-        ? `<div class="period-rank-list">${list.map(createPeriodRankRow).join('')}</div>`
-        : `<div class="period-empty">기간 내 집계 가능한 참가 기록이 없습니다.</div>`
-      }
-    `;
-  }catch(error){
-    console.error('EVENT PERIOD RANKING:',error);
-    box.innerHTML=`<div class="period-empty">기간 집계 데이터를 불러오지 못했습니다.<br>${escapeHtml(error.message||'')}</div>`;
-  }
-}
-
-function createPeriodRankRow(row){
-  let score='';
-  let sub='';
-
-  if(currentDetailCampaignType==='EAR'){
-    score=`${row.ear_share.toFixed(1)}<small>%</small>`;
-    sub=`${row.votes}표 · LIVE ${row.attendance}회`;
-  }else if(currentDetailCampaignType==='MISSION'){
-    score=`${row.attendance}<small>회</small>`;
-    sub=`누적 ${row.points}P · 1위 ${row.first}회`;
-  }else{
-    score=`${row.points}<small>P</small>`;
-    sub=`참석 ${row.attendance}회 · 1위 ${row.first}회 · 2위 ${row.second}회 · 3위 ${row.third}회`;
-  }
-
-  return `
-    <div class="period-rank-row">
-      <div class="period-rank-no">${row.rank}</div>
-      <div>
-        <div class="period-rank-name">${escapeHtml(row.name)}</div>
-        <div class="period-rank-sub">${escapeHtml(sub)}</div>
-      </div>
-      <div class="period-rank-score">${score}</div>
-    </div>
-  `;
-}
-
-let currentDetailCampaignType='POINT';
-
-function assignCompetitionRank(list,type){
-  currentDetailCampaignType=type;
-  let previous=null;
-  let rank=0;
-
-  list.forEach((row,index)=>{
-    const value=type==='EAR'
-      ? Number(row.ear_share.toFixed(8))
-      : type==='MISSION'
-      ? row.attendance
-      : row.points;
-
-    if(previous===null||value!==previous){
-      rank=index+1;
-      previous=value;
-    }
-
-    row.rank=rank;
-  });
-}
-
-function rankCampaignPeople(people){
-  const sorted=[...people].sort((a,b)=>b.votes-a.votes||a.name.localeCompare(b.name,'ko'));
-  let previousVotes=null;
-  let currentRank=0;
-
-  sorted.forEach((row,index)=>{
-    if(previousVotes===null||row.votes!==previousVotes){
-      currentRank=index+1;
-      previousVotes=row.votes;
-    }
-    row.rank=currentRank;
-  });
-
-  return sorted;
-}
-
-function normalizeCampaignResultArray(value){
-  if(Array.isArray(value)){
-    return value.map(row=>({
-      member_id:row?.member_id??null,
-      name:String(row?.name??''),
-      votes:Number(row?.votes??0)
-    }));
-  }
-
-  if(typeof value==='string'){
-    try{
-      return normalizeCampaignResultArray(JSON.parse(value));
-    }catch(error){
-      return [];
-    }
-  }
-
-  return [];
-}
-
-function normalizeName(value){
-  return String(value??'').trim().toLowerCase();
 }
 
 function closeDetail(){
@@ -1570,19 +1418,6 @@ function closeDetail(){
 
 
 /* MENU */
-
-function openAdminLogin(){closeMenu();document.getElementById('loginOverlay').classList.add('open')}
-function closeAdminLogin(){document.getElementById('loginOverlay').classList.remove('open')}
-async function adminLogin(){
- const email=document.getElementById('adminEmail').value.trim(),password=document.getElementById('adminPassword').value;
- const msg=document.getElementById('loginMessage');msg.textContent='';
- const {data,error}=await db.auth.signInWithPassword({email,password});
- if(error){msg.textContent='로그인 정보를 확인해주세요.';return}
- const {data:a}=await db.from('admins').select('user_id').eq('user_id',data.user.id).maybeSingle();
- if(!a){await db.auth.signOut();msg.textContent='관리자 권한이 없습니다.';return}
- if(typeof setAdmin==='function')setAdmin(true);
- closeAdminLogin();location.reload()
-}
 function openMenu(){
   document.getElementById('menuOverlay').classList.add('open');
 }
