@@ -357,16 +357,6 @@ function renderDetail(id){
     <section class="detail">
       <div class="type">BUSKING</div>
       <h1>${esc(row.title||'')}</h1>
-      <div class="detail-choice">
-        <a class="active" href="/busking/?id=${row.id}">
-          <strong>일정 자세히 보기</strong>
-          <small>날짜 · 장소 · 안내 · 셋리스트</small>
-        </a>
-        <a href="/busking/">
-          <strong>컨텐츠 소개 보기</strong>
-          <small>VOM 버스킹이 어떤 활동인지</small>
-        </a>
-      </div>
       ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
       <div class="detail-meta">
         <div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div>
