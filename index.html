@@ -1722,6 +1722,125 @@ function formatHomeNewsDate(value){
 }
 
 </style>
+
+<script id="vom-public-mode">
+(function(){
+  const MEMBER_HOSTS = new Set([
+    'thisisvom.vercel.app',
+    'localhost',
+    '127.0.0.1'
+  ]);
+  window.VOM_PUBLIC_MODE = !MEMBER_HOSTS.has(location.hostname);
+  if(window.VOM_PUBLIC_MODE){
+    document.documentElement.classList.add('vom-public-mode');
+  }
+})();
+</script>
+
+
+<style id="vom-motion-style">
+:root{
+  --vom-motion-fast:.22s;
+  --vom-motion-mid:.42s;
+  --vom-ease:cubic-bezier(.22,.8,.24,1);
+}
+html{scroll-behavior:smooth}
+body{
+  transition:opacity .18s ease, transform .18s ease, filter .18s ease;
+}
+body.vom-page-leave{
+  opacity:0;
+  transform:translateY(5px);
+  filter:blur(2px);
+}
+.vom-reveal{
+  opacity:0;
+  transform:translateY(18px);
+  transition:
+    opacity .58s var(--vom-ease),
+    transform .58s var(--vom-ease);
+}
+.vom-reveal.vom-visible{
+  opacity:1;
+  transform:none;
+}
+.vom-glassfx{
+  position:relative;
+  isolation:isolate;
+  transition:
+    transform var(--vom-motion-fast) var(--vom-ease),
+    box-shadow var(--vom-motion-fast) var(--vom-ease),
+    border-color var(--vom-motion-fast) ease;
+}
+.vom-glassfx::after{
+  content:"";
+  position:absolute;
+  z-index:3;
+  inset:-45% auto -45% -55%;
+  width:34%;
+  pointer-events:none;
+  opacity:0;
+  transform:skewX(-18deg) translateX(-180%);
+  background:linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.08) 20%,
+    rgba(255,255,255,.62) 50%,
+    rgba(255,255,255,.10) 80%,
+    transparent 100%
+  );
+}
+@media (hover:hover){
+  .vom-glassfx:hover{
+    transform:translateY(-3px) scale(1.015);
+    box-shadow:0 18px 42px rgba(48,52,90,.13);
+  }
+  .vom-glassfx:hover::after{
+    opacity:1;
+    animation:vomShine .72s var(--vom-ease) 1;
+  }
+}
+@keyframes vomShine{
+  from{transform:skewX(-18deg) translateX(-180%)}
+  to{transform:skewX(-18deg) translateX(520%)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body,.vom-reveal,.vom-glassfx{
+    transition:none!important;
+    animation:none!important;
+    transform:none!important;
+  }
+  .vom-reveal{opacity:1!important}
+  .vom-glassfx::after{display:none!important}
+}
+</style>
+
+
+<style id="vom-public-home-style">
+html.vom-public-mode .ranking-section,
+html.vom-public-mode .quick,
+html.vom-public-mode main > .section,
+html.vom-public-mode .next-live,
+html.vom-public-mode #homeToday,
+html.vom-public-mode #adminBadge,
+html.vom-public-mode .admin-menu,
+html.vom-public-mode .members-menu,
+html.vom-public-mode .bottom{
+  display:none!important;
+}
+html.vom-public-mode .hero{
+  grid-template-columns:minmax(0,760px)!important;
+  justify-content:center!important;
+}
+html.vom-public-mode .hero > div{
+  max-width:760px;
+}
+html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
+  display:none!important;
+}
+</style>
+
 </head>
 
 <body>
@@ -2164,6 +2283,10 @@ let locations = [];
 /* START */
 
 async function start(){
+
+  if(window.VOM_PUBLIC_MODE){
+    return;
+  }
 
   await restoreAdmin();
 
@@ -3204,6 +3327,68 @@ document
 
 
 start();
+</script>
+
+
+<script id="vom-motion-script">
+(function(){
+  const CARD_SELECTORS = [
+    '.next-live','.rank-shell','.quick > a','.quick-coming',
+    '.event-card','.schedule-card','.archive-card','.live-card',
+    '.busking-card','.member-card','.people-card','.info-card',
+    '.story-card','.value-card','.menu-card','.preview-box',
+    '.result-card','.winner-card','.setlist-card','.section-card',
+    'article.card','.card'
+  ];
+
+  function initVomMotion(){
+    const candidates = [...document.querySelectorAll(CARD_SELECTORS.join(','))];
+    candidates.forEach(el => el.classList.add('vom-glassfx'));
+
+    const revealTargets = [...document.querySelectorAll(
+      'main > section, .section, .ranking-section, .hero, .people-wrap, .story, .values, .events, .archive'
+    )].filter((el,idx,arr)=>arr.indexOf(el)===idx);
+
+    revealTargets.forEach(el => el.classList.add('vom-reveal'));
+
+    if('IntersectionObserver' in window){
+      const io = new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            entry.target.classList.add('vom-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, {threshold:.08, rootMargin:'0px 0px -5% 0px'});
+      revealTargets.forEach(el=>io.observe(el));
+    }else{
+      revealTargets.forEach(el=>el.classList.add('vom-visible'));
+    }
+
+    document.addEventListener('click', e=>{
+      const a = e.target.closest('a[href]');
+      if(!a) return;
+      if(e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if(a.target === '_blank' || a.hasAttribute('download')) return;
+
+      let url;
+      try{ url = new URL(a.href, location.href); }catch(_){ return; }
+      if(url.origin !== location.origin) return;
+      if(url.hash && url.pathname === location.pathname) return;
+      if(url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+      e.preventDefault();
+      document.body.classList.add('vom-page-leave');
+      setTimeout(()=>{ location.href = url.href; }, 145);
+    }, true);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initVomMotion, {once:true});
+  }else{
+    initVomMotion();
+  }
+})();
 </script>
 
 </body>
