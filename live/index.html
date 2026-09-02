@@ -3295,82 +3295,14 @@ async function saveResults(){
        RLS/네트워크 오류로 기존 참석자 전체가 사라지는 상황을 방지함.
     */
 
-    const existingRows =
-      participants.filter(
-        person =>
-          String(person.event_id) ===
-          String(eventId)
-      );
-
     /*
-       live_participants의 실제 UNIQUE 기준은 (event_id, name).
-       기존 행의 member_id 유무와 관계없이 이름 기준으로 UPSERT하여
-       이미 저장된 참가자를 다시 INSERT하려다 발생하던
-       live_participants_event_id_name_key 충돌을 방지함.
+       결과 저장에서는 live_participants를 수정하지 않음.
+       참가자 명단은 기존 저장값을 그대로 사용하고,
+       이 화면에서는 live_results에 투표/순위/포인트 결과만 저장함.
+
+       이렇게 분리하여 기존 참가자 UNIQUE 충돌과
+       live_participants RLS INSERT/UPDATE 오류를 모두 피함.
     */
-    const participantRows =
-      people.map(person => ({
-        event_id:eventId,
-        member_id:person.member_id || null,
-        name:String(person.name || '').trim()
-      }));
-
-    const {
-      error:participantUpsertError
-    } =
-      await db
-        .from('live_participants')
-        .upsert(
-          participantRows,
-          {
-            onConflict:'event_id,name'
-          }
-        );
-
-    if(participantUpsertError){
-      throw participantUpsertError;
-    }
-
-    /*
-       편집창에서 빠진 참가자만 삭제.
-       이름은 DB UNIQUE 기준과 동일하게 비교함.
-    */
-    const editorNames =
-      new Set(
-        participantRows.map(
-          person =>
-            normalizeName(person.name)
-        )
-      );
-
-    const toDelete =
-      existingRows.filter(
-        person =>
-          !editorNames.has(
-            normalizeName(person.name)
-          )
-      );
-
-    for(const person of toDelete){
-      let query =
-        db
-          .from('live_participants')
-          .delete()
-          .eq('event_id',eventId);
-
-      if(person.id != null){
-        query = query.eq('id',person.id);
-      }else{
-        query = query.eq('name',person.name);
-      }
-
-      const { error:deleteError } =
-        await query;
-
-      if(deleteError){
-        throw deleteError;
-      }
-    }
 
     /* 투표 결과 + 직접 지정 순위 저장 */
 
