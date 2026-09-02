@@ -3302,32 +3302,43 @@ async function saveResults(){
           String(eventId)
       );
 
-    const personKey = person => {
-      const memberId =
-        String(person?.member_id ?? '').trim();
+    /*
+       기존 DB 행에 member_id가 비어 있고 이름만 저장된 경우에도
+       같은 참가자로 인식해야 UNIQUE(event_id,name) 충돌이 발생하지 않음.
+    */
+    const sameParticipant = (a,b) => {
+      const aMemberId =
+        String(a?.member_id ?? '').trim();
 
-      if(memberId){
-        return `id:${memberId}`;
+      const bMemberId =
+        String(b?.member_id ?? '').trim();
+
+      if(
+        aMemberId &&
+        bMemberId &&
+        aMemberId === bMemberId
+      ){
+        return true;
       }
 
-      return `name:${normalizeName(person?.name)}`;
+      const aName =
+        normalizeName(a?.name);
+
+      const bName =
+        normalizeName(b?.name);
+
+      return !!aName && aName === bName;
     };
-
-    const existingKeySet =
-      new Set(
-        existingRows.map(personKey)
-      );
-
-    const editorKeySet =
-      new Set(
-        people.map(personKey)
-      );
 
     const toInsert =
       people.filter(
         person =>
-          !existingKeySet.has(
-            personKey(person)
+          !existingRows.some(
+            existing =>
+              sameParticipant(
+                existing,
+                person
+              )
           )
       );
 
@@ -3348,9 +3359,13 @@ async function saveResults(){
 
     const toDelete =
       existingRows.filter(
-        person =>
-          !editorKeySet.has(
-            personKey(person)
+        existing =>
+          !people.some(
+            person =>
+              sameParticipant(
+                existing,
+                person
+              )
           )
       );
 
