@@ -3303,69 +3303,51 @@ async function saveResults(){
       );
 
     /*
-       기존 DB 행에 member_id가 비어 있고 이름만 저장된 경우에도
-       같은 참가자로 인식해야 UNIQUE(event_id,name) 충돌이 발생하지 않음.
+       live_participants의 실제 UNIQUE 기준은 (event_id, name).
+       기존 행의 member_id 유무와 관계없이 이름 기준으로 UPSERT하여
+       이미 저장된 참가자를 다시 INSERT하려다 발생하던
+       live_participants_event_id_name_key 충돌을 방지함.
     */
-    const sameParticipant = (a,b) => {
-      const aMemberId =
-        String(a?.member_id ?? '').trim();
+    const participantRows =
+      people.map(person => ({
+        event_id:eventId,
+        member_id:person.member_id || null,
+        name:String(person.name || '').trim()
+      }));
 
-      const bMemberId =
-        String(b?.member_id ?? '').trim();
+    const {
+      error:participantUpsertError
+    } =
+      await db
+        .from('live_participants')
+        .upsert(
+          participantRows,
+          {
+            onConflict:'event_id,name'
+          }
+        );
 
-      if(
-        aMemberId &&
-        bMemberId &&
-        aMemberId === bMemberId
-      ){
-        return true;
-      }
-
-      const aName =
-        normalizeName(a?.name);
-
-      const bName =
-        normalizeName(b?.name);
-
-      return !!aName && aName === bName;
-    };
-
-    const toInsert =
-      people.filter(
-        person =>
-          !existingRows.some(
-            existing =>
-              sameParticipant(
-                existing,
-                person
-              )
-          )
-      );
-
-    for(const person of toInsert){
-      const { error:insertError } =
-        await db
-          .from('live_participants')
-          .insert({
-            event_id:eventId,
-            member_id:person.member_id,
-            name:person.name
-          });
-
-      if(insertError){
-        throw insertError;
-      }
+    if(participantUpsertError){
+      throw participantUpsertError;
     }
+
+    /*
+       편집창에서 빠진 참가자만 삭제.
+       이름은 DB UNIQUE 기준과 동일하게 비교함.
+    */
+    const editorNames =
+      new Set(
+        participantRows.map(
+          person =>
+            normalizeName(person.name)
+        )
+      );
 
     const toDelete =
       existingRows.filter(
-        existing =>
-          !people.some(
-            person =>
-              sameParticipant(
-                existing,
-                person
-              )
+        person =>
+          !editorNames.has(
+            normalizeName(person.name)
           )
       );
 
@@ -3378,8 +3360,6 @@ async function saveResults(){
 
       if(person.id != null){
         query = query.eq('id',person.id);
-      }else if(person.member_id != null && String(person.member_id).trim() !== ''){
-        query = query.eq('member_id',person.member_id);
       }else{
         query = query.eq('name',person.name);
       }
