@@ -929,9 +929,8 @@ button{
 
 .person-row{
   display:grid;
-  grid-template-columns:minmax(145px,190px) 64px 72px 34px;
+  grid-template-columns:minmax(0,1fr) 68px 80px 36px;
   gap:7px;
-  justify-content:start;
 }
 
 .field{
@@ -1007,7 +1006,7 @@ button{
 
 @media(max-width:600px){
   .person-row{
-    grid-template-columns:minmax(0,1fr) 58px 66px 32px;
+    grid-template-columns:minmax(0,1fr) 62px 72px 34px;
     gap:6px;
   }
 
@@ -2927,7 +2926,6 @@ function ensureMemberSearchList(){
         <option
           value="${escapeAttribute(String(member.name || '').trim())}"
           data-member-id="${escapeAttribute(member.id)}"
-          label="${escapeAttribute(memberOptionLabel(member))}"
         ></option>
       `)
       .join('');
