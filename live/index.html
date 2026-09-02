@@ -929,13 +929,14 @@ button{
 
 .person-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) 78px 82px 37px;
+  grid-template-columns:minmax(145px,190px) 64px 72px 34px;
   gap:7px;
+  justify-content:start;
 }
 
 .field{
   width:100%;
-  min-height:47px;
+  min-height:42px;
   padding:0 13px;
   border:1px solid #dddce5;
   border-radius:14px;
@@ -945,7 +946,7 @@ button{
 }
 
 .person-member{
-  cursor:pointer;
+  min-width:0;
 }
 
 .field:focus{
@@ -1001,6 +1002,20 @@ button{
   background:linear-gradient(135deg,#8169e8,#7189eb);
   cursor:pointer;
   font-weight:700;
+}
+
+
+@media(max-width:600px){
+  .person-row{
+    grid-template-columns:minmax(0,1fr) 58px 66px 32px;
+    gap:6px;
+  }
+
+  .field{
+    min-height:40px;
+    padding:0 9px;
+    font-size:11px;
+  }
 }
 
 /* =========================================
@@ -2884,12 +2899,63 @@ function closeResultEditor(){
 }
 
 
+function ensureMemberSearchList(){
+
+  let list =
+    document.getElementById(
+      'liveMemberSearchList'
+    );
+
+  if(!list){
+    list =
+      document.createElement(
+        'datalist'
+      );
+
+    list.id =
+      'liveMemberSearchList';
+
+    document.body.appendChild(
+      list
+    );
+  }
+
+
+  list.innerHTML =
+    members
+      .map(member => `
+        <option
+          value="${escapeAttribute(String(member.name || '').trim())}"
+          data-member-id="${escapeAttribute(member.id)}"
+          label="${escapeAttribute(memberOptionLabel(member))}"
+        ></option>
+      `)
+      .join('');
+}
+
+
 function addPersonRow(
   memberId = '',
   votes = '',
   legacyName = '',
   rank = ''
 ){
+
+  ensureMemberSearchList();
+
+  const member =
+    getMember(
+      memberId
+    );
+
+
+  const initialName =
+    String(
+      member?.name ||
+      legacyName ||
+      ''
+    ).trim();
+
 
   const row =
     document.createElement(
@@ -2901,21 +2967,18 @@ function addPersonRow(
     'person-row';
 
 
-  const options =
-    createMemberOptions(
-      memberId,
-      legacyName
-    );
-
-
   row.innerHTML =
   `
-    <select
+    <input
       class="field person-member"
-      onchange="updatePreview()"
+      type="text"
+      list="liveMemberSearchList"
+      autocomplete="off"
+      placeholder="이름 검색 / 직접 입력"
+      value="${escapeAttribute(initialName)}"
+      oninput="updatePreview()"
+      aria-label="참가자 이름"
     >
-      ${options}
-    </select>
 
     <input
       class="field person-votes"
@@ -2955,76 +3018,6 @@ function addPersonRow(
   document
     .getElementById('peopleEditor')
     .appendChild(row);
-}
-
-
-function createMemberOptions(
-  selectedId = '',
-  legacyName = ''
-){
-
-  const placeholder =
-    `<option value="">멤버 선택</option>`;
-
-
-  const memberOptions =
-    members
-      .map(member => {
-
-        const selected =
-          String(member.id) ===
-          String(selectedId)
-          ? ' selected'
-          : '';
-
-
-        return `
-          <option
-            value="${escapeAttribute(member.id)}"${selected}
-          >
-            ${escapeHtml(memberOptionLabel(member))}
-          </option>
-        `;
-      })
-      .join('');
-
-
-  let legacyOption = '';
-
-
-  if(
-    !selectedId &&
-    legacyName
-  ){
-
-    const matched =
-      findMemberByName(
-        legacyName
-      );
-
-
-    if(matched){
-
-      return createMemberOptions(
-        matched.id,
-        ''
-      );
-    }
-
-
-    legacyOption = `
-      <option value="" selected disabled>
-        기존 기록: ${escapeHtml(legacyName)} · MEMBERS에서 다시 선택
-      </option>
-    `;
-  }
-
-
-  return (
-    placeholder +
-    legacyOption +
-    memberOptions
-  );
 }
 
 
@@ -3078,30 +3071,57 @@ function readEditor(){
   ]
   .map(row => {
 
-    const select =
+    const input =
       row.querySelector(
         '.person-member'
       );
 
 
-    const memberId =
-      select.value;
+    const name =
+      String(
+        input?.value || ''
+      ).trim();
 
 
-    const member =
-      getMember(
-        memberId
-      );
+    let member = null;
+
+
+    if(name){
+      const option =
+        [
+          ...document.querySelectorAll(
+            '#liveMemberSearchList option'
+          )
+        ]
+        .find(
+          item =>
+            normalizeName(item.value) ===
+            normalizeName(name)
+        );
+
+
+      if(option?.dataset?.memberId){
+        member =
+          getMember(
+            option.dataset.memberId
+          );
+      }
+
+
+      if(!member){
+        member =
+          findMemberByName(
+            name
+          );
+      }
+    }
 
 
     return {
       member_id:
         member?.id ?? null,
 
-      name:
-        String(
-          member?.name || ''
-        ).trim(),
+      name:name,
 
       votes:
         Math.max(
@@ -3130,7 +3150,6 @@ function readEditor(){
   })
   .filter(
     item =>
-      item.member_id !== null &&
       item.name
   );
 }
@@ -3255,13 +3274,6 @@ async function saveResults(){
   const people =
     readEditor();
 
-  if(!members.length){
-    alert(
-      'MEMBERS 명단을 불러오지 못했습니다.'
-    );
-    return;
-  }
-
   if(!people.length){
     alert(
       '참석자를 한 명 이상 입력해주세요.'
@@ -3274,11 +3286,13 @@ async function saveResults(){
 
   for(const person of people){
     const key =
-      String(person.member_id);
+      normalizeName(
+        person.name
+      );
 
     if(duplicateCheck.has(key)){
       alert(
-        `같은 멤버가 두 번 선택되어 있습니다: ${person.name}`
+        `같은 이름이 두 번 입력되어 있습니다: ${person.name}`
       );
       return;
     }
