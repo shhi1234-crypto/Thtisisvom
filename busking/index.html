@@ -639,6 +639,33 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .host-note-title{margin-top:5px;font-size:13px;font-weight:850;color:#282d40}
 .host-note-body{margin-top:9px;color:#5f6577;font-size:11px;line-height:1.9}
 
+
+/* BUSKING GUIDE · FULL / HALF VOM */
+.u-guide{margin-top:58px}
+.u-guide-lead{max-width:720px;margin:0 0 20px;color:#73798c;font-size:12px;line-height:1.85}
+.u-guide-common{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.u-guide-chip{padding:16px 17px;border-radius:18px;background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.96);box-shadow:0 9px 26px rgba(31,37,74,.045)}
+.u-guide-chip small{display:block;color:#8069e8;font-family:"Nanum Pen Script",cursive;font-size:17px;margin-bottom:5px}
+.u-guide-chip strong{display:block;font-size:12px;line-height:1.55}
+.u-scale-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.u-scale-card{position:relative;overflow:hidden;padding:27px 28px 25px;border-radius:27px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.98);box-shadow:0 14px 38px rgba(31,37,74,.065)}
+.u-scale-card.full{background:linear-gradient(145deg,rgba(240,236,255,.96),rgba(255,255,255,.86))}
+.u-scale-card.half{background:linear-gradient(145deg,rgba(232,248,246,.94),rgba(255,255,255,.86))}
+.u-scale-eyebrow{font-family:"Nanum Pen Script",cursive;font-size:22px;color:#7660df}
+.u-scale-card h3{margin:3px 0 7px;font-family:"Nanum Pen Script",cursive;font-size:38px;font-weight:400;letter-spacing:0}
+.u-scale-desc{min-height:42px;margin:0 0 19px;color:#6e7487;font-size:11px;line-height:1.75}
+.u-scale-info{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.u-scale-box{padding:13px 14px;border-radius:15px;background:rgba(255,255,255,.66)}
+.u-scale-box small{display:block;margin-bottom:5px;color:#8a8fa0;font-size:8px;font-weight:800;letter-spacing:.08em}
+.u-scale-box strong{display:block;font-size:10px;line-height:1.65}
+.u-scale-fee{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-top:17px;padding-top:16px;border-top:1px solid rgba(100,100,140,.10)}
+.u-scale-fee span{color:#818698;font-size:10px}.u-scale-fee strong{font-family:"Nanum Pen Script",cursive;color:#705bd8;font-size:27px;font-weight:400}
+.u-half-note{margin-top:13px;color:#8a8f9f;font-size:9px;line-height:1.7}
+.u-equipment{margin-top:14px;padding:20px 22px;border-radius:22px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.94);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.u-equipment div:first-child{min-width:0}.u-equipment .eq-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:19px}.u-equipment h3{margin:2px 0 5px;font-size:15px}.u-equipment p{margin:0;color:#858a9b;font-size:10px;line-height:1.7}.u-equipment .eq-badge{flex:0 0 auto;padding:9px 13px;border-radius:999px;background:#f0edff;color:#715dd6;font-size:9px;font-weight:800}
+@media(max-width:850px){.u-guide-common{grid-template-columns:1fr 1fr}.u-scale-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.u-equipment .eq-badge{align-self:flex-start}}
+
 </style>
 </head>
 <body>
@@ -959,6 +986,53 @@ function renderBuskingList(){
           <h3>거리에서 LIVE</h3>
           <p>관객과 가까운 공간에서 현장의 반응까지 함께 즐깁니다.</p>
         </article>
+      </div>
+    </section>
+
+    <section class="u-section u-guide">
+      <div class="u-kicker">BUSKING GUIDE</div>
+      <h2 class="u-section-title">FULL / HALF VOM 운영 안내</h2>
+      <p class="u-guide-lead">FULL VOM과 HALF VOM은 우열의 개념이 아닌 운영 규모의 차이입니다. 장소, 참가 인원, 현장 운영 상황을 고려해 회차별 진행 형태를 결정합니다.</p>
+
+      <div class="u-guide-common">
+        <div class="u-guide-chip"><small>SONGS</small><strong>개인곡 4곡 진행</strong></div>
+        <div class="u-guide-chip"><small>PREP</small><strong>앵콜 대비 5곡 사전 준비</strong></div>
+        <div class="u-guide-chip"><small>TIME</small><strong>2시간 · 3시간 · 4시간 운영</strong></div>
+        <div class="u-guide-chip"><small>NOTICE</small><strong>세부 시간은 회차별 별도 안내</strong></div>
+      </div>
+
+      <div class="u-scale-grid">
+        <article class="u-scale-card full">
+          <div class="u-scale-eyebrow">Larger stage</div>
+          <h3>FULL VOM</h3>
+          <p class="u-scale-desc">보다 넓은 공간과 많은 관객이 예상되는 대규모 형태의 버스킹입니다.</p>
+          <div class="u-scale-info">
+            <div class="u-scale-box"><small>PLACE</small><strong>한강공원 · 마로니에공원<br>광장형 및 대규모 버스킹 장소</strong></div>
+            <div class="u-scale-box"><small>OPERATION</small><strong>대형 버스킹 장비<br>비교적 많은 참가 인원 · 공연형 중심</strong></div>
+            <div class="u-scale-box"><small>SONGS</small><strong>인당 4곡 진행<br>5곡 준비 (4곡 + 앵콜곡)</strong></div>
+            <div class="u-scale-box"><small>STYLE</small><strong>넓은 공간에 맞춘<br>공연 중심 운영</strong></div>
+          </div>
+          <div class="u-scale-fee"><span>참가비</span><strong>12,000원</strong></div>
+        </article>
+
+        <article class="u-scale-card half">
+          <div class="u-scale-eyebrow">Closer stage</div>
+          <h3>HALF VOM</h3>
+          <p class="u-scale-desc">조금 더 자유롭고 가벼운 분위기의 소규모 형태 버스킹입니다.</p>
+          <div class="u-scale-info">
+            <div class="u-scale-box"><small>PLACE</small><strong>청계천 · 신촌 · 연남동<br>기타 소규모 버스킹 장소</strong></div>
+            <div class="u-scale-box"><small>OPERATION</small><strong>소형 버스킹 장비<br>소수 인원 · 자유로운 분위기</strong></div>
+            <div class="u-scale-box"><small>SONGS</small><strong>인당 4곡 진행<br>5곡 준비 (4곡 + 앵콜곡)</strong></div>
+            <div class="u-scale-box"><small>STYLE</small><strong>장소 규모에 맞춘<br>가볍고 유연한 운영</strong></div>
+          </div>
+          <p class="u-half-note">※ HALF VOM 역시 일반적인 버스킹 진행에 충분한 장비를 사용하며, 장소 규모에 맞추어 장비를 간소화한 형태입니다.</p>
+          <div class="u-scale-fee"><span>참가비</span><strong>8,000원</strong></div>
+        </article>
+      </div>
+
+      <div class="u-equipment">
+        <div><div class="eq-kicker">EQUIPMENT</div><h3>버스킹 장비 스펙</h3><p>FULL / HALF VOM은 장소와 운영 규모에 맞춰 장비 구성을 달리합니다. 장비 상세 이미지는 별도 등록 후 이 영역에 연결할 수 있습니다.</p></div>
+        <div class="eq-badge">VOM BUSKING SYSTEM</div>
       </div>
     </section>
 
