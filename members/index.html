@@ -322,6 +322,56 @@
 }
 
 </style>
+
+<style id="staff-role-style">
+.summary .staff-summary-btn{
+  appearance:none;
+  font:inherit;
+  color:inherit;
+  padding:9px 14px;
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(241,237,255,.92));
+  border:1px solid rgba(116,93,224,.16);
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+.summary .staff-summary-btn b{color:#755fe0}
+.summary .staff-summary-btn .staff-summary-arrow{margin-left:5px;color:#8d7be3;font-size:10px}
+.summary .staff-summary-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(91,73,177,.11);border-color:rgba(116,93,224,.28)}
+.staff-role-modal{width:min(720px,100%)!important}
+.staff-role-intro{margin:-3px 0 18px;color:#73798a;font-size:11px;line-height:1.7}
+.staff-role-list{display:grid;gap:9px}
+.staff-role-row{
+  display:grid;
+  grid-template-columns:112px 116px minmax(0,1fr);
+  align-items:center;
+  gap:13px;
+  padding:14px 15px;
+  border:1px solid rgba(255,255,255,.96);
+  border-radius:17px;
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(248,246,255,.84));
+  box-shadow:0 8px 22px rgba(31,37,74,.045);
+}
+.staff-role-name{font-size:14px;font-weight:900;color:#272c40}
+.staff-role-badge{display:inline-flex;justify-content:center;padding:6px 9px;border-radius:999px;background:#eeeaff;color:#6956ce;font-size:10px;font-weight:900;white-space:nowrap}
+.staff-role-desc{color:#656c7f;font-size:11px;line-height:1.65}
+.staff-role-row.field .staff-role-badge{background:#e9f5ff;color:#447cb5}
+.staff-role-row.finance .staff-role-badge{background:#e8f7ef;color:#438363}
+.staff-role-row.promo .staff-role-badge{background:#f1ebff;color:#7655c4}
+.staff-role-foot{
+  margin-top:15px;padding:14px 16px;border-radius:16px;
+  background:linear-gradient(135deg,#f2efff,#edf8f7);
+  color:#5f6375;font-size:11px;line-height:1.7;text-align:center
+}
+.staff-role-foot strong{color:#6552c8}
+@media(max-width:620px){
+  .staff-role-row{grid-template-columns:1fr auto;gap:7px 10px}
+  .staff-role-desc{grid-column:1/-1}
+}
+</style>
+
 </head>
 <body>
 <div class="aurora"></div>
@@ -346,6 +396,55 @@
   <button class="save" onclick="saveMember()" type="button">저장</button>
 </div>
 </div></div>
+
+<div id="staffRoleOverlay" class="overlay">
+  <div class="modal staff-role-modal">
+    <div class="modal-head">
+      <h2>운영진 역할</h2>
+      <button class="close" onclick="closeStaffRoles()" type="button">✕</button>
+    </div>
+    <p class="staff-role-intro">VOM 운영진의 현재 담당 역할입니다. 관련 문의가 있다면 담당 운영진에게 확인해주세요.</p>
+    <div class="staff-role-list">
+      <div class="staff-role-row">
+        <div class="staff-role-name">이시현</div>
+        <div class="staff-role-badge">총괄기획</div>
+        <div class="staff-role-desc">전체 기획 총괄 및 운영 방향 수립</div>
+      </div>
+      <div class="staff-role-row finance">
+        <div class="staff-role-name">주예린</div>
+        <div class="staff-role-badge">운영총무</div>
+        <div class="staff-role-desc">회비 관리, 회의록 작성</div>
+      </div>
+      <div class="staff-role-row promo">
+        <div class="staff-role-name">김영란</div>
+        <div class="staff-role-badge">홍보관리</div>
+        <div class="staff-role-desc">SNS 및 홍보 채널 관리, 공지 및 홍보물 게시</div>
+      </div>
+      <div class="staff-role-row field">
+        <div class="staff-role-name">조수현</div>
+        <div class="staff-role-badge">현장운영</div>
+        <div class="staff-role-desc">행사 진행, 장비 운영, 현장 세팅 및 관리</div>
+      </div>
+      <div class="staff-role-row field">
+        <div class="staff-role-name">김종빈</div>
+        <div class="staff-role-badge">현장운영</div>
+        <div class="staff-role-desc">행사 진행, 장비 운영, 현장 세팅 및 관리</div>
+      </div>
+      <div class="staff-role-row field">
+        <div class="staff-role-name">길현우</div>
+        <div class="staff-role-badge">현장운영</div>
+        <div class="staff-role-desc">행사 진행, 장비 운영, 현장 세팅 및 관리</div>
+      </div>
+      <div class="staff-role-row field">
+        <div class="staff-role-name">한상인</div>
+        <div class="staff-role-badge">현장운영</div>
+        <div class="staff-role-desc">행사 진행, 장비 운영, 현장 세팅 및 관리</div>
+      </div>
+    </div>
+    <div class="staff-role-foot"><strong>운영진 활동</strong><br>모든 운영진은 원하는 컨셉에 맞게 직접 정기모임을 기획하고 운영할 수 있습니다.</div>
+  </div>
+</div>
+
 <div id="profileOverlay" class="overlay"><div class="modal" style="width:min(470px,100%)">
 <div class="modal-head"><h2 id="profileTitle">Profile</h2><button class="close" onclick="closeProfileEditor()">✕</button></div>
 <p class="profile-note">좋아하는 가수와 직업만 수정합니다. 다른 멤버 정보는 변경되지 않습니다.</p>
@@ -435,7 +534,7 @@ function setView(view){
 }
 
 
-function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>모임장 <b>${leader}명</b></span><span>운영진 <b>${staff}명</b></span><span>이번 달 생일 <b>${b}명</b></span>`}
+function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><span>모임장 <b>${leader}명</b></span><button class="staff-summary-btn" type="button" onclick="openStaffRoles()">운영진 <b>${staff}명</b><span class="staff-summary-arrow">역할 보기 →</span></button><span>이번 달 생일 <b>${b}명</b></span>`}
 function birthdayNow(){
   const box=document.getElementById('birthdayNow');if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
@@ -716,6 +815,8 @@ async function deleteMemberSong(id){
   await loadMemberSongs();renderMemberSongs()
 }
 
+function openStaffRoles(){staffRoleOverlay.classList.add('open')}
+function closeStaffRoles(){staffRoleOverlay.classList.remove('open')}
 function openAdminLogin(){closeMenu();loginOverlay.classList.add('open')}
 function closeAdminLogin(){loginOverlay.classList.remove('open')}
 async function adminLogin(){
@@ -728,7 +829,7 @@ async function adminLogin(){
  setAdmin(true);closeAdminLogin()
 }
 async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu()}
-function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}start();
+function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});staffRoleOverlay.addEventListener('click',e=>{if(e.target===staffRoleOverlay)closeStaffRoles()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}start();
 </script>
 </body>
 </html>
