@@ -321,6 +321,10 @@
   width:112px !important;
 }
 
+
+.site-log-link{display:none!important;color:#725de0!important;font-weight:900!important}
+.admin-mode .site-log-link{display:flex!important}
+
 </style>
 
 <style id="staff-role-style">
@@ -488,7 +492,7 @@
 </div>
 </div></div>
 <datalist id="memberNameOptions"></datalist>
-<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" href="/site-log/" style="display:none;color:#725de0;font-weight:800">SITE LOG <span>→</span></a>
+<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" class="site-log-link" href="/site-log/">SITE LOG <span>→</span></a>
 <button id="adminLoginButton" class="admin-menu" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
 <button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
 </div></div>
@@ -506,7 +510,7 @@ const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY
 const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>String(pick(m,'status','activity_status','active_status')||'활동중');const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
 async function start(){await checkAdmin();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
-function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton'),s=document.getElementById('siteLogMenuLink');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';if(s)s.style.display=v?'flex':'none';render()}
+function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
 function rolePriority(m){
   const r=role(m);
   if(r==='모임장') return 0;
