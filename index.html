@@ -1841,6 +1841,65 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 }
 </style>
 
+
+<style id="home-visitor-counter-style">
+.info-visitor-row{
+  width:min(540px,100%);
+  margin:28px 0 0 7px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+.info-visitor-row .info-link{margin:0!important;flex:0 1 405px}
+.visitor-mini{
+  flex:0 0 auto;
+  min-width:112px;
+  padding:10px 12px;
+  border-left:1px solid rgba(89,84,116,.13);
+  color:#8a8e9f;
+  line-height:1.15;
+}
+.visitor-mini small{
+  display:block;
+  margin-bottom:5px;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:1.15px;
+  color:#9a91bd;
+}
+.visitor-mini strong{
+  font-size:14px;
+  color:#686075;
+  font-weight:900;
+}
+.visitor-mini span{
+  margin-left:3px;
+  font-size:9px;
+  color:#9b9eaa;
+}
+@media(max-width:760px){
+  .info-visitor-row{
+    width:min(405px,100%);
+    margin:24px 0 0 0;
+    display:block;
+  }
+  .info-visitor-row .info-link{width:100%!important;margin:0!important}
+  .visitor-mini{
+    width:max-content;
+    min-width:0;
+    margin:9px 0 0 14px;
+    padding:0;
+    border-left:0;
+    display:flex;
+    align-items:baseline;
+    gap:5px;
+  }
+  .visitor-mini small{margin:0;font-size:7px}
+  .visitor-mini strong{font-size:12px}
+  .visitor-mini span{font-size:8px}
+}
+</style>
+
 </head>
 
 <body>
@@ -1903,10 +1962,17 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
         <span class="today-date">오늘을 불러오는 중...</span>
       </div>
 
-      <a href="/info/" class="info-link">
-        INFO
-        <span>→</span>
-      </a>
+      <div class="info-visitor-row">
+        <a href="/info/" class="info-link">
+          INFO
+          <span>→</span>
+        </a>
+        <div class="visitor-mini" title="홈페이지 누적 방문자">
+          <small>VISITORS</small>
+          <strong id="homeTotalVisitors">-</strong>
+          <span>누적</span>
+        </div>
+      </div>
 
     </div>
 
@@ -3347,7 +3413,21 @@ async function trackHomeVisit(){
   }
 }
 
+
+async function loadPublicVisitorCount(){
+  try{
+    const {data,error}=await db.rpc('get_public_total_visitors');
+    if(error)throw error;
+    const value=Array.isArray(data) ? (data[0]?.total_visitors ?? data[0]) : data;
+    const el=document.getElementById('homeTotalVisitors');
+    if(el)el.textContent=Number(value||0).toLocaleString('ko-KR');
+  }catch(error){
+    console.warn('VISITOR COUNT:',error);
+  }
+}
+
 trackHomeVisit();
+loadPublicVisitorCount();
 
 start();
 </script>
