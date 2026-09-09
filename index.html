@@ -1745,14 +1745,6 @@ function formatHomeNewsDate(value){
   --vom-ease:cubic-bezier(.22,.8,.24,1);
 }
 html{scroll-behavior:smooth}
-body{
-  transition:opacity .18s ease, transform .18s ease, filter .18s ease;
-}
-body.vom-page-leave{
-  opacity:0;
-  transform:translateY(5px);
-  filter:blur(2px);
-}
 .vom-reveal{
   opacity:0;
   transform:translateY(18px);
@@ -3468,22 +3460,6 @@ start();
       revealTargets.forEach(el=>el.classList.add('vom-visible'));
     }
 
-    document.addEventListener('click', e=>{
-      const a = e.target.closest('a[href]');
-      if(!a) return;
-      if(e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      if(a.target === '_blank' || a.hasAttribute('download')) return;
-
-      let url;
-      try{ url = new URL(a.href, location.href); }catch(_){ return; }
-      if(url.origin !== location.origin) return;
-      if(url.hash && url.pathname === location.pathname) return;
-      if(url.protocol !== 'http:' && url.protocol !== 'https:') return;
-
-      e.preventDefault();
-      document.body.classList.add('vom-page-leave');
-      setTimeout(()=>{ location.href = url.href; }, 145);
-    }, true);
   }
 
   if(document.readyState === 'loading'){
