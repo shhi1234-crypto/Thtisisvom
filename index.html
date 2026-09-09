@@ -3326,6 +3326,29 @@ document
   );
 
 
+
+async function trackHomeVisit(){
+  try{
+    let visitorId=localStorage.getItem('vom_visitor_id');
+    if(!visitorId){
+      visitorId=(window.crypto&&crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'vom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+      localStorage.setItem('vom_visitor_id',visitorId);
+    }
+
+    await db.from('site_visits').insert({
+      visitor_id:visitorId,
+      hostname:location.hostname,
+      path:location.pathname || '/'
+    });
+  }catch(error){
+    console.warn('VISIT LOG:',error);
+  }
+}
+
+trackHomeVisit();
+
 start();
 </script>
 
