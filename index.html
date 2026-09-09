@@ -1721,6 +1721,22 @@ function formatHomeNewsDate(value){
   }
 }
 
+
+#menuOverlay.vom-glassfx,
+#menuOverlay .vom-glassfx,
+.overlay.vom-glassfx,
+.overlay .modal.vom-glassfx,
+.modal.vom-glassfx{
+  transform:none!important;
+  box-shadow:none!important;
+}
+#menuOverlay.vom-glassfx::after,
+#menuOverlay .vom-glassfx::after,
+.overlay.vom-glassfx::after,
+.overlay .modal.vom-glassfx::after,
+.modal.vom-glassfx::after{
+  display:none!important;
+}
 </style>
 
 <script id="vom-public-mode">
@@ -3428,17 +3444,20 @@ start();
 <script id="vom-motion-script">
 (function(){
   const CARD_SELECTORS = [
-    '.next-live','.rank-shell','.quick > a','.quick-coming',
-    '.event-card','.schedule-card','.archive-card','.live-card',
-    '.busking-card','.member-card','.people-card','.info-card',
-    '.story-card','.value-card','.menu-card','.preview-box',
-    '.result-card','.winner-card','.setlist-card','.section-card',
-    'article.card','.card'
+    '.next-live',
+    '.rank-shell',
+    '.event-card',
+    '.quick-card',
+    '.about-wide',
+    '.info-link'
   ];
 
   function initVomMotion(){
     const candidates = [...document.querySelectorAll(CARD_SELECTORS.join(','))];
-    candidates.forEach(el => el.classList.add('vom-glassfx'));
+    candidates.forEach(el => {
+      if(el.closest('.overlay,.modal,.menu-modal,#menuOverlay,#loginOverlay')) return;
+      el.classList.add('vom-glassfx');
+    });
 
     const revealTargets = [...document.querySelectorAll(
       'main > section, .section, .ranking-section, .hero, .people-wrap, .story, .values, .events, .archive'
