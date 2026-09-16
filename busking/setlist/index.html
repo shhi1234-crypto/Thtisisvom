@@ -555,7 +555,7 @@ function renderDetail(id){
         <div><h2>Final Setlist</h2><p>현장에서 바로 볼 수 있는 최종 공연 순서입니다.</p></div>
         ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
-      <div class="order-help">자동 순서에는 2곡 이상 배정된 참가자마다 최소 한 번의 2곡 연속 무대가 포함됩니다. 준비시간은 5분 단위로 설정할 수 있고, 종료 전 15분은 정리시간으로 확보합니다. 공연 구간은 1곡당 5분 기준입니다. 구간의 ＋/−를 누르면 5분만 바뀌는 것이 아니라 다음 구간의 곡을 1곡씩 당겨오거나 넘기며 실제 곡 수와 시간이 함께 바뀝니다. 구간 사이에는 쉬는시간도 5분 단위로 추가할 수 있습니다.</div>
+      <div class="order-help">자동 순서에는 2곡 이상 배정된 참가자마다 최소 한 번의 2곡 연속 무대가 포함됩니다. 4곡 이상 편성에서는 2곡 묶음 사이에 다른 단독 무대 2곡을 배치합니다. 준비시간은 5분 단위로 설정할 수 있고, 종료 전 15분은 정리시간으로 확보합니다. 공연 구간은 1곡당 5분 기준입니다. 구간의 ＋/−를 누르면 5분만 바뀌는 것이 아니라 다음 구간의 곡을 1곡씩 당겨오거나 넘기며 실제 곡 수와 시간이 함께 바뀝니다. 구간 사이에는 쉬는시간도 5분 단위로 추가할 수 있습니다.</div>
       ${renderOperationSchedule(row)}
       <div id="performanceOrder"></div>
     </section>`;
@@ -673,6 +673,89 @@ function buildRandomPlanForPositions(positions,maxSongs){
     return true;
   }
 
+  function buildSpacedPairPlan(){
+    const total=positions.length*songCount;
+
+    // 2곡 묶음의 시작을 0, 4, 8…번으로 배치한다.
+    // 따라서 모든 묶음 사이에는 반드시 다른 단독 무대 2곡이 들어가며,
+    // 6곡(30분) 구간의 경계를 가로지르지도 않는다.
+    for(let attempt=0;attempt<1200;attempt++){
+      const pairOrder=[...positions].sort(()=>Math.random()-.5);
+      const line=Array(total).fill(null);
+      const singleSlots=[];
+      let cursor=0;
+
+      pairOrder.forEach((pos,index)=>{
+        line[cursor++]=pos;
+        line[cursor++]=pos;
+        if(index<pairOrder.length-1)singleSlots.push(cursor++,cursor++);
+      });
+      while(cursor<total)singleSlots.push(cursor++);
+
+      const remainingSingles=Object.fromEntries(positions.map(pos=>[pos,songCount-2]));
+      const blockCounts=Array.from(
+        {length:Math.ceil(total/BLOCK)},
+        ()=>Object.fromEntries(positions.map(pos=>[pos,0]))
+      );
+      line.forEach((pos,index)=>{
+        if(pos!==null)blockCounts[Math.floor(index/BLOCK)][pos]++;
+      });
+
+      function wouldMakeTriple(index,pos){
+        if(positions.length===1)return false;
+        for(let start=index-2;start<=index;start++){
+          if(start<0||start+2>=total)continue;
+          const values=[start,start+1,start+2].map(slot=>slot===index?pos:line[slot]);
+          if(values.every(value=>value===pos))return true;
+        }
+        return false;
+      }
+
+      let failed=false;
+      for(const index of singleSlots){
+        const blockIndex=Math.floor(index/BLOCK);
+        let candidates=positions.filter(pos=>
+          remainingSingles[pos]>0&&
+          blockCounts[blockIndex][pos]<maxSongsPerBlock&&
+          !wouldMakeTriple(index,pos)
+        );
+        if(!candidates.length){failed=true;break;}
+
+        // 가능하면 묶음 사이의 두 단독곡도 서로 다른 사람으로 둔다.
+        // 소규모/구간 정원 때문에 불가능할 때만 자연스럽게 완화한다.
+        const nonRepeating=candidates.filter(pos=>line[index-1]!==pos&&line[index+1]!==pos);
+        if(nonRepeating.length)candidates=nonRepeating;
+
+        candidates.sort((a,b)=>{
+          const remainingDiff=remainingSingles[b]-remainingSingles[a];
+          if(remainingDiff!==0)return remainingDiff;
+          const blockDiff=blockCounts[blockIndex][a]-blockCounts[blockIndex][b];
+          return blockDiff!==0?blockDiff:Math.random()-.5;
+        });
+        const chosen=candidates[Math.floor(Math.random()*Math.min(4,candidates.length))];
+        line[index]=chosen;
+        remainingSingles[chosen]--;
+        blockCounts[blockIndex][chosen]++;
+      }
+
+      if(!failed&&line.every(pos=>pos!==null)){
+        const plan={};
+        line.forEach((pos,index)=>{
+          if(!plan[pos])plan[pos]=[];
+          plan[pos].push(index+1);
+        });
+        if(positions.every(pos=>(plan[pos]||[]).length===songCount))return plan;
+      }
+    }
+    return {};
+  }
+
+  // 4곡 이상일 때는 2곡 묶음을 줄줄이 놓지 않고, 그 사이에 단독 무대 2곡을 보장한다.
+  if(songCount>=4){
+    const spacedPlan=buildSpacedPairPlan();
+    if(Object.keys(spacedPlan).length)return spacedPlan;
+  }
+
   for(let attempt=0;attempt<3000;attempt++){
     const remaining=units.map(unit=>({...unit,tokens:unit.tokens.map(token=>({...token}))}));
     const result=[];
@@ -686,8 +769,7 @@ function buildRandomPlanForPositions(positions,maxSongs){
         break;
       }
 
-      // 남은 곡 수가 많은 사람을 조금 우선한다. 2곡 묶음을 먼저 소진해
-      // 모든 참가자의 연속 무대가 빠지지 않으면서도 시작 순서는 랜덤으로 둔다.
+      // 남은 곡 수가 많은 사람과 2곡 묶음을 조금 우선한다.
       const counts={};
       remaining.forEach(unit=>unit.tokens.forEach(token=>counts[token.pos]=(counts[token.pos]||0)+1));
 
@@ -775,7 +857,7 @@ function renderSongDraw(){
     <div class="song-draw-top">
       <div>
         <div class="song-draw-title">곡 순서 사전 추첨</div>
-        <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하되, 2곡 이상 배정된 참가자는 최소 한 번 2곡 연속 무대로 편성합니다. 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 시작하며, 최종 셋리스트에서 5분을 조정할 때마다 곡도 1곡씩 다음 구간과 함께 이동합니다. · ${totalPerPart}</div>
+        <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하되, 2곡 이상 배정된 참가자는 최소 한 번 2곡 연속 무대로 편성합니다. 4곡 이상 편성에서는 2곡 묶음 사이에 다른 단독 무대 2곡을 둡니다. 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 시작하며, 최종 셋리스트에서 5분을 조정할 때마다 곡도 1곡씩 다음 구간과 함께 이동합니다. · ${totalPerPart}</div>
       </div>
       ${adminMode?`<div class="song-draw-actions">
         <button class="secondary" onclick="openDirectSong()">＋ 직접 추가</button>
