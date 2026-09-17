@@ -792,6 +792,9 @@ async function loadBoard(id){
   const event=events.find(x=>String(x.id)===String(id));
   const defaultMax=defaultCapacity(event);
   const found=settingRes.data;
+  // settings 행이 있으면 운영진이 셋리스트를 활성화한 상태다.
+  // 회원 화면도 이 값을 기준으로 바로 '셋리스트 보기'를 노출한다.
+  setlistExists=Boolean(found);
 
   settings=found||{
     event_id:Number(id),
