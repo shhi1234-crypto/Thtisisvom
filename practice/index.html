@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#f7f5fa">
+<link rel="icon" type="image/png" href="/favicon.png?v=4">
+<link rel="shortcut icon" type="image/png" href="/favicon.png?v=4">
+<title>PRACTICE · Voice of Melody</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#11182c;--muted:#73798b;--purple:#765fe3;--teal:#3f9f98;--line:rgba(28,34,65,.08);--card:rgba(255,255,255,.84)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;font-family:"Noto Sans KR",sans-serif;color:var(--ink);background:#f8f7fa}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+.aurora{position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 88% 0%,rgba(134,220,211,.42),transparent 28%),radial-gradient(circle at 68% 8%,rgba(181,151,241,.42),transparent 32%),linear-gradient(180deg,#faf8fb,#f8f7fb 56%,#fbfafc)}
+.header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}
+.menu-btn{width:44px;height:44px;border:1px solid rgba(255,255,255,.95);border-radius:50%;background:rgba(255,255,255,.76);cursor:pointer}
+.page{width:min(1080px,100%);margin:auto;padding:30px 18px 112px}
+.hero{display:grid;grid-template-columns:1.02fr .98fr;gap:44px;align-items:center;padding:47px 0 66px}
+.eyebrow,.section-kicker{font-family:"Nanum Pen Script",cursive;color:#806bf0;font-size:22px}
+.hero h1{margin:6px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(84px,12vw,132px);font-weight:400;line-height:.72}
+.hero-lead{margin:24px 0 0;font-size:21px;font-weight:700;letter-spacing:-.04em;line-height:1.55}
+.hero-copy{max-width:540px;margin:18px 0 0;color:#697083;font-size:13px;line-height:1.95}
+.hero-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:23px}.hero-tags span{padding:9px 13px;border:1px solid rgba(91,80,130,.08);border-radius:999px;background:rgba(255,255,255,.74);color:#74798a;font-size:10px}
+.hero-visual{min-height:366px;padding:34px;border-radius:32px;background:radial-gradient(circle at 84% 14%,rgba(124,225,218,.55),transparent 33%),radial-gradient(circle at 10% 88%,rgba(171,112,245,.66),transparent 42%),linear-gradient(145deg,#1d2b51,#363b7c);box-shadow:0 25px 65px rgba(28,35,75,.15);color:#fff;display:flex;flex-direction:column;justify-content:space-between}
+.hero-visual .script{font-family:"Nanum Pen Script",cursive;color:#e4dcff;font-size:52px;line-height:.87}.hero-visual p{margin:0;color:#efeaff;font-size:12px;font-weight:700;line-height:1.75}
+.hero-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.hero-mini{padding:12px 10px;border:1px solid rgba(255,255,255,.17);border-radius:15px;background:rgba(255,255,255,.13)}.hero-mini small{display:block;color:rgba(255,255,255,.73);font-size:8px;font-weight:700;letter-spacing:.11em}.hero-mini strong{display:block;margin-top:5px;font-size:11px;line-height:1.35}
+.section{margin-top:54px}.section h2{margin:3px 0 19px;font-size:26px;letter-spacing:-.045em}.section-lead{max-width:720px;margin:0 0 20px;color:#73798c;font-size:12px;line-height:1.85}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.process-card{min-height:185px;padding:22px;border:1px solid rgba(255,255,255,.95);border-radius:22px;background:var(--card);box-shadow:0 13px 35px rgba(31,37,74,.06)}.process-card .num{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:34px}.process-card h3{margin:22px 0 8px;font-size:15px}.process-card p{margin:0;color:#818697;font-size:10px;line-height:1.72}
+.ready-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.ready-card{padding:26px 25px;border:1px solid rgba(255,255,255,.95);border-radius:24px;background:rgba(255,255,255,.8);box-shadow:0 13px 35px rgba(31,37,74,.05)}.ready-card h3{margin:0 0 14px;font-size:17px}.ready-card ul,.notice-list{margin:0;padding:0;list-style:none;display:grid;gap:10px}.ready-card li,.notice-list li{position:relative;padding-left:17px;color:#707689;font-size:11px;line-height:1.65}.ready-card li::before,.notice-list li::before{content:"";position:absolute;left:0;top:.71em;width:6px;height:6px;border-radius:50%;background:#8068e8}.ready-card.accent{background:linear-gradient(145deg,rgba(239,234,255,.93),rgba(233,250,246,.90));border-color:rgba(117,94,220,.12)}.ready-card.accent li::before{background:#42a397}
+.benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.benefit-card{min-height:175px;padding:23px;border:1px solid rgba(255,255,255,.95);border-radius:22px;background:var(--card);box-shadow:0 13px 35px rgba(31,37,74,.06)}.benefit-card .icon{color:#7965dd;font-family:"Nanum Pen Script",cursive;font-size:29px}.benefit-card h3{margin:21px 0 7px;font-size:15px}.benefit-card p{margin:0;color:#7c8191;font-size:10px;line-height:1.72}
+.notice-wrap{display:grid;grid-template-columns:1.12fr .88fr;gap:13px}.notice-card,.contact-card{padding:26px;border:1px solid rgba(255,255,255,.95);border-radius:24px;background:rgba(255,255,255,.8);box-shadow:0 13px 35px rgba(31,37,74,.05)}.notice-card h3{margin:0 0 14px;font-size:17px}.contact-card{background:linear-gradient(145deg,#27355e,#4c4281);color:#fff}.contact-card .section-kicker{color:#bdb0ff}.contact-card h3{margin:5px 0 10px;font-size:22px;letter-spacing:-.035em}.contact-card p{margin:0;color:#e9e4ff;font-size:11px;line-height:1.85}.contact-card .contact-note{margin-top:21px;padding:12px 13px;border-radius:14px;background:rgba(255,255,255,.14);color:#f5f2ff;font-size:10px;line-height:1.65}
+.details{margin-top:13px;padding:22px 24px;border:1px solid rgba(255,255,255,.95);border-radius:23px;background:rgba(255,255,255,.75);box-shadow:0 13px 35px rgba(31,37,74,.045)}.details h3{margin:0 0 8px;font-size:16px}.details p{margin:0;color:#777d8e;font-size:11px;line-height:1.75}
+.overlay{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(24,29,54,.36);backdrop-filter:blur(15px)}.overlay.open{display:flex}.menu-card{width:min(410px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:25px;border-radius:27px;background:rgba(255,255,255,.97);box-shadow:0 28px 80px rgba(20,25,55,.22)}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.modal-head h3{margin:0;font-family:"Nanum Pen Script",cursive;font-size:35px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#eeeef4;cursor:pointer}.menu-card a{min-height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);font-size:13px}.menu-card a.active{color:#705bd6;font-weight:800}
+.bottom{position:fixed;z-index:80;left:50%;bottom:10px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:67px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border:1px solid rgba(255,255,255,.96);border-radius:22px;background:rgba(255,255,255,.85);box-shadow:0 14px 42px rgba(30,37,75,.12);backdrop-filter:blur(22px)}.bottom a,.bottom button{border:0;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#777c8d;cursor:pointer;font-size:8px}.nav-icon{font-size:18px}
+@media(max-width:850px){.hero{grid-template-columns:1fr;gap:28px;padding:46px 0 54px}.process-grid{grid-template-columns:1fr 1fr}.benefit-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.header{height:70px;padding:0 15px}.page{padding:24px 12px 102px}.hero h1{font-size:clamp(74px,24vw,108px)}.hero-lead{margin-top:23px;font-size:18px}.hero-copy{font-size:12px}.hero-visual{min-height:305px;padding:29px 25px}.hero-visual .script{font-size:42px}.hero-mini-grid{grid-template-columns:1fr}.section{margin-top:46px}.section h2{font-size:23px}.process-grid,.ready-grid,.benefit-grid,.notice-wrap{grid-template-columns:1fr}.process-card,.benefit-card{min-height:auto}.ready-card,.notice-card,.contact-card,.details{padding:22px 19px}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+
+<header class="header">
+  <a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <button class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">VOM on Stage</div>
+      <h1>PRACTICE</h1>
+      <div class="hero-lead">실제 무대를 닮은 환경에서<br>함께 노래하고, 함께 성장하는 시간.</div>
+      <p class="hero-copy">VOM 연습모임은 실제 버스킹 환경에 가까운 세팅에서 개인곡을 가창하고 무대를 공유하는 실전형 보컬 연습모임입니다. 편하게 노래하면서도, 다음 무대를 위한 감각을 함께 만들어갑니다.</p>
+      <div class="hero-tags">
+        <span>실전형 세팅</span>
+        <span>개인곡 가창</span>
+        <span>듀엣 가능</span>
+        <span>자유 피드백</span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="script">Practice<br>for the<br>real stage.</div>
+      <div class="hero-mini-grid">
+        <div class="hero-mini"><small>WHEN</small><strong>평일 저녁<br>또는 주말 오후</strong></div>
+        <div class="hero-mini"><small>DURATION</small><strong>약 3시간<br>내외 진행</strong></div>
+        <div class="hero-mini"><small>FORMAT</small><strong>개인곡 · 듀엣<br>자유곡 가창</strong></div>
+      </div>
+      <p>연습실에서 한 곡을 완성하고,<br>다음 버스킹과 정기공연으로 이어갑니다.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-kicker">How it works</div>
+    <h2>진행 안내</h2>
+    <div class="process-grid">
+      <article class="process-card"><div class="num">01</div><h3>약 3시간 진행</h3><p>평일 저녁 또는 주말 오후에 진행하며, 회차별 일정은 별도로 안내됩니다.</p></article>
+      <article class="process-card"><div class="num">02</div><h3>개인곡 가창</h3><p>준비한 개인곡을 부르고, 희망자에 한해 간단한 피드백을 나눕니다.</p></article>
+      <article class="process-card"><div class="num">03</div><h3>자유로운 구성</h3><p>자유곡과 듀엣 진행이 가능하며, 원하면 추가 가창도 이어갈 수 있습니다.</p></article>
+      <article class="process-card"><div class="num">04</div><h3>무대 감각 만들기</h3><p>마이크와 음향 세팅 안에서 실제 무대에 필요한 감각을 차근차근 익힙니다.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-kicker">Before you come</div>
+    <h2>준비사항</h2>
+    <div class="ready-grid">
+      <article class="ready-card">
+        <h3>곡 · 듀엣 준비</h3>
+        <ul>
+          <li>개인곡 2곡 이상 준비를 권장합니다.</li>
+          <li>듀엣을 희망하면 상대와 곡을 미리 정해 주세요.</li>
+          <li>MR은 유튜브 음원을 사용해도 됩니다.</li>
+        </ul>
+      </article>
+      <article class="ready-card accent">
+        <h3>사전 공유가 필요한 경우</h3>
+        <ul>
+          <li>사용할 음원이 없거나 별도 준비가 필요한 경우</li>
+          <li>듀엣 편성 또는 진행 관련 도움이 필요한 경우</li>
+          <li>기타 운영진에게 미리 전달할 사항이 있는 경우</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-kicker">Why practice</div>
+    <h2>연습모임의 장점</h2>
+    <div class="benefit-grid">
+      <article class="benefit-card"><div class="icon">01</div><h3>실전형 환경</h3><p>실제 버스킹 현장과 유사한 세팅, 실제 사용 장비 기반의 음향 환경을 경험합니다.</p></article>
+      <article class="benefit-card"><div class="icon">02</div><h3>음향 감각</h3><p>마이크 밸런스와 모니터링을 직접 경험하며, 본인에게 맞는 무대 감각을 찾습니다.</p></article>
+      <article class="benefit-card"><div class="icon">03</div><h3>다음 무대 준비</h3><p>버스킹 리허설과 정기공연 준비로 이어지는, 부담 없이 쌓는 무대 경험입니다.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-kicker">Participation</div>
+    <h2>참여 안내</h2>
+    <div class="notice-wrap">
+      <article class="notice-card">
+        <h3>편하게 참여해 주세요</h3>
+        <ul class="notice-list">
+          <li>실수에 대한 부담 없이 자유롭게 즐겨주세요.</li>
+          <li>원활한 진행을 위해 시작 시간은 꼭 지켜주세요.</li>
+          <li>서로 존중하는 분위기의 피드백 문화를 지향합니다.</li>
+          <li>피드백은 참여자 의사를 우선하며, 원치 않으면 언제든 중단할 수 있습니다.</li>
+        </ul>
+      </article>
+      <article class="contact-card">
+        <div class="section-kicker">Want to open one?</div>
+        <h3>연습모임을 열고 싶다면</h3>
+        <p>원하는 요일, 시간대, 진행하고 싶은 형태를 운영진에게 편하게 문의해 주세요. 가능 여부를 확인한 뒤 모임을 열어드립니다.</p>
+        <div class="contact-note">참가비와 세부 일정은 각 연습모임 공지를 통해 별도로 안내됩니다.</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="details">
+    <h3>VOM Practice</h3>
+    <p>연습은 완성된 무대를 보여주는 자리가 아니라, 각자의 목소리와 무대 감각을 편하게 시험해보는 시간입니다. 다음 무대를 준비하고 싶을 때 언제든 함께해 주세요.</p>
+  </section>
+</main>
+
+<div id="menuOverlay" class="overlay" aria-hidden="true">
+  <div class="menu-card">
+    <div class="modal-head"><h3>VOM Menu</h3><button class="close" onclick="closeMenu()" aria-label="메뉴 닫기">✕</button></div>
+    <a href="/">HOME <span>→</span></a>
+    <a href="/calendar/">CALENDAR <span>→</span></a>
+    <a href="/members/">MEMBERS <span>→</span></a>
+    <a href="/event/">EVENT <span>→</span></a>
+    <a href="/live/">VOM LIVE <span>→</span></a>
+    <a href="/busking/">BUSKING <span>→</span></a>
+    <a href="/practice/" class="active">PRACTICE <span>→</span></a>
+  </div>
+</div>
+
+<nav class="bottom">
+  <a href="/"><span class="nav-icon">⌂</span>HOME</a>
+  <a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a>
+  <a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a>
+  <a href="/event/"><span class="nav-icon">✦</span>EVENT</a>
+  <button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button>
+</nav>
+
+<script>
+const menuOverlay=document.getElementById('menuOverlay');
+function openMenu(){menuOverlay.classList.add('open');menuOverlay.setAttribute('aria-hidden','false')}
+function closeMenu(){menuOverlay.classList.remove('open');menuOverlay.setAttribute('aria-hidden','true')}
+menuOverlay.addEventListener('click',event=>{if(event.target===menuOverlay)closeMenu()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeMenu()});
+</script>
+</body>
+</html>
