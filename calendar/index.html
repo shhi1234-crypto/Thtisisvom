@@ -1550,6 +1550,12 @@ button{
   display:flex;
 }
 
+.admin-settings-link{
+  display:none;
+  color:#725de0!important;
+  font-weight:900!important;
+}
+
 
 /* ======================================================
    BOTTOM NAV
@@ -2784,6 +2790,14 @@ button{
       <span>→</span>
     </a>
 
+    <a
+      id="adminSettingsMenuLink"
+      class="admin-settings-link"
+      href="/admin-settings/"
+    >
+      ADMIN SETTINGS
+      <span>→</span>
+    </a>
 
     <button
       id="logoutButton"
@@ -2929,6 +2943,13 @@ function setAdmin(active){
     .getElementById('logoutButton')
     .classList
     .toggle('show',active);
+
+  const settingsLink =
+    document.getElementById('adminSettingsMenuLink');
+
+  if(settingsLink){
+    settingsLink.style.display = active ? 'flex' : 'none';
+  }
 
 
   renderCalendar();
