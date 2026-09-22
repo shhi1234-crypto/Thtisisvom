@@ -1409,6 +1409,43 @@ button{
   margin-top:10px;
 }
 
+.reframe-selected-image{
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  width:100%;
+  min-height:35px;
+
+  margin-top:10px;
+
+  border:
+    1px solid
+    rgba(112,91,203,.17);
+
+  border-radius:11px;
+
+  color:#6756c6;
+
+  background:#f7f5ff;
+
+  cursor:pointer;
+
+  font-size:10px;
+  font-weight:800;
+}
+
+.reframe-selected-image.show{
+  display:inline-flex;
+}
+
+.reframe-selected-image:disabled{
+  cursor:wait;
+
+  opacity:.62;
+}
+
 .crop-editor{
   display:none;
 
@@ -2823,8 +2860,8 @@ button{
       </div>
 
       <div class="form-help">
-        사진을 선택한 뒤 16:9 소모임 표지 프레임 안에서 구도를 맞춰주세요.<br>
-        드래그와 확대 조정 후 저장하면, 모든 일정 화면에 같은 비율로 적용됩니다.
+        새 사진은 파일을 선택한 뒤 16:9 소모임 표지 프레임 안에서 구도를 맞춰주세요.<br>
+        기존 사진은 아래에서 선택한 뒤 ‘선택 사진 구도 조정’을 누르면 다시 맞출 수 있습니다.
       </div>
 
 
@@ -2832,6 +2869,16 @@ button{
         id="imageLibrary"
         class="image-library"
       ></div>
+
+
+      <button
+        id="reframeSelectedImage"
+        class="reframe-selected-image"
+        type="button"
+        onclick="reframeSelectedImage()"
+      >
+        선택 사진 구도 조정
+      </button>
 
 
       <div class="upload-box">
@@ -4871,6 +4918,145 @@ function renderImageLibrary(){
 
   box.innerHTML =
     html;
+
+
+  const reframeButton =
+    document
+      .getElementById(
+        'reframeSelectedImage'
+      );
+
+
+  if(reframeButton){
+
+    reframeButton
+      .classList
+      .toggle(
+        'show',
+        !!selectedImageUrl
+      );
+
+
+    reframeButton.disabled =
+      false;
+
+
+    reframeButton.textContent =
+      '선택 사진 구도 조정';
+  }
+}
+
+
+async function reframeSelectedImage(){
+
+  if(!selectedImageUrl){
+    return;
+  }
+
+
+  const reframeButton =
+    document
+      .getElementById(
+        'reframeSelectedImage'
+      );
+
+
+  reframeButton.disabled =
+    true;
+
+
+  reframeButton.textContent =
+    '사진 불러오는 중...';
+
+
+  try{
+
+    const response =
+      await fetch(
+        selectedImageUrl
+      );
+
+
+    if(!response.ok){
+      throw new Error(
+        '이미지 응답 오류'
+      );
+    }
+
+
+    const blob =
+      await response.blob();
+
+
+    if(
+      !blob.type.startsWith(
+        'image/'
+      )
+    ){
+      throw new Error(
+        '이미지 형식 오류'
+      );
+    }
+
+
+    const extension =
+      blob.type
+        .split('/')
+        .pop()
+      || 'jpg';
+
+
+    const file =
+      new File(
+        [blob],
+        'selected-event-image.' +
+        extension,
+        {
+          type:blob.type,
+          lastModified:Date.now()
+        }
+      );
+
+
+    const transfer =
+      new DataTransfer();
+
+
+    transfer.items.add(
+      file
+    );
+
+
+    document
+      .getElementById(
+        'imageFile'
+      )
+      .files =
+      transfer.files;
+
+
+    previewUpload();
+
+  }catch(error){
+
+    console.error(
+      'REFRAME IMAGE:',
+      error
+    );
+
+
+    alert(
+      '기존 사진을 불러오지 못했습니다. 원본 파일을 다시 선택해 구도를 조정해주세요.'
+    );
+
+
+    reframeButton.disabled =
+      false;
+
+
+    reframeButton.textContent =
+      '선택 사진 구도 조정';
+  }
 }
 
 
