@@ -1151,6 +1151,16 @@ function formatHomeNewsDate(value){
   font-weight:700;
 }
 
+.admin-settings-link{
+  display:none!important;
+  color:#725de0!important;
+  font-weight:900!important;
+}
+
+.admin-settings-link.show{
+  display:flex!important;
+}
+
 .logout{
   display:none;
   color:#d15c70;
@@ -2254,6 +2264,10 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
       MEMBERS <span>→</span>
     </a>
 
+    <a id="adminSettingsMenuLink" class="admin-settings-link" href="/admin-settings/">
+      ADMIN SETTINGS <span>→</span>
+    </a>
+
     <button
       id="adminLoginButton"
       class="admin-menu"
@@ -3099,6 +3113,11 @@ function setAdminUI(active){
   document
     .getElementById('logoutButton')
     .classList
+    .toggle('show',active);
+
+  document
+    .getElementById('adminSettingsMenuLink')
+    ?.classList
     .toggle('show',active);
 
 }
