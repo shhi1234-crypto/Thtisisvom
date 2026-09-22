@@ -1406,16 +1406,24 @@ button{
 }
 
 .image-name{
-  margin-top:8px;
+  margin-top:10px;
 }
 
-.upload-preview{
+.crop-editor{
   display:none;
+
+  margin-top:10px;
+}
+
+.crop-editor.show{
+  display:block;
+}
+
+.crop-stage{
+  position:relative;
 
   width:100%;
   aspect-ratio:16 / 9;
-
-  margin-top:10px;
 
   overflow:hidden;
 
@@ -1424,20 +1432,166 @@ button{
   background:
     linear-gradient(
       145deg,
-      #ebe6ff,
-      #e1f1f4
+      #dcd7f3,
+      #d6edf0
+    );
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(255,255,255,.76);
+
+  cursor:grab;
+
+  touch-action:none;
+
+  user-select:none;
+}
+
+.crop-stage.dragging{
+  cursor:grabbing;
+}
+
+.crop-stage::before{
+  content:"";
+
+  position:absolute;
+  inset:0;
+  z-index:2;
+
+  pointer-events:none;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent 33.2%,
+      rgba(255,255,255,.35) 33.2%,
+      rgba(255,255,255,.35) 33.7%,
+      transparent 33.7%,
+      transparent 66.3%,
+      rgba(255,255,255,.35) 66.3%,
+      rgba(255,255,255,.35) 66.8%,
+      transparent 66.8%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 33.2%,
+      rgba(255,255,255,.35) 33.2%,
+      rgba(255,255,255,.35) 33.7%,
+      transparent 33.7%,
+      transparent 66.3%,
+      rgba(255,255,255,.35) 66.3%,
+      rgba(255,255,255,.35) 66.8%,
+      transparent 66.8%
     );
 }
 
-.upload-preview.show{
-  display:block;
+.crop-stage::after{
+  content:"16 : 9";
+
+  position:absolute;
+  top:9px;
+  right:10px;
+  z-index:3;
+
+  padding:3px 7px;
+
+  border-radius:999px;
+
+  color:rgba(255,255,255,.92);
+
+  background:rgba(17,24,44,.36);
+
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.08em;
 }
 
-.upload-preview img{
-  width:100%;
-  height:100%;
+.crop-stage img{
+  position:absolute;
 
-  object-fit:contain;
+  max-width:none;
+  max-height:none;
+
+  pointer-events:none;
+
+  user-select:none;
+
+  -webkit-user-drag:none;
+}
+
+.crop-controls{
+  display:flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  margin-top:10px;
+}
+
+.crop-zoom-label{
+  display:flex;
+
+  flex:1;
+
+  align-items:center;
+
+  gap:8px;
+
+  min-width:0;
+
+  color:#696d80;
+
+  font-size:10px;
+  font-weight:700;
+}
+
+.crop-zoom{
+  flex:1;
+
+  min-width:0;
+
+  accent-color:#7864df;
+}
+
+.crop-zoom-value{
+  min-width:39px;
+
+  color:#6e59d8;
+
+  font-size:10px;
+  font-weight:800;
+  text-align:right;
+}
+
+.crop-reset{
+  min-height:30px;
+
+  padding:0 10px;
+
+  border:
+    1px solid
+    #e2dff0;
+
+  border-radius:9px;
+
+  color:#6758bf;
+
+  background:#f7f5ff;
+
+  cursor:pointer;
+
+  font-size:10px;
+  font-weight:700;
+}
+
+.crop-tip{
+  margin-top:7px;
+
+  color:#898d9d;
+
+  font-size:10px;
+  line-height:1.5;
 }
 
 .default-row{
@@ -1459,6 +1613,18 @@ button{
   height:16px;
 
   accent-color:#7f69e7;
+}
+
+@media(max-width:480px){
+  .crop-controls{
+    align-items:flex-start;
+
+    flex-wrap:wrap;
+  }
+
+  .crop-zoom-label{
+    flex-basis:100%;
+  }
 }
 
 
@@ -2657,8 +2823,8 @@ button{
       </div>
 
       <div class="form-help">
-        소모임 가로 표지 비율(16:9)에 맞춰 준비해주세요.<br>
-        기존 사진도 자르지 않고 전체가 표시됩니다.
+        사진을 선택한 뒤 16:9 소모임 표지 프레임 안에서 구도를 맞춰주세요.<br>
+        드래그와 확대 조정 후 저장하면, 모든 일정 화면에 같은 비율로 적용됩니다.
       </div>
 
 
@@ -2679,17 +2845,77 @@ button{
         >
 
 
+        <div
+          id="cropEditor"
+          class="crop-editor"
+        >
+
+          <div
+            id="cropStage"
+            class="crop-stage"
+            aria-label="16 대 9 일정 이미지 구도 조정"
+          >
+
+            <img
+              id="cropImage"
+              alt=""
+            >
+
+          </div>
+
+
+          <div class="crop-controls">
+
+            <label class="crop-zoom-label">
+
+              확대
+
+              <input
+                id="cropZoom"
+                class="crop-zoom"
+                type="range"
+                min="100"
+                max="250"
+                step="1"
+                value="100"
+                oninput="setCropZoom(this.value)"
+              >
+
+            </label>
+
+
+            <output
+              id="cropZoomValue"
+              class="crop-zoom-value"
+              for="cropZoom"
+            >
+              100%
+            </output>
+
+
+            <button
+              class="crop-reset"
+              type="button"
+              onclick="resetCrop()"
+            >
+              원본 구도
+            </button>
+
+          </div>
+
+
+          <div class="crop-tip">
+            사진을 드래그해 위치를 맞춘 뒤 저장하세요. 저장 시 1600 × 900 규격으로 등록됩니다.
+          </div>
+
+        </div>
+
+
         <input
           id="imageName"
           class="text-input image-name"
           placeholder="사진 이름 (예: VOM LIVE 기본)"
         >
-
-
-        <div
-          id="uploadPreview"
-          class="upload-preview"
-        ></div>
 
       </div>
 
@@ -2908,6 +3134,11 @@ let adminMode = false;
 let selectedImageUrl = '';
 
 let uploadPreviewUrl = '';
+
+let cropState = null;
+
+const CROP_OUTPUT_WIDTH = 1600;
+const CROP_OUTPUT_HEIGHT = 900;
 
 
 /* ======================================================
@@ -4661,57 +4892,377 @@ function selectImage(url){
 }
 
 
-function previewUpload(){
+function getCropLayout(){
 
-  const file =
+  if(
+    !cropState ||
+    !cropState.image
+  ){
+    return null;
+  }
+
+
+  const stage =
     document
-      .getElementById('imageFile')
-      .files[0];
+      .getElementById(
+        'cropStage'
+      );
 
 
-  if(!file){
+  const frame =
+    stage
+      .getBoundingClientRect();
 
-    clearUploadPreview();
 
+  if(
+    !frame.width ||
+    !frame.height
+  ){
+    return null;
+  }
+
+
+  const naturalWidth =
+    cropState
+      .image
+      .naturalWidth;
+
+
+  const naturalHeight =
+    cropState
+      .image
+      .naturalHeight;
+
+
+  if(
+    !naturalWidth ||
+    !naturalHeight
+  ){
+    return null;
+  }
+
+
+  const baseScale =
+    Math.max(
+      frame.width / naturalWidth,
+      frame.height / naturalHeight
+    );
+
+
+  const scale =
+    baseScale *
+    cropState.zoom;
+
+
+  const imageWidth =
+    naturalWidth *
+    scale;
+
+
+  const imageHeight =
+    naturalHeight *
+    scale;
+
+
+  const maxX =
+    Math.max(
+      0,
+      (imageWidth - frame.width) / 2
+    );
+
+
+  const maxY =
+    Math.max(
+      0,
+      (imageHeight - frame.height) / 2
+    );
+
+
+  cropState.offsetX =
+    Math.max(
+      -maxX,
+      Math.min(
+        maxX,
+        cropState.offsetX
+      )
+    );
+
+
+  cropState.offsetY =
+    Math.max(
+      -maxY,
+      Math.min(
+        maxY,
+        cropState.offsetY
+      )
+    );
+
+
+  return {
+    frameWidth:
+      frame.width,
+
+    frameHeight:
+      frame.height,
+
+    scale,
+
+    imageWidth,
+
+    imageHeight
+  };
+}
+
+
+function renderCrop(){
+
+  const layout =
+    getCropLayout();
+
+
+  if(!layout){
     return;
   }
 
 
-  if(uploadPreviewUrl){
-
-    URL.revokeObjectURL(
-      uploadPreviewUrl
-    );
-  }
-
-
-  uploadPreviewUrl =
-    URL.createObjectURL(file);
-
-
-  const preview =
+  const image =
     document
       .getElementById(
-        'uploadPreview'
+        'cropImage'
       );
 
 
-  preview
+  image.style.width =
+    layout.imageWidth +
+    'px';
+
+
+  image.style.height =
+    layout.imageHeight +
+    'px';
+
+
+  image.style.left =
+    (
+      layout.frameWidth / 2 +
+      cropState.offsetX
+    ) +
+    'px';
+
+
+  image.style.top =
+    (
+      layout.frameHeight / 2 +
+      cropState.offsetY
+    ) +
+    'px';
+
+
+  image.style.transform =
+    'translate(-50%,-50%)';
+}
+
+
+function updateCropControls(){
+
+  const zoom =
+    Math.round(
+      (cropState?.zoom || 1) *
+      100
+    );
+
+
+  document
+    .getElementById(
+      'cropZoom'
+    )
+    .value =
+    zoom;
+
+
+  document
+    .getElementById(
+      'cropZoomValue'
+    )
+    .textContent =
+    zoom +
+    '%';
+}
+
+
+function resetCrop(){
+
+  if(!cropState){
+    return;
+  }
+
+
+  cropState.zoom = 1;
+  cropState.offsetX = 0;
+  cropState.offsetY = 0;
+
+
+  updateCropControls();
+
+  renderCrop();
+}
+
+
+function setCropZoom(value){
+
+  if(!cropState){
+    return;
+  }
+
+
+  cropState.zoom =
+    Number(value) /
+    100;
+
+
+  updateCropControls();
+
+  renderCrop();
+}
+
+
+function previewUpload(){
+
+  const file =
+    document
+      .getElementById(
+        'imageFile'
+      )
+      .files[0];
+
+
+  clearUploadPreview();
+
+
+  if(!file){
+    return;
+  }
+
+
+  selectedImageUrl = '';
+
+  renderImageLibrary();
+
+
+  uploadPreviewUrl =
+    URL.createObjectURL(
+      file
+    );
+
+
+  cropState = {
+    file,
+
+    image:null,
+
+    zoom:1,
+
+    offsetX:0,
+
+    offsetY:0,
+
+    dragging:false,
+
+    pointerId:null
+  };
+
+
+  const editor =
+    document
+      .getElementById(
+        'cropEditor'
+      );
+
+
+  const image =
+    document
+      .getElementById(
+        'cropImage'
+      );
+
+
+  editor
     .classList
     .add('show');
 
 
-  preview.innerHTML =
-  `
-    <img
-      src="${uploadPreviewUrl}"
-      alt=""
-    >
-  `;
+  image.onload =
+    function(){
+
+      if(
+        !cropState ||
+        cropState.file !== file
+      ){
+        return;
+      }
+
+
+      cropState.image =
+        image;
+
+
+      resetCrop();
+    };
+
+
+  image.onerror =
+    function(){
+
+      alert(
+        '사진을 불러오지 못했습니다. 다른 파일을 선택해주세요.'
+      );
+
+
+      document
+        .getElementById(
+          'imageFile'
+        )
+        .value = '';
+
+
+      clearUploadPreview();
+    };
+
+
+  image.src =
+    uploadPreviewUrl;
 }
 
 
 function clearUploadPreview(){
+
+  const editor =
+    document
+      .getElementById(
+        'cropEditor'
+      );
+
+
+  const image =
+    document
+      .getElementById(
+        'cropImage'
+      );
+
+
+  editor
+    .classList
+    .remove('show');
+
+
+  image.onload = null;
+  image.onerror = null;
+  image.removeAttribute('src');
+  image.removeAttribute('style');
+
+
+  cropState = null;
+
 
   if(uploadPreviewUrl){
 
@@ -4722,21 +5273,291 @@ function clearUploadPreview(){
 
     uploadPreviewUrl = '';
   }
+}
 
 
-  const preview =
+function bindCropper(){
+
+  const stage =
     document
       .getElementById(
-        'uploadPreview'
+        'cropStage'
       );
 
 
-  preview
-    .classList
-    .remove('show');
+  stage.addEventListener(
+    'pointerdown',
+    function(event){
+
+      if(
+        !cropState ||
+        !cropState.image
+      ){
+        return;
+      }
 
 
-  preview.innerHTML = '';
+      event.preventDefault();
+
+
+      cropState.dragging = true;
+      cropState.pointerId = event.pointerId;
+      cropState.startPointerX = event.clientX;
+      cropState.startPointerY = event.clientY;
+      cropState.startOffsetX = cropState.offsetX;
+      cropState.startOffsetY = cropState.offsetY;
+
+
+      stage
+        .classList
+        .add('dragging');
+
+
+      stage.setPointerCapture(
+        event.pointerId
+      );
+    }
+  );
+
+
+  stage.addEventListener(
+    'pointermove',
+    function(event){
+
+      if(
+        !cropState ||
+        !cropState.dragging ||
+        cropState.pointerId !== event.pointerId
+      ){
+        return;
+      }
+
+
+      cropState.offsetX =
+        cropState.startOffsetX +
+        event.clientX -
+        cropState.startPointerX;
+
+
+      cropState.offsetY =
+        cropState.startOffsetY +
+        event.clientY -
+        cropState.startPointerY;
+
+
+      renderCrop();
+    }
+  );
+
+
+  function stopDragging(event){
+
+    if(
+      !cropState ||
+      !cropState.dragging ||
+      (
+        event &&
+        cropState.pointerId !== event.pointerId
+      )
+    ){
+      return;
+    }
+
+
+    cropState.dragging = false;
+    cropState.pointerId = null;
+
+
+    stage
+      .classList
+      .remove('dragging');
+  }
+
+
+  stage.addEventListener(
+    'pointerup',
+    stopDragging
+  );
+
+
+  stage.addEventListener(
+    'pointercancel',
+    stopDragging
+  );
+
+
+  stage.addEventListener(
+    'lostpointercapture',
+    stopDragging
+  );
+
+
+  window.addEventListener(
+    'resize',
+    function(){
+
+      renderCrop();
+    }
+  );
+}
+
+
+function createCroppedImageFile(){
+
+  return new Promise(
+    function(resolve,reject){
+
+      const layout =
+        getCropLayout();
+
+
+      if(
+        !layout ||
+        !cropState ||
+        !cropState.image
+      ){
+        reject(
+          new Error(
+            '사진을 불러오는 중입니다. 잠시 후 다시 저장해주세요.'
+          )
+        );
+
+        return;
+      }
+
+
+      const image =
+        cropState.image;
+
+
+      const sourceX =
+        (
+          layout.frameWidth / 2 -
+          cropState.offsetX -
+          layout.imageWidth / 2
+        ) /
+        layout.scale;
+
+
+      const sourceY =
+        (
+          layout.frameHeight / 2 -
+          cropState.offsetY -
+          layout.imageHeight / 2
+        ) /
+        layout.scale;
+
+
+      const sourceWidth =
+        layout.frameWidth /
+        layout.scale;
+
+
+      const sourceHeight =
+        layout.frameHeight /
+        layout.scale;
+
+
+      const canvas =
+        document.createElement(
+          'canvas'
+        );
+
+
+      canvas.width =
+        CROP_OUTPUT_WIDTH;
+
+
+      canvas.height =
+        CROP_OUTPUT_HEIGHT;
+
+
+      const context =
+        canvas.getContext(
+          '2d'
+        );
+
+
+      context.fillStyle =
+        '#f8f7fa';
+
+
+      context.fillRect(
+        0,
+        0,
+        CROP_OUTPUT_WIDTH,
+        CROP_OUTPUT_HEIGHT
+      );
+
+
+      context.drawImage(
+        image,
+        sourceX,
+        sourceY,
+        sourceWidth,
+        sourceHeight,
+        0,
+        0,
+        CROP_OUTPUT_WIDTH,
+        CROP_OUTPUT_HEIGHT
+      );
+
+
+      canvas.toBlob(
+        function(blob){
+
+          if(!blob){
+
+            reject(
+              new Error(
+                '이미지 규격을 만들지 못했습니다.'
+              )
+            );
+
+            return;
+          }
+
+
+          const originalName =
+            cropState.file.name ||
+            'vom-cover';
+
+
+          const stem =
+            originalName
+              .replace(
+                /\.[^/.]+$/,
+                ''
+              )
+              .replace(
+                /[^0-9A-Za-z가-힣_-]+/g,
+                '-'
+              )
+              .slice(
+                0,
+                70
+              )
+            ||
+            'vom-cover';
+
+
+          resolve(
+            new File(
+              [blob],
+              stem +
+              '-16x9.jpg',
+              {
+                type:'image/jpeg',
+                lastModified:Date.now()
+              }
+            )
+          );
+        },
+        'image/jpeg',
+        .92
+      );
+    }
+  );
 }
 
 
@@ -4744,7 +5565,9 @@ async function uploadNewImage(){
 
   const file =
     document
-      .getElementById('imageFile')
+      .getElementById(
+        'imageFile'
+      )
       .files[0];
 
 
@@ -4753,15 +5576,16 @@ async function uploadNewImage(){
   }
 
 
-  const ext =
-    file.name
-      .split('.')
-      .pop()
-      .toLowerCase();
+  const croppedFile =
+    await createCroppedImageFile();
 
 
   const path =
-    `events/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+    'events/' +
+    Date.now() +
+    '-' +
+    crypto.randomUUID() +
+    '.jpg';
 
 
   const { error } =
@@ -4770,10 +5594,11 @@ async function uploadNewImage(){
       .from('event-images')
       .upload(
         path,
-        file,
+        croppedFile,
         {
           cacheControl:'3600',
-          upsert:false
+          upsert:false,
+          contentType:'image/jpeg'
         }
       );
 
@@ -5570,6 +6395,8 @@ document
 async function start(){
 
   buildTimeSelects();
+
+  bindCropper();
 
   await checkAdmin();
 
