@@ -5432,18 +5432,18 @@ function createCroppedImageFile(){
 
       const sourceX =
         (
+          layout.imageWidth / 2 -
           layout.frameWidth / 2 -
-          cropState.offsetX -
-          layout.imageWidth / 2
+          cropState.offsetX
         ) /
         layout.scale;
 
 
       const sourceY =
         (
+          layout.imageHeight / 2 -
           layout.frameHeight / 2 -
-          cropState.offsetY -
-          layout.imageHeight / 2
+          cropState.offsetY
         ) /
         layout.scale;
 
