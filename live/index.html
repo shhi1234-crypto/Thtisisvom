@@ -586,7 +586,7 @@ button{
 
 .live-image{
   width:130px;
-  height:78px;
+  aspect-ratio:16 / 9;
   overflow:hidden;
   border-radius:16px;
   background:linear-gradient(145deg,#e9e4ff,#e1eff5);
@@ -595,7 +595,7 @@ button{
 .live-image img{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .live-image-empty{
@@ -667,7 +667,7 @@ button{
 
 .detail-image{
   width:100%;
-  aspect-ratio:16/7;
+  aspect-ratio:16/9;
   margin-top:27px;
   overflow:hidden;
   border-radius:27px;
@@ -678,7 +678,7 @@ button{
 .detail-image img{
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .detail-image-empty{
@@ -1173,7 +1173,6 @@ button{
 
   .live-image{
     width:78px;
-    height:62px;
     border-radius:13px;
   }
 
@@ -1223,7 +1222,6 @@ button{
 
   .live-image{
     width:68px;
-    height:56px;
   }
 }
 
