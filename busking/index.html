@@ -662,10 +662,10 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .u-scale-fee span{color:#818698;font-size:10px}.u-scale-fee strong{font-family:"Nanum Pen Script",cursive;color:#705bd8;font-size:27px;font-weight:400}
 .u-half-note{margin-top:13px;color:#8a8f9f;font-size:9px;line-height:1.7}
 .u-equipment{margin-top:14px;padding:20px 22px;border-radius:22px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.94);display:flex;align-items:center;justify-content:space-between;gap:20px}
-.u-equipment div:first-child{min-width:0}.u-equipment .eq-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:19px}.u-equipment h3{margin:2px 0 5px;font-size:15px}.u-equipment p{margin:0;color:#858a9b;font-size:10px;line-height:1.7}.u-equipment .eq-badge{flex:0 0 auto;padding:9px 13px;border-radius:999px;background:#f0edff;color:#715dd6;font-size:9px;font-weight:800}
+.u-equipment div:first-child{min-width:0}.u-equipment .eq-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:19px}.u-equipment h3{margin:2px 0 5px;font-size:15px}.u-equipment p{margin:0;color:#858a9b;font-size:10px;line-height:1.7}.eq-badges{flex:0 0 auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.u-equipment .eq-badge{padding:9px 13px;border-radius:999px;background:#f0edff;color:#715dd6;font-size:9px;font-weight:800;white-space:nowrap}.u-equipment .eq-badge.half{background:#eaf7f4;color:#378e84}
 .u-prep-tip{margin-top:16px}.u-tip-intro{max-width:770px;margin:0 0 20px;color:#73798c;font-size:12px;line-height:1.85}.u-tip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.u-tip-card{padding:25px 24px;border-radius:24px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.96);box-shadow:0 11px 30px rgba(31,37,74,.05)}.u-tip-card.mr{background:linear-gradient(145deg,rgba(241,237,255,.94),rgba(255,255,255,.88))}.u-tip-card.video{background:linear-gradient(145deg,rgba(233,248,246,.94),rgba(255,255,255,.88))}.u-tip-step{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:23px}.u-tip-card.video .u-tip-step{color:#419c93}.u-tip-card h3{margin:7px 0 11px;font-size:17px;letter-spacing:-.03em}.u-tip-card ul{display:grid;gap:9px;margin:0;padding:0;list-style:none}.u-tip-card li{position:relative;padding-left:15px;color:#6f7586;font-size:11px;line-height:1.7}.u-tip-card li::before{content:"";position:absolute;left:0;top:.7em;width:5px;height:5px;border-radius:50%;background:#8069e8}.u-tip-card.video li::before{background:#419c93}.u-tip-note{margin-top:13px;padding:15px 17px;border-radius:17px;background:rgba(255,255,255,.68);border:1px solid rgba(95,80,150,.08);color:#666d80;font-size:11px;line-height:1.75}
 @media(max-width:850px){.u-guide-common{grid-template-columns:1fr 1fr}.u-scale-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.u-equipment .eq-badge{align-self:flex-start}.u-tip-grid{grid-template-columns:1fr}.u-tip-card{padding:21px 18px}}
+@media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.eq-badges{justify-content:flex-start}.u-tip-grid{grid-template-columns:1fr}.u-tip-card{padding:21px 18px}}
 
 </style>
 </head>
@@ -1013,7 +1013,7 @@ function renderBuskingList(){
           <p class="u-scale-desc">보다 넓은 공간과 많은 관객이 예상되는 대규모 형태의 버스킹입니다.</p>
           <div class="u-scale-info">
             <div class="u-scale-box"><small>PLACE</small><strong>한강공원 · 마로니에공원<br>광장형 및 대규모 버스킹 장소</strong></div>
-            <div class="u-scale-box"><small>OPERATION</small><strong>대형 버스킹 장비<br>비교적 많은 참가 인원 · 공연형 중심</strong></div>
+            <div class="u-scale-box"><small>MONITORING</small><strong>모니터링 스피커 포함<br>가창 모니터링 가능</strong></div>
             <div class="u-scale-box"><small>SONGS</small><strong>인당 4곡 진행<br>5곡 준비 (4곡 + 앵콜곡)</strong></div>
             <div class="u-scale-box"><small>STYLE</small><strong>넓은 공간에 맞춘<br>공연 중심 운영</strong></div>
           </div>
@@ -1026,7 +1026,7 @@ function renderBuskingList(){
           <p class="u-scale-desc">조금 더 자유롭고 가벼운 분위기의 소규모 형태 버스킹입니다.</p>
           <div class="u-scale-info">
             <div class="u-scale-box"><small>PLACE</small><strong>청계천 · 신촌 · 연남동<br>기타 소규모 버스킹 장소</strong></div>
-            <div class="u-scale-box"><small>OPERATION</small><strong>소형 버스킹 장비<br>소수 인원 · 자유로운 분위기</strong></div>
+            <div class="u-scale-box"><small>MONITORING</small><strong>모니터링 스피커 미포함<br>메인 음향 중심 운영</strong></div>
             <div class="u-scale-box"><small>SONGS</small><strong>인당 4곡 진행<br>5곡 준비 (4곡 + 앵콜곡)</strong></div>
             <div class="u-scale-box"><small>STYLE</small><strong>장소 규모에 맞춘<br>가볍고 유연한 운영</strong></div>
           </div>
@@ -1036,8 +1036,8 @@ function renderBuskingList(){
       </div>
 
       <div class="u-equipment">
-        <div><div class="eq-kicker">EQUIPMENT</div><h3>버스킹 장비 스펙</h3><p>FULL / HALF VOM은 장소와 운영 규모에 맞춰 장비 구성을 달리합니다. 장비 상세 이미지는 별도 등록 후 이 영역에 연결할 수 있습니다.</p></div>
-        <div class="eq-badge">VOM BUSKING SYSTEM</div>
+        <div><div class="eq-kicker">EQUIPMENT</div><h3>FULL / HALF VOM 장비 차이</h3><p>가장 큰 차이는 가창용 모니터링 스피커 포함 여부입니다. FULL VOM은 모니터링 스피커를 사용하고, HALF VOM은 메인 음향 중심의 간소화 장비로 진행합니다.</p></div>
+        <div class="eq-badges"><div class="eq-badge">FULL · 모니터링 스피커 포함</div><div class="eq-badge half">HALF · 모니터링 스피커 미포함</div></div>
       </div>
     </section>
 
