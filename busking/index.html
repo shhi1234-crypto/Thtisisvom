@@ -663,8 +663,9 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .u-half-note{margin-top:13px;color:#8a8f9f;font-size:9px;line-height:1.7}
 .u-equipment{margin-top:14px;padding:20px 22px;border-radius:22px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.94);display:flex;align-items:center;justify-content:space-between;gap:20px}
 .u-equipment div:first-child{min-width:0}.u-equipment .eq-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:19px}.u-equipment h3{margin:2px 0 5px;font-size:15px}.u-equipment p{margin:0;color:#858a9b;font-size:10px;line-height:1.7}.u-equipment .eq-badge{flex:0 0 auto;padding:9px 13px;border-radius:999px;background:#f0edff;color:#715dd6;font-size:9px;font-weight:800}
+.u-prep-tip{margin-top:16px}.u-tip-intro{max-width:770px;margin:0 0 20px;color:#73798c;font-size:12px;line-height:1.85}.u-tip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.u-tip-card{padding:25px 24px;border-radius:24px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.96);box-shadow:0 11px 30px rgba(31,37,74,.05)}.u-tip-card.mr{background:linear-gradient(145deg,rgba(241,237,255,.94),rgba(255,255,255,.88))}.u-tip-card.video{background:linear-gradient(145deg,rgba(233,248,246,.94),rgba(255,255,255,.88))}.u-tip-step{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:23px}.u-tip-card.video .u-tip-step{color:#419c93}.u-tip-card h3{margin:7px 0 11px;font-size:17px;letter-spacing:-.03em}.u-tip-card ul{display:grid;gap:9px;margin:0;padding:0;list-style:none}.u-tip-card li{position:relative;padding-left:15px;color:#6f7586;font-size:11px;line-height:1.7}.u-tip-card li::before{content:"";position:absolute;left:0;top:.7em;width:5px;height:5px;border-radius:50%;background:#8069e8}.u-tip-card.video li::before{background:#419c93}.u-tip-note{margin-top:13px;padding:15px 17px;border-radius:17px;background:rgba(255,255,255,.68);border:1px solid rgba(95,80,150,.08);color:#666d80;font-size:11px;line-height:1.75}
 @media(max-width:850px){.u-guide-common{grid-template-columns:1fr 1fr}.u-scale-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.u-equipment .eq-badge{align-self:flex-start}}
+@media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.u-equipment .eq-badge{align-self:flex-start}.u-tip-grid{grid-template-columns:1fr}.u-tip-card{padding:21px 18px}}
 
 </style>
 </head>
@@ -721,6 +722,7 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
   <a href="/event/">EVENT <span>→</span></a>
   <a href="/live/">VOM LIVE <span>→</span></a>
   <a href="/busking/">BUSKING <span>→</span></a>
+  <a href="/practice/">PRACTICE <span>→</span></a>
   <button id="adminLoginButton" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
   <button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
 </div></div>
@@ -1037,6 +1039,32 @@ function renderBuskingList(){
         <div><div class="eq-kicker">EQUIPMENT</div><h3>버스킹 장비 스펙</h3><p>FULL / HALF VOM은 장소와 운영 규모에 맞춰 장비 구성을 달리합니다. 장비 상세 이미지는 별도 등록 후 이 영역에 연결할 수 있습니다.</p></div>
         <div class="eq-badge">VOM BUSKING SYSTEM</div>
       </div>
+    </section>
+
+    <section class="u-section u-prep-tip">
+      <div class="u-kicker">BUSKING PREPARATION TIP</div>
+      <h2 class="u-section-title">좋은 공연과 좋은 기록을 위한 준비</h2>
+      <p class="u-tip-intro">버스킹은 현장마다 음향 환경이 다르고, 곡·가창자마다 필요한 반주와 마이크 볼륨도 다릅니다. 좋은 공연 진행은 물론, 버스킹 이후 남길 영상의 퀄리티에도 영향을 줄 수 있으니 아래의 항목들을 공연 전 꼭 확인해 주세요!</p>
+      <div class="u-tip-grid">
+        <article class="u-tip-card mr">
+          <div class="u-tip-step">01 · MR</div>
+          <h3>개인 MR 음량 확인</h3>
+          <ul>
+            <li>개인 MR은 최대 볼륨으로 저장하거나 다른 MR과 비교해 음량이 작지 않은지 확인해 주세요.</li>
+            <li>음량이 너무 작으면 현장에서 보정이 어려울 뿐만 아니라, 반주 자체가 잘 들리지 않을 수 있습니다.</li>
+          </ul>
+        </article>
+        <article class="u-tip-card video">
+          <div class="u-tip-step">02 · VIDEO</div>
+          <h3>개인 영상 촬영</h3>
+          <ul>
+            <li>영상 촬영은 개인이 직접 챙겨주세요.</li>
+            <li>본인 전·다음 순서의 참여자에게 미리 촬영을 부탁드리면 됩니다.</li>
+            <li>휴대폰 거치대 1개는 운영진에서 빌려드립니다.</li>
+          </ul>
+        </article>
+      </div>
+      <div class="u-tip-note">원활한 공연 진행과 개인 소장용 영상 확보를 위한 기본 준비사항입니다.</div>
     </section>
 
     <section class="u-lists">
