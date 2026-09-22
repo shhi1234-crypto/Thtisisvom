@@ -232,7 +232,7 @@ async function deleteLibraryImage(path){
 }
 
 function createStorageName(name){
-  const clean=String(name||'image').replace(/[^0-9A-Za-z가-힣._-]+/g,'-').replace(/-+/g,'-').slice(-100)||'image';
+  const clean=String(name||'image').replace(/[^0-9A-Za-z._-]+/g,'-').replace(/-+/g,'-').slice(-100)||'image';
   const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);
   return `${Date.now()}-${token}-${clean}`;
 }
