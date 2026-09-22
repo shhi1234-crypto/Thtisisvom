@@ -18,13 +18,14 @@
 .header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}.header-right{display:flex;align-items:center;gap:8px}.admin-badge{display:none;align-items:center;gap:6px;padding:8px 11px;border:1px solid rgba(117,96,222,.16);border-radius:999px;background:rgba(117,96,222,.1);color:#6a55ce;font-size:9px;font-weight:800}.admin-badge.show{display:flex}.admin-dot{width:6px;height:6px;border-radius:50%;background:#765fe6}.back{padding:10px 14px;border:1px solid rgba(255,255,255,.94);border-radius:999px;background:rgba(255,255,255,.77);box-shadow:0 8px 24px rgba(31,38,76,.06);font-size:10px;font-weight:800}
 .page{width:min(1080px,calc(100% - 32px));margin:auto;padding:42px 0 82px}.eyebrow{color:#7b67e3;font-family:"Nanum Pen Script",cursive;font-size:24px}.title-row{display:flex;align-items:end;justify-content:space-between;gap:18px}.title-row h1{margin:4px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(55px,9vw,86px);font-weight:400;line-height:.82}.sub{max-width:670px;margin:17px 0 0;color:#6f768a;font-size:12px;line-height:1.85}.notice{margin-top:22px;padding:14px 17px;border:1px solid rgba(117,96,222,.1);border-radius:17px;background:linear-gradient(120deg,rgba(240,236,255,.82),rgba(236,249,247,.82));color:#61677b;font-size:11px;line-height:1.7}.notice b{color:#6c58cf}
 .guard{margin-top:29px;padding:48px 25px;border:1px solid rgba(255,255,255,.96);border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 18px 50px rgba(31,37,74,.07);text-align:center}.guard h2{margin:0 0 9px;font-size:21px}.guard p{margin:0;color:#777d8e;font-size:12px;line-height:1.8}.guard a{display:inline-flex;margin-top:17px;padding:10px 14px;border-radius:999px;background:#eeeaff;color:#6854cc;font-size:10px;font-weight:800}.hidden{display:none!important}
-.folder-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:30px}.folder-card{min-height:192px;padding:22px;border:1px solid rgba(255,255,255,.96);border-radius:24px;background:rgba(255,255,255,.82);box-shadow:0 12px 34px rgba(31,37,74,.05);text-align:left;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.folder-card:hover{transform:translateY(-3px);border-color:rgba(117,96,222,.22);box-shadow:0 18px 42px rgba(31,37,74,.1)}.folder-card.BUSKING{background:linear-gradient(145deg,rgba(240,236,255,.95),rgba(255,255,255,.9))}.folder-card.RENTAL{background:linear-gradient(145deg,rgba(255,243,232,.95),rgba(255,255,255,.9))}.folder-card.GENERAL{background:linear-gradient(145deg,rgba(232,248,245,.95),rgba(255,255,255,.9))}.folder-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.folder-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.72);font-size:20px;box-shadow:0 8px 18px rgba(51,47,90,.07)}.folder-count{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.74);color:#6f5bd1;font-size:9px;font-weight:900}.folder-kicker{margin-top:20px;color:#8674d9;font-size:9px;font-weight:900;letter-spacing:.08em}.folder-card.RENTAL .folder-kicker{color:#bd7a40}.folder-card.GENERAL .folder-kicker{color:#3a9589}.folder-card h2{margin:5px 0 0;font-size:18px;letter-spacing:-.04em}.folder-card p{margin:8px 0 0;color:#757b8d;font-size:10px;line-height:1.65}.folder-open{display:flex;align-items:center;justify-content:space-between;margin-top:19px;color:#6452c9;font-size:10px;font-weight:900}.folder-card.RENTAL .folder-open{color:#b76c2f}.folder-card.GENERAL .folder-open{color:#368b80}
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-top:30px}.folder-card{min-height:192px;padding:22px;border:1px solid rgba(255,255,255,.96);border-radius:24px;background:rgba(255,255,255,.82);box-shadow:0 12px 34px rgba(31,37,74,.05);text-align:left;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.folder-card:hover{transform:translateY(-3px);border-color:rgba(117,96,222,.22);box-shadow:0 18px 42px rgba(31,37,74,.1)}.folder-card.BUSKING{background:linear-gradient(145deg,rgba(240,236,255,.95),rgba(255,255,255,.9))}.folder-card.RENTAL{background:linear-gradient(145deg,rgba(255,243,232,.95),rgba(255,255,255,.9))}.folder-card.GENERAL{background:linear-gradient(145deg,rgba(232,248,245,.95),rgba(255,255,255,.9))}.folder-card.IMAGES{background:linear-gradient(145deg,rgba(236,242,255,.97),rgba(255,255,255,.9))}.folder-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.folder-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.72);font-size:20px;box-shadow:0 8px 18px rgba(51,47,90,.07)}.folder-count{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.74);color:#6f5bd1;font-size:9px;font-weight:900}.folder-kicker{margin-top:20px;color:#8674d9;font-size:9px;font-weight:900;letter-spacing:.08em}.folder-card.RENTAL .folder-kicker{color:#bd7a40}.folder-card.GENERAL .folder-kicker{color:#3a9589}.folder-card.IMAGES .folder-kicker{color:#496eac}.folder-card h2{margin:5px 0 0;font-size:18px;letter-spacing:-.04em}.folder-card p{margin:8px 0 0;color:#757b8d;font-size:10px;line-height:1.65}.folder-open{display:flex;align-items:center;justify-content:space-between;margin-top:19px;color:#6452c9;font-size:10px;font-weight:900}.folder-card.RENTAL .folder-open{color:#b76c2f}.folder-card.GENERAL .folder-open{color:#368b80}.folder-card.IMAGES .folder-open{color:#496eac}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:27px 0 15px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{min-height:36px;padding:0 13px;border:1px solid rgba(100,92,150,.1);border-radius:999px;background:rgba(255,255,255,.7);color:#767b8e;font-size:10px;font-weight:800}.filter.active{border-color:transparent;background:linear-gradient(135deg,#8068e8,#6c8bea);color:#fff}.add{min-height:39px;padding:0 15px;border:0;border-radius:12px;background:#1d263e;color:#fff;font-size:11px;font-weight:800;box-shadow:0 10px 24px rgba(30,36,68,.13)}
 .resource-stack{display:grid;gap:22px}.resource-section{padding:23px;border:1px solid rgba(255,255,255,.95);border-radius:26px;background:rgba(255,255,255,.76);box-shadow:0 13px 38px rgba(31,37,74,.05)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:15px}.section-head-left{display:flex;align-items:end;gap:12px}.section-back{min-height:31px;padding:0 10px;border:1px solid rgba(105,90,192,.13);border-radius:10px;background:#faf9fe;color:#715dd3;font-size:9px;font-weight:900}.section-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:21px}.section-head h2{margin:2px 0 0;font-size:19px;letter-spacing:-.04em}.section-count{padding:6px 9px;border-radius:999px;background:#f0edff;color:#705dd1;font-size:9px;font-weight:800}.section-empty{padding:25px 16px;border:1px dashed rgba(110,99,170,.18);border-radius:16px;color:#979baa;font-size:11px;text-align:center}
 .resource-list{display:grid;gap:9px}.resource{padding:17px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.76)}.resource-top{display:flex;align-items:flex-start;justify-content:space-between;gap:13px}.resource-title{display:flex;align-items:center;gap:8px;min-width:0}.resource-title h3{margin:0;font-size:15px;letter-spacing:-.03em}.type-pill{flex:0 0 auto;padding:4px 7px;border-radius:999px;background:#eeeaff;color:#6955d2;font-size:8px;font-weight:900}.type-pill.RENTAL{background:#fff0e4;color:#b76c2f}.type-pill.GENERAL{background:#eaf8f5;color:#388d81}.item-actions{display:flex;gap:5px}.icon-btn{width:31px;height:31px;border:1px solid rgba(104,97,150,.1);border-radius:9px;background:#faf9fd;color:#715dd3;font-size:12px}.icon-btn.delete{color:#c95a6e;background:#fff7f8}
 .info-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;margin-top:13px}.info-cell{min-width:0;padding:10px 11px;border-radius:12px;background:#faf9fd}.info-cell small{display:block;margin-bottom:4px;color:#a09aaa;font-size:8px;font-weight:900;letter-spacing:.08em}.info-cell span,.info-cell a{display:block;overflow-wrap:anywhere;color:#656b7d;font-size:10px;line-height:1.58}.info-cell a{color:#6754cc;text-decoration:underline;text-underline-offset:2px;font-weight:700}.resource-note{margin:10px 0 0;color:#727789;font-size:10px;line-height:1.65}.resource-detail{margin:7px 0 0;color:#9397a4;font-size:10px;line-height:1.65}
+.image-library-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 15px}.image-library-note{margin:0;color:#7a8192;font-size:10px;line-height:1.65}.image-upload{display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:0 14px;border-radius:12px;background:#1d263e;color:#fff;font-size:10px;font-weight:900;box-shadow:0 10px 24px rgba(30,36,68,.13);cursor:pointer;white-space:nowrap}.image-upload input{display:none}.image-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.image-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff}.image-preview{display:block;aspect-ratio:1/1;background:#f1f2f7}.image-preview img{width:100%;height:100%;display:block;object-fit:cover}.image-meta{padding:10px}.image-name{overflow:hidden;color:#4c5368;font-size:10px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}.image-sub{margin-top:4px;color:#a0a4b0;font-size:8px}.image-actions{display:flex;gap:5px;margin-top:9px}.image-actions a,.image-actions button{flex:1;min-height:29px;border:0;border-radius:8px;background:#f0edff;color:#6854c8;font-size:8px;font-weight:900;text-align:center}.image-actions a{display:grid;place-items:center}.image-actions button{background:#fff1f3;color:#c15a6c}
 .overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(25,30,55,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal{width:min(680px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:24px;border-radius:25px;background:#fff;box-shadow:0 28px 80px rgba(21,26,55,.23)}.modal-top{display:flex;align-items:center;justify-content:space-between}.modal-top h2{margin:0;font-family:"Nanum Pen Script",cursive;font-size:37px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#efeff5;font-size:16px}.modal-note{margin:6px 0 18px;color:#7c8191;font-size:11px;line-height:1.75}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.field-wrap{display:grid;gap:6px}.field-wrap.full{grid-column:1/-1}.field-wrap label{color:#5f6578;font-size:10px;font-weight:800}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #e5e4ed;border-radius:11px;background:#fbfbfd;outline:none;font-size:12px}.field:focus{border-color:#a695ef;box-shadow:0 0 0 3px rgba(126,103,231,.1)}textarea.field{min-height:88px;padding:11px 12px;resize:vertical}.modal-actions{display:flex;justify-content:space-between;gap:10px;margin-top:15px}.save{flex:1;min-height:47px;border:0;border-radius:13px;background:linear-gradient(135deg,#8068e8,#6f88ed);color:#fff;font-size:12px;font-weight:800}.delete-btn{display:none;min-height:47px;padding:0 14px;border:0;border-radius:13px;background:#fff1f3;color:#ca5970;font-size:11px;font-weight:800}
-@media(max-width:700px){.header{height:70px;padding:0 15px}.page{width:min(100% - 24px,1080px);padding-top:30px}.admin-badge{display:none!important}.title-row{display:block}.title-row h1{font-size:62px}.folder-grid{grid-template-columns:1fr}.folder-card{min-height:0}.toolbar{align-items:stretch;flex-direction:column}.filters{width:100%}.filter{flex:1;padding:0 9px}.add{width:100%}.resource-section{padding:19px 15px}.section-head{align-items:flex-start}.section-head-left{align-items:flex-start;flex-direction:column;gap:8px}.info-grid{grid-template-columns:1fr 1fr}.info-cell:first-child{grid-column:1/-1}.resource{padding:15px}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.modal{padding:20px 17px}.modal-actions{flex-direction:column-reverse}.delete-btn{width:100%}}
+@media(max-width:700px){.header{height:70px;padding:0 15px}.page{width:min(100% - 24px,1080px);padding-top:30px}.admin-badge{display:none!important}.title-row{display:block}.title-row h1{font-size:62px}.folder-grid{grid-template-columns:1fr}.folder-card{min-height:0}.toolbar{align-items:stretch;flex-direction:column}.filters{width:100%}.filter{flex:1;padding:0 9px}.add{width:100%}.resource-section{padding:19px 15px}.section-head{align-items:flex-start}.section-head-left{align-items:flex-start;flex-direction:column;gap:8px}.info-grid{grid-template-columns:1fr 1fr}.info-cell:first-child{grid-column:1/-1}.resource{padding:15px}.image-library-actions{align-items:flex-start;flex-direction:column}.image-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.modal{padding:20px 17px}.modal-actions{flex-direction:column-reverse}.delete-btn{width:100%}}
 </style>
 </head>
 <body>
@@ -37,7 +38,7 @@
 <main class="page">
   <div class="eyebrow">ADMIN SETTINGS</div>
   <div class="title-row"><h1>운영 자료</h1></div>
-  <p class="sub">버스킹 신청처, 대관공연 정보, 운영 참고 링크를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
+  <p class="sub">버스킹 신청처, 대관공연 정보, 운영 참고 링크와 이미지 자료를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
   <div class="notice"><b>초기 자료 안내</b> · 기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</div>
 
   <section id="guard" class="guard">
@@ -55,6 +56,7 @@
         <button class="filter" data-filter="BUSKING" onclick="setFilter('BUSKING')">버스킹 관련 자료</button>
         <button class="filter" data-filter="RENTAL" onclick="setFilter('RENTAL')">대관공연</button>
         <button class="filter" data-filter="GENERAL" onclick="setFilter('GENERAL')">기타 자료</button>
+        <button class="filter" data-filter="IMAGES" onclick="setFilter('IMAGES')">이미지 보관함</button>
       </div>
       <button class="add" onclick="openEditor()">＋ 자료 추가</button>
     </div>
@@ -91,7 +93,9 @@ const categoryMeta={
   RENTAL:{label:'대관공연',kicker:'RENTAL PERFORMANCE',empty:'등록된 대관공연 자료가 없습니다.',icon:'🏛️',description:'공연장 · 견적 · 대관 진행 자료'},
   GENERAL:{label:'기타 운영자료',kicker:'OPERATIONS REFERENCE',empty:'등록된 참고 자료가 없습니다.',icon:'🗂️',description:'운영에 필요한 기타 참고 자료'}
 };
-let adminMode=false,items=[],currentFilter='HOME';
+const imageMeta={label:'이미지 보관함',kicker:'IMAGE LIBRARY',icon:'🖼️',description:'운영진만 보는 이미지 자료 보관함'};
+const folderMeta={...categoryMeta,IMAGES:imageMeta};
+let adminMode=false,items=[],imageFiles=[],currentFilter='HOME';
 
 async function start(){
   const {data}=await db.auth.getSession();
@@ -103,7 +107,7 @@ async function start(){
   adminBadge.classList.add('show');
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
-  await loadItems();
+  await Promise.all([loadItems(),loadImageLibrary()]);
 }
 
 async function loadItems(){
@@ -114,7 +118,7 @@ async function loadItems(){
 }
 
 function setFilter(filter){
-  currentFilter=(filter==='HOME'||categoryMeta[filter])?filter:'HOME';
+  currentFilter=(filter==='HOME'||folderMeta[filter])?filter:'HOME';
   document.querySelectorAll('.filter').forEach(button=>button.classList.toggle('active',button.dataset.filter===currentFilter));
   renderResources();
 }
@@ -130,10 +134,15 @@ function renderResources(){
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
-    folderHome.innerHTML=Object.entries(categoryMeta).map(([category,meta])=>{
-      const count=items.filter(item=>item.category===category).length;
+    folderHome.innerHTML=Object.entries(folderMeta).map(([category,meta])=>{
+      const count=category==='IMAGES'?imageFiles.length:items.filter(item=>item.category===category).length;
       return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${count}건</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
     }).join('');
+    return;
+  }
+
+  if(currentFilter==='IMAGES'){
+    renderImageLibrary();
     return;
   }
 
@@ -172,6 +181,68 @@ function nextSortOrder(category){
 }
 
 function closeEditor(){editorOverlay.classList.remove('open')}
+
+async function loadImageLibrary(){
+  const {data,error}=await db.storage.from('admin-image-library').list('',{limit:100,offset:0,sortBy:{column:'created_at',order:'desc'}});
+  if(error){console.error('IMAGE LIBRARY:',error);imageFiles=[];return}
+  const files=(data||[]).filter(file=>file?.id&&file?.name);
+  const signed=await Promise.all(files.map(file=>db.storage.from('admin-image-library').createSignedUrl(file.name,60*60)));
+  imageFiles=files.map((file,index)=>({
+    ...file,
+    url:signed[index]?.data?.signedUrl||''
+  })).filter(file=>file.url);
+  render();
+}
+
+function renderImageLibrary(){
+  resourceStack.innerHTML=`<section class="resource-section"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter('HOME')">← 운영 자료</button><div><div class="section-kicker">${imageMeta.kicker}</div><h2>${imageMeta.label}</h2></div></div><span class="section-count">${imageFiles.length}장</span></div><div class="image-library-actions"><p class="image-library-note">운영진 전용 보관함입니다. JPG · PNG · WEBP · GIF 파일을 최대 15MB까지 업로드할 수 있습니다.</p><label class="image-upload">＋ 이미지 업로드<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onchange="uploadLibraryImages(this.files,this)"></label></div>${imageFiles.length?`<div class="image-gallery">${imageFiles.map(renderImageCard).join('')}</div>`:'<div class="section-empty">보관된 이미지가 없습니다.<br><br>이미지 업로드로 포스터·현장 사진·운영 자료를 모아둘 수 있습니다.</div>'}</section>`;
+}
+
+function renderImageCard(file){
+  const name=String(file.name||'이미지');
+  const size=Number(file.metadata?.size||0);
+  const created=file.created_at?new Date(file.created_at):null;
+  const date=created&&!Number.isNaN(created.getTime())?`${created.getFullYear()}.${String(created.getMonth()+1).padStart(2,'0')}.${String(created.getDate()).padStart(2,'0')}`:'날짜 미확인';
+  return `<article class="image-card"><a class="image-preview" href="${attr(file.url)}" target="_blank" rel="noopener"><img src="${attr(file.url)}" alt="${attr(name)}"></a><div class="image-meta"><div class="image-name" title="${attr(name)}">${esc(name)}</div><div class="image-sub">${esc(date)} · ${esc(formatFileSize(size))}</div><div class="image-actions"><a href="${attr(file.url)}" target="_blank" rel="noopener">열기</a><button type="button" data-path="${attr(name)}" onclick="deleteLibraryImage(this.dataset.path)">삭제</button></div></div></article>`;
+}
+
+async function uploadLibraryImages(fileList,input){
+  if(!adminMode)return;
+  const files=Array.from(fileList||[]);
+  if(!files.length)return;
+  const allowed=new Set(['image/jpeg','image/png','image/webp','image/gif']);
+  const invalid=files.find(file=>!allowed.has(String(file.type||''))||Number(file.size||0)>15728640);
+  if(invalid){alert('JPG · PNG · WEBP · GIF 파일만, 파일당 15MB 이하로 업로드할 수 있습니다.');if(input)input.value='';return}
+  for(const file of files){
+    const path=createStorageName(file.name);
+    const {error}=await db.storage.from('admin-image-library').upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
+    if(error){alert(`‘${file.name}’ 업로드에 실패했습니다.\n${error.message}`);break}
+  }
+  if(input)input.value='';
+  await loadImageLibrary();
+}
+
+async function deleteLibraryImage(path){
+  if(!adminMode||!path)return;
+  const target=imageFiles.find(file=>file.name===path);
+  if(!target||!confirm(`‘${target.name}’ 이미지를 보관함에서 삭제할까요?`))return;
+  const {error}=await db.storage.from('admin-image-library').remove([path]);
+  if(error){alert('이미지 삭제에 실패했습니다.\n'+error.message);return}
+  await loadImageLibrary();
+}
+
+function createStorageName(name){
+  const clean=String(name||'image').replace(/[^0-9A-Za-z가-힣._-]+/g,'-').replace(/-+/g,'-').slice(-100)||'image';
+  const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);
+  return `${Date.now()}-${token}-${clean}`;
+}
+
+function formatFileSize(bytes){
+  const value=Number(bytes||0);
+  if(!value)return '0 KB';
+  if(value<1024*1024)return `${Math.max(1,Math.round(value/1024))} KB`;
+  return `${(value/(1024*1024)).toFixed(1)} MB`;
+}
 
 async function saveItem(){
   if(!adminMode)return;
