@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f7f5fa">
+<link rel="icon" type="image/png" href="/favicon.png?v=4">
+<link rel="shortcut icon" type="image/png" href="/favicon.png?v=4">
+<title>Admin Settings · Voice of Melody</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--ink:#1b2037;--muted:#73798c;--purple:#7561df;--mint:#3b9e91;--line:rgba(38,42,75,.09);--surface:rgba(255,255,255,.82)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;color:var(--ink);font-family:"Noto Sans KR",sans-serif;background:#f8f7fa}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.aurora{position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 87% 0%,rgba(128,220,209,.42),transparent 28%),radial-gradient(circle at 69% 6%,rgba(180,151,242,.4),transparent 32%),linear-gradient(180deg,#faf8fb,#f8f7fb 56%,#fbfafc)}
+.header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}.header-right{display:flex;align-items:center;gap:8px}.admin-badge{display:none;align-items:center;gap:6px;padding:8px 11px;border:1px solid rgba(117,96,222,.16);border-radius:999px;background:rgba(117,96,222,.1);color:#6a55ce;font-size:9px;font-weight:800}.admin-badge.show{display:flex}.admin-dot{width:6px;height:6px;border-radius:50%;background:#765fe6}.back{padding:10px 14px;border:1px solid rgba(255,255,255,.94);border-radius:999px;background:rgba(255,255,255,.77);box-shadow:0 8px 24px rgba(31,38,76,.06);font-size:10px;font-weight:800}
+.page{width:min(1080px,calc(100% - 32px));margin:auto;padding:42px 0 82px}.eyebrow{color:#7b67e3;font-family:"Nanum Pen Script",cursive;font-size:24px}.title-row{display:flex;align-items:end;justify-content:space-between;gap:18px}.title-row h1{margin:4px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(55px,9vw,86px);font-weight:400;line-height:.82}.sub{max-width:670px;margin:17px 0 0;color:#6f768a;font-size:12px;line-height:1.85}.notice{margin-top:22px;padding:14px 17px;border:1px solid rgba(117,96,222,.1);border-radius:17px;background:linear-gradient(120deg,rgba(240,236,255,.82),rgba(236,249,247,.82));color:#61677b;font-size:11px;line-height:1.7}.notice b{color:#6c58cf}
+.guard{margin-top:29px;padding:48px 25px;border:1px solid rgba(255,255,255,.96);border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 18px 50px rgba(31,37,74,.07);text-align:center}.guard h2{margin:0 0 9px;font-size:21px}.guard p{margin:0;color:#777d8e;font-size:12px;line-height:1.8}.guard a{display:inline-flex;margin-top:17px;padding:10px 14px;border-radius:999px;background:#eeeaff;color:#6854cc;font-size:10px;font-weight:800}.hidden{display:none!important}
+.overview{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:30px}.stat{padding:19px 20px;border:1px solid rgba(255,255,255,.96);border-radius:21px;background:var(--surface);box-shadow:0 12px 34px rgba(31,37,74,.05)}.stat small{display:block;color:#8c83af;font-size:9px;font-weight:900;letter-spacing:.08em}.stat strong{display:block;margin-top:7px;font-size:28px}.stat span{display:block;margin-top:3px;color:#858a9a;font-size:10px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:27px 0 15px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{min-height:36px;padding:0 13px;border:1px solid rgba(100,92,150,.1);border-radius:999px;background:rgba(255,255,255,.7);color:#767b8e;font-size:10px;font-weight:800}.filter.active{border-color:transparent;background:linear-gradient(135deg,#8068e8,#6c8bea);color:#fff}.add{min-height:39px;padding:0 15px;border:0;border-radius:12px;background:#1d263e;color:#fff;font-size:11px;font-weight:800;box-shadow:0 10px 24px rgba(30,36,68,.13)}
+.resource-stack{display:grid;gap:22px}.resource-section{padding:23px;border:1px solid rgba(255,255,255,.95);border-radius:26px;background:rgba(255,255,255,.76);box-shadow:0 13px 38px rgba(31,37,74,.05)}.section-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:15px}.section-kicker{font-family:"Nanum Pen Script",cursive;color:#8069e8;font-size:21px}.section-head h2{margin:2px 0 0;font-size:19px;letter-spacing:-.04em}.section-count{padding:6px 9px;border-radius:999px;background:#f0edff;color:#705dd1;font-size:9px;font-weight:800}.section-empty{padding:25px 16px;border:1px dashed rgba(110,99,170,.18);border-radius:16px;color:#979baa;font-size:11px;text-align:center}
+.resource-list{display:grid;gap:9px}.resource{padding:17px 18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.76)}.resource-top{display:flex;align-items:flex-start;justify-content:space-between;gap:13px}.resource-title{display:flex;align-items:center;gap:8px;min-width:0}.resource-title h3{margin:0;font-size:15px;letter-spacing:-.03em}.type-pill{flex:0 0 auto;padding:4px 7px;border-radius:999px;background:#eeeaff;color:#6955d2;font-size:8px;font-weight:900}.type-pill.RENTAL{background:#fff0e4;color:#b76c2f}.type-pill.GENERAL{background:#eaf8f5;color:#388d81}.item-actions{display:flex;gap:5px}.icon-btn{width:31px;height:31px;border:1px solid rgba(104,97,150,.1);border-radius:9px;background:#faf9fd;color:#715dd3;font-size:12px}.icon-btn.delete{color:#c95a6e;background:#fff7f8}
+.info-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;margin-top:13px}.info-cell{min-width:0;padding:10px 11px;border-radius:12px;background:#faf9fd}.info-cell small{display:block;margin-bottom:4px;color:#a09aaa;font-size:8px;font-weight:900;letter-spacing:.08em}.info-cell span,.info-cell a{display:block;overflow-wrap:anywhere;color:#656b7d;font-size:10px;line-height:1.58}.info-cell a{color:#6754cc;text-decoration:underline;text-underline-offset:2px;font-weight:700}.resource-note{margin:10px 0 0;color:#727789;font-size:10px;line-height:1.65}.resource-detail{margin:7px 0 0;color:#9397a4;font-size:10px;line-height:1.65}
+.overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(25,30,55,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal{width:min(680px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:24px;border-radius:25px;background:#fff;box-shadow:0 28px 80px rgba(21,26,55,.23)}.modal-top{display:flex;align-items:center;justify-content:space-between}.modal-top h2{margin:0;font-family:"Nanum Pen Script",cursive;font-size:37px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#efeff5;font-size:16px}.modal-note{margin:6px 0 18px;color:#7c8191;font-size:11px;line-height:1.75}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.field-wrap{display:grid;gap:6px}.field-wrap.full{grid-column:1/-1}.field-wrap label{color:#5f6578;font-size:10px;font-weight:800}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #e5e4ed;border-radius:11px;background:#fbfbfd;outline:none;font-size:12px}.field:focus{border-color:#a695ef;box-shadow:0 0 0 3px rgba(126,103,231,.1)}textarea.field{min-height:88px;padding:11px 12px;resize:vertical}.modal-actions{display:flex;justify-content:space-between;gap:10px;margin-top:15px}.save{flex:1;min-height:47px;border:0;border-radius:13px;background:linear-gradient(135deg,#8068e8,#6f88ed);color:#fff;font-size:12px;font-weight:800}.delete-btn{display:none;min-height:47px;padding:0 14px;border:0;border-radius:13px;background:#fff1f3;color:#ca5970;font-size:11px;font-weight:800}
+@media(max-width:700px){.header{height:70px;padding:0 15px}.page{width:min(100% - 24px,1080px);padding-top:30px}.admin-badge{display:none!important}.title-row{display:block}.title-row h1{font-size:62px}.overview{grid-template-columns:1fr 1fr}.overview .stat:last-child{grid-column:1/-1}.toolbar{align-items:stretch;flex-direction:column}.filters{width:100%}.filter{flex:1;padding:0 9px}.add{width:100%}.resource-section{padding:19px 15px}.info-grid{grid-template-columns:1fr 1fr}.info-cell:first-child{grid-column:1/-1}.resource{padding:15px}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.modal{padding:20px 17px}.modal-actions{flex-direction:column-reverse}.delete-btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<header class="header">
+  <a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <div class="header-right"><div id="adminBadge" class="admin-badge"><span class="admin-dot"></span>ADMIN MODE</div><a class="back" href="/members/">MEMBERS →</a></div>
+</header>
+
+<main class="page">
+  <div class="eyebrow">ADMIN SETTINGS</div>
+  <div class="title-row"><h1>운영 자료</h1></div>
+  <p class="sub">버스킹 신청처, 대관공연 정보, 운영 참고 링크를 한곳에서 관리합니다. 이 페이지와 자료 내용은 관리자 모드에서만 확인·수정할 수 있습니다.</p>
+  <div class="notice"><b>초기 자료 안내</b> · 기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</div>
+
+  <section id="guard" class="guard">
+    <h2>운영진 전용 페이지입니다.</h2>
+    <p>관리자 모드로 로그인된 운영진만 운영 자료를 확인하고 수정할 수 있습니다.</p>
+    <a href="/members/">MEMBERS에서 관리자 모드 시작 →</a>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <section class="overview">
+      <article class="stat"><small>BUSKING</small><strong id="buskingCount">0</strong><span>버스킹 신청 자료</span></article>
+      <article class="stat"><small>RENTAL</small><strong id="rentalCount">0</strong><span>대관공연 자료</span></article>
+      <article class="stat"><small>REFERENCE</small><strong id="generalCount">0</strong><span>기타 운영 자료</span></article>
+    </section>
+
+    <div class="toolbar">
+      <div class="filters">
+        <button class="filter active" data-filter="ALL" onclick="setFilter('ALL')">전체</button>
+        <button class="filter" data-filter="BUSKING" onclick="setFilter('BUSKING')">버스킹 신청</button>
+        <button class="filter" data-filter="RENTAL" onclick="setFilter('RENTAL')">대관공연</button>
+        <button class="filter" data-filter="GENERAL" onclick="setFilter('GENERAL')">기타 자료</button>
+      </div>
+      <button class="add" onclick="openEditor()">＋ 자료 추가</button>
+    </div>
+
+    <div id="resourceStack" class="resource-stack"></div>
+  </section>
+</main>
+
+<div id="editorOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-top"><h2 id="editorTitle">운영 자료</h2><button class="close" type="button" onclick="closeEditor()">✕</button></div>
+    <p class="modal-note">신청처·대관공연·참고 링크를 자유롭게 추가할 수 있습니다. 화면에는 입력한 정보만 표시됩니다.</p>
+    <input id="fId" type="hidden">
+    <div class="form-grid">
+      <div class="field-wrap"><label>분류</label><select id="fCategory" class="field"><option value="BUSKING">버스킹 신청</option><option value="RENTAL">대관공연</option><option value="GENERAL">기타 운영자료</option></select></div>
+      <div class="field-wrap"><label>표시 순서</label><input id="fSortOrder" class="field" type="number" min="0" placeholder="낮은 숫자부터 표시"></div>
+      <div class="field-wrap full"><label>장소 / 자료명</label><input id="fTitle" class="field" placeholder="예: 청계천"></div>
+      <div class="field-wrap full"><label>신청 / 참고 링크</label><input id="fUrl" class="field" type="url" placeholder="https://..."></div>
+      <div class="field-wrap"><label>신청 기한 / 기준</label><input id="fDeadline" class="field" placeholder="예: 전월 10일까지"></div>
+      <div class="field-wrap"><label>가능 날짜 / 일정</label><input id="fDates" class="field" placeholder="예: 10/31 · 11/07"></div>
+      <div class="field-wrap full"><label>비고</label><textarea id="fNote" class="field" placeholder="신청 조건, 확인이 필요한 내용 등을 적어주세요."></textarea></div>
+      <div class="field-wrap full"><label>상세 메모 (선택)</label><textarea id="fDetail" class="field" placeholder="운영진에게만 필요한 추가 메모"></textarea></div>
+    </div>
+    <div class="modal-actions"><button id="deleteButton" class="delete-btn" type="button" onclick="deleteItem()">삭제</button><button class="save" type="button" onclick="saveItem()">저장</button></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
+const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const categoryMeta={
+  BUSKING:{label:'버스킹 신청',kicker:'BUSKING APPLICATION',empty:'등록된 버스킹 신청 자료가 없습니다.'},
+  RENTAL:{label:'대관공연',kicker:'RENTAL PERFORMANCE',empty:'등록된 대관공연 자료가 없습니다.'},
+  GENERAL:{label:'기타 운영자료',kicker:'OPERATIONS REFERENCE',empty:'등록된 참고 자료가 없습니다.'}
+};
+let adminMode=false,items=[],currentFilter='ALL';
+
+async function start(){
+  const {data}=await db.auth.getSession();
+  const session=data.session;
+  if(!session)return;
+  const {data:admin,error}=await db.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+  if(error||!admin)return;
+  adminMode=true;
+  adminBadge.classList.add('show');
+  guard.classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  await loadItems();
+}
+
+async function loadItems(){
+  const {data,error}=await db.from('admin_reference_items').select('*').eq('is_archived',false).order('category',{ascending:true}).order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(error){resourceStack.innerHTML=`<div class="section-empty">자료를 불러오지 못했습니다.<br>${esc(error.message||'')}</div>`;return}
+  items=data||[];
+  render();
+}
+
+function setFilter(filter){
+  currentFilter=(filter==='ALL'||categoryMeta[filter])?filter:'ALL';
+  document.querySelectorAll('.filter').forEach(button=>button.classList.toggle('active',button.dataset.filter===currentFilter));
+  renderResources();
+}
+
+function render(){
+  buskingCount.textContent=items.filter(item=>item.category==='BUSKING').length;
+  rentalCount.textContent=items.filter(item=>item.category==='RENTAL').length;
+  generalCount.textContent=items.filter(item=>item.category==='GENERAL').length;
+  renderResources();
+}
+
+function renderResources(){
+  const categories=currentFilter==='ALL'?['BUSKING','RENTAL','GENERAL']:[currentFilter];
+  resourceStack.innerHTML=categories.map(category=>{
+    const meta=categoryMeta[category];
+    const list=items.filter(item=>item.category===category);
+    return `<section class="resource-section"><div class="section-head"><div><div class="section-kicker">${meta.kicker}</div><h2>${meta.label}</h2></div><span class="section-count">${list.length}건</span></div>${list.length?`<div class="resource-list">${list.map(renderItem).join('')}</div>`:`<div class="section-empty">${meta.empty}<br><br>오른쪽 상단의 ‘자료 추가’로 바로 등록할 수 있습니다.</div>`}</section>`;
+  }).join('');
+}
+
+function renderItem(item){
+  const meta=categoryMeta[item.category]||categoryMeta.GENERAL;
+  const link=safeUrl(item.application_url);
+  return `<article class="resource"><div class="resource-top"><div class="resource-title"><span class="type-pill ${esc(item.category)}">${esc(meta.label)}</span><h3>${esc(item.title)}</h3></div><div class="item-actions"><button class="icon-btn" type="button" onclick="openEditor(${Number(item.id)})" aria-label="${esc(item.title)} 수정">✎</button><button class="icon-btn delete" type="button" onclick="deleteItem(${Number(item.id)})" aria-label="${esc(item.title)} 삭제">×</button></div></div><div class="info-grid"><div class="info-cell"><small>LINK</small>${link?`<a href="${attr(link)}" target="_blank" rel="noopener">신청 사이트 열기 ↗</a>`:'<span>링크 미입력</span>'}</div><div class="info-cell"><small>DEADLINE</small><span>${esc(item.application_deadline||'미입력')}</span></div><div class="info-cell"><small>AVAILABLE</small><span>${esc(item.available_dates||'미입력')}</span></div></div>${item.note?`<p class="resource-note">${esc(item.note)}</p>`:''}${item.detail?`<p class="resource-detail">${esc(item.detail)}</p>`:''}</article>`;
+}
+
+function openEditor(id=''){
+  if(!adminMode)return;
+  const item=items.find(row=>String(row.id)===String(id));
+  fId.value=item?.id||'';
+  editorTitle.textContent=item?'운영 자료 수정':'운영 자료 추가';
+  fCategory.value=item?.category||'BUSKING';
+  fSortOrder.value=item?.sort_order??nextSortOrder(fCategory.value);
+  fTitle.value=item?.title||'';
+  fUrl.value=item?.application_url||'';
+  fDeadline.value=item?.application_deadline||'';
+  fDates.value=item?.available_dates||'';
+  fNote.value=item?.note||'';
+  fDetail.value=item?.detail||'';
+  deleteButton.style.display=item?'inline-flex':'none';
+  editorOverlay.classList.add('open');
+  setTimeout(()=>fTitle.focus(),40);
+}
+
+function nextSortOrder(category){
+  const nums=items.filter(item=>item.category===category).map(item=>Number(item.sort_order)||0);
+  return nums.length?Math.max(...nums)+10:10;
+}
+
+function closeEditor(){editorOverlay.classList.remove('open')}
+
+async function saveItem(){
+  if(!adminMode)return;
+  const title=fTitle.value.trim();
+  if(!title){alert('장소 또는 자료명을 입력해주세요.');fTitle.focus();return}
+  const url=fUrl.value.trim();
+  if(url&&!safeUrl(url)){alert('링크는 http:// 또는 https://로 시작해야 합니다.');fUrl.focus();return}
+  const payload={
+    category:fCategory.value,
+    title,
+    application_url:url||null,
+    application_deadline:fDeadline.value.trim()||null,
+    available_dates:fDates.value.trim()||null,
+    note:fNote.value.trim()||null,
+    detail:fDetail.value.trim()||null,
+    sort_order:Math.max(0,Number(fSortOrder.value||0)),
+    updated_at:new Date().toISOString()
+  };
+  const id=fId.value;
+  const query=id?db.from('admin_reference_items').update(payload).eq('id',Number(id)):db.from('admin_reference_items').insert(payload);
+  const {error}=await query;
+  if(error){alert('저장에 실패했습니다.\n'+error.message);return}
+  closeEditor();
+  await loadItems();
+}
+
+async function deleteItem(id=''){
+  if(!adminMode)return;
+  const target=items.find(item=>String(item.id)===String(id||fId.value));
+  if(!target)return;
+  if(!confirm(`‘${target.title}’ 자료를 삭제할까요?`))return;
+  const {error}=await db.from('admin_reference_items').delete().eq('id',Number(target.id));
+  if(error){alert('삭제에 실패했습니다.\n'+error.message);return}
+  closeEditor();
+  await loadItems();
+}
+
+function safeUrl(value){try{const url=new URL(String(value||''));return /^https?:$/.test(url.protocol)?url.href:''}catch{return ''}}
+function esc(value){const div=document.createElement('div');div.textContent=String(value??'');return div.innerHTML}
+function attr(value){return esc(value).replace(/"/g,'&quot;')}
+editorOverlay.addEventListener('click',event=>{if(event.target===editorOverlay)closeEditor()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeEditor()});
+start();
+</script>
+</body>
+</html>
