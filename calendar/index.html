@@ -669,7 +669,7 @@ button{
 
 .event-image{
   width:128px;
-  height:78px;
+  aspect-ratio:16 / 9;
 
   overflow:hidden;
 
@@ -689,7 +689,7 @@ button{
 
   display:block;
 
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .image-empty{
@@ -1334,7 +1334,7 @@ button{
 }
 
 .image-choice-preview{
-  height:72px;
+  aspect-ratio:16 / 9;
 
   overflow:hidden;
 
@@ -1352,7 +1352,7 @@ button{
   width:100%;
   height:100%;
 
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .no-image-choice{
@@ -1413,13 +1413,20 @@ button{
   display:none;
 
   width:100%;
-  height:150px;
+  aspect-ratio:16 / 9;
 
   margin-top:10px;
 
   overflow:hidden;
 
   border-radius:14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ebe6ff,
+      #e1f1f4
+    );
 }
 
 .upload-preview.show{
@@ -1430,7 +1437,7 @@ button{
   width:100%;
   height:100%;
 
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .default-row{
@@ -1746,7 +1753,6 @@ button{
 
   .event-image{
     width:78px;
-    height:62px;
 
     border-radius:13px;
   }
@@ -1877,7 +1883,6 @@ button{
 
   .event-image{
     width:67px;
-    height:56px;
   }
 }
 
@@ -2652,7 +2657,8 @@ button{
       </div>
 
       <div class="form-help">
-        이미 올린 사진을 다시 사용하거나 새 이미지를 추가할 수 있습니다.
+        소모임 가로 표지 비율(16:9)에 맞춰 준비해주세요.<br>
+        기존 사진도 자르지 않고 전체가 표시됩니다.
       </div>
 
 
