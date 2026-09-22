@@ -362,6 +362,8 @@
 
 .site-log-link{display:none!important;color:#725de0!important;font-weight:900!important}
 .admin-mode .site-log-link{display:flex!important}
+.admin-settings-link{display:none!important;color:#725de0!important;font-weight:900!important}
+.admin-mode .admin-settings-link{display:flex!important}
 
 </style>
 
@@ -530,7 +532,7 @@
 </div>
 </div></div>
 <datalist id="memberNameOptions"></datalist>
-<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" class="site-log-link" href="/site-log/">SITE LOG <span>→</span></a>
+<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" class="site-log-link" href="/site-log/">SITE LOG <span>→</span></a><a id="adminSettingsMenuLink" class="admin-settings-link" href="/admin-settings/">ADMIN SETTINGS <span>→</span></a>
 <button id="adminLoginButton" class="admin-menu" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
 <button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
 </div></div>
