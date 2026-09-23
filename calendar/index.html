@@ -1399,6 +1399,62 @@ button{
   background:#fff;
 }
 
+.schedule-image-dropzone{
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  min-height:84px;
+
+  margin-bottom:10px;
+  padding:13px;
+
+  border:1.5px dashed rgba(112,91,203,.28);
+  border-radius:12px;
+
+  color:#6a6f81;
+  background:linear-gradient(135deg,#faf9ff,#f6fcfb);
+
+  cursor:pointer;
+  text-align:center;
+
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    transform .18s ease;
+}
+
+.schedule-image-dropzone strong{
+  color:#5e5287;
+
+  font-size:11px;
+}
+
+.schedule-image-dropzone span{
+  margin-top:4px;
+
+  color:#8a8e9d;
+
+  font-size:9px;
+  line-height:1.5;
+}
+
+.schedule-image-dropzone.dragover{
+  border-color:#735fdf;
+
+  background:linear-gradient(135deg,#f1edff,#ebf8f5);
+
+  transform:translateY(-1px);
+}
+
+.schedule-image-dropzone:focus-visible{
+  outline:3px solid rgba(121,99,226,.18);
+  outline-offset:2px;
+}
+
 .file-input{
   width:100%;
 
@@ -2860,7 +2916,7 @@ button{
       </div>
 
       <div class="form-help">
-        새 사진은 파일을 선택한 뒤 16:9 소모임 표지 프레임 안에서 구도를 맞춰주세요.<br>
+        새 사진은 파일을 선택하거나 카카오톡에서 끌어다 놓은 뒤 16:9 소모임 표지 프레임 안에서 구도를 맞춰주세요.<br>
         기존 사진은 아래에서 선택한 뒤 ‘선택 사진 구도 조정’을 누르면 다시 맞출 수 있습니다.
       </div>
 
@@ -2883,12 +2939,23 @@ button{
 
       <div class="upload-box">
 
+        <div
+          id="scheduleImageDropzone"
+          class="schedule-image-dropzone"
+          tabindex="0"
+          role="button"
+          aria-label="일정 이미지 끌어놓기 또는 파일 선택"
+        >
+          <strong>사진을 여기로 끌어다 놓으세요</strong>
+          <span>카카오톡 사진 드래그 가능 · 놓은 뒤 16:9 구도를 조정합니다</span>
+        </div>
+
         <input
           id="imageFile"
           class="file-input"
           type="file"
           accept="image/*"
-          onchange="previewUpload()"
+          onchange="handleScheduleImageInput(this)"
         >
 
 
@@ -5312,6 +5379,198 @@ function setCropZoom(value){
 }
 
 
+function validateScheduleImageFile(file){
+  if(!file){
+    return false;
+  }
+
+  if(
+    !String(file.type || '')
+      .startsWith('image/')
+  ){
+    alert('이미지 파일만 등록할 수 있습니다.');
+    return false;
+  }
+
+  if(
+    Number(file.size || 0) >
+    15 * 1024 * 1024
+  ){
+    alert('일정 이미지는 파일당 15MB 이하로 등록해주세요.');
+    return false;
+  }
+
+  return true;
+}
+
+function handleScheduleImageInput(input){
+  const file =
+    input?.files?.[0];
+
+  if(!file){
+    clearUploadPreview();
+    return;
+  }
+
+  if(
+    !validateScheduleImageFile(
+      file
+    )
+  ){
+    input.value = '';
+    clearUploadPreview();
+    return;
+  }
+
+  previewUpload();
+}
+
+function setScheduleImageFile(file){
+  if(
+    !validateScheduleImageFile(
+      file
+    )
+  ){
+    return;
+  }
+
+  const input =
+    document
+      .getElementById(
+        'imageFile'
+      );
+
+  const transfer =
+    new DataTransfer();
+
+  transfer.items.add(
+    file
+  );
+
+  input.files =
+    transfer.files;
+
+  handleScheduleImageInput(
+    input
+  );
+}
+
+function bindScheduleImageDropzone(){
+  const zone =
+    document
+      .getElementById(
+        'scheduleImageDropzone'
+      );
+
+  const input =
+    document
+      .getElementById(
+        'imageFile'
+      );
+
+  if(
+    !zone ||
+    !input
+  ){
+    return;
+  }
+
+  const prevent =
+    event => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+  zone.addEventListener(
+    'click',
+    function(){
+      input.click();
+    }
+  );
+
+  zone.addEventListener(
+    'keydown',
+    function(event){
+      if(
+        event.key === 'Enter' ||
+        event.key === ' '
+      ){
+        event.preventDefault();
+        input.click();
+      }
+    }
+  );
+
+  zone.addEventListener(
+    'dragenter',
+    function(event){
+      prevent(event);
+
+      zone
+        .classList
+        .add('dragover');
+    }
+  );
+
+  zone.addEventListener(
+    'dragover',
+    function(event){
+      prevent(event);
+
+      zone
+        .classList
+        .add('dragover');
+    }
+  );
+
+  zone.addEventListener(
+    'dragleave',
+    function(event){
+      prevent(event);
+
+      if(
+        !zone.contains(
+          event.relatedTarget
+        )
+      ){
+        zone
+          .classList
+          .remove('dragover');
+      }
+    }
+  );
+
+  zone.addEventListener(
+    'drop',
+    function(event){
+      prevent(event);
+
+      zone
+        .classList
+        .remove('dragover');
+
+      const file =
+        Array
+          .from(
+            event
+              .dataTransfer
+              ?.files || []
+          )
+          .find(Boolean);
+
+      if(!file){
+        alert('이미지 파일이 확인되지 않았습니다. 사진 파일을 끌어다 놓아주세요.');
+        return;
+      }
+
+      setScheduleImageFile(
+        file
+      );
+    }
+  );
+}
+
+
 function previewUpload(){
 
   const file =
@@ -6583,6 +6842,8 @@ async function start(){
   buildTimeSelects();
 
   bindCropper();
+
+  bindScheduleImageDropzone();
 
   await checkAdmin();
 
