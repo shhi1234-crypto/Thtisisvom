@@ -43,6 +43,11 @@
 .info-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:8px;margin-top:13px}.info-cell{min-width:0;padding:10px 11px;border-radius:12px;background:#faf9fd}.info-cell small{display:block;margin-bottom:4px;color:#a09aaa;font-size:8px;font-weight:900;letter-spacing:.08em}.info-cell span,.info-cell a{display:block;overflow-wrap:anywhere;color:#656b7d;font-size:10px;line-height:1.58}.info-cell a{color:#6754cc;text-decoration:underline;text-underline-offset:2px;font-weight:700}.resource-note{margin:10px 0 0;color:#727789;font-size:10px;line-height:1.65}.resource-detail{margin:7px 0 0;color:#9397a4;font-size:10px;line-height:1.65}
 .image-library-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 15px}.image-library-note{margin:0;color:#7a8192;font-size:10px;line-height:1.65}.image-dropzone{display:grid;place-items:center;min-height:124px;margin:0 0 15px;padding:18px;border:1.5px dashed rgba(117,96,222,.28);border-radius:18px;background:linear-gradient(135deg,rgba(243,240,255,.78),rgba(238,249,247,.78));color:#666d80;text-align:center;transition:border-color .18s ease,background .18s ease,transform .18s ease}.image-dropzone.dragover{border-color:#725ee0;background:linear-gradient(135deg,rgba(232,226,255,.92),rgba(225,247,244,.92));transform:translateY(-1px)}.image-dropzone strong{display:block;color:#554a7b;font-size:12px}.image-dropzone small{display:block;margin-top:5px;color:#848a9a;font-size:9px}.image-dropzone-status{display:block;min-height:16px;margin-top:8px;color:#7b69d9;font-size:9px;font-weight:800}.image-dropzone-status.error{color:#c15a6c}.image-dropzone-status.success{color:#388d81}.image-upload{display:inline-flex;align-items:center;justify-content:center;min-height:39px;padding:0 14px;border-radius:12px;background:#1d263e;color:#fff;font-size:10px;font-weight:900;box-shadow:0 10px 24px rgba(30,36,68,.13);cursor:pointer;white-space:nowrap}.image-upload input{display:none}.image-gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.image-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff}.image-preview{display:block;aspect-ratio:1/1;background:#f1f2f7}.image-preview img{width:100%;height:100%;display:block;object-fit:cover}.image-meta{padding:10px}.image-name{overflow:hidden;color:#4c5368;font-size:10px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}.image-sub{margin-top:4px;color:#a0a4b0;font-size:8px}.image-actions{display:flex;gap:5px;margin-top:9px}.image-actions a,.image-actions button{flex:1;min-height:29px;border:0;border-radius:8px;background:#f0edff;color:#6854c8;font-size:8px;font-weight:900;text-align:center}.image-actions a{display:grid;place-items:center}.image-actions button{background:#fff1f3;color:#c15a6c}
 .overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(25,30,55,.36);backdrop-filter:blur(14px)}.overlay.open{display:flex}.modal{width:min(680px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:24px;border-radius:25px;background:#fff;box-shadow:0 28px 80px rgba(21,26,55,.23)}.modal-top{display:flex;align-items:center;justify-content:space-between}.modal-top h2{margin:0;font-family:"Nanum Pen Script",cursive;font-size:37px;font-weight:400}.close{width:38px;height:38px;border:0;border-radius:50%;background:#efeff5;font-size:16px}.modal-note{margin:6px 0 18px;color:#7c8191;font-size:11px;line-height:1.75}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.field-wrap{display:grid;gap:6px}.field-wrap.full{grid-column:1/-1}.field-wrap label{color:#5f6578;font-size:10px;font-weight:800}.field{width:100%;min-height:43px;padding:0 12px;border:1px solid #e5e4ed;border-radius:11px;background:#fbfbfd;outline:none;font-size:12px}.field:focus{border-color:#a695ef;box-shadow:0 0 0 3px rgba(126,103,231,.1)}textarea.field{min-height:88px;padding:11px 12px;resize:vertical}.modal-actions{display:flex;justify-content:space-between;gap:10px;margin-top:15px}.save{flex:1;min-height:47px;border:0;border-radius:13px;background:linear-gradient(135deg,#8068e8,#6f88ed);color:#fff;font-size:12px;font-weight:800}.delete-btn{display:none;min-height:47px;padding:0 14px;border:0;border-radius:13px;background:#fff1f3;color:#ca5970;font-size:11px;font-weight:800}
+
+.folder-card.OPERATIONS{background:linear-gradient(145deg,rgba(232,248,245,.96),rgba(255,255,255,.9))}.folder-card.OPERATIONS .folder-kicker{color:#358b7d}.folder-card.OPERATIONS .folder-open{color:#318174}
+.operations-intro{margin:0 0 15px;padding:13px 14px;border:1px solid rgba(59,158,145,.15);border-radius:15px;background:linear-gradient(120deg,rgba(234,249,246,.84),rgba(242,238,255,.76));color:#657080;font-size:10px;line-height:1.7}.operations-intro b{color:#338b7d}.operation-events{display:grid;gap:13px}.operation-empty{padding:32px 16px;border:1px dashed rgba(94,140,130,.24);border-radius:17px;color:#879197;font-size:11px;line-height:1.8;text-align:center}.operation-event{padding:17px;border:1px solid rgba(59,158,145,.12);border-radius:20px;background:linear-gradient(135deg,rgba(250,255,254,.92),rgba(248,247,255,.88))}.operation-event-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.operation-type{display:inline-flex;padding:4px 7px;border-radius:999px;background:#e8f8f5;color:#328e80;font-size:8px;font-weight:900;letter-spacing:.06em}.operation-event h3{margin:7px 0 0;font-size:16px;letter-spacing:-.04em}.operation-meta{margin:6px 0 0;color:#858b9c;font-size:10px;line-height:1.6}.operation-progress{flex:0 0 auto;padding:7px 9px;border-radius:11px;background:rgba(255,255,255,.8);color:#6d5fd0;font-size:9px;font-weight:900}.operation-list{display:grid;gap:8px;margin-top:15px}.operation-task{display:grid;grid-template-columns:29px minmax(0,1fr) auto;gap:10px;align-items:start;padding:11px;border:1px solid rgba(47,57,91,.07);border-radius:14px;background:rgba(255,255,255,.78)}.operation-task.done{border-color:rgba(55,145,126,.14);background:rgba(242,250,248,.76)}.operation-toggle{width:29px;height:29px;padding:0;border:1px solid rgba(113,93,210,.22);border-radius:9px;background:#fff;color:#7662dd;font-size:14px;font-weight:900}.operation-task.done .operation-toggle{border-color:#55a692;background:#55a692;color:#fff}.operation-task-main{min-width:0}.operation-task-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.operation-task-title strong{font-size:11px;line-height:1.45}.operation-task.done .operation-task-title strong{text-decoration:line-through;color:#8a958f}.operation-due{padding:3px 6px;border-radius:999px;background:#f0edff;color:#735fd5;font-size:8px;font-weight:900}.operation-due.late{background:#fff0f2;color:#c56070}.operation-task-main p{margin:4px 0 0;color:#818797;font-size:9px;line-height:1.55}.operation-actions{display:flex;gap:5px}.operation-edit,.operation-add,.operation-notice{min-height:28px;padding:0 9px;border:1px solid rgba(112,94,202,.12);border-radius:8px;background:#f4f1ff;color:#6957c9;font-size:8px;font-weight:900}.operation-event-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.operation-add{margin-top:0;background:#fff;color:#3b8e81;border-color:rgba(56,144,129,.18)}.operation-notice{background:#1d263e;color:#fff;border-color:#1d263e}.notice-event-label{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#f2f0fb;color:#6558a6;font-size:10px;font-weight:800}.notice-preview{min-height:350px!important;line-height:1.7;white-space:pre-wrap}.notice-secondary{min-height:47px;padding:0 14px;border:1px solid rgba(112,94,202,.17);border-radius:13px;background:#f5f2ff;color:#6957c9;font-size:11px;font-weight:900}
+@media(max-width:700px){.operation-event{padding:15px}.operation-event-head{display:block}.operation-progress{display:inline-flex;margin-top:9px}.operation-task{grid-template-columns:29px minmax(0,1fr)}.operation-actions{grid-column:2;justify-content:flex-end}.operation-edit{min-height:25px}.operation-event-actions{flex-direction:column}.operation-event-actions button{width:100%}}
+
 @media(max-width:700px){.header{height:70px;padding:0 15px}.page{width:min(100% - 24px,1080px);padding-top:30px}.admin-badge{display:none!important}.title-row{display:block}.title-row h1{font-size:62px}.folder-grid{grid-template-columns:1fr}.folder-card{min-height:0}.toolbar{align-items:stretch;flex-direction:column}.filters{width:100%}.filter{flex:1;padding:0 9px}.add{width:100%}.resource-section{padding:19px 15px}.section-head{align-items:flex-start}.section-head-left{align-items:flex-start;flex-direction:column;gap:8px}.info-grid{grid-template-columns:1fr 1fr}.info-cell:first-child{grid-column:1/-1}.resource{padding:15px}.image-library-actions{align-items:flex-start;flex-direction:column}.image-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.modal{padding:20px 17px}.modal-actions{flex-direction:column-reverse}.delete-btn{width:100%}}
 </style>
 </head>
@@ -56,7 +61,7 @@
 <main class="page">
   <div class="eyebrow">ADMIN SETTINGS</div>
   <div class="title-row"><h1>운영 자료</h1></div>
-  <p class="sub">버스킹 신청처, 대관공연 정보, 운영 참고 링크와 이미지 자료를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
+  <p class="sub">버스킹 신청처, 대관공연 정보, 일정별 운영 체크리스트와 이미지 자료를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
   <div class="notice"><b>초기 자료 안내</b> · 기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</div>
 
   <section id="guard" class="guard">
@@ -71,6 +76,7 @@
     <div id="toolbar" class="toolbar hidden">
       <div class="filters">
         <button class="filter" data-filter="HOME" onclick="setFilter('HOME')">운영자료 홈</button>
+        <button class="filter" data-filter="OPERATIONS" onclick="setFilter('OPERATIONS')">일정 운영</button>
         <button class="filter" data-filter="BUSKING" onclick="setFilter('BUSKING')">버스킹 관련 자료</button>
         <button class="filter" data-filter="RENTAL" onclick="setFilter('RENTAL')">대관공연</button>
         <button class="filter" data-filter="GENERAL" onclick="setFilter('GENERAL')">기타 자료</button>
@@ -102,6 +108,22 @@
   </div>
 </div>
 
+<div id="noticeOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-top"><h2>버스킹 공지문</h2><button class="close" type="button" onclick="closeBuskingNotice()">✕</button></div>
+    <p class="modal-note">소모임을 올린 뒤 카카오톡 공지방에 바로 붙여넣을 문구입니다. 참가 마감은 공연 전주 금요일, 셋리스트·MR 마감은 공연 5일 전으로 자동 계산됩니다.</p>
+    <input id="noticeEventId" type="hidden">
+    <p id="noticeEventLabel" class="notice-event-label"></p>
+    <div class="form-grid">
+      <div class="field-wrap"><label>참가비</label><input id="noticeFee" class="field" type="number" min="0" inputmode="numeric" placeholder="예: 12000" oninput="updateBuskingNoticePreview()"></div>
+      <div class="field-wrap"><label>참가 인원</label><input id="noticeCapacity" class="field" type="number" min="1" inputmode="numeric" placeholder="예: 7" oninput="updateBuskingNoticePreview()"></div>
+      <div class="field-wrap full"><label>소개 문장</label><textarea id="noticeIntro" class="field" oninput="updateBuskingNoticePreview()" placeholder="예: 10월의 마지막 날, 할로윈 분위기와 함께하는 Full VOM을 진행합니다! 🎃"></textarea></div>
+      <div class="field-wrap full"><label>카카오톡 공지문</label><textarea id="noticeText" class="field notice-preview" readonly></textarea></div>
+    </div>
+    <div class="modal-actions"><button class="notice-secondary" type="button" onclick="closeBuskingNotice()">닫기</button><button class="save" type="button" onclick="copyBuskingNotice()">저장 후 공지문 복사</button></div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
 const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
@@ -125,6 +147,13 @@ const fDates=document.getElementById('fDates');
 const fNote=document.getElementById('fNote');
 const fDetail=document.getElementById('fDetail');
 const deleteButton=document.getElementById('deleteButton');
+const noticeOverlay=document.getElementById('noticeOverlay');
+const noticeEventId=document.getElementById('noticeEventId');
+const noticeEventLabel=document.getElementById('noticeEventLabel');
+const noticeFee=document.getElementById('noticeFee');
+const noticeCapacity=document.getElementById('noticeCapacity');
+const noticeIntro=document.getElementById('noticeIntro');
+const noticeText=document.getElementById('noticeText');
 
 const categoryMeta={
   BUSKING:{label:'버스킹 관련 자료',kicker:'BUSKING RESOURCES',empty:'등록된 버스킹 관련 자료가 없습니다.',icon:'🎤',description:'신청처 · 장소 · 일정 참고 자료'},
@@ -132,8 +161,9 @@ const categoryMeta={
   GENERAL:{label:'기타 운영자료',kicker:'OPERATIONS REFERENCE',empty:'등록된 참고 자료가 없습니다.',icon:'🗂️',description:'운영에 필요한 기타 참고 자료'}
 };
 const imageMeta={label:'이미지 보관함',kicker:'IMAGE LIBRARY',icon:'🖼️',description:'운영진만 보는 이미지 자료 보관함'};
-const folderMeta={...categoryMeta,IMAGES:imageMeta};
-let adminMode=false,items=[],imageFiles=[],currentFilter='HOME',itemLoadError='';
+const operationsMeta={label:'일정 운영',kicker:'EVENT CHECKLIST',icon:'✅',description:'소모임 · 공지 · 현장 준비 체크'};
+const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,IMAGES:imageMeta};
+let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],currentFilter='HOME',itemLoadError='',operationLoadError='';
 const IMAGE_LIBRARY_ALLOWED_TYPES=new Set(['image/jpeg','image/png','image/webp','image/gif']);
 const IMAGE_LIBRARY_MAX_BYTES=15*1024*1024;
 
@@ -147,7 +177,7 @@ async function start(){
   adminBadge.classList.add('show');
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
-  await Promise.all([loadItems(),loadImageLibrary()]);
+  await Promise.all([loadItems(),loadImageLibrary(),loadOperations()]);
 
   renderResources();
   bindImagePaste();
@@ -169,6 +199,284 @@ async function loadItems(){
   render();
 }
 
+
+async function loadOperations(){
+  const today=koreanToday();
+  const [{data:eventData,error:eventError},{data:taskData,error:taskError},{data:noticeData,error:noticeError},{data:settingData}]=await Promise.all([
+    db.from('events').select('id,title,event_type,event_date,start_time,end_time,location').gte('event_date',today).order('event_date',{ascending:true}).order('start_time',{ascending:true}),
+    db.from('event_operation_tasks').select('*').order('due_date',{ascending:true}).order('sort_order',{ascending:true}),
+    db.from('event_operation_notices').select('*'),
+    db.from('busking_setlist_settings').select('event_id,max_participants')
+  ]);
+  operationEvents=eventData||[];
+  operationTasks=taskData||[];
+  operationNotices=noticeData||[];
+  buskingSettings=settingData||[];
+  operationLoadError=[eventError?.message,taskError?.message,noticeError?.message].filter(Boolean).join(' · ');
+  render();
+}
+
+function renderOperations(){
+  const eventIds=new Set(operationEvents.map(event=>Number(event.id)));
+  const pending=operationTasks.filter(task=>eventIds.has(Number(task.event_id))&&!task.is_done).length;
+  const body=operationLoadError
+    ? `<div class="operation-empty">운영 체크리스트를 불러오지 못했습니다.<br>${esc(operationLoadError)}</div>`
+    : operationEvents.length
+      ? `<div class="operation-events">${operationEvents.map(renderOperationEvent).join('')}</div>`
+      : `<div class="operation-empty">앞으로 예정된 일정이 없습니다.<br><br>일정을 추가하면 운영 체크리스트가 자동으로 생성됩니다.</div>`;
+
+  resourceStack.innerHTML=`<section class="resource-section"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter('HOME')">← 운영 자료</button><div><div class="section-kicker">${operationsMeta.kicker}</div><h2>${operationsMeta.label}</h2></div></div><span class="section-count">${pending}개 미완료</span></div><p class="operations-intro"><b>회원 신청은 지금처럼 소모임에서만 진행</b>합니다. 이 화면은 운영진이 소모임 오픈 여부, 공지와 현장 준비를 일정별로 확인하는 내부 체크리스트입니다.</p>${body}</section>`;
+}
+
+function renderOperationEvent(event){
+  const tasks=operationTasks.filter(task=>Number(task.event_id)===Number(event.id)).sort((a,b)=>(Number(a.sort_order)||0)-(Number(b.sort_order)||0));
+  const done=tasks.filter(task=>task.is_done).length;
+  const type=event.event_type||'OTHER';
+  const eventDate=event.event_date?formatOperationDate(event.event_date):'날짜 미정';
+  const time=[formatOperationTime(event.start_time),formatOperationTime(event.end_time)].filter(Boolean).join(' - ');
+  const meta=[eventDate,time,event.location].filter(Boolean).join(' · ');
+  const noticeAction=type==='BUSKING'?`<button type="button" class="operation-notice" onclick="openBuskingNotice(${Number(event.id)})">공지문 만들기</button>`:'';
+  return `<article class="operation-event"><div class="operation-event-head"><div><span class="operation-type">${esc(type)}</span><h3>${esc(event.title||'제목 없는 일정')}</h3><p class="operation-meta">${esc(meta||'일정 정보 미입력')}</p></div><span class="operation-progress">${done}/${tasks.length||0} 완료</span></div><div class="operation-list">${tasks.length?tasks.map(renderOperationTask).join(''):'<div class="operation-empty">기본 체크리스트가 없습니다.</div>'}</div><div class="operation-event-actions">${noticeAction}<button type="button" class="operation-add" onclick="addOperationTask(${Number(event.id)})">＋ 항목 추가</button></div></article>`;
+}
+
+function renderOperationTask(task){
+  const done=Boolean(task.is_done);
+  const due=operationDue(task.due_date);
+  return `<div class="operation-task ${done?'done':''}"><button class="operation-toggle" type="button" onclick="toggleOperationTask(${Number(task.id)},${done?'false':'true'})" aria-label="${esc(task.title)} ${done?'미완료로 변경':'완료 처리'}">${done?'✓':''}</button><div class="operation-task-main"><div class="operation-task-title"><strong>${esc(task.title)}</strong><span class="operation-due ${due.late?'late':''}">${esc(due.label)}</span></div>${task.description?`<p>${esc(task.description)}</p>`:''}</div><div class="operation-actions"><button class="operation-edit" type="button" onclick="editOperationTask(${Number(task.id)})">수정</button></div></div>`;
+}
+
+async function toggleOperationTask(id,done){
+  if(!adminMode)return;
+  const {error}=await db.from('event_operation_tasks').update({
+    is_done:done,
+    completed_at:done?new Date().toISOString():null,
+    updated_at:new Date().toISOString()
+  }).eq('id',Number(id));
+  if(error){alert('체크 상태를 저장하지 못했습니다.\n'+error.message);return}
+  await loadOperations();
+}
+
+async function editOperationTask(id){
+  if(!adminMode)return;
+  const task=operationTasks.find(item=>Number(item.id)===Number(id));
+  if(!task)return;
+  const title=prompt('체크 항목',task.title||'');
+  if(title===null)return;
+  if(!title.trim()){alert('체크 항목을 입력해주세요.');return}
+  const dueValue=prompt('마감일 (YYYY-MM-DD / 비우면 기한 없음)',task.due_date||'');
+  if(dueValue===null)return;
+  const due=dueValue.trim();
+  if(due&&!isIsoDate(due)){alert('마감일은 YYYY-MM-DD 형식으로 입력해주세요.');return}
+  const description=prompt('운영진 참고 메모',task.description||'');
+  if(description===null)return;
+  const {error}=await db.from('event_operation_tasks').update({
+    title:title.trim(),
+    due_date:due||null,
+    description:description.trim()||null,
+    updated_at:new Date().toISOString()
+  }).eq('id',Number(id));
+  if(error){alert('체크 항목을 저장하지 못했습니다.\n'+error.message);return}
+  await loadOperations();
+}
+
+async function addOperationTask(eventId){
+  if(!adminMode)return;
+  const title=prompt('새 체크 항목');
+  if(title===null||!title.trim())return;
+  const dueValue=prompt('마감일 (YYYY-MM-DD / 비우면 기한 없음)','');
+  if(dueValue===null)return;
+  const due=dueValue.trim();
+  if(due&&!isIsoDate(due)){alert('마감일은 YYYY-MM-DD 형식으로 입력해주세요.');return}
+  const description=prompt('운영진 참고 메모','');
+  if(description===null)return;
+  const sortOrder=Math.max(0,...operationTasks.filter(task=>Number(task.event_id)===Number(eventId)).map(task=>Number(task.sort_order)||0))+10;
+  const {error}=await db.from('event_operation_tasks').insert({
+    event_id:Number(eventId),
+    task_key:`custom-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+    title:title.trim(),
+    description:description.trim()||null,
+    due_date:due||null,
+    sort_order:sortOrder
+  });
+  if(error){alert('체크 항목을 추가하지 못했습니다.\n'+error.message);return}
+  await loadOperations();
+}
+
+function openBuskingNotice(eventId){
+  if(!adminMode)return;
+  const event=operationEvents.find(item=>Number(item.id)===Number(eventId));
+  if(!event)return;
+  const saved=operationNotices.find(item=>Number(item.event_id)===Number(eventId));
+  const setting=buskingSettings.find(item=>Number(item.event_id)===Number(eventId));
+  noticeEventId.value=String(eventId);
+  noticeEventLabel.textContent=`${event.title||'버스킹'} · ${formatNoticeDate(event.event_date)}`;
+  noticeFee.value=saved?.entry_fee??'';
+  noticeCapacity.value=saved?.participant_limit??setting?.max_participants??'';
+  noticeIntro.value=saved?.notice_intro||defaultBuskingIntro(event);
+  updateBuskingNoticePreview();
+  noticeOverlay.classList.add('open');
+}
+
+function closeBuskingNotice(){
+  noticeOverlay.classList.remove('open');
+}
+
+function getNoticeFormData(requireRequired=false){
+  const event=operationEvents.find(item=>Number(item.id)===Number(noticeEventId.value));
+  if(!event)return null;
+  const fee=Number(noticeFee.value);
+  const capacity=Number(noticeCapacity.value);
+  const intro=noticeIntro.value.trim();
+  if(requireRequired&&(!Number.isFinite(fee)||fee<=0||!Number.isInteger(capacity)||capacity<=0||!intro)){
+    alert('참가비, 참가 인원, 소개 문장을 모두 입력해주세요.');
+    return null;
+  }
+  return {event,entry_fee:Number.isFinite(fee)&&fee>0?Math.floor(fee):null,participant_limit:Number.isInteger(capacity)&&capacity>0?capacity:null,notice_intro:intro||defaultBuskingIntro(event)};
+}
+
+function updateBuskingNoticePreview(){
+  const data=getNoticeFormData(false);
+  if(!data)return;
+  noticeText.value=buildBuskingNotice(data.event,data);
+}
+
+async function saveBuskingNotice(silent=false){
+  const data=getNoticeFormData(true);
+  if(!data)return false;
+  const {data:saved,error}=await db.from('event_operation_notices').upsert({
+    event_id:Number(data.event.id),
+    entry_fee:data.entry_fee,
+    participant_limit:data.participant_limit,
+    notice_intro:data.notice_intro,
+    updated_at:new Date().toISOString()
+  },{onConflict:'event_id'}).select().single();
+  if(error){alert('공지 설정을 저장하지 못했습니다.\n'+error.message);return false}
+  const index=operationNotices.findIndex(item=>Number(item.event_id)===Number(data.event.id));
+  if(index>=0)operationNotices[index]=saved;
+  else operationNotices.push(saved);
+  updateBuskingNoticePreview();
+  if(!silent)alert('공지 설정을 저장했습니다.');
+  return true;
+}
+
+async function copyBuskingNotice(){
+  const saved=await saveBuskingNotice(true);
+  if(!saved)return;
+  const text=noticeText.value;
+  if(!text)return;
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch{
+    noticeText.focus();
+    noticeText.select();
+    document.execCommand('copy');
+  }
+  alert('공지문을 복사했습니다. 소모임을 올린 뒤 카카오톡 공지방에 그대로 붙여넣어주세요.');
+}
+
+function buildBuskingNotice(event,details){
+  const title=event.title||'Full VOM 버스킹';
+  const date=formatNoticeDate(event.event_date);
+  const time=[formatOperationTime(event.start_time),formatOperationTime(event.end_time)].filter(Boolean).join(' - ')||'시간 미정';
+  const duration=formatDuration(event.start_time,event.end_time);
+  const deadline=formatNoticeDate(previousWeekFriday(event.event_date));
+  const setlistDeadline=formatNoticeDate(shiftDate(event.event_date,-5));
+  const fee=details.entry_fee?`${Number(details.entry_fee).toLocaleString('ko-KR')}원`:'참가비 미입력';
+  const capacity=details.participant_limit?`${details.participant_limit}명`:'인원 미정';
+  return `[${title} 버스킹 안내]
+
+안녕하세요 VOM 여러분!
+${details.notice_intro}
+
+🎙 ${title}
+📅 ${date} ${time}${duration?` (${duration})`:''}
+📍 ${event.location||'장소 미정'}
+💰 참가비 : ${fee}
+👥 참가 인원 : ${capacity}
+
+━━━━━━━━━━━━━━
+🎵 버스킹 진행 안내
+
+• 인당 기본 4곡 + 예비 1곡 준비
+• 참가자 간 듀엣 구성 가능!
+• 참가자 확정 후 세부 공연 순서를 안내드릴 예정입니다.
+
+참가 인원은 ${deadline}에 확정됩니다.
+셋리스트 및 MR은 ${setlistDeadline}까지 VOM 홈페이지에 입력해주세요.
+
+※ 세부 집결 시간 및 공연 관련 안내사항은 참가자 확정 후 안내드리겠습니다.
+※ 현장 상황에 따라 공연 순서 및 진행 시간은 일부 조정될 수 있습니다. @all
+https://thisisvom.vercel.app/busking/?v=1`;
+}
+
+function defaultBuskingIntro(event){
+  const title=String(event.title||'');
+  const month=Number(String(event.event_date||'').slice(5,7))||'';
+  if(/할로윈/.test(title))return `${month}월의 마지막 날, 할로윈 분위기와 함께하는 Full VOM을 진행합니다! 🎃`;
+  if(/Full VOM/i.test(title))return `${month}월, 함께 노래하는 Full VOM을 진행합니다! 🎤`;
+  return `${month}월, VOM과 함께하는 버스킹을 진행합니다! 🎤`;
+}
+
+function koreanToday(){
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+  const get=type=>parts.find(part=>part.type===type)?.value||'';
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+function isIsoDate(value){
+  return /^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(new Date(`${value}T00:00:00`).getTime());
+}
+
+function operationDue(value){
+  if(!value)return {label:'기한 미정',late:false};
+  const today=koreanToday();
+  const diff=Math.round((new Date(`${value}T00:00:00`).getTime()-new Date(`${today}T00:00:00`).getTime())/86400000);
+  if(diff<0)return {label:`D+${Math.abs(diff)}`,late:true};
+  if(diff===0)return {label:'D-DAY',late:false};
+  return {label:`D-${diff}`,late:false};
+}
+
+function formatOperationDate(value){
+  const [year,month,day]=String(value||'').split('-');
+  return year&&month&&day?`${year}.${month}.${day}`:String(value||'');
+}
+
+function formatOperationTime(value){
+  return value?String(value).slice(0,5):'';
+}
+
+function shiftDate(value,days){
+  const date=new Date(`${value}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate()+Number(days||0));
+  return date.toISOString().slice(0,10);
+}
+
+function previousWeekFriday(value){
+  const date=new Date(`${value}T00:00:00Z`);
+  const daysBack=((date.getUTCDay()+6)%7)+3;
+  return shiftDate(value,-daysBack);
+}
+
+function formatNoticeDate(value){
+  if(!value)return '날짜 미정';
+  const date=new Date(`${value}T00:00:00Z`);
+  const weekdays=['일','월','화','수','목','금','토'];
+  return `${date.getUTCMonth()+1}/${date.getUTCDate()}(${weekdays[date.getUTCDay()]})`;
+}
+
+function formatDuration(start,end){
+  if(!start||!end)return '';
+  const toMinute=value=>{
+    const [hour,minute]=String(value).slice(0,5).split(':').map(Number);
+    return hour*60+minute;
+  };
+  const minutes=toMinute(end)-toMinute(start);
+  if(!Number.isFinite(minutes)||minutes<=0)return '';
+  const hour=Math.floor(minutes/60);
+  const rest=minutes%60;
+  return rest?`${hour}시간 ${rest}분`:`${hour}시간`;
+}
+
 function setFilter(filter){
   currentFilter=(filter==='HOME'||folderMeta[filter])?filter:'HOME';
   document.querySelectorAll('.filter').forEach(button=>button.classList.toggle('active',button.dataset.filter===currentFilter));
@@ -182,17 +490,23 @@ function render(){
 function renderResources(){
   const isHome=currentFilter==='HOME';
   folderHome.classList.toggle('hidden',!isHome);
-  toolbar.classList.toggle('hidden',isHome);
+  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS');
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
     const loadError=itemLoadError?`<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>${esc(itemLoadError)}</div>`:'';
 
     folderHome.innerHTML=Object.entries(folderMeta).map(([category,meta])=>{
-      const count=category==='IMAGES'?imageFiles.length:items.filter(item=>item.category===category).length;
-      return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${count}건</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
+      const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:items.filter(item=>item.category===category).length;
+      const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:`${count}건`;
+      return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${countLabel}</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
     }).join('')+loadError;
 
+    return;
+  }
+
+  if(currentFilter==='OPERATIONS'){
+    renderOperations();
     return;
   }
 
@@ -410,7 +724,8 @@ function safeUrl(value){try{const url=new URL(String(value||''));return /^https?
 function esc(value){const div=document.createElement('div');div.textContent=String(value??'');return div.innerHTML}
 function attr(value){return esc(value).replace(/"/g,'&quot;')}
 editorOverlay.addEventListener('click',event=>{if(event.target===editorOverlay)closeEditor()});
-document.addEventListener('keydown',event=>{if(event.key==='Escape')closeEditor()});
+noticeOverlay.addEventListener('click',event=>{if(event.target===noticeOverlay)closeBuskingNotice()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeEditor();closeBuskingNotice()}});
 start();
 </script>
 </body>
