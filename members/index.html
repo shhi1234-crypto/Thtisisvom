@@ -951,6 +951,6 @@ async function adminLogin(){
 async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu()}
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});staffRoleOverlay.addEventListener('click',e=>{if(e.target===staffRoleOverlay)closeStaffRoles()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}start();
 </script>
-<script src="/assets/vom-shell.js?v=1"></script>
+<script src="/assets/vom-shell.js?v=2"></script>
 </body>
 </html>
