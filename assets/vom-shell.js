@@ -138,15 +138,30 @@
     document.body.classList.add('has-vom-bottom');
   }
 
-  function normalizeBackLinks() {
-    document.querySelectorAll('a.back').forEach(function (link) {
-      const label = (link.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!/^←\s*HOME$/i.test(label)) {
-        link.href = '/';
-        link.textContent = '← HOME';
-        link.setAttribute('aria-label', 'HOME으로 돌아가기');
-      }
+  function normalizeBackLink(link) {
+    const label = (link.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!/^←\s*HOME$/i.test(label)) {
+      link.href = '/';
+      link.textContent = '← HOME';
+      link.setAttribute('aria-label', 'HOME으로 돌아가기');
+    }
+  }
+
+  function normalizeBackLinks(root) {
+    const scope = root || document;
+    if (scope instanceof Element && scope.matches('a.back')) normalizeBackLink(scope);
+    if (scope.querySelectorAll) scope.querySelectorAll('a.back').forEach(normalizeBackLink);
+  }
+
+  function keepBackLinksNormalized() {
+    const observer = new MutationObserver(function (records) {
+      records.forEach(function (record) {
+        record.addedNodes.forEach(function (node) {
+          if (node.nodeType === Node.ELEMENT_NODE) normalizeBackLinks(node);
+        });
+      });
     });
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function storedAccessToken() {
@@ -208,6 +223,7 @@
     addStyle();
     normalizeBottomNavigation();
     normalizeBackLinks();
+    keepBackLinksNormalized();
     showCurrentMember();
   }
 
