@@ -149,18 +149,33 @@
     });
   }
 
-  async function showCurrentMember() {
-    if (!window.supabase || !window.supabase.createClient) return;
+  function storedAccessToken() {
+    try {
+      const raw = window.localStorage.getItem('sb-aqfmhqultzpakfqwzulj-auth-token');
+      const parsed = raw && JSON.parse(raw);
+      return parsed && parsed.access_token ? parsed.access_token : null;
+    } catch (_) {
+      return null;
+    }
+  }
 
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const sessionResult = await client.auth.getSession();
-    if (!sessionResult || !sessionResult.data || !sessionResult.data.session) return;
+  async function showCurrentMember() {
+    const accessToken = storedAccessToken();
+    if (!accessToken) return;
 
     try {
-      const result = await client.functions.invoke('member-account', {
-        body: { action: 'whoami' }
+      const response = await window.fetch(SUPABASE_URL + '/functions/v1/member-account', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + accessToken
+        },
+        body: JSON.stringify({ action: 'whoami' })
       });
-      const data = result && result.data;
+      if (!response.ok) return;
+
+      const data = await response.json();
       const member = data && (data.member || (data.data && data.data.member) || data);
       const name = member && member.name;
       if (!name) return;
