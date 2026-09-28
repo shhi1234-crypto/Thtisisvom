@@ -471,6 +471,7 @@
 <div class="field-wrap"><label>좋아하는 가수</label><input id="fSinger" class="field"></div><div class="field-wrap"><label>전화번호</label><input id="fPhone" class="field"></div>
 <div class="field-wrap"><label>가입순서</label><input id="fOrder" class="field" type="number" min="1"></div><div class="field-wrap full"><label>메모</label><textarea id="fMemo" class="field"></textarea></div></div>
 <div class="member-modal-actions">
+  <button id="resetMemberPasswordButton" class="delete-member-btn" style="background:#eeeaff;color:#6250cc" onclick="resetMemberPassword()" type="button">비밀번호 0000 초기화</button>
   <button id="deleteMemberButton" class="delete-member-btn" onclick="deleteMember()" type="button">멤버 삭제</button>
   <button class="save" onclick="saveMember()" type="button">저장</button>
 </div>
@@ -536,7 +537,7 @@
 </div></div>
 <div id="memberSongsOverlay" class="overlay"><div class="modal">
 <div class="modal-head"><h2 id="memberSongsTitle">Songs</h2><button class="close" onclick="closeMemberSongs()">✕</button></div>
-<p class="song-note">버스킹에서 사용하는 공용 곡 목록입니다. 관리자 모드가 아니어도 추가·수정할 수 있습니다.</p>
+<p class="song-note">내 버스킹 곡 목록입니다. 본인 또는 운영진만 추가·수정할 수 있습니다.</p>
 <div id="memberSongList" class="song-list"></div>
 <div class="song-form">
 <h3 id="memberSongFormTitle">새 곡 추가</h3>
@@ -552,7 +553,7 @@
 </div>
 </div></div>
 <datalist id="memberNameOptions"></datalist>
-<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" class="site-log-link" href="/site-log/">SITE LOG <span>→</span></a><a id="adminSettingsMenuLink" class="admin-settings-link" href="/admin-settings/">ADMIN SETTINGS <span>→</span></a>
+<div id="menuOverlay" class="overlay"><div class="menu-card"><div class="modal-head"><h2>VOM Menu</h2><button class="close" onclick="closeMenu()">✕</button></div><a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a href="/members/">MEMBERS <span>→</span></a><a href="/me/">MY VOM <span>→</span></a><a href="/qna/">Q&A <span>→</span></a><a href="/event/">EVENT <span>→</span></a><a href="/live/">VOM LIVE <span>→</span></a><a id="siteLogMenuLink" class="site-log-link" href="/site-log/">SITE LOG <span>→</span></a><a id="adminSettingsMenuLink" class="admin-settings-link" href="/admin-settings/">ADMIN SETTINGS <span>→</span></a>
 <button id="adminLoginButton" class="admin-menu" onclick="openAdminLogin()" style="width:100%;min-height:52px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;color:#725de0;font-weight:700;cursor:pointer">관리자 모드 <span style="float:right">→</span></button>
 <button id="logoutButton" onclick="adminLogout()" style="display:none;width:100%;min-height:52px;border:0;background:none;text-align:left;color:#d15c70;font-weight:700;cursor:pointer">관리자 모드 종료 <span style="float:right">→</span></button>
 </div></div>
@@ -566,11 +567,11 @@
 </div></div>
 <nav class="bottom"><a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/" class="active"><span class="nav-icon">♙</span>MEMBERS</a><a href="/event/"><span class="nav-icon">✦</span>EVENT</a><button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button></nav>
 <script>
-const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null;
+const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null,currentMemberId=null;
 const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>String(pick(m,'status','activity_status','active_status')||'활동중');const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singers','favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
-async function start(){await checkAdmin();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
+async function start(){await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions();const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){const own=members.find(m=>String(m.id)===String(currentMemberId));if(own)openMemberSongs(own.id);else location.href='/me/'}}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
-function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
+function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:member,error}=await db.from('members').select('id').eq('auth_user_id',session.user.id).maybeSingle();if(error){console.warn(error);currentMemberId=null;return}currentMemberId=member?.id||null}function canManageMember(m){return !!m&&(adminMode||String(m.id)===String(currentMemberId))}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
 function rolePriority(m){
   const r=role(m);
   if(r==='모임장') return 0;
@@ -580,7 +581,7 @@ function rolePriority(m){
 }
 
 async function load(){
-  const {data,error}=await db.from('members').select('*');
+  const {data,error}=await db.from(adminMode?'members':'members_public').select('*');
   if(error){
     console.error(error);
     members=[];
@@ -658,7 +659,7 @@ function table(){
         </div>
       </td>
       <td class="c-role"><span class="role-pill ${staff?'staff':'normal'}">${esc(role(m))}</span></td>
-      <td class="c-song">${staff&&!adminMode?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">MY SETLIST <span class="setlist-arrow">→</span></button>`}</td>
+      <td class="c-song">${!canManageMember(m)?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">MY SETLIST <span class="setlist-arrow">→</span></button>`}</td>
       <td class="c-date">${fmt(join(m))}</td>
       <td class="c-region">${esc(reg(m))}</td>
       <td class="c-singer">${profileCell(m,'singer')}</td>
@@ -667,7 +668,7 @@ function table(){
   }).join('');
 }
 
-function canEditPublicProfile(m){return !['모임장','운영진'].includes(role(m))||adminMode}
+function canEditPublicProfile(m){return canManageMember(m)}
 function profileCell(m,type){
   const value=type==='singer'?sing(m):job(m);
   const empty=!value || value==='-';
@@ -689,9 +690,8 @@ function openProfileEditor(id){
 }
 function closeProfileEditor(){profileOverlay.classList.remove('open');currentProfileMember=null}
 async function savePublicProfile(){
-  if(!currentProfileMember)return;
-  if(['모임장','운영진'].includes(role(currentProfileMember))&&!adminMode)return;
-  const {error}=await db.rpc('update_member_public_profile',{p_member_id:String(currentProfileMember.id),p_favorite_singer:profileSinger.value.trim(),p_job:profileJob.value.trim()});
+  if(!currentProfileMember||!canEditPublicProfile(currentProfileMember))return;
+  const {error}=await db.from('members').update({favorite_singers:profileSinger.value.trim()||null,job:profileJob.value.trim()||null}).eq('id',currentProfileMember.id);
   if(error){alert('저장 실패\n'+error.message);return}
   closeProfileEditor();await load();render();
 }
@@ -788,8 +788,10 @@ function showRegion(r,card){
 }
 
 function parseBirth(v){const d=String(v||'').replace(/\D/g,'');if(d.length===8)return{year:+d.slice(0,4),month:+d.slice(4,6),day:+d.slice(6,8)};const m=String(v||'').match(/^(\d{4})-(\d{2})-(\d{2})/);return m?{year:+m[1],month:+m[2],day:+m[3]}:null}function fmt(v){return v?String(v).slice(0,10).replaceAll('-','.'):'-'}
-function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';const deleteBtn=document.getElementById('deleteMemberButton');if(deleteBtn)deleteBtn.style.display=m?.id?'inline-flex':'none';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}
+function editRow(id){if(!adminMode)return;const m=members.find(x=>String(x.id)===String(id));openEditor(m)}function openEditor(m=null){if(!adminMode)return;document.getElementById('memberId').value=m?.id??'';const deleteBtn=document.getElementById('deleteMemberButton');if(deleteBtn)deleteBtn.style.display=m?.id?'inline-flex':'none';const resetBtn=document.getElementById('resetMemberPasswordButton');if(resetBtn)resetBtn.style.display=m?.id?'inline-flex':'none';fName.value=m?.name??'';fRole.value=m?role(m):'모임원';fStatus.value=m?stat(m):'활동중';fJoinDate.value=m?join(m):new Date().toISOString().slice(0,10);const b=m?parseBirth(birth(m)):null;fBirth.value=b?`${b.year}${String(b.month).padStart(2,'0')}${String(b.day).padStart(2,'0')}`:'';fRegion.value=m?reg(m):'';fGender.value=m?gen(m).replace('-',''):'';fJob.value=m?job(m).replace('-',''):'';fSinger.value=m?sing(m).replace('-',''):'';fPhone.value=m?phone(m):'';fOrder.value=m&&ord(m)!==999999?ord(m):'';fMemo.value=m?memo(m):'';memberOverlay.classList.add('open')}
 function closeEditor(){memberOverlay.classList.remove('open')}
+
+async function resetMemberPassword(){if(!adminMode)return;const id=memberId.value;if(!id)return;const m=members.find(x=>String(x.id)===String(id));if(!m)return;if(!confirm(`${m.name}님의 개인 비밀번호를 0000으로 초기화할까요?`))return;const {data,error}=await db.functions.invoke('member-account',{body:{action:'admin_reset',member_id:id}});if(error||data?.error){alert('초기화 실패\n'+(data?.error||error?.message||'다시 시도해 주세요.'));return}alert(`${m.name}님의 비밀번호를 0000으로 초기화했습니다.`)}
 
 async function deleteMember(){
   if(!adminMode)return;
@@ -867,19 +869,16 @@ async function saveMember(){
 }
 
 function openMemberSongs(id){
-  const m=members.find(x=>String(x.id)===String(id));if(!m)return;
-  if(['모임장','운영진'].includes(role(m))&&!adminMode){
-    return;
-  }
+  const m=members.find(x=>String(x.id)===String(id));if(!m||!canManageMember(m))return;
   currentSongMember=m;memberSongsTitle.textContent=`${m.name} · Songs`;resetMemberSongForm();renderMemberSongs();memberSongsOverlay.classList.add('open')
 }
 function closeMemberSongs(){memberSongsOverlay.classList.remove('open');currentSongMember=null}
 function renderMemberSongs(){
   if(!currentSongMember)return;
   const list=memberSongs.filter(s=>String(s.member_id||'')===String(currentSongMember.id)||String(s.vocalist_name||'').trim()===String(currentSongMember.name||'').trim());
-  memberSongList.innerHTML=list.length?list.map(s=>{
+  const editable=canManageMember(currentSongMember);memberSongList.innerHTML=list.length?list.map(s=>{
     const refs=[s.youtube_url?'YouTube 링크':'',s.file_name?`첨부 · ${s.file_name}`:''].filter(Boolean).join(' · ')||'링크/파일 없음';
-    return `<div class="member-song-row"><div><strong>${esc(s.song_title||'')} · ${esc(s.artist_name||'')}</strong><small>${s.duet_name?`duet ${esc(s.duet_name)} · `:''}${esc(refs)}</small></div><div class="member-song-actions">${memberSongReferenceButtons(s)}<button class="mini" onclick="editMemberSong(${s.id})">수정</button><button class="mini danger" onclick="deleteMemberSong(${s.id})">삭제</button></div></div>`;
+    return `<div class="member-song-row"><div><strong>${esc(s.song_title||'')} · ${esc(s.artist_name||'')}</strong><small>${s.duet_name?`duet ${esc(s.duet_name)} · `:''}${esc(refs)}</small></div><div class="member-song-actions">${memberSongReferenceButtons(s)}${editable?`<button class="mini" onclick="editMemberSong(${s.id})">수정</button><button class="mini danger" onclick="deleteMemberSong(${s.id})">삭제</button>`:''}</div></div>`;
   }).join(''):'<div class="empty">저장된 곡이 없습니다.</div>'
 }
 function resetMemberSongForm(){memberSongId.value='';memberSongTitle.value='';memberSongArtist.value='';memberSongDuet.value='';memberSongYoutube.value='';memberSongFile.value='';memberSongFileCurrent.textContent='카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하';memberSongFormTitle.textContent='새 곡 추가'}
@@ -898,7 +897,7 @@ async function addActivityLog(actionType,targetId,targetName,detail){
   }
 }
 async function saveMemberSong(){
-  if(!currentSongMember)return;
+  if(!currentSongMember||!canManageMember(currentSongMember))return;
   const title=memberSongTitle.value.trim();if(!title){alert('곡명을 입력해주세요.');return}
   const duetName=memberSongDuet.value.trim(),duet=members.find(m=>String(m.name||'').trim()===duetName);
   const id=memberSongId.value;
@@ -923,6 +922,7 @@ async function saveMemberSong(){
   await loadMemberSongs();resetMemberSongForm();renderMemberSongs()
 }
 async function deleteMemberSong(id){
+  if(!currentSongMember||!canManageMember(currentSongMember))return;
   if(!confirm('이 곡을 공용 곡 목록에서 삭제할까요? 이 곡을 사용하는 버스킹 셋리스트에서도 빠질 수 있습니다.'))return;
   const before=memberSongs.find(x=>String(x.id)===String(id));
   const {error}=await db.from('busking_repertoire').delete().eq('id',id);if(error){alert('삭제 실패\n'+error.message);return}
@@ -938,7 +938,7 @@ const attachmentMime={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'audio/mp4',aac:'audi
 const attachmentMaxBytes=50*1024*1024;
 function attachmentExt(name){const hit=String(name||'').toLowerCase().match(/\.([a-z0-9]+)$/);return hit?hit[1]:''}
 function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachmentMime[ext])throw new Error('MP3 · M4A · AAC · AMR · WAV · OGG · OPUS · FLAC · 3GP · WEBM · PDF 파일만 첨부할 수 있습니다.');if(Number(file?.size||0)>attachmentMaxBytes)throw new Error('첨부 파일은 50MB 이하만 올릴 수 있습니다.');return{ext,mime:attachmentMime[ext]}}
-function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);return `${prefix}/${Date.now()}-${token}.${ext}`}
+function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);const memberId=currentSongMember?.id||currentMemberId||'unassigned';return `${prefix}/${memberId}/${Date.now()}-${token}.${ext}`}
 async function uploadMemberSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('repertoire',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
