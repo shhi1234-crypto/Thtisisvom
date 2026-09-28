@@ -65,6 +65,6 @@ function closeMenu(){const el=document.getElementById('menuOverlay');el.classLis
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadMembers();await loadSession();render()}catch(error){app.innerHTML='<div class="empty">개인 설정을 불러오지 못했습니다.<br><br>'+esc(error.message||'잠시 후 다시 시도해 주세요.')+'</div>'}})();
 </script>
-<script src="/assets/vom-shell.js?v=2"></script>
+<script src="/assets/vom-shell.js?v=3"></script>
 </body>
 </html>
