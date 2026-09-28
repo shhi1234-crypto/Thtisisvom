@@ -79,6 +79,12 @@
         color: #846ee9;
         font-size: 8px;
       }
+      .member-session-chip.is-guest {
+        border-color: rgba(119,126,145,.14);
+        background: rgba(247,248,251,.92);
+        color: #747b8e !important;
+      }
+      .member-session-chip.is-guest::before { color: #a1a7b5; }
       .member-session-chip .member-session-name {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -174,9 +180,38 @@
     }
   }
 
+  function addMemberStatus(label, loggedIn) {
+    const menuButton = document.querySelector('.header .menu-btn');
+    const host = (menuButton && menuButton.parentElement) ||
+      document.querySelector('.header-actions, .header-right, .header');
+    if (!host || host.querySelector('.member-session-chip')) return;
+
+    const chip = document.createElement('a');
+    chip.className = 'member-session-chip' + (loggedIn ? '' : ' is-guest');
+    chip.href = '/me/';
+    chip.setAttribute(
+      'aria-label',
+      loggedIn ? '현재 로그인: ' + label + '. MY VOM으로 이동' : '현재 로그인 전입니다. MY VOM으로 이동'
+    );
+
+    const nameText = document.createElement('span');
+    nameText.className = 'member-session-name';
+    nameText.textContent = loggedIn ? label + '님' : '로그인 전';
+    chip.appendChild(nameText);
+
+    if (menuButton && menuButton.parentElement === host) {
+      host.insertBefore(chip, menuButton);
+    } else {
+      host.appendChild(chip);
+    }
+  }
+
   async function showCurrentMember() {
     const accessToken = storedAccessToken();
-    if (!accessToken) return;
+    if (!accessToken) {
+      addMemberStatus('', false);
+      return;
+    }
 
     try {
       const response = await window.fetch(SUPABASE_URL + '/functions/v1/member-account', {
@@ -193,27 +228,7 @@
       const data = await response.json();
       const member = data && (data.member || (data.data && data.data.member) || data);
       const name = member && member.name;
-      if (!name) return;
-
-      const menuButton = document.querySelector('.header .menu-btn');
-      const host = (menuButton && menuButton.parentElement) ||
-        document.querySelector('.header-actions, .header-right, .header');
-      if (!host || host.querySelector('.member-session-chip')) return;
-
-      const chip = document.createElement('a');
-      chip.className = 'member-session-chip';
-      chip.href = '/me/';
-      chip.setAttribute('aria-label', '현재 로그인: ' + name + '. MY VOM으로 이동');
-      const nameText = document.createElement('span');
-      nameText.className = 'member-session-name';
-      nameText.textContent = name + '님';
-      chip.appendChild(nameText);
-
-      if (menuButton && menuButton.parentElement === host) {
-        host.insertBefore(chip, menuButton);
-      } else {
-        host.appendChild(chip);
-      }
+      if (name) addMemberStatus(name, true);
     } catch (_) {
       // 로그인 표시는 보조 기능이므로 본문 사용을 막지 않습니다.
     }
