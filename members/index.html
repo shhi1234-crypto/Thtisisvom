@@ -568,10 +568,11 @@
 <nav class="bottom"><a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/" class="active"><span class="nav-icon">♙</span>MEMBERS</a><a href="/event/"><span class="nav-icon">✦</span>EVENT</a><button onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button></nav>
 <script>
 const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null,currentMemberId=null;
-const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>String(pick(m,'status','activity_status','active_status')||'활동중');const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singers','favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
+const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>{const value=pick(m,'status','activity_status','active_status');return value!==''?String(value):(m?.is_active===false?'비활동':'활동중')};const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singers','favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
 async function start(){await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions();const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){const own=members.find(m=>String(m.id)===String(currentMemberId));if(own)openMemberSongs(own.id);else location.href='/me/'}}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
-function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:member,error}=await db.from('members').select('id').eq('auth_user_id',session.user.id).maybeSingle();if(error){console.warn(error);currentMemberId=null;return}currentMemberId=member?.id||null}function canManageMember(m){return !!m&&(adminMode||String(m.id)===String(currentMemberId))}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
+function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function invokeMemberAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error)throw new Error(data?.error||error.message||'요청을 처리하지 못했습니다.');if(data?.error)throw new Error(data.error);return data}
+async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}try{const account=await invokeMemberAccount({action:'whoami'});currentMemberId=account?.member_id||null}catch(error){console.warn(error);currentMemberId=null}}function canManageMember(m){return !!m&&(adminMode||String(m.id)===String(currentMemberId))}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
 function rolePriority(m){
   const r=role(m);
   if(r==='모임장') return 0;
@@ -581,7 +582,16 @@ function rolePriority(m){
 }
 
 async function load(){
-  const {data,error}=await db.from(adminMode?'members':'members_public').select('*');
+  let data=[],error=null;
+  try{
+    if(adminMode){
+      const result=await invokeMemberAccount({action:'admin_members_list'});
+      data=result.members||[];
+    }else{
+      const result=await db.from('members_public').select('*');
+      data=result.data||[];error=result.error;
+    }
+  }catch(err){error=err}
   if(error){
     console.error(error);
     members=[];
@@ -795,40 +805,22 @@ async function resetMemberPassword(){if(!adminMode)return;const id=memberId.valu
 
 async function deleteMember(){
   if(!adminMode)return;
-
   const id=memberId.value;
   if(!id)return;
-
   const m=members.find(x=>String(x.id)===String(id));
   if(!m)return;
-
-  const ok=confirm(`${m.name} 멤버를 삭제할까요?\n\n삭제하면 멤버 명단에서 완전히 제거됩니다.`);
-  if(!ok)return;
-
+  if(!confirm(`${m.name} 멤버를 삭제할까요?\n\n삭제하면 멤버 명단에서 완전히 제거됩니다.`))return;
   const btn=document.getElementById('deleteMemberButton');
-  if(btn){
-    btn.disabled=true;
-    btn.textContent='삭제 중...';
+  if(btn){btn.disabled=true;btn.textContent='삭제 중...'}
+  try{
+    await invokeMemberAccount({action:'admin_member_delete',member_id:id});
+    closeEditor();await load();render();fillMemberNameOptions();
+  }catch(error){
+    alert('삭제 실패\n'+(error.message||'다시 시도해 주세요.'));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='멤버 삭제'}
   }
-
-  const {error}=await db.from('members').delete().eq('id',id);
-
-  if(btn){
-    btn.disabled=false;
-    btn.textContent='멤버 삭제';
-  }
-
-  if(error){
-    alert('삭제 실패\n'+error.message);
-    return;
-  }
-
-  closeEditor();
-  await load();
-  render();
-  fillMemberNameOptions();
 }
-
 
 function existingKey(record,keys){return keys.find(k=>record&&Object.prototype.hasOwnProperty.call(record,k))||null}
 function putExisting(payload,record,keys,value){const k=existingKey(record,keys);if(k)payload[k]=value}
@@ -838,15 +830,14 @@ async function saveMember(){
   if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}
   const name=fName.value.trim();
   if(!name){alert('이름을 입력해주세요.');return}
-
   const current=id?members.find(m=>String(m.id)===String(id)):null;
   const schemaSource=current||members[0]||null;
   const p={};
-
   if(schemaSource){
     putExisting(p,schemaSource,['name'],name);
     putExisting(p,schemaSource,['role','member_role','type'],fRole.value);
     putExisting(p,schemaSource,['status','activity_status','active_status'],fStatus.value);
+    if(Object.prototype.hasOwnProperty.call(schemaSource,'is_active'))p.is_active=fStatus.value==='활동중';
     putExisting(p,schemaSource,['join_date','joined_at'],fJoinDate.value||null);
     putExisting(p,schemaSource,['birth_date','birthday','birth'],b?`${b.slice(0,4)}-${b.slice(4,6)}-${b.slice(6,8)}`:null);
     putExisting(p,schemaSource,['region','area','location'],fRegion.value.trim());
@@ -857,15 +848,15 @@ async function saveMember(){
     putExisting(p,schemaSource,['join_order','join_sequence','member_order','order_no','sequence','join_number'],Number(fOrder.value)||null);
     putExisting(p,schemaSource,['memo','note','notes'],fMemo.value.trim());
   }else{
-    p.name=name;
-    p.role=fRole.value;
+    p.name=name;p.role=fRole.value;p.is_active=fStatus.value==='활동중';
   }
-
   if(!Object.keys(p).length){alert('저장 가능한 멤버 컬럼을 찾지 못했습니다.');return}
-  const q=id?db.from('members').update(p).eq('id',id):db.from('members').insert(p);
-  const {error}=await q;
-  if(error){alert('저장 실패\n'+error.message);return}
-  closeEditor();await load();render();
+  try{
+    await invokeMemberAccount({action:'admin_member_save',member_id:id||null,fields:p});
+    closeEditor();await load();render();fillMemberNameOptions();
+  }catch(error){
+    alert('저장 실패\n'+(error.message||'다시 시도해 주세요.'));
+  }
 }
 
 function openMemberSongs(id){
