@@ -1782,7 +1782,7 @@ async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
 function songReferenceLinks(song){const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');return `${youtube?`<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${file?`<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`:''}`}
 
-async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:member,error}=await db.from('members').select('id').eq('auth_user_id',session.user.id).maybeSingle();if(error){console.warn('MEMBER SESSION',error);currentMemberId=null;return}currentMemberId=member?.id||null}
+async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:account,error}=await db.functions.invoke('member-account',{body:{action:'whoami'}});if(error||account?.error){console.warn('MEMBER SESSION',account?.error||error?.message);currentMemberId=null;return}currentMemberId=account?.member_id||null}
 async function checkAdmin(){
   const {data}=await db.auth.getSession();const s=data.session;
   if(!s){setAdmin(false);return}
