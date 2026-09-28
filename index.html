@@ -2176,6 +2176,12 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
       <small>QUESTION</small>
     </a>
 
+    <a href="/me/">
+      <div class="quick-icon">◉</div>
+      <strong>MY VOM</strong>
+      <small>MY SPACE</small>
+    </a>
+
     <a href="/practice/">
       <div class="quick-icon">◎</div>
       <strong>PRACTICE</strong>
@@ -2263,6 +2269,10 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 
     <a href="/members/" class="members-menu">
       MEMBERS <span>→</span>
+    </a>
+
+    <a href="/me/">
+      MY VOM <span>→</span>
     </a>
 
     <a id="adminSettingsMenuLink" class="admin-settings-link" href="/admin-settings/">
@@ -2419,7 +2429,7 @@ async function loadHomeBirthday(){
   if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
   box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">🎂 이번 달 생일을 확인하는 중...</span>`;
-  const {data,error}=await db.from('members').select('*');
+  const {data,error}=await db.from('members_public').select('*');
   let birthdayHtml='';
   if(error){
     console.error('MEMBER BIRTHDAY:',error);
