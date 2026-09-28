@@ -578,7 +578,7 @@ async function loadAll(){
   const [ev,loc,mem,win]=await Promise.all([
     db.from('events').select('*').order('event_date',{ascending:true}),
     db.from('locations').select('*'),
-    db.from('members').select('*'),
+    db.from('members_public').select('*'),
     db.from('open_mic_winners').select('*')
   ]);
   events=(ev.data||[]).filter(isOpenMicEvent);
