@@ -195,6 +195,8 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
   <a href="/">HOME <span>→</span></a>
   <a href="/calendar/">CALENDAR <span>→</span></a>
   <a href="/members/">MEMBERS <span>→</span></a>
+  <a href="/me/">MY VOM <span>→</span></a>
+  <a href="/qna/">Q&A <span>→</span></a>
   <a href="/event/">EVENT <span>→</span></a>
   <a href="/live/">VOM LIVE <span>→</span></a>
   <a href="/busking/">BUSKING <span>→</span></a>
@@ -222,13 +224,14 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 <script>
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
 
-let adminMode=false;
+let adminMode=false;let currentMemberId=null;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[],directSongs=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
 let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup',saveToastTimer=null;
 
 async function start(){
   await checkAdmin();
+  await loadCurrentMember();
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
   const createRequested=params.get('create')==='1';
@@ -236,7 +239,7 @@ async function start(){
   const [e,l,m,r]=await Promise.all([
     db.from('events').select('*').order('event_date',{ascending:true}),
     db.from('locations').select('*'),
-    db.from('members').select('*'),
+    db.from('members_public').select('*'),
     db.from('busking_repertoire').select('*').order('updated_at',{ascending:false})
   ]);
 
@@ -516,7 +519,7 @@ function songsForSlot(slot){return slotSongs.filter(x=>String(x.slot_id)===Strin
 function slotBySongId(slotSongId){const ss=slotSongs.find(x=>String(x.id)===String(slotSongId));return ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null}
 function slotSongById(id){return slotSongs.find(x=>String(x.id)===String(id))}
 function isStaffMember(m){return String(m?.role||'')==='운영진'}
-function canEditSlotSongs(slot){const m=memberById(slot.member_id);return !(m&&isStaffMember(m))||adminMode}
+function canEditSlotSongs(slot){return adminMode||String(slot?.member_id||'')===String(currentMemberId||'')}
 function partForPosition(pos){return settings.section_count===2&&pos>settings.part1_capacity?2:1}
 function partLabel(part){return settings.section_count===2?`${part}부`:'공연'}
 
@@ -1562,17 +1565,50 @@ async function syncPerformanceOrderToPlan(){
   for(const slot of slots){
     const pos=Number(slot.sort_order),part=partForPosition(pos);
     const songs=songsForSlot(slot).slice(0,settings.max_songs_per_member);
-    songs.forEach((ss,i)=>{const seq=songOrderNumber(pos,i);if(seq)desired.push({event_id:Number(currentEventId),part_no:part,sequence_no:seq,slot_song_id:ss.id,updated_at:new Date().toISOString()})});
+    songs.forEach((ss,i)=>{
+      const seq=songOrderNumber(pos,i);
+      if(seq)desired.push({event_id:Number(currentEventId),part_no:part,sequence_no:seq,slot_song_id:ss.id,updated_at:new Date().toISOString()});
+    });
   }
+
   const desiredIds=new Set(desired.map(x=>String(x.slot_song_id)));
-  const existingBySong=new Map(performanceOrder.map(x=>[String(x.slot_song_id),x]));
-  for(const old of performanceOrder){if(!desiredIds.has(String(old.slot_song_id)))await db.from('busking_setlist_order').delete().eq('id',old.id)}
+  for(const old of [...performanceOrder]){
+    if(!desiredIds.has(String(old.slot_song_id))){
+      const {error}=await db.from('busking_setlist_order').delete().eq('id',old.id);
+      if(error)throw error;
+      performanceOrder=performanceOrder.filter(item=>String(item.id)!==String(old.id));
+    }
+  }
+
   for(const row of desired){
-    if(existingBySong.has(String(row.slot_song_id)))continue;
-    let seq=row.sequence_no;
-    const occupied=new Set(performanceOrder.filter(x=>Number(x.part_no)===row.part_no).map(x=>Number(x.sequence_no)));
-    while(occupied.has(seq))seq++;
-    const {error}=await db.from('busking_setlist_order').insert({...row,sequence_no:seq});if(error)console.error(error);
+    if(performanceOrder.some(item=>String(item.slot_song_id)===String(row.slot_song_id)))continue;
+
+    const partRows=performanceOrder
+      .filter(item=>Number(item.part_no)===Number(row.part_no))
+      .sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
+    const maxSequence=partRows.length?Math.max(...partRows.map(item=>Number(item.sequence_no)||0)):0;
+    const wanted=Math.max(1,Number(row.sequence_no)||1);
+    const sequence=Math.min(wanted,maxSequence+1);
+
+    // 새 곡을 원하는 자리 사이에 넣는다. 기존 곡들의 상대 순서는 그대로 두고
+    // 뒤쪽 번호만 한 칸씩 밀기 때문에, 곡을 수정·추가해도 끝으로 튀지 않는다.
+    const toShift=partRows
+      .filter(item=>Number(item.sequence_no)>=sequence)
+      .sort((a,b)=>Number(b.sequence_no)-Number(a.sequence_no));
+    for(const item of toShift){
+      const next=Number(item.sequence_no)+1;
+      const {error}=await db.from('busking_setlist_order').update({sequence_no:next}).eq('id',item.id);
+      if(error)throw error;
+      item.sequence_no=next;
+    }
+
+    const {data,error}=await db
+      .from('busking_setlist_order')
+      .insert({...row,sequence_no:sequence})
+      .select('*')
+      .single();
+    if(error)throw error;
+    performanceOrder.push(data||{...row,sequence_no:sequence});
   }
 }
 
@@ -1746,6 +1782,7 @@ async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
 function songReferenceLinks(song){const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');return `${youtube?`<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${file?`<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`:''}`}
 
+async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:member,error}=await db.from('members').select('id').eq('auth_user_id',session.user.id).maybeSingle();if(error){console.warn('MEMBER SESSION',error);currentMemberId=null;return}currentMemberId=member?.id||null}
 async function checkAdmin(){
   const {data}=await db.auth.getSession();const s=data.session;
   if(!s){setAdmin(false);return}
