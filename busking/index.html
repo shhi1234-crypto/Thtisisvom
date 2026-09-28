@@ -1954,7 +1954,7 @@ function norm(v){return String(v??'').trim().toLowerCase()}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
-async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:member,error}=await db.from('members').select('id').eq('auth_user_id',session.user.id).maybeSingle();if(error){console.warn('MEMBER SESSION',error);currentMemberId=null;return}currentMemberId=member?.id||null}
+async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:account,error}=await db.functions.invoke('member-account',{body:{action:'whoami'}});if(error||account?.error){console.warn('MEMBER SESSION',account?.error||error?.message);currentMemberId=null;return}currentMemberId=account?.member_id||null}
 async function checkAdmin(){
   const {data}=await db.auth.getSession();const s=data.session;
   if(!s){setAdmin(false);return}
