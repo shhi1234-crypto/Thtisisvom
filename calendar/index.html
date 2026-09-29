@@ -3651,8 +3651,8 @@ function nextMonthLabel(){
 function renderMonthlyOperationsGuide(){
   if(!adminMode)return '';
   const list=nextMonthScheduleEvents(),month=nextMonthLabel();
-  const status=list.length===0?month+' 일정 미등록':list.length<=2?month+' 일정 확인 필요':month+' 일정 '+list.length+'개 등록';
-  const warning=list.length===0?month+' 일정을 등록해주세요.':list.length<=2?month+' 일정이 모두 등록되었는지 확인해주세요.':'등록된 일정들이 공지방에 모두 안내됐는지 확인해주세요.';
+  const status=list.length===0?month+' 일정 등록 대기':list.length<=2?month+' 일정 확인 필요':month+' 일정 '+list.length+'개 등록';
+  const warning=list.length===0?month+' 일정이 아직 없습니다. 매월 20일 오전 10시에 운영진 전체에게 일정 등록 알림이 발송됩니다. 그 전까지 등록해주세요.':list.length<=2?month+' 일정이 모두 등록되었는지 확인해주세요.':'등록된 일정들이 공지방에 모두 안내됐는지 확인해주세요.';
   return '<section class="monthly-ops-guide"><div class="monthly-ops-head"><div><b>다음 달 운영 준비</b><p class="monthly-ops-copy">① 홈페이지 일정 등록 → ② 공지방 월간 공지 → ③ 소모임 모집글 예약·정식 오픈</p></div><span>'+status+'</span></div><div class="monthly-ops-list">'+(list.length?list.map(item=>'<div class="monthly-ops-item">'+escapeHtml(item.title||'일정')+'<small>'+formatKoreanDate(item.event_date)+'</small></div>').join(''):'<div class="monthly-ops-item">등록된 일정이 없습니다.</div>')+'</div><div class="monthly-ops-warning">'+warning+'</div><button class="monthly-copy-btn" type="button" onclick="copyNextMonthNotice()">공지 확인문 복사</button></section>';
 }
 async function copyNextMonthNotice(){
