@@ -345,21 +345,31 @@ button{
   box-shadow:0 25px 70px rgba(41,45,91,.12);
 }
 
+/* 일정 사진은 배경이 아니라 우측 하단 썸네일로 통일합니다. */
 .next-bg{
   position:absolute;
-  width:195px;
-  height:195px;
-  right:-45px;
-  bottom:-55px;
+  z-index:1;
+  width:178px;
+  height:122px;
+  right:22px;
+  bottom:22px;
   overflow:hidden;
-  border-radius:50%;
-  opacity:.17;
+  border:1px solid rgba(255,255,255,.92);
+  border-radius:20px;
+  background:#ece8fa;
+  box-shadow:0 14px 30px rgba(35,39,80,.16);
 }
 
 .next-bg img{
+  display:block;
   width:100%;
   height:100%;
   object-fit:cover;
+  object-position:center;
+}
+
+.next-live.has-image{
+  padding-right:224px;
 }
 
 .next-content{
@@ -996,32 +1006,19 @@ function formatHomeNewsDate(value){
     linear-gradient(145deg,#21325e,#393c84);
 }
 
-/* 일정 사진은 카드 전체를 채우고, 글씨 쪽에만 가독성용 막을 둡니다. */
-.event-card.has-image::after{
-  content:'';
-  position:absolute;
-  z-index:1;
-  inset:0;
-  pointer-events:none;
-  background:linear-gradient(100deg,
-    rgba(255,255,255,.78) 0%,
-    rgba(255,255,255,.54) 45%,
-    rgba(255,255,255,.10) 100%);
-}
-
-.event-card.featured.has-image::after{
-  background:linear-gradient(100deg,
-    rgba(20,27,61,.91) 0%,
-    rgba(28,35,78,.72) 48%,
-    rgba(26,31,65,.16) 100%);
-}
-
+/* 다가오는 일정도 같은 우측 하단 썸네일 방식으로 보여줍니다. */
 .event-image{
   position:absolute;
-  z-index:0;
-  inset:0;
+  z-index:1;
+  width:126px;
+  height:92px;
+  right:14px;
+  bottom:14px;
   overflow:hidden;
-  border-radius:inherit;
+  border:1px solid rgba(255,255,255,.92);
+  border-radius:16px;
+  background:#ece8fa;
+  box-shadow:0 10px 24px rgba(35,39,80,.15);
 }
 
 .event-image img{
@@ -1029,8 +1026,12 @@ function formatHomeNewsDate(value){
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position:center center;
-  transform:scale(1.015);
+  object-position:center;
+}
+
+.event-card.featured .event-image{
+  border-color:rgba(255,255,255,.36);
+  box-shadow:0 12px 26px rgba(8,13,40,.28);
 }
 
 .event-type{
@@ -1487,6 +1488,28 @@ function formatHomeNewsDate(value){
 
   .event-card{
     min-width:190px;
+  }
+
+  .event-image{
+    width:112px;
+    height:82px;
+    right:12px;
+    bottom:12px;
+    border-radius:14px;
+  }
+
+  .next-live.has-image{
+    min-height:330px;
+    padding-right:20px;
+    padding-bottom:126px;
+  }
+
+  .next-bg{
+    width:142px;
+    height:96px;
+    right:18px;
+    bottom:18px;
+    border-radius:17px;
   }
 }
 
@@ -2849,6 +2872,8 @@ function renderNextSchedule(row){
 
   if(!row){
 
+    box.classList.remove('has-image');
+
     box.innerHTML =
       `<div class="next-empty">
         예정된 일정이 없습니다.<br>
@@ -2868,6 +2893,8 @@ function renderNextSchedule(row){
     row.image_url ||
     location?.image_url ||
     '';
+
+  box.classList.toggle('has-image', Boolean(image));
 
   box.innerHTML =
   `
