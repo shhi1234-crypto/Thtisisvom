@@ -345,21 +345,28 @@ button{
   box-shadow:0 25px 70px rgba(41,45,91,.12);
 }
 
-/* 사진은 오른쪽에서 자연스럽게 잘리고, 텍스트 쪽으로는 부드럽게 흐려집니다. */
+/* 일정 사진은 글을 가리지 않는 우측 하단 원형 장식으로만 사용합니다. */
 .next-bg{
   position:absolute;
   z-index:0;
-  top:0;
-  right:-10%;
-  bottom:0;
-  width:72%;
+  right:-34px;
+  bottom:-40px;
+  width:172px;
+  height:172px;
   overflow:hidden;
   border:0;
-  border-radius:0;
+  border-radius:50%;
   background:transparent;
   box-shadow:none;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.28) 28%,#000 62%);
-  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.28) 28%,#000 62%);
+}
+
+.next-bg::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:1;
+  border-radius:inherit;
+  background:radial-gradient(circle at 35% 33%,transparent 0%,rgba(255,255,255,.10) 52%,rgba(255,255,255,.46) 100%);
 }
 
 .next-bg img{
@@ -368,9 +375,9 @@ button{
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:blur(1.8px) saturate(.86);
-  opacity:.82;
-  transform:scale(1.07);
+  filter:blur(1.35px) saturate(.84);
+  opacity:.76;
+  transform:scale(1.1);
 }
 
 .next-live.has-image{
@@ -378,7 +385,7 @@ button{
 }
 
 .next-live.has-image .next-content{
-  max-width:57%;
+  max-width:64%;
 }
 
 .next-live.has-image::after{
@@ -388,10 +395,10 @@ button{
   inset:0;
   pointer-events:none;
   background:linear-gradient(90deg,
-    rgba(255,255,255,.97) 0%,
-    rgba(250,248,254,.90) 42%,
-    rgba(248,247,253,.46) 68%,
-    rgba(248,247,253,.04) 100%);
+    rgba(255,255,255,.96) 0%,
+    rgba(250,248,254,.84) 50%,
+    rgba(248,247,253,.22) 74%,
+    transparent 100%);
 }
 
 .next-content{
@@ -1028,7 +1035,7 @@ function formatHomeNewsDate(value){
     linear-gradient(145deg,#21325e,#393c84);
 }
 
-/* 다가오는 일정도 사진이 우측에서 자연스럽게 흐려지며 잘립니다. */
+/* 다가오는 일정도 사진을 우측 하단 원형으로 통일합니다. */
 .event-card.has-image::after{
   content:'';
   position:absolute;
@@ -1037,33 +1044,40 @@ function formatHomeNewsDate(value){
   pointer-events:none;
   background:linear-gradient(90deg,
     rgba(255,255,255,.97) 0%,
-    rgba(255,255,255,.90) 42%,
-    rgba(255,255,255,.46) 68%,
-    rgba(255,255,255,.04) 100%);
+    rgba(255,255,255,.84) 51%,
+    rgba(255,255,255,.18) 77%,
+    transparent 100%);
 }
 
 .event-card.featured.has-image::after{
   background:linear-gradient(90deg,
     rgba(25,34,74,.97) 0%,
-    rgba(31,42,89,.88) 42%,
-    rgba(34,46,95,.48) 68%,
-    rgba(34,46,95,.05) 100%);
+    rgba(31,42,89,.84) 51%,
+    rgba(34,46,95,.20) 77%,
+    transparent 100%);
 }
 
 .event-image{
   position:absolute;
   z-index:0;
-  top:0;
-  right:-12%;
-  bottom:0;
-  width:76%;
+  right:-32px;
+  bottom:-40px;
+  width:138px;
+  height:138px;
   overflow:hidden;
   border:0;
-  border-radius:0;
+  border-radius:50%;
   background:transparent;
   box-shadow:none;
-  -webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.24) 30%,#000 63%);
-  mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.24) 30%,#000 63%);
+}
+
+.event-image::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:1;
+  border-radius:inherit;
+  background:radial-gradient(circle at 35% 33%,transparent 0%,rgba(255,255,255,.10) 52%,rgba(255,255,255,.42) 100%);
 }
 
 .event-image img{
@@ -1072,9 +1086,9 @@ function formatHomeNewsDate(value){
   height:100%;
   object-fit:cover;
   object-position:center;
-  filter:blur(1.45px) saturate(.86);
-  opacity:.82;
-  transform:scale(1.07);
+  filter:blur(1.2px) saturate(.84);
+  opacity:.74;
+  transform:scale(1.1);
 }
 
 .event-type{
@@ -1534,8 +1548,10 @@ function formatHomeNewsDate(value){
   }
 
   .event-image{
-    width:82%;
-    right:-18%;
+    width:120px;
+    height:120px;
+    right:-31px;
+    bottom:-35px;
   }
 
   .next-live.has-image{
@@ -1545,12 +1561,14 @@ function formatHomeNewsDate(value){
   }
 
   .next-live.has-image .next-content{
-    max-width:61%;
+    max-width:65%;
   }
 
   .next-bg{
-    width:78%;
-    right:-18%;
+    width:144px;
+    height:144px;
+    right:-29px;
+    bottom:-34px;
   }
 }
 
