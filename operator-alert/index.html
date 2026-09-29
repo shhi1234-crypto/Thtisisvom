@@ -63,6 +63,6 @@ async function setup(){try{if(isIOS&&!isStandalone){setStatus('아이폰은 홈 
 async function sendTest(){if(!registered)return;try{testBtn.disabled=true;setStatus('테스트 알림을 보내는 중입니다.');await call('test');setStatus('발송했습니다. 잠금화면 또는 상단 알림창을 확인해주세요.');}catch(e){console.error(e);setStatus('테스트 발송에 실패했습니다. 다시 시도해주세요.');}finally{testBtn.disabled=false}}
 setupBtn.addEventListener('click',setup);testBtn.addEventListener('click',sendTest);refresh();
 </script>
-<script src="/assets/vom-shell.js?v=5"></script>
+<script src="/assets/vom-shell.js?v=6"></script>
 </body>
 </html>
