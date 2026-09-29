@@ -152,6 +152,12 @@
         background:rgba(255,255,255,.66);color:#20253a;font-size:18px;cursor:pointer;
         box-shadow:0 10px 30px rgba(31,38,76,.08);
       }
+      .vom-shell-floating-menu-trigger{
+        position:fixed;
+        z-index:90;
+        top:18px;
+        right:18px;
+      }
       @media (max-width: 640px) {
         body.has-vom-bottom { padding-bottom: 92px !important; }
         nav.bottom.vom-global-bottom {
@@ -329,6 +335,14 @@
       button.textContent = '☰';
       button.addEventListener('click', open);
       host.appendChild(button);
+    } else if (!host && !document.querySelector('.vom-shell-menu-trigger')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'vom-shell-menu-trigger vom-shell-floating-menu-trigger';
+      button.setAttribute('aria-label', '메뉴 열기');
+      button.textContent = '☰';
+      button.addEventListener('click', open);
+      document.body.appendChild(button);
     }
 
     window.openMenu = window.openMenu || open;
