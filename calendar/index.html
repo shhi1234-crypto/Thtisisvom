@@ -3444,11 +3444,27 @@ async function loadMedia(){
 
 async function loadEvents(){
 
-  const { data,error } =
-    await db.functions.invoke(
-      'public-events',
-      {body:{action:'list'}}
+  let data = null;
+  let error = null;
+
+  try{
+    const response = await fetch(
+      SUPABASE_URL + '/functions/v1/public-events',
+      {
+        method:'POST',
+        credentials:'omit',
+        headers:{
+          'Content-Type':'application/json',
+          'apikey':SUPABASE_KEY
+        },
+        body:JSON.stringify({action:'list'})
+      }
     );
+    data = await response.json().catch(()=>null);
+    if(!response.ok)error = new Error(data?.error || 'events_unavailable');
+  }catch(requestError){
+    error = requestError;
+  }
 
   const list =
     data &&
