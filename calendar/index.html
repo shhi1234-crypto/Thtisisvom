@@ -3346,7 +3346,7 @@ function setAdmin(active){
   }
 
 
-  renderCalendar();
+  renderCalendarView();
 }
 
 
@@ -7018,9 +7018,10 @@ async function start(){
 
   bindScheduleImageDropzone();
 
-  await checkAdmin();
-
+  /* 일정은 권한 확인과 동시에 불러와 빈 화면이 먼저 보이지 않게 합니다. */
   const eventLoad = loadEvents();
+
+  await checkAdmin();
 
   await Promise.all([
     loadOperationMembers(),
