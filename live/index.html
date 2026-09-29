@@ -645,10 +645,24 @@ button{
 .back-link{
   display:inline-flex;
   align-items:center;
-  gap:7px;
-  margin-bottom:28px;
-  color:#686e81;
+  gap:8px;
+  min-height:40px;
+  padding:0 15px;
+  margin:0 0 24px;
+  border:1px solid rgba(117,97,220,.18);
+  border-radius:13px;
+  background:rgba(255,255,255,.78);
+  box-shadow:0 7px 18px rgba(47,44,102,.07);
+  color:#6958ce;
   font-size:11px;
+  font-weight:800;
+  letter-spacing:.02em;
+  transition:transform .15s ease,background .15s ease,box-shadow .15s ease;
+}
+.back-link:hover{
+  transform:translateY(-1px);
+  background:#fff;
+  box-shadow:0 10px 23px rgba(47,44,102,.12);
 }
 
 .detail-kicker{
