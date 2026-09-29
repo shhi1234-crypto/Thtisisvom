@@ -194,6 +194,14 @@ async function loadReminders(){
 function reminderTypeLabel(type){
   return {event_created:'새 일정·주최자 저장 시',month_end_minus_one:'매월 말일 전날',month_end:'매월 말일',once:'한 번',monthly_day:'매월 특정일'}[type]||'알림';
 }
+function toLocalDateTimeInput(value){
+  if(!value)return '';
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return '';
+  date.setMinutes(date.getMinutes()-date.getTimezoneOffset());
+  return date.toISOString().slice(0,16);
+}
+
 function renderReminders(){
   const editing=reminders.find(row=>row.id===reminderEditingId);
   const row=editing||{title:'',message:'',trigger_type:'once',run_at:'',monthly_day:'',notify_time:'10:00:00'};
