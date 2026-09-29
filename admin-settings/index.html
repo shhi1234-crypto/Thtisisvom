@@ -49,6 +49,7 @@
 @media(max-width:700px){.operation-event{padding:15px}.operation-event-head{display:block}.operation-progress{display:inline-flex;margin-top:9px}.operation-task{grid-template-columns:29px minmax(0,1fr)}.operation-actions{grid-column:2;justify-content:flex-end}.operation-edit{min-height:25px}.operation-event-actions{flex-direction:column}.operation-event-actions button{width:100%}}
 
 @media(max-width:700px){.header{height:70px;padding:0 15px}.page{width:min(100% - 24px,1080px);padding-top:30px}.admin-badge{display:none!important}.title-row{display:block}.title-row h1{font-size:62px}.folder-grid{grid-template-columns:1fr}.folder-card{min-height:0}.toolbar{align-items:stretch;flex-direction:column}.filters{width:100%}.filter{flex:1;padding:0 9px}.add{width:100%}.resource-section{padding:19px 15px}.section-head{align-items:flex-start}.section-head-left{align-items:flex-start;flex-direction:column;gap:8px}.info-grid{grid-template-columns:1fr 1fr}.info-cell:first-child{grid-column:1/-1}.resource{padding:15px}.image-library-actions{align-items:flex-start;flex-direction:column}.image-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.modal{padding:20px 17px}.modal-actions{flex-direction:column-reverse}.delete-btn{width:100%}}
+.reminder-panel{display:grid;gap:14px}.reminder-intro{margin:0;color:#74798b;font-size:12px;line-height:1.7}.reminder-form,.reminder-row{padding:16px;border:1px solid rgba(111,88,190,.12);border-radius:17px;background:#faf9fd}.reminder-form{background:linear-gradient(135deg,#f4f0ff,#f0faf7)}.reminder-form h3{margin:0 0 10px;font-size:14px}.reminder-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.reminder-grid .wide{grid-column:1/-1}.reminder-input,.reminder-select,.reminder-textarea{width:100%;border:1px solid #dfddea;border-radius:10px;background:#fff;padding:10px;font:inherit;font-size:12px;color:#24283a}.reminder-textarea{min-height:74px;resize:vertical}.reminder-actions{display:flex;gap:7px;justify-content:flex-end;margin-top:10px}.reminder-row-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.reminder-row strong{font-size:13px}.reminder-row p{margin:5px 0 0;color:#74798b;font-size:11px;line-height:1.6}.reminder-meta{margin-top:8px;color:#6755c8;font-size:10px;font-weight:800}.reminder-state{padding:5px 8px;border-radius:999px;background:#e7f7ef;color:#418161;font-size:9px;font-weight:900}.reminder-state.off{background:#f1eff5;color:#8c8f9b}@media(max-width:600px){.reminder-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -77,6 +78,7 @@
       <div class="filters">
         <button class="filter" data-filter="HOME" onclick="setFilter('HOME')">운영자료 홈</button>
         <button class="filter" data-filter="OPERATIONS" onclick="setFilter('OPERATIONS')">일정 운영</button>
+        <button class="filter" data-filter="REMINDERS" onclick="setFilter('REMINDERS')">리마인더 설정</button>
         <button class="filter" data-filter="BUSKING" onclick="setFilter('BUSKING')">버스킹 관련 자료</button>
         <button class="filter" data-filter="RENTAL" onclick="setFilter('RENTAL')">대관공연</button>
         <button class="filter" data-filter="GENERAL" onclick="setFilter('GENERAL')">기타 자료</button>
@@ -162,8 +164,9 @@ const categoryMeta={
 };
 const imageMeta={label:'이미지 보관함',kicker:'IMAGE LIBRARY',icon:'🖼️',description:'운영진만 보는 이미지 자료 보관함'};
 const operationsMeta={label:'일정 운영',kicker:'EVENT CHECKLIST',icon:'✅',description:'소모임 · 공지 · 현장 준비 체크'};
-const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,IMAGES:imageMeta};
-let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],currentFilter='HOME',itemLoadError='',operationLoadError='';
+const remindersMeta={label:'리마인더 설정',kicker:'OPERATIONS ALERT',icon:'🔔',description:'자동 알림과 직접 만든 운영 알림'};
+const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,REMINDERS:remindersMeta,IMAGES:imageMeta};
+let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],reminders=[],reminderEditingId='',currentFilter='HOME',itemLoadError='',operationLoadError='';
 const IMAGE_LIBRARY_ALLOWED_TYPES=new Set(['image/jpeg','image/png','image/webp','image/gif']);
 const IMAGE_LIBRARY_MAX_BYTES=15*1024*1024;
 
@@ -177,11 +180,50 @@ async function start(){
   adminBadge.classList.add('show');
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
-  await Promise.all([loadItems(),loadImageLibrary(),loadOperations()]);
+  await Promise.all([loadItems(),loadImageLibrary(),loadOperations(),loadReminders()]);
 
   renderResources();
   bindImagePaste();
 }
+
+async function loadReminders(){
+  const {data,error}=await db.from('operation_reminders').select('*').order('created_at',{ascending:true});
+  if(error){console.error('REMINDERS:',error);reminders=[];return}
+  reminders=data||[];
+}
+function reminderTypeLabel(type){
+  return {event_created:'새 일정·주최자 저장 시',month_end_minus_one:'매월 말일 전날',month_end:'매월 말일',once:'한 번',monthly_day:'매월 특정일'}[type]||'알림';
+}
+function renderReminders(){
+  const editing=reminders.find(row=>row.id===reminderEditingId);
+  const row=editing||{title:'',message:'',trigger_type:'once',run_at:'',monthly_day:'',notify_time:'10:00:00'};
+  resourceStack.innerHTML='<section class="resource-section reminder-panel"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(\'HOME\')">← 운영 자료</button><div><div class="section-kicker">'+remindersMeta.kicker+'</div><h2>'+remindersMeta.label+'</h2></div></div><span class="section-count">전체 운영진</span></div><p class="reminder-intro">등록된 알림은 당분간 운영진 전체에게 발송됩니다. 새 일정 등록·정산일 알림도 여기에서 문구와 시간을 바꿀 수 있습니다.</p><form class="reminder-form" onsubmit="saveReminder(event)"><h3>'+ (editing?'리마인더 수정':'새 리마인더 추가') +'</h3><input id="reminderId" type="hidden" value="'+(editing?.id||'')+'"><div class="reminder-grid"><input id="reminderTitle" class="reminder-input" required placeholder="알림 제목" value="'+esc(row.title)+'"><select id="reminderType" class="reminder-select" onchange="updateReminderScheduleFields()"><option value="once" '+(row.trigger_type==='once'?'selected':'')+'>한 번</option><option value="monthly_day" '+(row.trigger_type==='monthly_day'?'selected':'')+'>매월 특정일</option><option value="event_created" '+(row.trigger_type==='event_created'?'selected':'')+'>새 일정·주최자 저장 시</option><option value="month_end_minus_one" '+(row.trigger_type==='month_end_minus_one'?'selected':'')+'>매월 말일 전날</option><option value="month_end" '+(row.trigger_type==='month_end'?'selected':'')+'>매월 말일</option></select><textarea id="reminderMessage" class="reminder-textarea wide" required placeholder="알림 내용">'+esc(row.message)+'</textarea><input id="reminderRunAt" class="reminder-input" type="datetime-local" value="'+(row.run_at?toLocalDateTimeInput(row.run_at):'')+'"><input id="reminderMonthlyDay" class="reminder-input" type="number" min="1" max="31" placeholder="매월 날짜 (1~31)" value="'+(row.monthly_day||'')+'"><input id="reminderTime" class="reminder-input" type="time" value="'+String(row.notify_time||'10:00').slice(0,5)+'"></div><div class="reminder-actions">'+(editing?'<button class="secondary" type="button" onclick="cancelReminderEdit()">취소</button>':'')+'<button class="primary" type="submit">저장</button></div></form><div class="resource-list">'+(reminders.length?reminders.map(reminder=>'<article class="reminder-row"><div class="reminder-row-head"><div><strong>'+esc(reminder.title)+'</strong><p>'+esc(reminder.message)+'</p></div><span class="reminder-state '+(reminder.is_active?'':'off')+'">'+(reminder.is_active?'활성':'중지')+'</span></div><div class="reminder-meta">'+reminderTypeLabel(reminder.trigger_type)+' · '+String(reminder.notify_time||'').slice(0,5)+'</div><div class="reminder-actions"><button class="secondary" type="button" onclick="editReminder(\''+reminder.id+'\')">수정</button><button class="secondary" type="button" onclick="toggleReminder(\''+reminder.id+'\','+(!reminder.is_active)+')">'+(reminder.is_active?'중지':'활성')+'</button><button class="danger" type="button" onclick="deleteReminder(\''+reminder.id+'\')">삭제</button></div></article>').join(''):'<div class="section-empty">등록된 리마인더가 없습니다.</div>')+'</div></section>';
+  updateReminderScheduleFields();
+}
+function updateReminderScheduleFields(){
+  const type=document.getElementById('reminderType')?.value;
+  const run=document.getElementById('reminderRunAt'),day=document.getElementById('reminderMonthlyDay');
+  if(!run||!day)return;
+  run.style.display=type==='once'?'block':'none';
+  day.style.display=type==='monthly_day'?'block':'none';
+}
+async function saveReminder(event){
+  event.preventDefault();
+  const id=document.getElementById('reminderId').value;
+  const type=document.getElementById('reminderType').value;
+  const runAt=document.getElementById('reminderRunAt').value;
+  const day=Number(document.getElementById('reminderMonthlyDay').value);
+  if(type==='once'&&!runAt){alert('발송 일시를 입력해주세요.');return}
+  if(type==='monthly_day'&&(!day||day<1||day>31)){alert('매월 날짜를 1~31로 입력해주세요.');return}
+  const payload={title:document.getElementById('reminderTitle').value.trim(),message:document.getElementById('reminderMessage').value.trim(),trigger_type:type,run_at:type==='once'?new Date(runAt).toISOString():null,monthly_day:type==='monthly_day'?day:null,notify_time:document.getElementById('reminderTime').value||'10:00',audience:'all_operators',is_active:true};
+  const result=id?await db.from('operation_reminders').update(payload).eq('id',id):await db.from('operation_reminders').insert(payload);
+  if(result.error){alert('저장하지 못했습니다.\n'+result.error.message);return}
+  reminderEditingId='';await loadReminders();renderReminders();
+}
+function editReminder(id){reminderEditingId=id;renderReminders()}
+function cancelReminderEdit(){reminderEditingId='';renderReminders()}
+async function toggleReminder(id,next){const {error}=await db.from('operation_reminders').update({is_active:next}).eq('id',id);if(error){alert('변경하지 못했습니다.');return}await loadReminders();renderReminders()}
+async function deleteReminder(id){if(!confirm('이 리마인더를 삭제할까요?'))return;const {error}=await db.from('operation_reminders').delete().eq('id',id);if(error){alert('삭제하지 못했습니다.');return}if(reminderEditingId===id)reminderEditingId='';await loadReminders();renderReminders()}
 
 async function loadItems(){
   const {data,error}=await db.from('admin_reference_items').select('*').eq('is_archived',false).order('category',{ascending:true}).order('sort_order',{ascending:true}).order('id',{ascending:true});
@@ -490,15 +532,15 @@ function render(){
 function renderResources(){
   const isHome=currentFilter==='HOME';
   folderHome.classList.toggle('hidden',!isHome);
-  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS');
+  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS');
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
     const loadError=itemLoadError?`<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>${esc(itemLoadError)}</div>`:'';
 
     folderHome.innerHTML=Object.entries(folderMeta).map(([category,meta])=>{
-      const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:items.filter(item=>item.category===category).length;
-      const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:`${count}건`;
+      const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:items.filter(item=>item.category===category).length;
+      const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:category==='REMINDERS'?`${count}개 활성`:`${count}건`;
       return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${countLabel}</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
     }).join('')+loadError;
 
@@ -507,6 +549,11 @@ function renderResources(){
 
   if(currentFilter==='OPERATIONS'){
     renderOperations();
+    return;
+  }
+
+  if(currentFilter==='REMINDERS'){
+    renderReminders();
     return;
   }
 
