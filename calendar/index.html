@@ -3246,7 +3246,7 @@ const db =
     SUPABASE_KEY
   );
 
-/* 일정은 로그인 세션과 분리된 공개 읽기 전용 클라이언트로 조회합니다. */
+/* 일정 조회는 로그인 세션과 분리된 공개 읽기 전용 클라이언트입니다. */
 const eventDb =
   supabase.createClient(
     SUPABASE_URL,
@@ -3431,9 +3431,34 @@ async function loadMedia(){
 
   const { data,error } =
     await db
-     async function loadEvents(){
+      .from('media_library')
+      .select('*')
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      );
 
-  const { data, error } =
+
+  if(error){
+
+    console.error(error);
+
+    mediaLibrary = [];
+
+    return;
+  }
+
+
+  mediaLibrary =
+    data || [];
+}
+
+
+async function loadEvents(){
+
+  const { data,error } =
     await eventDb
       .from('events')
       .select('id,title,event_type,event_date,start_time,end_time,location,image_url')
@@ -3443,53 +3468,18 @@ async function loadMedia(){
   if(error){
 
     document
-      .getElementById(
-        'calendarContainer'
-      )
+      .getElementById('calendarContainer')
       .innerHTML =
-      `
-        <section class="month">
-
-          <div class="empty">
-
-            일정을 불러오지 못했습니다.<br>
-
-            ${escapeHtml(error.message || '잠시 후 다시 시도해주세요.')}
-
-          </div>
-
-        </section>
-      `;
+        '<section class="month"><div class="empty">' +
+        '일정을 불러오지 못했습니다.<br>' +
+        escapeHtml(error.message || '잠시 후 다시 시도해주세요.') +
+        '</div></section>';
 
     return;
   }
 
   events = data || [];
   eventsLoaded = true;
-
-  renderCalendarView();
-}
-
-
-empty">
-
-            일정을 불러오지 못했습니다.<br>
-
-            ${escapeHtml(data?.error || error?.message || '잠시 후 다시 시도해주세요.')}
-
-          </div>
-
-        </section>
-      `;
-
-    return;
-  }
-
-
-  events = list;
-
-  eventsLoaded = true;
-
   renderCalendarView();
 }
 
