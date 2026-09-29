@@ -6515,6 +6515,7 @@ async function saveEvent(){
 
     if(!id && result.data){
       await createAutoOperationTasks(result.data);
+      notifyNewEvent(result.data);
     }
 
     closeEventModal();
@@ -6796,6 +6797,19 @@ function eventMonthLabel(eventDate){
   const date=new Date(eventDate+'T12:00:00');
   return (date.getMonth()+1)+'월';
 }
+async function notifyNewEvent(event){
+  try{
+    const date=formatNoticeDate(event.event_date);
+    const title=[date,event.title||'새 일정'].filter(Boolean).join(' · ');
+    const {data,error}=await db.functions.invoke('admin-reminder-push',{
+      body:{action:'event_created',eventTitle:title}
+    });
+    if(error||data?.error)console.warn('EVENT REMINDER:',data?.error||error?.message);
+  }catch(error){
+    console.warn('EVENT REMINDER:',error?.message||error);
+  }
+}
+
 async function createAutoOperationTasks(event){
   const eventDate=new Date(event.event_date+'T12:00:00');
   const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
