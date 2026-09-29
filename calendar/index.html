@@ -2913,7 +2913,7 @@ button{
       <div class="form-help">주최자는 1명, 운영 담당은 여러 명 선택할 수 있습니다. 알림은 당분간 운영진 전체에게 공통 발송됩니다.</div>
       <div class="field">
         <label>주최자 <span class="required-mark">필수</span></label>
-        <select id="eventHostMember" class="field"></select>
+        <select id="eventHostMember" class="field" onchange="syncHostMember()"></select>
       </div>
       <div class="field">
         <label>운영 담당</label>
