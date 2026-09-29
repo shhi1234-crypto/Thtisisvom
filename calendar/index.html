@@ -2398,6 +2398,7 @@ button{
    GENERIC CALENDAR DETAIL
 ====================================================== */
 .operation-checklist{margin-top:16px;padding:16px;border:1px solid rgba(244,143,55,.22);border-radius:18px;background:linear-gradient(135deg,rgba(255,249,240,.95),rgba(255,255,255,.95))}.operation-checklist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.operation-checklist-head b{font-size:14px}.operation-checklist-head span{padding:5px 8px;border-radius:999px;background:#fff0dc;color:#d77820;font-size:9px;font-weight:900}.operation-checklist-head p{margin:3px 0 0;color:#8a7768;font-size:9px}.operation-task{display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:5px;border-radius:12px;background:#fff;border:1px solid rgba(28,34,65,.06);cursor:pointer}.operation-task input{width:16px;height:16px;accent-color:#6f9e83;flex:none}.operation-task.pending{border-color:rgba(241,142,51,.28);background:#fffaf4}.operation-task.done{opacity:.66}.operation-task-copy{min-width:0;flex:1}.operation-task-copy strong{display:block;font-size:10px}.operation-task-copy small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.operation-task.pending small{color:#d77820}
+.monthly-ops-guide{margin:0 0 18px;padding:18px;border:1px solid rgba(112,93,222,.14);border-radius:20px;background:linear-gradient(135deg,rgba(244,240,255,.96),rgba(237,250,247,.94))}.monthly-ops-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.monthly-ops-head b{font-size:15px}.monthly-ops-head span{padding:5px 8px;border-radius:999px;background:#ece8ff;color:#6654c7;font-size:9px;font-weight:900}.monthly-ops-copy{margin:6px 0 11px;color:#757b8e;font-size:10px;line-height:1.65}.monthly-ops-list{display:grid;gap:5px}.monthly-ops-item{padding:9px 10px;border-radius:11px;background:rgba(255,255,255,.72);font-size:10px;font-weight:800}.monthly-ops-item small{margin-left:6px;color:#7f8496;font-weight:600}.monthly-ops-warning{margin:10px 0 0;color:#c4722a;font-size:10px;font-weight:800}.monthly-copy-btn{margin-top:11px;border:0;border-radius:11px;padding:9px 11px;background:#7461dd;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
 .owner-section{border-top:1px solid rgba(28,34,65,.06)}.required-mark{margin-left:4px;color:#dc7430;font-size:8px;font-weight:900}.owner-members{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid #dddde7;border-radius:12px;background:#fbfaff}.owner-option{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:9px;background:#f0edfb;color:#6555c4;font-size:10px;font-weight:800;cursor:pointer}.owner-option input{accent-color:#7561dc}
 .schedule-detail-card{
   padding:3px 1px 2px;
@@ -3637,6 +3638,29 @@ function setCalendarView(view){
 }
 
 
+function nextMonthScheduleEvents(){
+  const today=new Date();
+  const start=new Date(today.getFullYear(),today.getMonth()+1,1);
+  const end=new Date(today.getFullYear(),today.getMonth()+2,1);
+  return events.filter(item=>{const date=new Date(item.event_date+'T00:00:00');return date>=start&&date<end}).sort((a,b)=>String(a.event_date).localeCompare(String(b.event_date)));
+}
+function nextMonthLabel(){
+  const date=new Date();
+  return (date.getMonth()+2)+'월';
+}
+function renderMonthlyOperationsGuide(){
+  if(!adminMode)return '';
+  const list=nextMonthScheduleEvents(),month=nextMonthLabel();
+  const status=list.length===0?month+' 일정 미등록':list.length<=2?month+' 일정 확인 필요':month+' 일정 '+list.length+'개 등록';
+  const warning=list.length===0?month+' 일정을 등록해주세요.':list.length<=2?month+' 일정이 모두 등록되었는지 확인해주세요.':'등록된 일정들이 공지방에 모두 안내됐는지 확인해주세요.';
+  return '<section class="monthly-ops-guide"><div class="monthly-ops-head"><div><b>다음 달 운영 준비</b><p class="monthly-ops-copy">① 홈페이지 일정 등록 → ② 공지방 월간 공지 → ③ 소모임 모집글 예약·정식 오픈</p></div><span>'+status+'</span></div><div class="monthly-ops-list">'+(list.length?list.map(item=>'<div class="monthly-ops-item">'+escapeHtml(item.title||'일정')+'<small>'+formatKoreanDate(item.event_date)+'</small></div>').join(''):'<div class="monthly-ops-item">등록된 일정이 없습니다.</div>')+'</div><div class="monthly-ops-warning">'+warning+'</div><button class="monthly-copy-btn" type="button" onclick="copyNextMonthNotice()">공지 확인문 복사</button></section>';
+}
+async function copyNextMonthNotice(){
+  const list=nextMonthScheduleEvents(),month=nextMonthLabel();
+  const text='[ '+month+' 일정 공지 확인 ]\n\n'+(list.length?list.map(item=>'• '+formatKoreanDate(item.event_date)+' · '+(item.title||'일정')).join('\n'):'• 등록된 일정이 없습니다.')+'\n\n등록된 일정들이 공지방에 모두 안내되었는지 확인해주세요.';
+  try{await navigator.clipboard.writeText(text);alert('공지 확인문을 복사했습니다.')}catch(_error){window.prompt('아래 문구를 복사해주세요.',text)}
+}
+
 function renderCalendarView(){
 
   if(calendarView === 'MONTH'){
@@ -3824,6 +3848,7 @@ function renderRealCalendar(){
 
 
   container.innerHTML = `
+    ${renderMonthlyOperationsGuide()}
     <section class="real-calendar">
 
       <div class="week-head">
@@ -4017,6 +4042,7 @@ function renderCalendar(){
 
     container.innerHTML =
     `
+      ${renderMonthlyOperationsGuide()}
       <section class="month">
 
         <div class="empty">
@@ -4098,6 +4124,7 @@ function renderCalendar(){
 
 
   container.innerHTML =
+    renderMonthlyOperationsGuide() +
     renderScheduleGroup('다가오는 일정', upcoming, false) +
     renderScheduleGroup('지난 일정', past, true);
 }
@@ -4346,7 +4373,7 @@ function openEventDetail(id){
 
 async function loadOperationTasks(eventId){if(!adminMode){operationTasks=[];return}const {data,error}=await db.from('event_operation_tasks').select('*').eq('event_id',Number(eventId)).order('sort_order',{ascending:true});operationTasks=error?[]:(data||[])}
 function taskDueLabel(value){if(!value)return '마감일 미정';const due=new Date(value+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);const label=(due.getMonth()+1)+'/'+due.getDate()+'까지';return due<today?'마감 지남 · '+label:label}
-function renderOperationChecklist(){if(!adminMode||!operationTasks.length)return '';const pending=operationTasks.filter(t=>!t.is_done).length;return '<section class="operation-checklist"><div class="operation-checklist-head"><div><b>운영 체크리스트</b><p>완료한 항목을 체크해주세요.</p></div><span>미완료 '+pending+'건</span></div>'+operationTasks.map(t=>'<label class="operation-task '+(t.is_done?'done':'pending')+'"><input type="checkbox" '+(t.is_done?'checked':'')+' onchange="toggleOperationTask('+Number(t.id)+',this.checked)"><span class="operation-task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+taskDueLabel(t.due_date)+(t.is_done?' · 완료':' · 확인 필요')+'</small></span></label>').join('')+'</section>'}
+function renderOperationChecklist(){if(!adminMode||!operationTasks.length)return '';const pending=operationTasks.filter(t=>!t.is_done).length;return '<section class="operation-checklist"><div class="operation-checklist-head"><div><b>운영 체크리스트</b><p>완료한 항목을 체크해주세요.</p></div><span>미완료 '+pending+'건</span></div>'+operationTasks.map(t=>'<label class="operation-task '+(t.is_done?'done':'pending')+'"><input type="checkbox" '+(t.is_done?'checked':'')+' onchange="toggleOperationTask('+Number(t.id)+',this.checked)"><span class="operation-task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+taskDueLabel(t.due_date)+(t.is_done?' · 완료':' · 확인 필요')+(t.description?' · '+escapeHtml(t.description):'')+'</small></span></label>').join('')+'</section>'}
 async function toggleOperationTask(taskId,done){const {error}=await db.from('event_operation_tasks').update({is_done:done,completed_at:done?new Date().toISOString():null}).eq('id',Number(taskId));if(error){alert('체크 상태를 저장하지 못했습니다.');return}const task=operationTasks.find(t=>Number(t.id)===Number(taskId));const item=events.find(row=>String(row.id)===String(task?.event_id));if(item)await openScheduleDetail(item)}
 
 async function openScheduleDetail(item){
