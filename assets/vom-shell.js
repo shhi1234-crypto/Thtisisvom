@@ -56,6 +56,22 @@
         color: #755fe1 !important;
         font-weight: 900 !important;
       }
+      .vom-shell-admin-badge{
+        display:inline-flex !important;
+        align-items:center;
+        gap:7px;
+        min-height:34px;
+        padding:0 12px;
+        border:1px solid rgba(126,102,232,.18);
+        border-radius:999px;
+        background:rgba(126,102,232,.12);
+        color:#6955d2 !important;
+        font:800 10px/1 Pretendard,"Noto Sans KR",Arial,sans-serif;
+        letter-spacing:.7px;
+        text-decoration:none !important;
+        white-space:nowrap;
+      }
+      .vom-shell-admin-badge .admin-dot{width:7px;height:7px;border-radius:50%;background:#765fe6}
       .member-session-chip {
         display: inline-flex;
         align-items: center;
@@ -206,6 +222,85 @@
     }
   }
 
+
+  function adminBadgeHost() {
+    return document.querySelector('.header-right, .header-actions, .header');
+  }
+
+  function addAdminBadge() {
+    const existing = document.getElementById('adminBadge');
+    if (existing) {
+      existing.classList.add('show');
+      return;
+    }
+    const host = adminBadgeHost();
+    if (!host || host.querySelector('.vom-shell-admin-badge')) return;
+    const badge = document.createElement('a');
+    badge.href = '/admin-settings/';
+    badge.className = 'admin-badge show vom-shell-admin-badge';
+    badge.setAttribute('aria-label', '운영자료로 이동');
+    badge.innerHTML = '<span class="admin-dot"></span><span>ADMIN MODE</span>';
+    const menuButton = host.querySelector('.menu-btn');
+    if (menuButton) host.insertBefore(badge, menuButton);
+    else host.appendChild(badge);
+  }
+
+  function setUnifiedMenu(isAdmin) {
+    document.querySelectorAll('.menu-card').forEach(function (card) {
+      const top = card.querySelector('.menu-top');
+      if (!top) return;
+      card.querySelectorAll(':scope > a').forEach(function (link) { link.remove(); });
+      const links = [
+        ['HOME', '/'],
+        ['INFO', '/info/'],
+        ['CALENDAR', '/calendar/'],
+        ['VOM LIVE', '/live/'],
+        ['BUSKING', '/busking/'],
+        ['MEMBERS', '/members/'],
+        ['MY VOM', '/me/'],
+        ['Q&A', '/qna/']
+      ];
+      if (isAdmin) links.push(['운영자료 · ADMIN SETTINGS', '/admin-settings/']);
+      links.forEach(function (item) {
+        const link = document.createElement('a');
+        link.href = item[1];
+        if (path === item[1].replace(/\/$/, '') || (item[1] !== '/' && path.indexOf(item[1].replace(/\/$/, '')) === 0)) link.classList.add('active');
+        link.innerHTML = '<span>' + item[0] + '</span><span>→</span>';
+        card.appendChild(link);
+      });
+    });
+  }
+
+  async function checkAdminShell() {
+    const token = storedAccessToken();
+    if (!token) {
+      setUnifiedMenu(false);
+      return false;
+    }
+    try {
+      const userRes = await window.fetch(SUPABASE_URL + '/auth/v1/user', {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token }
+      });
+      if (!userRes.ok) {
+        setUnifiedMenu(false);
+        return false;
+      }
+      const user = await userRes.json();
+      const adminRes = await window.fetch(
+        SUPABASE_URL + '/rest/v1/admins?select=user_id&user_id=eq.' + encodeURIComponent(user.id),
+        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token } }
+      );
+      const admins = adminRes.ok ? await adminRes.json() : [];
+      const isAdmin = Array.isArray(admins) && admins.length > 0;
+      if (isAdmin) addAdminBadge();
+      setUnifiedMenu(isAdmin);
+      return isAdmin;
+    } catch (_) {
+      setUnifiedMenu(false);
+      return false;
+    }
+  }
+
   async function showCurrentMember() {
     const accessToken = storedAccessToken();
     if (!accessToken) {
@@ -239,6 +334,7 @@
     normalizeBottomNavigation();
     normalizeBackLinks();
     keepBackLinksNormalized();
+    checkAdminShell();
     showCurrentMember();
   }
 
