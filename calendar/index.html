@@ -3458,14 +3458,47 @@ async function loadMedia(){
 
 async function loadEvents(){
 
-  const { data,error } =
-    await eventDb
-      .from('events')
-      .select('id,title,event_type,event_date,start_time,end_time,location,image_url')
-      .order('event_date',{ascending:true})
-      .order('start_time',{ascending:true});
+  const controller = new AbortController();
+  const timer = window.setTimeout(
+    () => controller.abort(),
+    10000
+  );
 
-  if(error){
+  try{
+
+    const response =
+      await fetch(
+        SUPABASE_URL +
+        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Cimage_url&order=event_date.asc%2Cstart_time.asc',
+        {
+          method:'GET',
+          credentials:'omit',
+          headers:{
+            'apikey':SUPABASE_KEY
+          },
+          signal:controller.signal
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if(
+      !response.ok ||
+      !Array.isArray(data)
+    ){
+      throw new Error(
+        data?.message ||
+        data?.hint ||
+        'events_unavailable'
+      );
+    }
+
+    events = data;
+    eventsLoaded = true;
+    renderCalendarView();
+
+  }catch(error){
 
     document
       .getElementById('calendarContainer')
@@ -3475,12 +3508,9 @@ async function loadEvents(){
         escapeHtml(error.message || '잠시 후 다시 시도해주세요.') +
         '</div></section>';
 
-    return;
+  }finally{
+    window.clearTimeout(timer);
   }
-
-  events = data || [];
-  eventsLoaded = true;
-  renderCalendarView();
 }
 
 
