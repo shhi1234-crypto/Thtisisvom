@@ -105,6 +105,53 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .vom-shell-fallback-overlay{
+        position:fixed;
+        inset:0;
+        z-index:1000;
+        display:none;
+        align-items:flex-start;
+        justify-content:flex-end;
+        padding:18px;
+        background:rgba(20,20,40,.26);
+        backdrop-filter:blur(5px);
+      }
+      .vom-shell-fallback-overlay.open{display:flex}
+      .vom-shell-fallback-card{
+        width:min(380px,100%);
+        margin-top:55px;
+        padding:16px;
+        border-radius:24px;
+        background:#fff;
+        box-shadow:0 22px 70px rgba(31,23,79,.2);
+      }
+      .vom-shell-fallback-card .menu-top{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:6px 5px 12px;
+      }
+      .vom-shell-fallback-card .menu-top h3{margin:0;font:800 17px/1 Pretendard,"Noto Sans KR",Arial,sans-serif}
+      .vom-shell-fallback-card .vom-shell-close{
+        width:34px;height:34px;border:0;border-radius:50%;background:#f3f2f8;color:#4d5264;font-size:16px;cursor:pointer;
+      }
+      .vom-shell-fallback-card > a{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        min-height:48px;
+        padding:0 10px;
+        border-top:1px solid #f0eef6;
+        color:#2c3043;
+        text-decoration:none;
+        font:700 13px "DM Sans",Pretendard,"Noto Sans KR",Arial,sans-serif;
+      }
+      .vom-shell-fallback-card > a.active{color:#6755d9}
+      .vom-shell-menu-trigger{
+        width:46px;height:46px;border:1px solid rgba(255,255,255,.92);border-radius:50%;
+        background:rgba(255,255,255,.66);color:#20253a;font-size:18px;cursor:pointer;
+        box-shadow:0 10px 30px rgba(31,38,76,.08);
+      }
       @media (max-width: 640px) {
         body.has-vom-bottom { padding-bottom: 92px !important; }
         nav.bottom.vom-global-bottom {
@@ -245,8 +292,51 @@
     else host.appendChild(badge);
   }
 
+
+  function ensureFallbackMenu() {
+    if (document.querySelector('.menu-card') || document.getElementById('vom-shell-fallback-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'vom-shell-fallback-overlay';
+    overlay.className = 'vom-shell-fallback-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML =
+      '<div class="vom-shell-fallback-card">' +
+      '<div class="menu-top"><h3>VOM Menu</h3><button type="button" class="vom-shell-close" aria-label="메뉴 닫기">✕</button></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    const open = function () {
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+    };
+    const close = function () {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+    };
+
+    overlay.querySelector('.vom-shell-close').addEventListener('click', close);
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) close();
+    });
+
+    const host = adminBadgeHost();
+    if (host && !host.querySelector('.menu-btn, .vom-shell-menu-trigger')) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'vom-shell-menu-trigger';
+      button.setAttribute('aria-label', '메뉴 열기');
+      button.textContent = '☰';
+      button.addEventListener('click', open);
+      host.appendChild(button);
+    }
+
+    window.openMenu = window.openMenu || open;
+    window.closeMenu = window.closeMenu || close;
+  }
+
   function setUnifiedMenu(isAdmin) {
-    document.querySelectorAll('.menu-card').forEach(function (card) {
+    document.querySelectorAll('.menu-card, .vom-shell-fallback-card').forEach(function (card) {
       const top = card.querySelector('.menu-top');
       if (!top) return;
       card.querySelectorAll(':scope > a').forEach(function (link) { link.remove(); });
@@ -334,6 +424,7 @@
     normalizeBottomNavigation();
     normalizeBackLinks();
     keepBackLinksNormalized();
+    ensureFallbackMenu();
     checkAdminShell();
     showCurrentMember();
   }
