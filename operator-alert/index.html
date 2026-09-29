@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7d68e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="VOM 운영">
+<link rel="apple-touch-icon" href="/favicon.png?v=4">
+<link rel="icon" href="/favicon.png?v=4">
+<title>VOM 운영 알림</title>
+<style>
+:root{--ink:#171b31;--muted:#74798d;--purple:#7461df;--line:#e8e5f0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 92% 3%,#d7f1f0 0,transparent 31%),radial-gradient(circle at 6% 100%,#eee6ff 0,transparent 34%),#f8f7fb}
+main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#725ddd;font-size:12px;font-weight:800;letter-spacing:.08em}.logo{font-size:52px;font-weight:900;letter-spacing:-.07em;margin:8px 0 1px}.sub{font-size:10px;letter-spacing:.3em;font-weight:800}.card{margin-top:38px;padding:27px;border:1px solid #fff;border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 22px 55px rgba(46,43,91,.11)}h1{font-size:25px;margin:0 0 8px;letter-spacing:-.06em}.copy{margin:0;color:var(--muted);font-size:14px;line-height:1.7}.steps{display:grid;gap:11px;margin:23px 0}.step{display:flex;gap:11px;padding:12px;border-radius:15px;background:#f7f5fb;color:#50566c;font-size:13px;line-height:1.55}.num{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;color:#fff;background:#826ee8;font-size:11px;font-weight:800}button{width:100%;border:0;border-radius:15px;padding:15px;background:linear-gradient(135deg,#7d64e4,#7284e7);color:#fff;font-size:15px;font-weight:800;cursor:pointer}button+button{margin-top:10px}button.secondary{background:#f0edff;color:#6754ce}button:disabled{opacity:.48;cursor:default}.status{min-height:23px;margin:18px 2px 0;color:#6d668d;font-size:13px;line-height:1.6}.fine{margin:19px 2px 0;color:#9b9eab;font-size:11px;line-height:1.65}.hidden{display:none}@media(max-width:420px){main{padding-top:58px}.logo{font-size:47px}.card{padding:23px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">VOM OPERATIONS</div>
+  <div class="logo">VOM</div>
+  <div class="sub">VOICE OF MELODY</div>
+  <section class="card">
+    <h1>운영 알림 테스트</h1>
+    <p class="copy">이 기기에서만 VOM 운영 알림을 받아봅니다.</p>
+    <div id="iosGuide" class="steps hidden">
+      <div class="step"><span class="num">1</span><span>Safari 하단의 <b>공유</b> 버튼을 누르세요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>홈 화면에 추가</b> 후 생성된 <b>VOM 운영</b> 아이콘을 다시 여세요.</span></div>
+      <div class="step"><span class="num">3</span><span>아래 버튼을 눌러 알림을 허용하면 됩니다.</span></div>
+    </div>
+    <button id="setupBtn" type="button">이 기기에서 알림 받기</button>
+    <button id="testBtn" class="secondary" type="button" disabled>테스트 알림 보내기</button>
+    <div id="status" class="status">등록 정보를 확인하는 중입니다.</div>
+    <div class="fine">알림은 이 링크를 받은 운영진의 기기에만 등록됩니다. 폰을 바꾸면 이 링크에서 다시 등록하면 됩니다.</div>
+  </section>
+</main>
+<script>
+const token=new URLSearchParams(location.search).get('t')||'';
+const endpoint='https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/operator-push';
+const setupBtn=document.getElementById('setupBtn'),testBtn=document.getElementById('testBtn'),status=document.getElementById('status');
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);
+const isStandalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+let config=null,registered=false;
+function setStatus(message){status.textContent=message}
+function toUint8(value){const padding='='.repeat((4-value.length%4)%4);const raw=atob((value+padding).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)))}
+async function call(action,payload={}){const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,inviteToken:token,...payload})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'요청에 실패했습니다.');return data}
+async function refresh(){if(!token){setStatus('유효하지 않은 등록 링크입니다.');setupBtn.disabled=true;return}try{config=await call('config');setStatus(config.recipientName+'님 기기에서 알림을 등록할 수 있습니다.');const reg=await navigator.serviceWorker.getRegistration('/');const existing=reg&&await reg.pushManager.getSubscription();if(existing){registered=true;setupBtn.textContent='알림 등록 완료';setupBtn.disabled=true;testBtn.disabled=false;setStatus('알림이 등록되었습니다. 테스트 알림을 보내보세요.')}}catch(e){setStatus('등록 정보를 불러오지 못했습니다.');setupBtn.disabled=true}}
+async function setup(){try{if(isIOS&&!isStandalone){setStatus('아이폰은 홈 화면에 추가한 뒤 VOM 운영 아이콘에서 다시 열어주세요.');return}if(!('serviceWorker' in navigator)||!('PushManager' in window)){setStatus('이 기기에서는 웹 푸시를 지원하지 않습니다.');return}setupBtn.disabled=true;setStatus('알림 권한을 요청하는 중입니다.');const permission=await Notification.requestPermission();if(permission!=='granted'){setStatus('알림을 허용해야 테스트할 수 있습니다.');setupBtn.disabled=false;return}const reg=await navigator.serviceWorker.register('/sw.js',{scope:'/'});await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:toUint8(config.publicKey)});await call('subscribe',{subscription:sub.toJSON()});registered=true;setupBtn.textContent='알림 등록 완료';testBtn.disabled=false;setStatus('등록 완료. 아래에서 실제 푸시를 보내보세요.')}catch(e){console.error(e);setStatus('등록하지 못했습니다. 잠시 후 다시 시도해주세요.');setupBtn.disabled=false}}
+async function sendTest(){if(!registered)return;try{testBtn.disabled=true;setStatus('테스트 알림을 보내는 중입니다.');await call('test');setStatus('발송했습니다. 잠금화면 또는 상단 알림창을 확인해주세요.');}catch(e){console.error(e);setStatus('테스트 발송에 실패했습니다. 다시 시도해주세요.');}finally{testBtn.disabled=false}}
+if(isIOS&&!isStandalone)document.getElementById('iosGuide').classList.remove('hidden');
+setupBtn.addEventListener('click',setup);testBtn.addEventListener('click',sendTest);refresh();
+</script>
+</body>
+</html>
