@@ -7,13 +7,14 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="VOM 운영">
-<link rel="manifest" href="/operator-alert/vom-ops-8e2d88b58fc5.webmanifest">\n<link rel="apple-touch-icon" href="/favicon.png?v=4">
+<link rel="manifest" href="/operator-alert/vom-ops-8e2d88b58fc5.webmanifest">
+<link rel="apple-touch-icon" href="/favicon.png?v=4">
 <link rel="icon" href="/favicon.png?v=4">
 <title>VOM 운영 알림</title>
 <style>
 :root{--ink:#171b31;--muted:#74798d;--purple:#7461df;--line:#e8e5f0}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 92% 3%,#d7f1f0 0,transparent 31%),radial-gradient(circle at 6% 100%,#eee6ff 0,transparent 34%),#f8f7fb}
-main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#725ddd;font-size:12px;font-weight:800;letter-spacing:.08em}.logo{font-size:52px;font-weight:900;letter-spacing:-.07em;margin:8px 0 1px}.sub{font-size:10px;letter-spacing:.3em;font-weight:800}.card{margin-top:38px;padding:27px;border:1px solid #fff;border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 22px 55px rgba(46,43,91,.11)}h1{font-size:25px;margin:0 0 8px;letter-spacing:-.06em}.copy{margin:0;color:var(--muted);font-size:14px;line-height:1.7}.steps{display:grid;gap:11px;margin:23px 0}.step{display:flex;gap:11px;padding:12px;border-radius:15px;background:#f7f5fb;color:#50566c;font-size:13px;line-height:1.55}.num{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;color:#fff;background:#826ee8;font-size:11px;font-weight:800}button{width:100%;border:0;border-radius:15px;padding:15px;background:linear-gradient(135deg,#7d64e4,#7284e7);color:#fff;font-size:15px;font-weight:800;cursor:pointer}button+button{margin-top:10px}button.secondary{background:#f0edff;color:#6754ce}button:disabled{opacity:.48;cursor:default}.status{min-height:23px;margin:18px 2px 0;color:#6d668d;font-size:13px;line-height:1.6}.fine{margin:19px 2px 0;color:#9b9eab;font-size:11px;line-height:1.65}.hidden{display:none}@media(max-width:420px){main{padding-top:58px}.logo{font-size:47px}.card{padding:23px}}
+main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#725ddd;font-size:12px;font-weight:800;letter-spacing:.08em}.logo{font-size:52px;font-weight:900;letter-spacing:-.07em;margin:8px 0 1px}.sub{font-size:10px;letter-spacing:.3em;font-weight:800}.card{margin-top:38px;padding:27px;border:1px solid #fff;border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 22px 55px rgba(46,43,91,.11)}h1{font-size:25px;margin:0 0 8px;letter-spacing:-.06em}.copy{margin:0;color:var(--muted);font-size:14px;line-height:1.7}.steps{display:grid;gap:11px;margin:23px 0}.step{display:flex;gap:11px;padding:12px;border-radius:15px;background:#f7f5fb;color:#50566c;font-size:13px;line-height:1.55}.num{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;color:#fff;background:#826ee8;font-size:11px;font-weight:800}button,.guide-link{display:block;width:100%;border:0;border-radius:15px;padding:15px;background:linear-gradient(135deg,#7d64e4,#7284e7);color:#fff;font-size:15px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none}button+button{margin-top:10px}button.secondary{background:#f0edff;color:#6754ce}.guide-link{margin-bottom:10px;background:#f0edff;color:#6754ce}button:disabled{opacity:.48;cursor:default}.status{min-height:23px;margin:18px 2px 0;color:#6d668d;font-size:13px;line-height:1.6}.fine{margin:19px 2px 0;color:#9b9eab;font-size:11px;line-height:1.65}.hidden{display:none}@media(max-width:420px){main{padding-top:58px}.logo{font-size:47px}.card{padding:23px}}
 </style>
 </head>
 <body>
@@ -32,6 +33,7 @@ main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#72
       <div class="step"><span class="num">5</span><span>아래 <b>이 기기에서 알림 받기</b>를 누르고, 아이폰 팝업에서 <b>허용</b>을 선택합니다.</span></div>
       <div class="step"><span class="num">6</span><span><b>테스트 알림 보내기</b>를 누른 뒤 잠금화면 또는 상단 알림창에 <b>VOM 운영 알림</b>이 뜨는지 확인합니다.</span></div>
     </div>
+    <a class="guide-link" href="/operator-alert/ios-notification-guide.svg?v=1" target="_blank" rel="noopener">안내 이미지 열기 · 길게 눌러 저장</a>
     <button id="setupBtn" type="button">이 기기에서 알림 받기</button>
     <button id="testBtn" class="secondary" type="button" disabled>테스트 알림 보내기</button>
     <div id="status" class="status">등록 정보를 확인하는 중입니다.</div>
@@ -51,7 +53,6 @@ async function call(action,payload={}){const res=await fetch(endpoint,{method:'P
 async function refresh(){if(!token){setStatus('유효하지 않은 등록 링크입니다.');setupBtn.disabled=true;return}try{config=await call('config');setStatus(config.recipientName+'님 기기에서 알림을 등록할 수 있습니다.');const reg=await navigator.serviceWorker.getRegistration('/');const existing=reg&&await reg.pushManager.getSubscription();if(existing){registered=true;setupBtn.textContent='알림 등록 완료';setupBtn.disabled=true;testBtn.disabled=false;setStatus('알림이 등록되었습니다. 테스트 알림을 보내보세요.')}}catch(e){setStatus('등록 정보를 불러오지 못했습니다.');setupBtn.disabled=true}}
 async function setup(){try{if(isIOS&&!isStandalone){setStatus('아이폰은 홈 화면에 추가한 뒤 VOM 운영 아이콘에서 다시 열어주세요.');return}if(!('serviceWorker' in navigator)||!('PushManager' in window)){setStatus('이 기기에서는 웹 푸시를 지원하지 않습니다.');return}setupBtn.disabled=true;setStatus('알림 권한을 요청하는 중입니다.');const permission=await Notification.requestPermission();if(permission!=='granted'){setStatus('알림을 허용해야 테스트할 수 있습니다.');setupBtn.disabled=false;return}const reg=await navigator.serviceWorker.register('/sw.js',{scope:'/'});await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:toUint8(config.publicKey)});await call('subscribe',{subscription:sub.toJSON()});registered=true;setupBtn.textContent='알림 등록 완료';testBtn.disabled=false;setStatus('등록 완료. 아래에서 실제 푸시를 보내보세요.')}catch(e){console.error(e);setStatus('등록하지 못했습니다. 잠시 후 다시 시도해주세요.');setupBtn.disabled=false}}
 async function sendTest(){if(!registered)return;try{testBtn.disabled=true;setStatus('테스트 알림을 보내는 중입니다.');await call('test');setStatus('발송했습니다. 잠금화면 또는 상단 알림창을 확인해주세요.');}catch(e){console.error(e);setStatus('테스트 발송에 실패했습니다. 다시 시도해주세요.');}finally{testBtn.disabled=false}}
-
 setupBtn.addEventListener('click',setup);testBtn.addEventListener('click',sendTest);refresh();
 </script>
 </body>
