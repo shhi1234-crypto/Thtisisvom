@@ -3445,18 +3445,19 @@ async function loadMedia(){
 async function loadEvents(){
 
   const { data,error } =
-    await db
-      .from('events')
-      .select('*')
-      .order(
-        'event_date',
-        {
-          ascending:true
-        }
-      );
+    await db.functions.invoke(
+      'public-events',
+      {body:{action:'list'}}
+    );
 
+  const list =
+    data &&
+    data.ok &&
+    Array.isArray(data.events)
+      ? data.events
+      : null;
 
-  if(error){
+  if(error || !list){
 
     document
       .getElementById(
@@ -3470,7 +3471,7 @@ async function loadEvents(){
 
             일정을 불러오지 못했습니다.<br>
 
-            ${escapeHtml(error.message)}
+            ${escapeHtml(data?.error || error?.message || '잠시 후 다시 시도해주세요.')}
 
           </div>
 
@@ -3481,8 +3482,7 @@ async function loadEvents(){
   }
 
 
-  events =
-    data || [];
+  events = list;
 
   eventsLoaded = true;
 
