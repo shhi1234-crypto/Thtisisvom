@@ -2397,6 +2397,7 @@ button{
 /* ======================================================
    GENERIC CALENDAR DETAIL
 ====================================================== */
+.operation-checklist{margin-top:16px;padding:16px;border:1px solid rgba(244,143,55,.22);border-radius:18px;background:linear-gradient(135deg,rgba(255,249,240,.95),rgba(255,255,255,.95))}.operation-checklist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.operation-checklist-head b{font-size:14px}.operation-checklist-head span{padding:5px 8px;border-radius:999px;background:#fff0dc;color:#d77820;font-size:9px;font-weight:900}.operation-checklist-head p{margin:3px 0 0;color:#8a7768;font-size:9px}.operation-task{display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:5px;border-radius:12px;background:#fff;border:1px solid rgba(28,34,65,.06);cursor:pointer}.operation-task input{width:16px;height:16px;accent-color:#6f9e83;flex:none}.operation-task.pending{border-color:rgba(241,142,51,.28);background:#fffaf4}.operation-task.done{opacity:.66}.operation-task-copy{min-width:0;flex:1}.operation-task-copy strong{display:block;font-size:10px}.operation-task-copy small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.operation-task.pending small{color:#d77820}
 .schedule-detail-card{
   padding:3px 1px 2px;
 }
@@ -3244,6 +3245,7 @@ let currentEventType =
   'VOM LIVE';
 
 let adminMode = false;
+let operationTasks = [];
 
 let selectedImageUrl = '';
 
@@ -4301,6 +4303,11 @@ function openEventDetail(id){
 }
 
 
+async function loadOperationTasks(eventId){if(!adminMode){operationTasks=[];return}const {data,error}=await db.from('event_operation_tasks').select('*').eq('event_id',Number(eventId)).order('sort_order',{ascending:true});operationTasks=error?[]:(data||[])}
+function taskDueLabel(value){if(!value)return '마감일 미정';const due=new Date(value+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);const label=(due.getMonth()+1)+'/'+due.getDate()+'까지';return due<today?'마감 지남 · '+label:label}
+function renderOperationChecklist(){if(!adminMode||!operationTasks.length)return '';const pending=operationTasks.filter(t=>!t.is_done).length;return '<section class="operation-checklist"><div class="operation-checklist-head"><div><b>운영 체크리스트</b><p>완료한 항목을 체크해주세요.</p></div><span>미완료 '+pending+'건</span></div>'+operationTasks.map(t=>'<label class="operation-task '+(t.is_done?'done':'pending')+'"><input type="checkbox" '+(t.is_done?'checked':'')+' onchange="toggleOperationTask('+Number(t.id)+',this.checked)"><span class="operation-task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+taskDueLabel(t.due_date)+(t.is_done?' · 완료':' · 확인 필요')+'</small></span></label>').join('')+'</section>'}
+async function toggleOperationTask(taskId,done){const {error}=await db.from('event_operation_tasks').update({is_done:done,completed_at:done?new Date().toISOString():null}).eq('id',Number(taskId));if(error){alert('체크 상태를 저장하지 못했습니다.');return}const item=events.find(row=>operationTasks.some(t=>Number(t.id)===Number(taskId))?String(row.id)===String(operationTasks.find(t=>Number(t.id)===Number(taskId)).event_id):false);if(item)await openScheduleDetail(item)}
+
 async function openScheduleDetail(item){
 
   const preset =
@@ -4316,6 +4323,8 @@ async function openScheduleDetail(item){
     item.location ||
     '장소 미정';
 
+
+  await loadOperationTasks(item.id);
 
   let setlistExists = false;
 
@@ -4414,6 +4423,8 @@ async function openScheduleDetail(item){
         ? `<div class="host-note"><div class="host-note-label">HOST NOTE</div><div class="host-note-title">주최자 안내</div><div class="host-note-body">${escapeHtml(item.host_note).replace(/\n/g,'<br>')}</div></div>`
         : ''
       }
+
+      ${renderOperationChecklist()}
 
       <div class="schedule-detail-admin">
 
