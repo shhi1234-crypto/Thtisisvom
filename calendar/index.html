@@ -2886,6 +2886,12 @@ button{
 
       </div>
 
+      <div class="field">
+        <label>소모임 정식 오픈 일시</label>
+        <input id="somoimOpenAt" class="text-input" type="datetime-local">
+        <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">이 시간에 맞춰 ‘모집글 정식 오픈 · 인원 제한 해제’ 작업이 생성됩니다.</div>
+      </div>
+
 
       <div class="field">
 
@@ -4611,13 +4617,6 @@ function setEventType(type){
 
 function updatePresetCopy(){
 
-  const hostMemberId=Number(document.getElementById('eventHostMember').value);
-  if(!hostMemberId){
-    alert('주최자를 선택해주세요.');
-    return;
-  }
-  const supportMemberIds=selectedSupportMemberIds();
-
   const title =
     document
       .getElementById(
@@ -6255,6 +6254,7 @@ function clearForm(){
     )
     .value = '';
     document.getElementById('eventHostNote').value = '';
+    document.getElementById('somoimOpenAt').value = '';
     resetOwnerFields();
 
 
@@ -6326,6 +6326,12 @@ async function saveEvent(){
     return;
   }
 
+  const hostMemberId=Number(document.getElementById('eventHostMember').value);
+  if(!hostMemberId){
+    alert('주최자를 선택해주세요.');
+    return;
+  }
+  const supportMemberIds=selectedSupportMemberIds();
 
   const title =
     document
@@ -6426,6 +6432,8 @@ async function saveEvent(){
           )
           .value || null,
 
+      somoim_open_at: document.getElementById('somoimOpenAt').value ? new Date(document.getElementById('somoimOpenAt').value).toISOString() : null,
+
       description:
         document
           .getElementById(
@@ -6468,7 +6476,9 @@ async function saveEvent(){
       result =
         await db
           .from('events')
-          .insert(payload);
+          .insert(payload)
+          .select()
+          .single();
     }
 
 
@@ -6476,6 +6486,9 @@ async function saveEvent(){
       throw result.error;
     }
 
+    if(!id && result.data){
+      await createAutoOperationTasks(result.data);
+    }
 
     closeEventModal();
 
@@ -6651,6 +6664,7 @@ function editEvent(id){
     .value =
     item.description || '';
     document.getElementById('eventHostNote').value = item.host_note || '';
+    document.getElementById('somoimOpenAt').value = toLocalDateTimeInput(item.somoim_open_at);
     renderOwnerFields(item.host_member_id || '',item.support_member_ids || []);
 
 
@@ -6739,6 +6753,49 @@ async function deleteEvent(id){
 /* ======================================================
    HELPERS
 ====================================================== */
+
+function toLocalDateTimeInput(value){
+  if(!value)return '';
+  const date=new Date(value);
+  date.setMinutes(date.getMinutes()-date.getTimezoneOffset());
+  return date.toISOString().slice(0,16);
+}
+function dateKey(date){
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+d;
+}
+function addDays(date,days){const copy=new Date(date);copy.setDate(copy.getDate()+days);return copy}
+function eventMonthLabel(eventDate){
+  const date=new Date(eventDate+'T12:00:00');
+  return (date.getMonth()+1)+'월';
+}
+async function createAutoOperationTasks(event){
+  const eventDate=new Date(event.event_date+'T12:00:00');
+  const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
+  const month=eventMonthLabel(event.event_date);
+  const title=event.title||'일정';
+  const tasks=[
+    {task_key:'monthly-schedule-confirm',title:month+' 일정 등록 확인',description:'등록 일정: '+title+'. '+month+' 모든 일정이 홈페이지에 등록됐는지 확인하세요.',due_date:dateKey(registerBy),sort_order:10},
+    {task_key:'monthly-notice-confirm',title:'공지방 '+month+' 일정 공지 확인',description:'공지에 '+title+'을 포함해 '+month+' 등록 일정이 모두 안내됐는지 확인하세요.',due_date:dateKey(registerBy),sort_order:20}
+  ];
+  if(event.somoim_open_at){
+    const openAt=new Date(event.somoim_open_at);
+    const openLabel=openAt.toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    tasks.push({task_key:'somoim-draft',title:'소모임 모집글 작성·예약',description:openLabel+' 정식 오픈 전 모집글과 안내 문구를 준비하세요.',due_date:dateKey(addDays(openAt,-1)),sort_order:30});
+    tasks.push({task_key:'somoim-open',title:'소모임 정식 오픈 · 인원 제한 해제',description:openLabel+'에 인원 제한을 1명에서 해당 일정 정원으로 변경하세요.',due_date:dateKey(openAt),sort_order:40});
+  }else{
+    tasks.push({task_key:'somoim-open-time',title:'소모임 정식 오픈 일시 입력',description:'소모임 오픈 시간을 입력하면 모집글 준비·정식 오픈 작업이 자동으로 잡힙니다.',due_date:dateKey(registerBy),sort_order:30});
+  }
+  if(event.event_type==='BUSKING'){
+    tasks.push({task_key:'application-close',title:'참가 신청 마감·인원 확정',description:'버스킹 참가 인원을 확정하고 공지문에 마감 내용을 반영하세요.',due_date:dateKey(addDays(eventDate,-8)),sort_order:50});
+    tasks.push({task_key:'setlist-deadline',title:'셋리스트·MR 마감',description:'최종 셋리스트와 MR을 취합하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:60});
+  }else if(event.event_type==='VOM LIVE'){
+    tasks.push({task_key:'application-close',title:'참가 신청 마감·인원 확정',description:'VOM LIVE 참가 인원을 확정하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:50});
+  }
+  const rows=tasks.map(task=>({...task,event_id:Number(event.id),is_done:false}));
+  const {error}=await db.from('event_operation_tasks').insert(rows);
+  if(error)throw error;
+}
 
 function formatTime(value){
 
