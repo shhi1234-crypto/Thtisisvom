@@ -3646,7 +3646,7 @@ function nextMonthScheduleEvents(){
 }
 function nextMonthLabel(){
   const date=new Date();
-  return (date.getMonth()+2)+'월';
+  return (new Date(date.getFullYear(),date.getMonth()+1,1).getMonth()+1)+'월';
 }
 function renderMonthlyOperationsGuide(){
   if(!adminMode)return '';
