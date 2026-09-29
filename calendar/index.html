@@ -3248,6 +3248,7 @@ const db =
 
 
 let events = [];
+let eventsLoaded = false;
 let presets = [];
 let mediaLibrary = [];
 
@@ -3483,6 +3484,7 @@ async function loadEvents(){
   events =
     data || [];
 
+  eventsLoaded = true;
 
   renderCalendarView();
 }
@@ -3662,6 +3664,11 @@ async function copyNextMonthNotice(){
 }
 
 function renderCalendarView(){
+
+  if(!eventsLoaded){
+    document.getElementById('calendarContainer').innerHTML='<section class="month"><div class="empty">일정을 불러오는 중...</div></section>';
+    return;
+  }
 
   if(calendarView === 'MONTH'){
 
@@ -7003,13 +7010,15 @@ async function start(){
 
   await checkAdmin();
 
-  await loadOperationMembers();
+  const eventLoad = loadEvents();
 
-  await loadPresets();
+  await Promise.all([
+    loadOperationMembers(),
+    loadPresets(),
+    loadMedia()
+  ]);
 
-  await loadMedia();
-
-  await loadEvents();
+  await eventLoad;
 }
 
 document
