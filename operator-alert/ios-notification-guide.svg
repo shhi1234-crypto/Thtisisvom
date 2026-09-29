@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1600" viewBox="0 0 1080 1600">
+<defs>
+  <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#FAF9FF"/><stop offset=".52" stop-color="#F4F2FF"/><stop offset="1" stop-color="#E8F7F6"/></linearGradient>
+  <linearGradient id="head" x1="0" x2="1"><stop stop-color="#755FE3"/><stop offset="1" stop-color="#7391E8"/></linearGradient>
+</defs>
+<rect width="1080" height="1600" fill="url(#bg)"/>
+<circle cx="1010" cy="80" r="260" fill="#DED8FF" opacity=".48"/><circle cx="0" cy="1580" r="330" fill="#D6F1EF" opacity=".58"/>
+<text x="84" y="122" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="28" font-weight="700" fill="#725DDD" letter-spacing="3">VOM OPERATIONS</text>
+<text x="84" y="202" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="76" font-weight="900" fill="#171B31" letter-spacing="-5">아이폰 운영 알림 등록</text>
+<text x="84" y="258" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="30" fill="#6F7489">처음 한 번만 하면 됩니다.</text>
+<rect x="62" y="310" width="956" height="1118" rx="42" fill="#FFFFFF" fill-opacity=".92"/>
+<g font-family="Arial, 'Noto Sans KR', sans-serif">
+  <g transform="translate(100 360)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">1</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">이 링크를 Safari로 엽니다.</text><text x="88" y="68" font-size="25" fill="#62687C">카카오톡 안에서 열렸다면 메뉴에서</text><text x="88" y="104" font-size="25" font-weight="700" fill="#5545BD">‘Safari로 열기’를 눌러주세요.</text></g>
+  <line x1="132" y1="500" x2="948" y2="500" stroke="#E8E5F0" stroke-width="2"/>
+  <g transform="translate(100 536)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">2</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">Safari 하단 가운데 공유 버튼을 누릅니다.</text><text x="88" y="68" font-size="25" fill="#62687C">네모 위로 화살표가 있는 버튼입니다.</text></g>
+  <line x1="132" y1="638" x2="948" y2="638" stroke="#E8E5F0" stroke-width="2"/>
+  <g transform="translate(100 674)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">3</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">메뉴를 내려 ‘홈 화면에 추가’를 누릅니다.</text><text x="88" y="68" font-size="25" fill="#62687C">마지막으로 우측 상단 ‘추가’를 눌러주세요.</text></g>
+  <line x1="132" y1="776" x2="948" y2="776" stroke="#E8E5F0" stroke-width="2"/>
+  <g transform="translate(100 812)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">4</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">홈 화면에 생긴 ‘VOM 운영’ 아이콘을 엽니다.</text><text x="88" y="68" font-size="25" fill="#62687C">Safari가 아니라 새로 생긴 아이콘에서 열어야 합니다.</text></g>
+  <line x1="132" y1="914" x2="948" y2="914" stroke="#E8E5F0" stroke-width="2"/>
+  <g transform="translate(100 950)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">5</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">‘이 기기에서 알림 받기’를 누릅니다.</text><text x="88" y="68" font-size="25" fill="#62687C">아이폰 팝업이 나오면 ‘허용’을 선택합니다.</text></g>
+  <line x1="132" y1="1052" x2="948" y2="1052" stroke="#E8E5F0" stroke-width="2"/>
+  <g transform="translate(100 1088)"><circle cx="31" cy="31" r="31" fill="url(#head)"/><text x="31" y="41" font-size="28" font-weight="800" text-anchor="middle" fill="#fff">6</text><text x="88" y="25" font-size="30" font-weight="800" fill="#20243A">‘테스트 알림 보내기’를 눌러 확인합니다.</text><text x="88" y="68" font-size="25" fill="#62687C">잠금화면 또는 상단 알림창을 확인해주세요.</text></g>
+  <rect x="100" y="1244" width="880" height="126" rx="24" fill="#F1EEFF"/><text x="136" y="1294" font-size="26" font-weight="800" fill="#6651CA">등록 후에는 홈페이지를 열지 않아도</text><text x="136" y="1332" font-size="26" fill="#6651CA">운영 마감 알림이 폰으로 도착합니다.</text>
+</g>
+<text x="84" y="1515" font-family="Arial, 'Noto Sans KR', sans-serif" font-size="25" font-weight="800" fill="#171B31" letter-spacing="5">VOM · VOICE OF MELODY</text>
+</svg>
