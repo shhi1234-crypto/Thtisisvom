@@ -3494,11 +3494,14 @@ async function loadEvents(){
       );
     }
 
+    document.documentElement.dataset.vomCalendarEvents = String(data.length);
     events = data;
     eventsLoaded = true;
     renderCalendarView();
 
   }catch(error){
+
+    document.documentElement.dataset.vomCalendarError = String(error.message || error);
 
     document
       .getElementById('calendarContainer')
