@@ -3246,20 +3246,6 @@ const db =
     SUPABASE_KEY
   );
 
-/* 일정 조회는 로그인 세션과 분리된 공개 읽기 전용 클라이언트입니다. */
-const eventDb =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY,
-    {
-      auth:{
-        persistSession:false,
-        autoRefreshToken:false,
-        detectSessionInUrl:false
-      }
-    }
-  );
-
 
 let events = [];
 let eventsLoaded = false;
@@ -3494,14 +3480,11 @@ async function loadEvents(){
       );
     }
 
-    document.documentElement.dataset.vomCalendarEvents = String(data.length);
     events = data;
     eventsLoaded = true;
     renderCalendarView();
 
   }catch(error){
-
-    document.documentElement.dataset.vomCalendarError = String(error.message || error);
 
     document
       .getElementById('calendarContainer')
