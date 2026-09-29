@@ -22,17 +22,20 @@ main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#72
   <div class="logo">VOM</div>
   <div class="sub">VOICE OF MELODY</div>
   <section class="card">
-    <h1>운영 알림 테스트</h1>
-    <p class="copy">이 기기에서만 VOM 운영 알림을 받아봅니다.</p>
-    <div id="iosGuide" class="steps hidden">
-      <div class="step"><span class="num">1</span><span>Safari 하단의 <b>공유</b> 버튼을 누르세요.</span></div>
-      <div class="step"><span class="num">2</span><span><b>홈 화면에 추가</b> 후 생성된 <b>VOM 운영</b> 아이콘을 다시 여세요.</span></div>
-      <div class="step"><span class="num">3</span><span>아래 버튼을 눌러 알림을 허용하면 됩니다.</span></div>
+    <h1>아이폰 운영 알림 등록</h1>
+    <p class="copy">처음 한 번만 하면 됩니다. 아래 순서대로 진행해주세요.</p>
+    <div id="iosGuide" class="steps">
+      <div class="step"><span class="num">1</span><span><b>이 링크를 Safari로 엽니다.</b><br>카카오톡 안에서 열렸다면 우측 하단 또는 상단 메뉴에서 <b>Safari로 열기</b>를 눌러주세요.</span></div>
+      <div class="step"><span class="num">2</span><span>Safari 하단 가운데의 <b>공유 버튼</b> (네모 위 화살표)을 누릅니다.</span></div>
+      <div class="step"><span class="num">3</span><span>메뉴를 아래로 내려 <b>홈 화면에 추가</b> → 우측 상단 <b>추가</b>를 누릅니다.</span></div>
+      <div class="step"><span class="num">4</span><span>아이폰 홈 화면에 생긴 보라색 <b>VOM 운영</b> 아이콘을 다시 엽니다.</span></div>
+      <div class="step"><span class="num">5</span><span>아래 <b>이 기기에서 알림 받기</b>를 누르고, 아이폰 팝업에서 <b>허용</b>을 선택합니다.</span></div>
+      <div class="step"><span class="num">6</span><span><b>테스트 알림 보내기</b>를 누른 뒤 잠금화면 또는 상단 알림창에 <b>VOM 운영 알림</b>이 뜨는지 확인합니다.</span></div>
     </div>
     <button id="setupBtn" type="button">이 기기에서 알림 받기</button>
     <button id="testBtn" class="secondary" type="button" disabled>테스트 알림 보내기</button>
     <div id="status" class="status">등록 정보를 확인하는 중입니다.</div>
-    <div class="fine">알림은 이 링크를 받은 운영진의 기기에만 등록됩니다. 폰을 바꾸면 이 링크에서 다시 등록하면 됩니다.</div>
+    <div class="fine">등록 후에는 따로 홈페이지를 열지 않아도 운영 마감 알림이 폰으로 옵니다. 폰을 바꾸거나 알림을 껐다면 이 링크로 다시 등록하면 됩니다.</div>
   </section>
 </main>
 <script>
@@ -48,7 +51,7 @@ async function call(action,payload={}){const res=await fetch(endpoint,{method:'P
 async function refresh(){if(!token){setStatus('유효하지 않은 등록 링크입니다.');setupBtn.disabled=true;return}try{config=await call('config');setStatus(config.recipientName+'님 기기에서 알림을 등록할 수 있습니다.');const reg=await navigator.serviceWorker.getRegistration('/');const existing=reg&&await reg.pushManager.getSubscription();if(existing){registered=true;setupBtn.textContent='알림 등록 완료';setupBtn.disabled=true;testBtn.disabled=false;setStatus('알림이 등록되었습니다. 테스트 알림을 보내보세요.')}}catch(e){setStatus('등록 정보를 불러오지 못했습니다.');setupBtn.disabled=true}}
 async function setup(){try{if(isIOS&&!isStandalone){setStatus('아이폰은 홈 화면에 추가한 뒤 VOM 운영 아이콘에서 다시 열어주세요.');return}if(!('serviceWorker' in navigator)||!('PushManager' in window)){setStatus('이 기기에서는 웹 푸시를 지원하지 않습니다.');return}setupBtn.disabled=true;setStatus('알림 권한을 요청하는 중입니다.');const permission=await Notification.requestPermission();if(permission!=='granted'){setStatus('알림을 허용해야 테스트할 수 있습니다.');setupBtn.disabled=false;return}const reg=await navigator.serviceWorker.register('/sw.js',{scope:'/'});await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:toUint8(config.publicKey)});await call('subscribe',{subscription:sub.toJSON()});registered=true;setupBtn.textContent='알림 등록 완료';testBtn.disabled=false;setStatus('등록 완료. 아래에서 실제 푸시를 보내보세요.')}catch(e){console.error(e);setStatus('등록하지 못했습니다. 잠시 후 다시 시도해주세요.');setupBtn.disabled=false}}
 async function sendTest(){if(!registered)return;try{testBtn.disabled=true;setStatus('테스트 알림을 보내는 중입니다.');await call('test');setStatus('발송했습니다. 잠금화면 또는 상단 알림창을 확인해주세요.');}catch(e){console.error(e);setStatus('테스트 발송에 실패했습니다. 다시 시도해주세요.');}finally{testBtn.disabled=false}}
-if(isIOS&&!isStandalone)document.getElementById('iosGuide').classList.remove('hidden');
+
 setupBtn.addEventListener('click',setup);testBtn.addEventListener('click',sendTest);refresh();
 </script>
 </body>
