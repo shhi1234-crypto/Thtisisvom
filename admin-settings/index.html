@@ -34,7 +34,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;min-height:100vh;color:var(--ink);font-family:"Noto Sans KR",sans-serif;background:#f8f7fa}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
 .aurora{position:fixed;inset:0;z-index:-10;background:radial-gradient(circle at 87% 0%,rgba(128,220,209,.42),transparent 28%),radial-gradient(circle at 69% 6%,rgba(180,151,242,.4),transparent 32%),linear-gradient(180deg,#faf8fb,#f8f7fb 56%,#fbfafc)}
 .header{width:min(1120px,100%);height:78px;margin:auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;flex-direction:column}.brand strong{font-size:27px;font-weight:800;line-height:1}.brand small{margin-top:5px;font-size:8px;font-weight:700;letter-spacing:3px}.header-right{display:flex;align-items:center;gap:8px}.admin-badge{display:none;align-items:center;gap:6px;padding:8px 11px;border:1px solid rgba(117,96,222,.16);border-radius:999px;background:rgba(117,96,222,.1);color:#6a55ce;font-size:9px;font-weight:800}.admin-badge.show{display:flex}.admin-dot{width:6px;height:6px;border-radius:50%;background:#765fe6}.back{padding:10px 14px;border:1px solid rgba(255,255,255,.94);border-radius:999px;background:rgba(255,255,255,.77);box-shadow:0 8px 24px rgba(31,38,76,.06);font-size:10px;font-weight:800}
-.page{width:min(1080px,calc(100% - 32px));margin:auto;padding:42px 0 82px}.eyebrow{color:#7b67e3;font-family:"Nanum Pen Script",cursive;font-size:24px}.title-row{display:flex;align-items:end;justify-content:space-between;gap:18px}.title-row h1{margin:4px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(55px,9vw,86px);font-weight:400;line-height:.82}.sub{max-width:670px;margin:17px 0 0;color:#6f768a;font-size:12px;line-height:1.85}.notice{margin-top:22px;padding:14px 17px;border:1px solid rgba(117,96,222,.1);border-radius:17px;background:linear-gradient(120deg,rgba(240,236,255,.82),rgba(236,249,247,.82));color:#61677b;font-size:11px;line-height:1.7}.notice b{color:#6c58cf}
+.page{width:min(1080px,calc(100% - 32px));margin:auto;padding:42px 0 82px}.eyebrow{color:#7b67e3;font-family:"Nanum Pen Script",cursive;font-size:24px}.title-row{display:flex;align-items:end;justify-content:space-between;gap:18px}.title-row h1{margin:4px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(55px,9vw,86px);font-weight:400;line-height:.82}.title-parent{margin:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;line-height:inherit}.title-parent.is-clickable{color:#1b2037;text-decoration:underline;text-decoration-color:rgba(117,96,222,.23);text-underline-offset:.11em;cursor:pointer}.title-parent.is-clickable:hover{color:#6e58d2}.title-divider,.title-sub{display:none}.title-divider.show{display:inline;margin:0 .11em;color:#a397d6}.title-sub.show{display:inline;color:#705ed3;font-size:.66em;white-space:nowrap}.sub{max-width:670px;margin:17px 0 0;color:#6f768a;font-size:12px;line-height:1.85}.notice{margin-top:22px;padding:14px 17px;border:1px solid rgba(117,96,222,.1);border-radius:17px;background:linear-gradient(120deg,rgba(240,236,255,.82),rgba(236,249,247,.82));color:#61677b;font-size:11px;line-height:1.7}.notice b{color:#6c58cf}
 .guard{margin-top:29px;padding:48px 25px;border:1px solid rgba(255,255,255,.96);border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 18px 50px rgba(31,37,74,.07);text-align:center}.guard h2{margin:0 0 9px;font-size:21px}.guard p{margin:0;color:#777d8e;font-size:12px;line-height:1.8}.guard a{display:inline-flex;margin-top:17px;padding:10px 14px;border-radius:999px;background:#eeeaff;color:#6854cc;font-size:10px;font-weight:800}.hidden{display:none!important}
 .folder-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-top:30px}.folder-load-error{grid-column:1/-1}.folder-card{min-height:192px;padding:22px;border:1px solid rgba(255,255,255,.96);border-radius:24px;background:rgba(255,255,255,.82);box-shadow:0 12px 34px rgba(31,37,74,.05);text-align:left;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.folder-card:hover{transform:translateY(-3px);border-color:rgba(117,96,222,.22);box-shadow:0 18px 42px rgba(31,37,74,.1)}.folder-card.BUSKING{background:linear-gradient(145deg,rgba(240,236,255,.95),rgba(255,255,255,.9))}.folder-card.RENTAL{background:linear-gradient(145deg,rgba(255,243,232,.95),rgba(255,255,255,.9))}.folder-card.GENERAL{background:linear-gradient(145deg,rgba(232,248,245,.95),rgba(255,255,255,.9))}.folder-card.IMAGES{background:linear-gradient(145deg,rgba(236,242,255,.97),rgba(255,255,255,.9))}.folder-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.folder-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.72);font-size:20px;box-shadow:0 8px 18px rgba(51,47,90,.07)}.folder-count{padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.74);color:#6f5bd1;font-size:9px;font-weight:900}.folder-kicker{margin-top:20px;color:#8674d9;font-size:9px;font-weight:900;letter-spacing:.08em}.folder-card.RENTAL .folder-kicker{color:#bd7a40}.folder-card.GENERAL .folder-kicker{color:#3a9589}.folder-card.IMAGES .folder-kicker{color:#496eac}.folder-card h2{margin:5px 0 0;font-size:18px;letter-spacing:-.04em}.folder-card p{margin:8px 0 0;color:#757b8d;font-size:10px;line-height:1.65}.folder-open{display:flex;align-items:center;justify-content:space-between;margin-top:19px;color:#6452c9;font-size:10px;font-weight:900}.folder-card.RENTAL .folder-open{color:#b76c2f}.folder-card.GENERAL .folder-open{color:#368b80}.folder-card.IMAGES .folder-open{color:#496eac}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:27px 0 15px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{min-height:36px;padding:0 13px;border:1px solid rgba(100,92,150,.1);border-radius:999px;background:rgba(255,255,255,.7);color:#767b8e;font-size:10px;font-weight:800}.filter.active{border-color:transparent;background:linear-gradient(135deg,#8068e8,#6c8bea);color:#fff}.add{min-height:39px;padding:0 15px;border:0;border-radius:12px;background:#1d263e;color:#fff;font-size:11px;font-weight:800;box-shadow:0 10px 24px rgba(30,36,68,.13)}
@@ -61,7 +61,7 @@
 
 <main class="page">
   <div class="eyebrow">ADMIN SETTINGS</div>
-  <div class="title-row"><h1>운영 자료</h1></div>
+  <div class="title-row"><h1><button id="materialsTitleHome" class="title-parent" type="button" onclick="setFilter('HOME')" aria-label="운영 자료 홈으로 돌아가기">운영 자료</button><span id="materialsTitleDivider" class="title-divider">·</span><span id="materialsTitleSub" class="title-sub"></span></h1></div>
   <p class="sub">버스킹 신청처, 대관공연 정보, 일정별 운영 체크리스트와 이미지 자료를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
   <div class="notice"><b>초기 자료 안내</b> · 기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</div>
 
@@ -134,6 +134,9 @@ const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const adminBadge=document.getElementById('adminBadge');
 const guard=document.getElementById('guard');
 const dashboard=document.getElementById('dashboard');
+const materialsTitleHome=document.getElementById('materialsTitleHome');
+const materialsTitleDivider=document.getElementById('materialsTitleDivider');
+const materialsTitleSub=document.getElementById('materialsTitleSub');
 const folderHome=document.getElementById('folderHome');
 const toolbar=document.getElementById('toolbar');
 const resourceStack=document.getElementById('resourceStack');
@@ -683,7 +686,17 @@ function render(){
   renderResources();
 }
 
+function updateMaterialsTitle(){
+  const detail=currentFilter==='HOME'?'':folderMeta[currentFilter]?.label||'';
+  materialsTitleHome.classList.toggle('is-clickable',!!detail);
+  materialsTitleHome.disabled=!detail;
+  materialsTitleDivider.classList.toggle('show',!!detail);
+  materialsTitleSub.classList.toggle('show',!!detail);
+  materialsTitleSub.textContent=detail;
+}
+
 function renderResources(){
+  updateMaterialsTitle();
   const isHome=currentFilter==='HOME';
   folderHome.classList.toggle('hidden',!isHome);
   toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS');
