@@ -213,7 +213,7 @@ function reminderGroupMeta(reminder){
 }
 
 function isD1Reminder(reminder){
-  return String(reminder.title||'').startsWith('D-1 · ');
+  return String(reminder.title||'').startsWith('D-1 · ')||reminder.trigger_type==='month_end_minus_one';
 }
 
 function d1Title(title){
@@ -221,7 +221,16 @@ function d1Title(title){
 }
 
 function findD1Reminder(reminder){
-  if(!reminder||reminder.trigger_type!=='once'||isD1Reminder(reminder))return null;
+  if(!reminder||isD1Reminder(reminder))return null;
+
+  if(reminder.trigger_type==='month_end'){
+    const candidates=reminders.filter(item=>String(item.id)!==String(reminder.id)&&item.trigger_type==='month_end_minus_one');
+    return candidates.find(item=>String(item.title||'')===d1Title(reminder.title))||
+      candidates.find(item=>String(item.message||'')===String(reminder.message||''))||
+      (candidates.length===1?candidates[0]:null);
+  }
+
+  if(reminder.trigger_type!=='once')return null;
   return reminders.find(item=>
     String(item.id)!==String(reminder.id)&&
     item.trigger_type==='once'&&
@@ -271,10 +280,10 @@ function renderReminders(){
   }).join('');
 
   const formHtml=editorOpen
-    ? '<form class="reminder-form" onsubmit="saveReminder(event)"><h3>'+(editing?'리마인더 수정':'새 리마인더 추가')+'</h3><input id="reminderId" type="hidden" value="'+(editing?.id||'')+'"><input id="reminderD1Id" type="hidden" value="'+(d1?.id||'')+'"><div class="reminder-grid"><input id="reminderTitle" class="reminder-input" required placeholder="알림 제목" value="'+esc(row.title)+'"><select id="reminderType" class="reminder-select" onchange="updateReminderScheduleFields()"><option value="once" '+(row.trigger_type==='once'?'selected':'')+'>직접 날짜·시간</option><option value="monthly_day" '+(row.trigger_type==='monthly_day'?'selected':'')+'>매월 특정일</option><option value="event_created" '+(row.trigger_type==='event_created'?'selected':'')+'>새 일정·주최자 저장 시</option><option value="next_month_schedule_check" '+(row.trigger_type==='next_month_schedule_check'?'selected':'')+'>익월 일정 미등록 시 (매월 20일)</option><option value="month_end_minus_one" '+(row.trigger_type==='month_end_minus_one'?'selected':'')+'>매월 말일 전날</option><option value="month_end" '+(row.trigger_type==='month_end'?'selected':'')+'>매월 말일</option></select><textarea id="reminderMessage" class="reminder-textarea wide" required placeholder="알림 내용">'+esc(row.message)+'</textarea><input id="reminderRunAt" class="reminder-input" type="datetime-local" value="'+(row.run_at?toLocalDateTimeInput(row.run_at):'')+'"><input id="reminderMonthlyDay" class="reminder-input" type="number" min="1" max="31" placeholder="매월 날짜 (1~31)" value="'+(row.monthly_day||'')+'"><input id="reminderTime" class="reminder-input" type="time" value="'+String(row.notify_time||'10:00').slice(0,5)+'"><label id="reminderD1Field" class="reminder-check wide"><input id="reminderD1" type="checkbox" '+(d1?'checked':'')+'><span>전날(D-1)에도 한 번 더 알림 보내기</span></label></div><div class="reminder-actions"><button class="secondary" type="button" onclick="cancelReminderEdit()">취소</button><button class="primary" type="submit">저장</button></div></form>'
+    ? '<form class="reminder-form" onsubmit="saveReminder(event)"><h3>'+(editing?'리마인더 수정':'새 리마인더 추가')+'</h3><input id="reminderId" type="hidden" value="'+(editing?.id||'')+'"><input id="reminderD1Id" type="hidden" value="'+(d1?.id||'')+'"><div class="reminder-grid"><input id="reminderTitle" class="reminder-input" required placeholder="알림 제목" value="'+esc(row.title)+'"><select id="reminderType" class="reminder-select" onchange="updateReminderScheduleFields()"><option value="once" '+(row.trigger_type==='once'?'selected':'')+'>직접 날짜·시간</option><option value="monthly_day" '+(row.trigger_type==='monthly_day'?'selected':'')+'>매월 특정일</option><option value="event_created" '+(row.trigger_type==='event_created'?'selected':'')+'>새 일정·주최자 저장 시</option><option value="next_month_schedule_check" '+(row.trigger_type==='next_month_schedule_check'?'selected':'')+'>익월 일정 미등록 시 (매월 20일)</option><option value="month_end" '+(row.trigger_type==='month_end'?'selected':'')+'>매월 말일</option></select><textarea id="reminderMessage" class="reminder-textarea wide" required placeholder="알림 내용">'+esc(row.message)+'</textarea><input id="reminderRunAt" class="reminder-input" type="datetime-local" value="'+(row.run_at?toLocalDateTimeInput(row.run_at):'')+'"><input id="reminderMonthlyDay" class="reminder-input" type="number" min="1" max="31" placeholder="매월 날짜 (1~31)" value="'+(row.monthly_day||'')+'"><input id="reminderTime" class="reminder-input" type="time" value="'+String(row.notify_time||'10:00').slice(0,5)+'"><label id="reminderD1Field" class="reminder-check wide"><input id="reminderD1" type="checkbox" '+(d1?'checked':'')+'><span>전날(D-1)에도 한 번 더 알림 보내기</span></label></div><div class="reminder-actions"><button class="secondary" type="button" onclick="cancelReminderEdit()">취소</button><button class="primary" type="submit">저장</button></div></form>'
     : '';
 
-  resourceStack.innerHTML='<section class="resource-section reminder-panel"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(\'HOME\')">← 운영 자료</button><div><div class="section-kicker">'+remindersMeta.kicker+'</div><h2>'+remindersMeta.label+'</h2></div></div><span class="section-count">전체 운영진</span></div><div class="reminder-toolbar"><p class="reminder-intro">등록된 알림은 당분간 운영진 전체에게 발송됩니다. 카드를 누르면 수정할 수 있고, 직접 설정 알림은 D-1 알림도 함께 체크할 수 있습니다.</p>'+(!editorOpen?'<button class="primary reminder-create" type="button" onclick="openReminderCreate()">+ 새 리마인더</button>':'')+'</div>'+formHtml+'<div class="reminder-groups">'+(groupHtml||'<div class="section-empty">등록된 리마인더가 없습니다.</div>')+'</div></section>';
+  resourceStack.innerHTML='<section class="resource-section reminder-panel"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(\'HOME\')">← 운영 자료</button><div><div class="section-kicker">'+remindersMeta.kicker+'</div><h2>'+remindersMeta.label+'</h2></div></div><span class="section-count">전체 운영진</span></div><div class="reminder-toolbar"><p class="reminder-intro">등록된 알림은 당분간 운영진 전체에게 발송됩니다. 카드 하나에서 당일 알림을 설정하고, 필요하면 D-1 알림도 함께 체크할 수 있습니다.</p>'+(!editorOpen?'<button class="primary reminder-create" type="button" onclick="openReminderCreate()">+ 새 리마인더</button>':'')+'</div>'+formHtml+'<div class="reminder-groups">'+(groupHtml||'<div class="section-empty">등록된 리마인더가 없습니다.</div>')+'</div></section>';
 
   updateReminderScheduleFields();
 }
@@ -286,7 +295,7 @@ function updateReminderScheduleFields(){
   if(!run||!day||!d1)return;
   run.style.display=type==='once'?'block':'none';
   day.style.display=type==='monthly_day'?'block':'none';
-  d1.style.display=type==='once'?'flex':'none';
+  d1.style.display=(type==='once'||type==='month_end')?'flex':'none';
 }
 async function saveReminder(event){
   event.preventDefault();
@@ -319,10 +328,16 @@ async function saveReminder(event){
 
     if(result.error)throw result.error;
 
-    if(type==='once'&&sendD1){
-      const dayBefore=new Date(runAt);
-      dayBefore.setDate(dayBefore.getDate()-1);
-      const d1Payload={...payload,title:d1Title(payload.title),run_at:dayBefore.toISOString(),monthly_day:null,trigger_type:'once'};
+    if((type==='once'||type==='month_end')&&sendD1){
+      let d1Payload;
+
+      if(type==='once'){
+        const dayBefore=new Date(runAt);
+        dayBefore.setDate(dayBefore.getDate()-1);
+        d1Payload={...payload,title:d1Title(payload.title),run_at:dayBefore.toISOString(),monthly_day:null,trigger_type:'once'};
+      }else{
+        d1Payload={...payload,title:d1Title(payload.title),run_at:null,monthly_day:null,trigger_type:'month_end_minus_one'};
+      }
 
       const d1Result=d1Id
         ? await db.from('operation_reminders').update(d1Payload).eq('id',d1Id)
@@ -342,17 +357,7 @@ async function saveReminder(event){
     alert('저장하지 못했습니다.\n'+error.message);
   }
 }
-function openReminderCreate(){
-  reminderEditingId='';
-  reminderCreating=true;
-  renderReminders();
-}
 
-function editReminder(id){
-  reminderCreating=false;
-  reminderEditingId=id;
-  renderReminders();
-}
 function cancelReminderEdit(){
   reminderEditingId='';
   reminderCreating=false;
