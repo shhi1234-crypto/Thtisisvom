@@ -631,9 +631,70 @@ button{
 
 /* QUICK */
 
+.quick-stack{
+  display:grid;
+  gap:10px;
+}
+
+.quick-my-vom{
+  min-height:88px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:0 25px;
+  border:1px solid rgba(255,255,255,.96);
+  border-radius:24px;
+  color:#fff;
+  background:linear-gradient(135deg,rgba(126,103,232,.96),rgba(105,157,230,.90));
+  box-shadow:0 18px 48px rgba(66,67,148,.16);
+  transition:transform .16s ease, box-shadow .16s ease;
+}
+
+.quick-my-vom:hover{
+  transform:translateY(-2px);
+  box-shadow:0 22px 54px rgba(66,67,148,.22);
+}
+
+.quick-my-vom-icon{
+  width:44px;
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  border:1px solid rgba(255,255,255,.42);
+  border-radius:15px;
+  background:rgba(255,255,255,.16);
+  font-size:25px;
+}
+
+.quick-my-vom-copy{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+}
+
+.quick-my-vom-copy strong{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+
+.quick-my-vom-copy small{
+  margin-top:4px;
+  color:rgba(255,255,255,.76);
+  font-size:10px;
+}
+
+.quick-my-vom-arrow{
+  margin-left:auto;
+  font-size:23px;
+  font-weight:300;
+}
+
 .quick{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:1px;
   overflow:hidden;
   border-radius:27px;
@@ -683,11 +744,36 @@ button{
   .quick a{
     min-height:96px;
   }
+
+  .quick-my-vom{
+    min-height:78px;
+    padding:0 18px;
+    border-radius:21px;
+  }
+
+  .quick-my-vom-copy strong{
+    font-size:14px;
+  }
+
+  .quick-my-vom-copy small{
+    font-size:9px;
+  }
 }
 
 @media(max-width:390px){
   .quick strong{
     font-size:12px;
+  }
+
+  .quick-my-vom{
+    gap:11px;
+    padding:0 15px;
+  }
+
+  .quick-my-vom-icon{
+    width:39px;
+    height:39px;
+    font-size:22px;
   }
 }
 
@@ -2235,63 +2321,76 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 
   <!-- QUICK -->
 
-  <section class="quick">
+  <div class="quick-stack">
 
-    <a href="/info/">
-      <div class="quick-icon">ⓘ</div>
-      <strong>INFO</strong>
-      <small>ABOUT VOM</small>
+    <a href="/me/" class="quick-my-vom">
+      <div class="quick-my-vom-icon">◉</div>
+      <div class="quick-my-vom-copy">
+        <strong>MY VOM</strong>
+        <small>개인 셋리스트와 나의 공간</small>
+      </div>
+      <span class="quick-my-vom-arrow">→</span>
     </a>
 
-    <a href="/calendar/">
-      <div class="quick-icon">◫</div>
-      <strong>CALENDAR</strong>
-      <small>SCHEDULE</small>
-    </a>
+    <section class="quick">
 
-    <a href="/busking/">
-      <div class="quick-icon">♪</div>
-      <strong>BUSKING</strong>
-      <small>BUSKING</small>
-    </a>
+      <a href="/info/">
+        <div class="quick-icon">ⓘ</div>
+        <strong>INFO</strong>
+        <small>ABOUT VOM</small>
+      </a>
 
-    <a href="/live/">
-      <div class="quick-icon">♬</div>
-      <strong>VOM LIVE</strong>
-      <small>LIVE</small>
-    </a>
+      <a href="/calendar/">
+        <div class="quick-icon">◫</div>
+        <strong>CALENDAR</strong>
+        <small>SCHEDULE</small>
+      </a>
 
-    <a href="/members/">
-      <div class="quick-icon">♙</div>
-      <strong>MEMBERS</strong>
-      <small>VOM PEOPLE</small>
-    </a>
+      <a href="/busking/">
+        <div class="quick-icon">♪</div>
+        <strong>BUSKING</strong>
+        <small>BUSKING</small>
+      </a>
 
-    <a href="/event/">
-      <div class="quick-icon">✦</div>
-      <strong>EVENT</strong>
-      <small>CAMPAIGN</small>
-    </a>
+      <a href="/live/">
+        <div class="quick-icon">♬</div>
+        <strong>VOM LIVE</strong>
+        <small>LIVE</small>
+      </a>
 
-    <a href="/qna/">
-      <div class="quick-icon">?</div>
-      <strong>Q&A</strong>
-      <small>QUESTION</small>
-    </a>
+      <a href="/members/">
+        <div class="quick-icon">♙</div>
+        <strong>MEMBERS</strong>
+        <small>VOM PEOPLE</small>
+      </a>
 
-    <a href="/me/">
-      <div class="quick-icon">◉</div>
-      <strong>MY VOM</strong>
-      <small>MY SPACE</small>
-    </a>
+      <a href="/event/">
+        <div class="quick-icon">✦</div>
+        <strong>EVENT</strong>
+        <small>CAMPAIGN</small>
+      </a>
 
-    <a href="/practice/">
-      <div class="quick-icon">◎</div>
-      <strong>PRACTICE</strong>
-      <small>REHEARSAL</small>
-    </a>
+      <a href="/qna/">
+        <div class="quick-icon">?</div>
+        <strong>Q&A</strong>
+        <small>QUESTION</small>
+      </a>
 
-  </section>
+      <a href="/notice/">
+        <div class="quick-icon">▤</div>
+        <strong>NOTICE</strong>
+        <small>UPDATES</small>
+      </a>
+
+      <a href="/practice/">
+        <div class="quick-icon">◎</div>
+        <strong>PRACTICE</strong>
+        <small>REHEARSAL</small>
+      </a>
+
+    </section>
+
+  </div>
 
 
   <!-- UPCOMING -->
