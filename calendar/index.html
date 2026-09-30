@@ -2399,7 +2399,7 @@ button{
 ====================================================== */
 .operation-checklist{margin-top:16px;padding:16px;border:1px solid rgba(244,143,55,.22);border-radius:18px;background:linear-gradient(135deg,rgba(255,249,240,.95),rgba(255,255,255,.95))}.operation-checklist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.operation-checklist-head b{font-size:14px}.operation-checklist-head span{padding:5px 8px;border-radius:999px;background:#fff0dc;color:#d77820;font-size:9px;font-weight:900}.operation-checklist-head p{margin:3px 0 0;color:#8a7768;font-size:9px}.operation-task{display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:5px;border-radius:12px;background:#fff;border:1px solid rgba(28,34,65,.06);cursor:pointer}.operation-task input{width:16px;height:16px;accent-color:#6f9e83;flex:none}.operation-task.pending{border-color:rgba(241,142,51,.28);background:#fffaf4}.operation-task.done{opacity:.66}.operation-task-copy{min-width:0;flex:1}.operation-task-copy strong{display:block;font-size:10px}.operation-task-copy small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.operation-task.pending small{color:#d77820}
 .monthly-ops-guide{margin:0 0 18px;padding:18px;border:1px solid rgba(112,93,222,.14);border-radius:20px;background:linear-gradient(135deg,rgba(244,240,255,.96),rgba(237,250,247,.94))}.monthly-ops-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.monthly-ops-head b{font-size:15px}.monthly-ops-head span{padding:5px 8px;border-radius:999px;background:#ece8ff;color:#6654c7;font-size:9px;font-weight:900}.monthly-ops-copy{margin:6px 0 11px;color:#757b8e;font-size:10px;line-height:1.65}.monthly-ops-list{display:grid;gap:5px}.monthly-ops-item{padding:9px 10px;border-radius:11px;background:rgba(255,255,255,.72);font-size:10px;font-weight:800}.monthly-ops-item small{margin-left:6px;color:#7f8496;font-weight:600}.monthly-ops-warning{margin:10px 0 0;color:#c4722a;font-size:10px;font-weight:800}.monthly-copy-btn{margin-top:11px;border:0;border-radius:11px;padding:9px 11px;background:#7461dd;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
-.owner-section{border-top:1px solid rgba(28,34,65,.06)}.required-mark{margin-left:4px;color:#dc7430;font-size:8px;font-weight:900}.owner-members{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid #dddde7;border-radius:12px;background:#fbfaff}.owner-option{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:9px;background:#f0edfb;color:#6555c4;font-size:10px;font-weight:800;cursor:pointer}.owner-option input{accent-color:#7561dc}
+.event-readiness-alert{margin:0 0 18px;padding:17px 18px;border:1px solid rgba(232,133,43,.25);border-radius:20px;background:linear-gradient(135deg,rgba(255,243,229,.96),rgba(255,250,245,.96));box-shadow:0 10px 25px rgba(192,113,38,.05)}.event-readiness-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.event-readiness-head b{display:block;color:#9a531c;font-size:14px}.event-readiness-head p{margin:4px 0 0;color:#9b755b;font-size:10px;line-height:1.55}.event-readiness-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:#fff0dc;color:#c66e1f;font-size:9px;font-weight:900}.event-readiness-list{display:grid;gap:6px;margin-top:12px}.event-readiness-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid rgba(229,143,67,.14);border-radius:12px;background:rgba(255,255,255,.8)}.event-readiness-row strong{display:block;color:#5e4939;font-size:10px}.event-readiness-row small{display:block;margin-top:3px;color:#bc702d;font-size:9px;font-weight:800}.event-readiness-row button{flex:0 0 auto;min-height:29px;padding:0 9px;border:0;border-radius:8px;background:#e68132;color:#fff;font-size:9px;font-weight:900;cursor:pointer}.owner-section{border-top:1px solid rgba(28,34,65,.06)}.required-mark{margin-left:4px;color:#dc7430;font-size:8px;font-weight:900}.owner-members{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid #dddde7;border-radius:12px;background:#fbfaff}.owner-option{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:9px;background:#f0edfb;color:#6555c4;font-size:10px;font-weight:800;cursor:pointer}.owner-option input{accent-color:#7561dc}
 .schedule-detail-card{
   padding:3px 1px 2px;
 }
@@ -3440,7 +3440,7 @@ async function loadEvents(){
     const response =
       await fetch(
         SUPABASE_URL +
-        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Cimage_url&order=event_date.asc%2Cstart_time.asc',
+        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at&order=event_date.asc%2Cstart_time.asc',
         {
           method:'GET',
           credentials:'omit',
@@ -3646,6 +3646,26 @@ function nextMonthLabel(){
   const date=new Date();
   return (new Date(date.getFullYear(),date.getMonth()+1,1).getMonth()+1)+'월';
 }
+function eventMissingFields(item){
+  const missing=[];
+  if(!item.title)missing.push('제목');
+  if(!item.event_date)missing.push('날짜');
+  if(!item.location)missing.push('장소');
+  if(!item.start_time||!item.end_time)missing.push('진행 시간');
+  if(!item.host_member_id)missing.push('주최자');
+  if(['BUSKING','VOM LIVE'].includes(item.event_type)&&!item.somoim_open_at)missing.push('소모임 오픈 일시');
+  return missing;
+}
+
+function renderEventReadinessAlert(){
+  if(!adminMode)return '';
+
+  const incomplete=events.map(item=>({item,missing:eventMissingFields(item)})).filter(entry=>entry.missing.length);
+  if(!incomplete.length)return '';
+
+  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 항목을 채워야 운영 체크리스트와 공지 준비가 정확해집니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>'<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.join(' · '))+'</small></div><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button></div>').join('')+'</div></section>';
+}
+
 function renderMonthlyOperationsGuide(){
   if(!adminMode)return '';
 
@@ -3868,6 +3888,7 @@ function renderRealCalendar(){
 
 
   container.innerHTML = `
+    ${renderEventReadinessAlert()}
     ${renderMonthlyOperationsGuide()}
     <section class="real-calendar">
 
@@ -4062,6 +4083,7 @@ function renderCalendar(){
 
     container.innerHTML =
     `
+      ${renderEventReadinessAlert()}
       ${renderMonthlyOperationsGuide()}
       <section class="month">
 
@@ -4144,6 +4166,7 @@ function renderCalendar(){
 
 
   container.innerHTML =
+    renderEventReadinessAlert() +
     renderMonthlyOperationsGuide() +
     renderScheduleGroup('다가오는 일정', upcoming, false) +
     renderScheduleGroup('지난 일정', past, true);
@@ -6817,12 +6840,28 @@ function eventMonthLabel(eventDate){
   const date=new Date(eventDate+'T12:00:00');
   return (date.getMonth()+1)+'월';
 }
+async function eventTypeLabel(type){
+  return type==='BUSKING'?'버스킹':type==='VOM LIVE'?'VOM LIVE':String(type||'일정');
+}
+
+function hostNameForEvent(event){
+  const host=operationMembers.find(member=>String(member.id)===String(event?.host_member_id));
+  return host?.name||'미정';
+}
+
 async function notifyNewEvent(event){
+  if(!['BUSKING','VOM LIVE'].includes(event?.event_type))return;
+
   try{
     const date=formatNoticeDate(event.event_date);
     const title=[date,event.title||'새 일정'].filter(Boolean).join(' · ');
     const {data,error}=await db.functions.invoke('admin-reminder-push',{
-      body:{action:'event_created',eventTitle:title}
+      body:{
+        action:'event_created',
+        eventTitle:title,
+        eventType:eventTypeLabel(event.event_type),
+        hostName:hostNameForEvent(event)
+      }
     });
     if(error||data?.error)console.warn('EVENT REMINDER:',data?.error||error?.message);
   }catch(error){
@@ -6852,6 +6891,7 @@ async function createAutoOperationTasks(event){
     tasks.push({task_key:'setlist-deadline',title:'셋리스트·MR 마감',description:'최종 셋리스트와 MR을 취합하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:60});
   }else if(event.event_type==='VOM LIVE'){
     tasks.push({task_key:'application-close',title:'참가 신청 마감·인원 확정',description:'VOM LIVE 참가 인원을 확정하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:50});
+    tasks.push({task_key:'duet-plan',title:'듀엣 구성·참가자 안내',description:'참가자 확정 후 듀엣 구성과 개인곡 진행 순서를 정리해 안내하세요.',due_date:dateKey(addDays(eventDate,-4)),sort_order:60});
   }
   const rows=tasks.map(task=>({...task,event_id:Number(event.id),is_done:false}));
   const {error}=await db.from('event_operation_tasks').insert(rows);
