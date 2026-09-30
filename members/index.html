@@ -47,8 +47,7 @@
 @media(max-width:440px){.group-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}}
 
 .profile-edit{display:inline-flex;align-items:center;gap:5px;max-width:100%;border:0;background:none;padding:0;color:inherit;cursor:pointer;text-align:left}.profile-edit .value{min-width:0;overflow:hidden;text-overflow:ellipsis}.profile-edit .pencil{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f1effb;color:#7763d7;font-size:10px;font-weight:800}.profile-edit:hover .pencil{background:#e9e4fb}.profile-static{display:block;overflow:hidden;text-overflow:ellipsis}.profile-note{margin:0 0 12px;color:#85899a;font-size:10px;line-height:1.65}.song-btn{min-height:29px;padding:0 9px;border:0;border-radius:9px;background:#eeeaff;color:#6657c5;font-size:10px;font-weight:800;cursor:pointer}.c-song{width:78px;text-align:center}
-.song-list{display:grid;gap:7px}.member-song-row{padding:11px 12px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.member-song-row strong{display:block;font-size:12px}.member-song-row small{display:block;margin-top:3px;color:#777c8d;font-size:10px}.member-song-actions{display:flex;gap:5px;align-items:center}.yt-btn{padding:7px 9px;border-radius:9px;background:#171b2a;color:#fff;font-size:9px;font-weight:800}.mini{padding:7px 9px;border:0;border-radius:9px;background:#eeeaff;color:#6556c2;font-size:9px;font-weight:800;cursor:pointer}.mini.danger{background:#fff0f2;color:#a74f62}.song-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.song-form h3{margin:0 0 8px;font-size:13px}.song-note{margin:0 0 12px;color:#85899a;font-size:10px;line-height:1.6}
-.file-btn{padding:7px 9px;border-radius:9px;background:#eef8f6;color:#2e7d70;font-size:9px;font-weight:800;white-space:nowrap}.attachment-input{padding:8px 10px;font-size:11px}.file-help{display:block;margin-top:5px;color:#85899a;font-size:9px;line-height:1.5}
+.song-list{display:grid;gap:7px}.member-song-row{padding:11px 12px;border-radius:13px;background:#f7f6fa;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}.member-song-row strong{display:block;font-size:12px}.member-song-row small{display:block;margin-top:3px;color:#777c8d;font-size:10px}.member-song-actions{display:flex;gap:5px;align-items:center}.yt-btn{padding:7px 9px;border-radius:9px;background:#171b2a;color:#fff;font-size:9px;font-weight:800}.mini{padding:7px 9px;border:0;border-radius:9px;background:#eeeaff;color:#6556c2;font-size:9px;font-weight:800;cursor:pointer}.mini.danger{background:#fff0f2;color:#a74f62}.song-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.song-form h3{margin:0 0 8px;font-size:13px}.song-note{margin:0 0 12px;color:#85899a;font-size:10px;line-height:1.6}.reference-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.reference-choice label{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px;border:1px solid #e2def1;border-radius:11px;background:#fbfaff;color:#646b7f;font-size:10px;font-weight:900;cursor:pointer}.reference-choice input{accent-color:#7561df}.reference-choice label:has(input:checked){border-color:#8370e8;background:#f0edff;color:#6250c5}.reference-guide{display:block;margin-top:6px;color:#8b8f9e;font-size:9px;line-height:1.55}.reference-field[hidden]{display:none!important}.file-btn{padding:7px 9px;border-radius:9px;background:#eef8f6;color:#2e7d70;font-size:9px;font-weight:800;white-space:nowrap}.attachment-input{padding:8px 10px;font-size:11px}.file-help{display:block;margin-top:5px;color:#85899a;font-size:9px;line-height:1.5}
 
 /* AGE / REGION VIEW */
 #panel-age,
@@ -549,8 +548,9 @@
 <div class="field-wrap"><label>곡명</label><input id="memberSongTitle" class="field"></div>
 <div class="field-wrap"><label>원곡 가수</label><input id="memberSongArtist" class="field"></div>
 <div class="field-wrap"><label>듀엣 상대 (선택)</label><input id="memberSongDuet" class="field" list="memberNameOptions"></div>
-<div class="field-wrap"><label>YouTube 링크</label><input id="memberSongYoutube" class="field" placeholder="https://youtube.com/..."></div>
-<div class="field-wrap full"><label>MR · 음성 · 참고 파일 (선택)</label><input id="memberSongFile" class="field attachment-input" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small id="memberSongFileCurrent" class="file-help">카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하</small></div>
+<div class="field-wrap full"><label>재생 자료 <span style="color:#dc7430;font-size:9px">필수</span></label><div class="reference-choice"><label><input name="memberSongReferenceType" type="radio" value="youtube" onchange="updateMemberSongReferenceType()"> YouTube 링크</label><label><input name="memberSongReferenceType" type="radio" value="file" onchange="updateMemberSongReferenceType()"> 파일 첨부</label></div><small class="reference-guide">둘 중 하나만 선택해 입력해주세요. 저장 후 아래 곡 목록에서 재생 또는 파일 열기를 꼭 확인해주세요.</small></div>
+<div id="memberSongYoutubeField" class="field-wrap full reference-field" hidden><label>YouTube 링크 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="memberSongYoutube" class="field" placeholder="https://youtube.com/..."></div>
+<div id="memberSongFileField" class="field-wrap full reference-field" hidden><label>MR · 음성 · 참고 파일 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="memberSongFile" class="field attachment-input" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small id="memberSongFileCurrent" class="file-help">카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하</small></div>
 </div>
 <button class="save" onclick="saveMemberSong()">곡 저장</button>
 </div>
@@ -875,8 +875,17 @@ function renderMemberSongs(){
     return `<div class="member-song-row"><div><strong>${esc(s.song_title||'')} · ${esc(s.artist_name||'')}</strong><small>${s.duet_name?`duet ${esc(s.duet_name)} · `:''}${esc(refs)}</small></div><div class="member-song-actions">${memberSongReferenceButtons(s)}${editable?`<button class="mini" onclick="editMemberSong(${s.id})">수정</button><button class="mini danger" onclick="deleteMemberSong(${s.id})">삭제</button>`:''}</div></div>`;
   }).join(''):'<div class="empty">저장된 곡이 없습니다.</div>'
 }
-function resetMemberSongForm(){memberSongId.value='';memberSongTitle.value='';memberSongArtist.value='';memberSongDuet.value='';memberSongYoutube.value='';memberSongFile.value='';memberSongFileCurrent.textContent='카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하';memberSongFormTitle.textContent='새 곡 추가'}
-function editMemberSong(id){const s=memberSongs.find(x=>String(x.id)===String(id));if(!s)return;memberSongId.value=s.id;memberSongTitle.value=s.song_title||'';memberSongArtist.value=s.artist_name||'';memberSongDuet.value=s.duet_name||'';memberSongYoutube.value=s.youtube_url||'';memberSongFile.value='';memberSongFileCurrent.textContent=s.file_name?`현재 첨부: ${s.file_name} · 새 파일을 고르면 교체됩니다.`:'첨부 파일 없음 · 카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능';memberSongFormTitle.textContent='곡 수정'}
+function selectedMemberSongReferenceType(){return document.querySelector('input[name="memberSongReferenceType"]:checked')?.value||''}
+function setMemberSongReferenceType(type){
+  document.querySelectorAll('input[name="memberSongReferenceType"]').forEach(input=>{input.checked=input.value===type});
+  const youtubeField=document.getElementById('memberSongYoutubeField');
+  const fileField=document.getElementById('memberSongFileField');
+  youtubeField.hidden=type!=='youtube';
+  fileField.hidden=type!=='file';
+}
+function updateMemberSongReferenceType(){setMemberSongReferenceType(selectedMemberSongReferenceType())}
+function resetMemberSongForm(){memberSongId.value='';memberSongTitle.value='';memberSongArtist.value='';memberSongDuet.value='';memberSongYoutube.value='';memberSongFile.value='';memberSongFileCurrent.textContent='카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하';setMemberSongReferenceType('');memberSongFormTitle.textContent='새 곡 추가'}
+function editMemberSong(id){const s=memberSongs.find(x=>String(x.id)===String(id));if(!s)return;memberSongId.value=s.id;memberSongTitle.value=s.song_title||'';memberSongArtist.value=s.artist_name||'';memberSongDuet.value=s.duet_name||'';memberSongYoutube.value=s.youtube_url||'';memberSongFile.value='';memberSongFileCurrent.textContent=s.file_name?`현재 첨부: ${s.file_name} · 파일 방식을 유지하면 그대로 저장되고, 새 파일을 고르면 교체됩니다.`:'첨부 파일 없음 · 카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능';setMemberSongReferenceType(s.youtube_url?'youtube':s.file_url?'file':'');memberSongFormTitle.textContent='곡 수정'}
 async function addActivityLog(actionType,targetId,targetName,detail){
   try{
     await db.from('activity_logs').insert({
@@ -893,18 +902,35 @@ async function addActivityLog(actionType,targetId,targetName,detail){
 async function saveMemberSong(){
   if(!currentSongMember||!canManageMember(currentSongMember))return;
   const title=memberSongTitle.value.trim();if(!title){alert('곡명을 입력해주세요.');return}
+  const referenceType=selectedMemberSongReferenceType();
+  if(!referenceType){alert('재생 자료 방식을 선택해주세요. YouTube 링크 또는 파일 첨부 중 하나를 골라주세요.');return}
   const duetName=memberSongDuet.value.trim(),duet=members.find(m=>String(m.name||'').trim()===duetName);
   const id=memberSongId.value;
   const before=id?memberSongs.find(x=>String(x.id)===String(id)):null;
   const pickedFile=memberSongFile.files&&memberSongFile.files[0];
-  let attachment=before?{file_url:before.file_url||null,file_name:before.file_name||null,file_path:before.file_path||null}:{file_url:null,file_name:null,file_path:null};
-  if(pickedFile){
-    try{attachment=await uploadMemberSongAttachment(pickedFile)}catch(error){alert(error?.message||'파일 업로드 준비에 실패했습니다.');return}
+  let youtubeUrl=null;
+  let attachment={file_url:null,file_name:null,file_path:null};
+
+  if(referenceType==='youtube'){
+    const value=memberSongYoutube.value.trim();
+    let url;
+    try{url=new URL(value)}catch(_error){url=null}
+    if(!url||!/^https?:$/.test(url.protocol)){alert('YouTube 링크를 정확히 입력해주세요.');return}
+    youtubeUrl=url.href;
+  }else{
+    if(pickedFile){
+      try{attachment=await uploadMemberSongAttachment(pickedFile)}catch(error){alert(error?.message||'파일 업로드 준비에 실패했습니다.');return}
+    }else if(before?.file_url){
+      attachment={file_url:before.file_url||null,file_name:before.file_name||null,file_path:before.file_path||null};
+    }else{
+      alert('파일을 선택해주세요.');return
+    }
   }
-  const p={member_id:String(currentSongMember.id),vocalist_name:currentSongMember.name||'',song_title:title,artist_name:memberSongArtist.value.trim(),duet_member_id:duet?String(duet.id):null,duet_name:duetName,youtube_url:memberSongYoutube.value.trim(),...attachment};
+
+  const p={member_id:String(currentSongMember.id),vocalist_name:currentSongMember.name||'',song_title:title,artist_name:memberSongArtist.value.trim(),duet_member_id:duet?String(duet.id):null,duet_name:duetName,youtube_url:youtubeUrl,...attachment};
   const q=id?db.from('busking_repertoire').update(p).eq('id',id):db.from('busking_repertoire').insert(p).select('id').single();
   const {data,error}=await q;if(error){alert('곡 저장 실패\n'+error.message);return}
-  if(pickedFile&&before?.file_path&&before.file_path!==attachment.file_path&&adminMode){await removeBuskingAttachment(before.file_path)}
+  if(before?.file_path&&before.file_path!==attachment.file_path&&adminMode){await removeBuskingAttachment(before.file_path)}
   const savedId=id||(data&&data.id)||'';
   await addActivityLog(id?'UPDATE':'ADD',savedId,currentSongMember.name,{
     song_title:title,
