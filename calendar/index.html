@@ -6558,7 +6558,9 @@ async function saveEvent(){
 
     if(!id && result.data){
       await createAutoOperationTasks(result.data);
-      notifyNewEvent(result.data);
+      await notifyNewEvent(result.data);
+      window.location.href='/admin-settings/?section=operations&event='+encodeURIComponent(result.data.id);
+      return;
     }
 
     closeEventModal();
