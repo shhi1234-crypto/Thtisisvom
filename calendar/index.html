@@ -2400,6 +2400,7 @@ button{
 .operation-checklist{margin-top:16px;padding:16px;border:1px solid rgba(244,143,55,.22);border-radius:18px;background:linear-gradient(135deg,rgba(255,249,240,.95),rgba(255,255,255,.95))}.operation-checklist-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}.operation-checklist-head b{font-size:14px}.operation-checklist-head span{padding:5px 8px;border-radius:999px;background:#fff0dc;color:#d77820;font-size:9px;font-weight:900}.operation-checklist-head p{margin:3px 0 0;color:#8a7768;font-size:9px}.operation-task{display:flex;align-items:center;gap:9px;padding:9px 10px;margin-top:5px;border-radius:12px;background:#fff;border:1px solid rgba(28,34,65,.06);cursor:pointer}.operation-task input{width:16px;height:16px;accent-color:#6f9e83;flex:none}.operation-task.pending{border-color:rgba(241,142,51,.28);background:#fffaf4}.operation-task.done{opacity:.66}.operation-task-copy{min-width:0;flex:1}.operation-task-copy strong{display:block;font-size:10px}.operation-task-copy small{display:block;margin-top:2px;color:#9296a5;font-size:8px}.operation-task.pending small{color:#d77820}
 .monthly-ops-guide{margin:0 0 18px;padding:18px;border:1px solid rgba(112,93,222,.14);border-radius:20px;background:linear-gradient(135deg,rgba(244,240,255,.96),rgba(237,250,247,.94))}.monthly-ops-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.monthly-ops-head b{font-size:15px}.monthly-ops-head span{padding:5px 8px;border-radius:999px;background:#ece8ff;color:#6654c7;font-size:9px;font-weight:900}.monthly-ops-copy{margin:6px 0 11px;color:#757b8e;font-size:10px;line-height:1.65}.monthly-ops-list{display:grid;gap:5px}.monthly-ops-item{padding:9px 10px;border-radius:11px;background:rgba(255,255,255,.72);font-size:10px;font-weight:800}.monthly-ops-item small{margin-left:6px;color:#7f8496;font-weight:600}.monthly-ops-warning{margin:10px 0 0;color:#c4722a;font-size:10px;font-weight:800}.monthly-copy-btn{margin-top:11px;border:0;border-radius:11px;padding:9px 11px;background:#7461dd;color:#fff;font-size:10px;font-weight:800;cursor:pointer}
 .event-readiness-alert{margin:0 0 18px;padding:17px 18px;border:1px solid rgba(232,133,43,.25);border-radius:20px;background:linear-gradient(135deg,rgba(255,243,229,.96),rgba(255,250,245,.96));box-shadow:0 10px 25px rgba(192,113,38,.05)}.event-readiness-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.event-readiness-head b{display:block;color:#9a531c;font-size:14px}.event-readiness-head p{margin:4px 0 0;color:#9b755b;font-size:10px;line-height:1.55}.event-readiness-count{flex:0 0 auto;padding:5px 8px;border-radius:999px;background:#fff0dc;color:#c66e1f;font-size:9px;font-weight:900}.event-readiness-list{display:grid;gap:6px;margin-top:12px}.event-readiness-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid rgba(229,143,67,.14);border-radius:12px;background:rgba(255,255,255,.8)}.event-readiness-row strong{display:block;color:#5e4939;font-size:10px}.event-readiness-row small{display:block;margin-top:3px;color:#bc702d;font-size:9px;font-weight:800}.event-readiness-row button{flex:0 0 auto;min-height:29px;padding:0 9px;border:0;border-radius:8px;background:#e68132;color:#fff;font-size:9px;font-weight:900;cursor:pointer}.owner-section{border-top:1px solid rgba(28,34,65,.06)}.required-mark{margin-left:4px;color:#dc7430;font-size:8px;font-weight:900}.owner-members{display:flex;flex-wrap:wrap;gap:7px;padding:10px;border:1px solid #dddde7;border-radius:12px;background:#fbfaff}.owner-option{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:9px;background:#f0edfb;color:#6555c4;font-size:10px;font-weight:800;cursor:pointer}.owner-option input{accent-color:#7561dc}
+.somoim-open-details{margin-top:9px}.somoim-no-open-note{margin-top:9px;padding:10px 11px;border-radius:11px;background:#f5f2ff;color:#695bc7;font-size:9px;font-weight:800;line-height:1.55}.event-readiness-actions{display:flex;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;gap:5px}.event-readiness-row .event-readiness-skip{background:#fff7ed;color:#bd6b2b;border:1px solid rgba(230,132,50,.28)}.operation-task{cursor:default;justify-content:space-between}.operation-task-check{display:flex;align-items:center;min-width:0;flex:1;gap:9px;cursor:pointer}.operation-task-check input:disabled{cursor:not-allowed}.operation-task-action{flex:0 0 auto;min-height:26px;padding:0 8px;border:1px solid rgba(227,132,44,.28);border-radius:8px;background:#fff7ed;color:#bd6b2b;font-size:8px;font-weight:900;cursor:pointer}.operation-task.skipped{border-color:rgba(128,135,151,.16);background:#f7f8fb;opacity:.76}.operation-task.skipped .operation-task-copy strong{text-decoration:line-through;color:#89909c}.operation-task.skipped .operation-task-copy small{color:#89909c}.operation-task.skipped .operation-task-action{border-color:rgba(103,91,205,.18);background:#f4f1ff;color:#6c5dc9}
 .schedule-detail-card{
   padding:3px 1px 2px;
 }
@@ -2888,9 +2889,17 @@ button{
       </div>
 
       <div class="field">
-        <label>소모임 정식 오픈 일시</label>
-        <input id="somoimOpenAt" class="text-input" type="datetime-local">
-        <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">이 시간에 맞춰 ‘모집글 정식 오픈 · 인원 제한 해제’ 작업이 생성됩니다.</div>
+        <label>소모임 진행</label>
+        <select id="somoimOpenMode" class="pretty-select" onchange="syncSomoimOpenMode()">
+          <option value="OPEN">소모임 열기</option>
+          <option value="NONE">이번 일정은 소모임 미오픈</option>
+        </select>
+        <div id="somoimOpenDetails" class="somoim-open-details">
+          <label style="font-size:9px;color:#7f8392;">정식 오픈 일시</label>
+          <input id="somoimOpenAt" class="text-input" type="datetime-local">
+          <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">이 시간에 맞춰 ‘모집글 정식 오픈 · 인원 제한 해제’ 작업이 생성됩니다.</div>
+        </div>
+        <div id="somoimNoOpenNote" class="somoim-no-open-note" hidden>이번 일정은 소모임 관련 체크리스트와 주황 안내에서 제외됩니다.</div>
       </div>
 
 
@@ -3440,7 +3449,7 @@ async function loadEvents(){
     const response =
       await fetch(
         SUPABASE_URL +
-        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at&order=event_date.asc%2Cstart_time.asc',
+        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at%2Csomoim_open_enabled&order=event_date.asc%2Cstart_time.asc',
         {
           method:'GET',
           credentials:'omit',
@@ -3648,12 +3657,13 @@ function nextMonthLabel(){
 }
 function eventMissingFields(item){
   const missing=[];
-  if(!item.title)missing.push('제목');
-  if(!item.event_date)missing.push('날짜');
-  if(!item.location)missing.push('장소');
-  if(!item.start_time||!item.end_time)missing.push('진행 시간');
-  if(!item.host_member_id)missing.push('주최자');
-  if(['BUSKING','VOM LIVE'].includes(item.event_type)&&!item.somoim_open_at)missing.push('소모임 오픈 일시');
+  const add=(key,label)=>missing.push({key,label});
+  if(!item.title)add('title','제목');
+  if(!item.event_date)add('event_date','날짜');
+  if(!item.location)add('location','장소');
+  if(!item.start_time||!item.end_time)add('time','진행 시간');
+  if(!item.host_member_id)add('host_member_id','주최자');
+  if(['BUSKING','VOM LIVE'].includes(item.event_type)&&item.somoim_open_enabled!==false&&!item.somoim_open_at)add('somoim_open_at','소모임 오픈 일시');
   return missing;
 }
 
@@ -3663,7 +3673,21 @@ function renderEventReadinessAlert(){
   const incomplete=events.map(item=>({item,missing:eventMissingFields(item)})).filter(entry=>entry.missing.length);
   if(!incomplete.length)return '';
 
-  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 항목을 채워야 운영 체크리스트와 공지 준비가 정확해집니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>'<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.join(' · '))+'</small></div><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button></div>').join('')+'</div></section>';
+  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 소모임이 없는 일정은 미오픈으로 처리하면 이 안내에서 제외됩니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>{const hasSomoim=entry.missing.some(field=>field.key==='somoim_open_at');return '<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.map(field=>field.label).join(' · '))+'</small></div><div class="event-readiness-actions"><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button>'+(hasSomoim?'<button class="event-readiness-skip" type="button" onclick="markEventSomoimNotOpen('+Number(entry.item.id)+')">소모임 미오픈</button>':'')+'</div></div>';}).join('')+'</div></section>';
+}
+
+async function markEventSomoimNotOpen(eventId){
+  if(!adminMode)return;
+  const item=events.find(row=>Number(row.id)===Number(eventId));
+  if(!item)return;
+  const {error}=await db.from('events').update({somoim_open_enabled:false,somoim_open_at:null}).eq('id',Number(eventId));
+  if(error){alert('소모임 미오픈 상태를 저장하지 못했습니다.\n'+error.message);return;}
+  try{
+    await syncSomoimOperationTasks({...item,somoim_open_enabled:false,somoim_open_at:null});
+  }catch(taskError){
+    alert('소모임 상태는 저장됐지만 체크리스트를 정리하지 못했습니다.\n'+taskError.message);
+  }
+  await loadEvents();
 }
 
 function renderMonthlyOperationsGuide(){
@@ -4416,8 +4440,9 @@ function openEventDetail(id){
 
 async function loadOperationTasks(eventId){if(!adminMode){operationTasks=[];return}const {data,error}=await db.from('event_operation_tasks').select('*').eq('event_id',Number(eventId)).order('sort_order',{ascending:true});operationTasks=error?[]:(data||[])}
 function taskDueLabel(value){if(!value)return '마감일 미정';const due=new Date(value+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);const label=(due.getMonth()+1)+'/'+due.getDate()+'까지';return due<today?'마감 지남 · '+label:label}
-function renderOperationChecklist(){if(!adminMode||!operationTasks.length)return '';const pending=operationTasks.filter(t=>!t.is_done).length;return '<section class="operation-checklist"><div class="operation-checklist-head"><div><b>운영 체크리스트</b><p>완료한 항목을 체크해주세요.</p></div><span>미완료 '+pending+'건</span></div>'+operationTasks.map(t=>'<label class="operation-task '+(t.is_done?'done':'pending')+'"><input type="checkbox" '+(t.is_done?'checked':'')+' onchange="toggleOperationTask('+Number(t.id)+',this.checked)"><span class="operation-task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+taskDueLabel(t.due_date)+(t.is_done?' · 완료':' · 확인 필요')+(t.description?' · '+escapeHtml(t.description):'')+'</small></span></label>').join('')+'</section>'}
+function renderOperationChecklist(){if(!adminMode||!operationTasks.length)return '';const pending=operationTasks.filter(t=>!t.is_done&&!t.is_skipped).length;return '<section class="operation-checklist"><div class="operation-checklist-head"><div><b>운영 체크리스트</b><p>완료한 항목을 체크하거나, 이번 일정에 필요 없으면 생략 처리할 수 있습니다.</p></div><span>미완료 '+pending+'건</span></div>'+operationTasks.map(t=>{const skipped=Boolean(t.is_skipped),done=Boolean(t.is_done),state=skipped?'skipped':done?'done':'pending';const status=skipped?' · 해당 없음':done?' · 완료':' · 확인 필요';return '<div class="operation-task '+state+'"><label class="operation-task-check"><input type="checkbox" '+(done?'checked ':'')+(skipped?'disabled ':'')+'onchange="toggleOperationTask('+Number(t.id)+',this.checked)"><span class="operation-task-copy"><strong>'+escapeHtml(t.title)+'</strong><small>'+taskDueLabel(t.due_date)+status+(t.description?' · '+escapeHtml(t.description):'')+'</small></span></label><button class="operation-task-action" type="button" onclick="setOperationTaskSkipped('+Number(t.id)+','+(skipped?'false':'true')+')">'+(skipped?'되돌리기':'이번 일정은 생략')+'</button></div>';}).join('')+'</section>'}
 async function toggleOperationTask(taskId,done){const {error}=await db.from('event_operation_tasks').update({is_done:done,completed_at:done?new Date().toISOString():null}).eq('id',Number(taskId));if(error){alert('체크 상태를 저장하지 못했습니다.');return}const task=operationTasks.find(t=>Number(t.id)===Number(taskId));const item=events.find(row=>String(row.id)===String(task?.event_id));if(item)await openScheduleDetail(item)}
+async function setOperationTaskSkipped(taskId,skipped){if(!adminMode)return;const {error}=await db.from('event_operation_tasks').update({is_skipped:skipped,skipped_at:skipped?new Date().toISOString():null}).eq('id',Number(taskId));if(error){alert('생략 상태를 저장하지 못했습니다.');return}const task=operationTasks.find(t=>Number(t.id)===Number(taskId));const item=events.find(row=>String(row.id)===String(task?.event_id));if(item)await openScheduleDetail(item)}
 
 async function openScheduleDetail(item){
 
@@ -4613,6 +4638,22 @@ function makeTime(item){
 /* ======================================================
    EVENT TYPE
 ====================================================== */
+
+function isSomoimOpenEnabled(){
+  return document.getElementById('somoimOpenMode')?.value!=='NONE';
+}
+
+function syncSomoimOpenMode(){
+  const enabled=isSomoimOpenEnabled();
+  const details=document.getElementById('somoimOpenDetails');
+  const note=document.getElementById('somoimNoOpenNote');
+  if(details)details.hidden=!enabled;
+  if(note)note.hidden=enabled;
+  if(!enabled){
+    const input=document.getElementById('somoimOpenAt');
+    if(input)input.value='';
+  }
+}
 
 function setEventType(type){
 
@@ -6324,7 +6365,9 @@ function clearForm(){
     )
     .value = '';
     document.getElementById('eventHostNote').value = '';
+    document.getElementById('somoimOpenMode').value = 'OPEN';
     document.getElementById('somoimOpenAt').value = '';
+    syncSomoimOpenMode();
     resetOwnerFields();
 
 
@@ -6502,7 +6545,9 @@ async function saveEvent(){
           )
           .value || null,
 
-      somoim_open_at: document.getElementById('somoimOpenAt').value ? new Date(document.getElementById('somoimOpenAt').value).toISOString() : null,
+      somoim_open_enabled: isSomoimOpenEnabled(),
+
+      somoim_open_at: isSomoimOpenEnabled()&&document.getElementById('somoimOpenAt').value ? new Date(document.getElementById('somoimOpenAt').value).toISOString() : null,
 
       description:
         document
@@ -6561,6 +6606,10 @@ async function saveEvent(){
       await notifyNewEvent(result.data);
       window.location.href='/admin-settings/?section=operations&event='+encodeURIComponent(result.data.id);
       return;
+    }
+
+    if(id){
+      await syncSomoimOperationTasks({...payload,id:Number(id)});
     }
 
     closeEventModal();
@@ -6737,7 +6786,9 @@ function editEvent(id){
     .value =
     item.description || '';
     document.getElementById('eventHostNote').value = item.host_note || '';
+    document.getElementById('somoimOpenMode').value = item.somoim_open_enabled===false ? 'NONE' : 'OPEN';
     document.getElementById('somoimOpenAt').value = toLocalDateTimeInput(item.somoim_open_at);
+    syncSomoimOpenMode();
     renderOwnerFields(item.host_member_id || '',item.support_member_ids || []);
 
 
@@ -6871,6 +6922,46 @@ async function notifyNewEvent(event){
   }
 }
 
+const SOMOIM_TASK_KEYS=['somoim-open-time','somoim-draft','somoim-open'];
+
+function buildSomoimOperationTasks(event){
+  if(event.somoim_open_enabled===false)return [];
+  const eventDate=new Date(event.event_date+'T12:00:00');
+  const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
+  if(!event.somoim_open_at){
+    return [{task_key:'somoim-open-time',title:'소모임 정식 오픈 일시 입력',description:'소모임 오픈 시간을 입력하면 모집글 준비·정식 오픈 작업이 자동으로 잡힙니다.',due_date:dateKey(registerBy),sort_order:30}];
+  }
+  const openAt=new Date(event.somoim_open_at);
+  const openLabel=openAt.toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  return [
+    {task_key:'somoim-draft',title:'소모임 모집글 작성·예약',description:openLabel+' 정식 오픈 전 모집글과 안내 문구를 준비하세요.',due_date:dateKey(addDays(openAt,-1)),sort_order:30},
+    {task_key:'somoim-open',title:'소모임 정식 오픈 · 인원 제한 해제',description:openLabel+'에 인원 제한을 1명에서 해당 일정 정원으로 변경하세요.',due_date:dateKey(openAt),sort_order:40}
+  ];
+}
+
+async function syncSomoimOperationTasks(event){
+  const {data:existing,error}=await db.from('event_operation_tasks').select('id,task_key').eq('event_id',Number(event.id)).in('task_key',SOMOIM_TASK_KEYS);
+  if(error)throw error;
+  const desired=buildSomoimOperationTasks(event);
+  const byKey=new Map((existing||[]).map(task=>[task.task_key,task]));
+  const desiredKeys=new Set(desired.map(task=>task.task_key));
+  for(const task of desired){
+    const current=byKey.get(task.task_key);
+    if(current){
+      const {error:updateError}=await db.from('event_operation_tasks').update({...task,is_skipped:false,skipped_at:null,updated_at:new Date().toISOString()}).eq('id',Number(current.id));
+      if(updateError)throw updateError;
+    }else{
+      const {error:insertError}=await db.from('event_operation_tasks').insert({...task,event_id:Number(event.id),is_done:false,is_skipped:false});
+      if(insertError)throw insertError;
+    }
+  }
+  for(const task of existing||[]){
+    if(desiredKeys.has(task.task_key))continue;
+    const {error:skipError}=await db.from('event_operation_tasks').update({is_skipped:true,skipped_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',Number(task.id));
+    if(skipError)throw skipError;
+  }
+}
+
 async function createAutoOperationTasks(event){
   const eventDate=new Date(event.event_date+'T12:00:00');
   const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
@@ -6878,16 +6969,9 @@ async function createAutoOperationTasks(event){
   const title=event.title||'일정';
   const tasks=[
     {task_key:'monthly-schedule-confirm',title:month+' 일정 등록 확인',description:'등록 일정: '+title+'. '+month+' 모든 일정이 홈페이지에 등록됐는지 확인하세요.',due_date:dateKey(registerBy),sort_order:10},
-    {task_key:'monthly-notice-confirm',title:'공지방 '+month+' 일정 공지 확인',description:'공지에 '+title+'을 포함해 '+month+' 등록 일정이 모두 안내됐는지 확인하세요.',due_date:dateKey(registerBy),sort_order:20}
+    {task_key:'monthly-notice-confirm',title:'공지방 '+month+' 일정 공지 확인',description:'공지에 '+title+'을 포함해 '+month+' 등록 일정이 모두 안내됐는지 확인하세요.',due_date:dateKey(registerBy),sort_order:20},
+    ...buildSomoimOperationTasks(event)
   ];
-  if(event.somoim_open_at){
-    const openAt=new Date(event.somoim_open_at);
-    const openLabel=openAt.toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
-    tasks.push({task_key:'somoim-draft',title:'소모임 모집글 작성·예약',description:openLabel+' 정식 오픈 전 모집글과 안내 문구를 준비하세요.',due_date:dateKey(addDays(openAt,-1)),sort_order:30});
-    tasks.push({task_key:'somoim-open',title:'소모임 정식 오픈 · 인원 제한 해제',description:openLabel+'에 인원 제한을 1명에서 해당 일정 정원으로 변경하세요.',due_date:dateKey(openAt),sort_order:40});
-  }else{
-    tasks.push({task_key:'somoim-open-time',title:'소모임 정식 오픈 일시 입력',description:'소모임 오픈 시간을 입력하면 모집글 준비·정식 오픈 작업이 자동으로 잡힙니다.',due_date:dateKey(registerBy),sort_order:30});
-  }
   if(event.event_type==='BUSKING'){
     tasks.push({task_key:'application-close',title:'참가 신청 마감·인원 확정',description:'버스킹 참가 인원을 확정하고 공지문에 마감 내용을 반영하세요.',due_date:dateKey(addDays(eventDate,-8)),sort_order:50});
     tasks.push({task_key:'setlist-deadline',title:'셋리스트·MR 마감',description:'최종 셋리스트와 MR을 취합하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:60});
@@ -6895,7 +6979,7 @@ async function createAutoOperationTasks(event){
     tasks.push({task_key:'application-close',title:'참가 신청 마감·인원 확정',description:'VOM LIVE 참가 인원을 확정하세요.',due_date:dateKey(addDays(eventDate,-5)),sort_order:50});
     tasks.push({task_key:'duet-plan',title:'듀엣 구성·참가자 안내',description:'참가자 확정 후 듀엣 구성과 개인곡 진행 순서를 정리해 안내하세요.',due_date:dateKey(addDays(eventDate,-4)),sort_order:60});
   }
-  const rows=tasks.map(task=>({...task,event_id:Number(event.id),is_done:false}));
+  const rows=tasks.map(task=>({...task,event_id:Number(event.id),is_done:false,is_skipped:false}));
   const {error}=await db.from('event_operation_tasks').insert(rows);
   if(error)throw error;
 }
