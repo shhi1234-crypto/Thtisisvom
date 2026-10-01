@@ -430,6 +430,16 @@
     }
   }
 
+  function loadConsultationWidget() {
+    if (document.getElementById('vom-consultation-script')) return;
+    if (/^\/(admin-settings|admin|operator-alert|site-log)(\/|$)/.test(path)) return;
+    const script = document.createElement('script');
+    script.id = 'vom-consultation-script';
+    script.src = '/assets/vom-consultation.js?v=1';
+    script.async = false;
+    document.body.appendChild(script);
+  }
+
   function bootstrap() {
     addStyle();
     normalizeBottomNavigation();
@@ -438,6 +448,7 @@
     ensureFallbackMenu();
     checkAdminShell();
     showCurrentMember();
+    loadConsultationWidget();
   }
 
   if (document.readyState === 'loading') {
