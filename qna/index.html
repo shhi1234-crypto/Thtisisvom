@@ -66,6 +66,6 @@ async function saveAnswer(id){if(!isAdmin)return;const content=document.getEleme
 function openMenu(){const el=document.getElementById('menuOverlay');el.classList.add('open');el.setAttribute('aria-hidden','false')}function closeMenu(){const el=document.getElementById('menuOverlay');el.classList.remove('open');el.setAttribute('aria-hidden','true')}document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadSession();await Promise.all([loadMemberMap(),loadQuestions()]);renderFixedFaq();renderPublished();renderMy();renderAdmin()}catch(error){document.getElementById('myQnaSection').innerHTML='<div class="empty">Q&A를 불러오지 못했습니다.<br><br>'+esc(error.message||'잠시 후 다시 시도해 주세요.')+'</div>'}})();
 </script>
-<script src="/assets/vom-shell.js?v=7"></script>
+<script src="/assets/vom-shell.js?v=8"></script>
 </body>
 </html>
