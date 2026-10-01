@@ -1,4 +1,4 @@
-/* VOM shared member shell: consistent navigation, HOME return and current member display. */
+/* VOM shared member shell: consistent navigation, contextual back links and current member display. */
 (function () {
   'use strict';
 
@@ -215,11 +215,8 @@
 
   function normalizeBackLink(link) {
     const label = (link.textContent || '').replace(/\s+/g, ' ').trim();
-    if (!/^←\s*HOME$/i.test(label)) {
-      link.href = '/';
-      link.textContent = '← HOME';
-      link.setAttribute('aria-label', 'HOME으로 돌아가기');
-    }
+    const target = label.replace(/^←\s*/, '').replace(/\s*→$/, '').trim();
+    if (target) link.setAttribute('aria-label', target + '으로 돌아가기');
   }
 
   function normalizeBackLinks(root) {
