@@ -95,6 +95,22 @@
     return payload;
   }
 
+
+  async function memberAccount(action, payload) {
+    state.token = state.token || storedAccessToken();
+    if (!state.token) throw new Error('로그인이 필요합니다.');
+    const response = await window.fetch(SUPABASE_URL + '/functions/v1/member-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + state.token },
+      body: JSON.stringify(Object.assign({ action: action }, payload || {}))
+    });
+    const text = await response.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch (_) { data = null; }
+    if (!response.ok) throw new Error((data && data.error) || '요청을 처리하지 못했습니다.');
+    return data || {};
+  }
+
   async function loadMember() {
     if (state.loadingMember) return state.member;
     state.loadingMember = true;
@@ -105,13 +121,7 @@
       return null;
     }
     try {
-      const response = await window.fetch(SUPABASE_URL + '/functions/v1/member-account', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_KEY, Authorization: 'Bearer ' + state.token },
-        body: JSON.stringify({ action: 'whoami' })
-      });
-      if (!response.ok) throw new Error('로그인 정보를 확인하지 못했습니다.');
-      const payload = await response.json();
+      const payload = await memberAccount('whoami');
       state.member = payload && (payload.member || (payload.data && payload.data.member)) || null;
       if (!state.member || !state.member.id) state.member = null;
     } catch (_) {
@@ -123,7 +133,7 @@
   }
 
   function statusText(status) {
-    return ({ '신규': '신규', '대기': '신규', '확인중': '확인중', '답변완료': '답변완료', '보류': '보류' })[status] || '확인중';
+    return ({ '신규': '답변 대기', '대기': '답변 대기', '확인중': '확인중', '답변완료': '답변완료', '보류': '보류' })[status] || '확인중';
   }
 
   function statusClass(status) {
@@ -187,7 +197,7 @@
     const answer = answers.length ? answers[0] : null;
     const channel = question.channel === 'CONSULTATION' ? 'VOM 문의' : '기존 Q&A';
     return '<article class="vc-inquiry"><div class="vc-inquiry-top"><div><span class="vc-inquiry-category">' + esc(question.category || '기타 문의') + ' · ' + esc(channel) + '</span><h3>' + esc(question.title || '문의') + '</h3></div><span class="vc-status ' + statusClass(question.status) + '">' + statusText(question.status) + '</span></div><p class="vc-inquiry-content">' + esc(question.content || '').replace(/\n/g, '<br>') + '</p><div class="vc-inquiry-meta">' + (question.is_public ? '공개 문의' : '비공개 문의') + ' · ' + formatDate(question.created_at) + '</div>' +
-      (answer ? '<div class="vc-reply"><b>VOM 운영진 답변</b><p>' + esc(answer.content || '').replace(/\n/g, '<br>') + '</p></div>' : '<div class="vc-awaiting">운영진이 확인 중이에요.</div>') + '</article>';
+      (answer ? '<div class="vc-reply"><b>VOM 운영진 답변</b><p>' + esc(answer.content || '').replace(/\n/g, '<br>') + '</p></div>' : '<div class="vc-awaiting">운영진 답변 대기 중이에요.</div>') + '</article>';
   }
 
   function mineMarkup() {
@@ -197,7 +207,7 @@
   }
 
   function successMarkup() {
-    return '<div class="vc-success"><span>✓</span><h2>문의가 접수됐어요</h2><p>운영진이 확인한 뒤 답변을 남기면<br>이 상담창의 <b>내 문의</b>에서 확인할 수 있어요.</p><button type="button" class="vc-primary" data-vc-action="mine">내 문의 확인 <span>→</span></button><button type="button" class="vc-secondary" data-vc-action="home">빠른 안내로 돌아가기</button></div>';
+    return '<div class="vc-success"><span>✓</span><h2>문의가 접수됐어요</h2><p>현재 상태는 <b>답변 대기</b>예요.<br>답변이 등록되면 이 상담창의 <b>내 문의</b>에서 바로 확인할 수 있어요.</p><button type="button" class="vc-primary" data-vc-action="mine">내 문의 확인 <span>→</span></button><button type="button" class="vc-secondary" data-vc-action="home">빠른 안내로 돌아가기</button></div>';
   }
 
   function renderBody() {
@@ -227,8 +237,8 @@
     state.loadingInquiries = true;
     renderBody();
     try {
-      const query = 'vom_qna_questions?select=' + encodeURIComponent(QUESTION_SELECT) + '&member_id=eq.' + encodeURIComponent(state.member.id) + '&order=created_at.desc';
-      const data = await api(query, { method: 'GET' }, state.token);
+      const payload = await memberAccount('consultation_list');
+      const data = payload && payload.inquiries;
       state.inquiries = Array.isArray(data) ? data : [];
     } catch (error) {
       state.inquiries = [];
@@ -257,21 +267,12 @@
     button.disabled = true;
     button.textContent = '문의 접수 중…';
     try {
-      await api('vom_qna_questions', {
-        method: 'POST',
-        headers: { Prefer: 'return=representation' },
-        body: JSON.stringify({
-          member_id: Number(state.member.id),
-          category: category,
-          title: title,
-          content: content,
-          status: '신규',
-          channel: 'CONSULTATION',
-          is_public: visibility === 'public',
-          is_anonymous: false
-        })
-      }, state.token);
-      state.inquiries = [];
+      const payload = await memberAccount('consultation_create', {
+        category: category,
+        content: content,
+        is_public: visibility === 'public'
+      });
+      state.inquiries = payload && payload.inquiry ? [payload.inquiry] : [];
       state.view = 'success';
       renderBody();
     } catch (error) {
