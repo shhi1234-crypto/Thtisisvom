@@ -2892,14 +2892,14 @@ button{
         <label>소모임 진행</label>
         <select id="somoimOpenMode" class="pretty-select" onchange="syncSomoimOpenMode()">
           <option value="OPEN">소모임 열기</option>
-          <option value="NONE">이번 일정은 소모임 미오픈</option>
+          <option value="NONE">이번 일정은 소모임 미오픈 (연습모임 등)</option>
         </select>
         <div id="somoimOpenDetails" class="somoim-open-details">
           <label style="font-size:9px;color:#7f8392;">정식 오픈 일시</label>
           <input id="somoimOpenAt" class="text-input" type="datetime-local">
           <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">이 시간에 맞춰 ‘모집글 정식 오픈 · 인원 제한 해제’ 작업이 생성됩니다.</div>
         </div>
-        <div id="somoimNoOpenNote" class="somoim-no-open-note" hidden>이번 일정은 소모임 관련 체크리스트와 주황 안내에서 제외됩니다.</div>
+        <div id="somoimNoOpenNote" class="somoim-no-open-note" hidden>연습모임은 소모임 앱에 따로 올리지 않습니다. 이 일정은 소모임 관련 체크리스트와 주황 안내에서 제외됩니다.</div>
       </div>
 
 
@@ -3655,6 +3655,11 @@ function nextMonthLabel(){
   const date=new Date();
   return (new Date(date.getFullYear(),date.getMonth()+1,1).getMonth()+1)+'월';
 }
+function isPracticeEvent(item){
+  const type=String(item?.event_type||'').trim().toUpperCase();
+  const title=String(item?.title||'');
+  return type==='PRACTICE'||/(?:연습\\s*모임|연습모임|연모)/.test(title);
+}
 function eventMissingFields(item){
   const missing=[];
   const add=(key,label)=>missing.push({key,label});
@@ -3663,7 +3668,7 @@ function eventMissingFields(item){
   if(!item.location)add('location','장소');
   if(!item.start_time||!item.end_time)add('time','진행 시간');
   if(!item.host_member_id)add('host_member_id','주최자');
-  if(['BUSKING','VOM LIVE'].includes(item.event_type)&&item.somoim_open_enabled!==false&&!item.somoim_open_at)add('somoim_open_at','소모임 오픈 일시');
+  if(!isPracticeEvent(item)&&item.somoim_open_enabled!==false&&!item.somoim_open_at)add('somoim_open_at','소모임 오픈 일시');
   return missing;
 }
 
@@ -3673,7 +3678,7 @@ function renderEventReadinessAlert(){
   const incomplete=events.map(item=>({item,missing:eventMissingFields(item)})).filter(entry=>entry.missing.length);
   if(!incomplete.length)return '';
 
-  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 소모임이 없는 일정은 미오픈으로 처리하면 이 안내에서 제외됩니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>{const hasSomoim=entry.missing.some(field=>field.key==='somoim_open_at');return '<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.map(field=>field.label).join(' · '))+'</small></div><div class="event-readiness-actions"><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button>'+(hasSomoim?'<button class="event-readiness-skip" type="button" onclick="markEventSomoimNotOpen('+Number(entry.item.id)+')">소모임 미오픈</button>':'')+'</div></div>';}).join('')+'</div></section>';
+  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 연습모임과 소모임 미오픈 일정은 이 안내에서 제외됩니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>{const hasSomoim=entry.missing.some(field=>field.key==='somoim_open_at');return '<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.map(field=>field.label).join(' · '))+'</small></div><div class="event-readiness-actions"><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button>'+(hasSomoim?'<button class="event-readiness-skip" type="button" onclick="markEventSomoimNotOpen('+Number(entry.item.id)+')">소모임 미오픈</button>':'')+'</div></div>';}).join('')+'</div></section>';
 }
 
 async function markEventSomoimNotOpen(eventId){
@@ -6925,7 +6930,7 @@ async function notifyNewEvent(event){
 const SOMOIM_TASK_KEYS=['somoim-open-time','somoim-draft','somoim-open'];
 
 function buildSomoimOperationTasks(event){
-  if(event.somoim_open_enabled===false)return [];
+  if(isPracticeEvent(event)||event.somoim_open_enabled===false)return [];
   const eventDate=new Date(event.event_date+'T12:00:00');
   const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
   if(!event.somoim_open_at){
@@ -7189,6 +7194,7 @@ document
 start();
 </script>
 
+<script src="/assets/vom-somoim.js?v=1"></script>
 <script src="/assets/vom-shell.js?v=9"></script>
 </body>
 </html>
