@@ -572,7 +572,7 @@
 <script>
 const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null,currentMemberId=null;
 const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>{const value=pick(m,'status','activity_status','active_status');return value!==''?String(value):(m?.is_active===false?'비활동':'활동중')};const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singers','favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
-async function start(){await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions();const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){const own=members.find(m=>String(m.id)===String(currentMemberId));if(own)openMemberSongs(own.id);else location.href='/me/'}}
+async function start(){const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){location.replace('/me/#mySetlistWorkspace');return}await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function invokeMemberAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error)throw new Error(data?.error||error.message||'요청을 처리하지 못했습니다.');if(data?.error)throw new Error(data.error);return data}
 async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}try{const account=await invokeMemberAccount({action:'whoami'});currentMemberId=account?.member_id||null}catch(error){console.warn(error);currentMemberId=null}}function canManageMember(m){return !!m&&(adminMode||String(m.id)===String(currentMemberId))}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
@@ -672,7 +672,7 @@ function table(){
         </div>
       </td>
       <td class="c-role"><span class="role-pill ${staff?'staff':'normal'}">${esc(role(m))}</span></td>
-      <td class="c-song">${!canManageMember(m)?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">MY SETLIST <span class="setlist-arrow">→</span></button>`}</td>
+      <td class="c-song">${!adminMode?'':`<button class="song-btn" onclick="event.stopPropagation();openMemberSongs('${String(m.id).replace(/'/g,"\'")}')">MY SETLIST <span class="setlist-arrow">→</span></button>`}</td>
       <td class="c-date">${fmt(join(m))}</td>
       <td class="c-region">${esc(reg(m))}</td>
       <td class="c-singer">${profileCell(m,'singer')}</td>
@@ -863,14 +863,14 @@ async function saveMember(){
 }
 
 function openMemberSongs(id){
-  const m=members.find(x=>String(x.id)===String(id));if(!m||!canManageMember(m))return;
+  const m=members.find(x=>String(x.id)===String(id));if(!m||!adminMode)return;
   currentSongMember=m;memberSongsTitle.textContent=`${m.name} · Songs`;resetMemberSongForm();renderMemberSongs();memberSongsOverlay.classList.add('open')
 }
 function closeMemberSongs(){memberSongsOverlay.classList.remove('open');currentSongMember=null}
 function renderMemberSongs(){
   if(!currentSongMember)return;
   const list=memberSongs.filter(s=>String(s.member_id||'')===String(currentSongMember.id)||String(s.vocalist_name||'').trim()===String(currentSongMember.name||'').trim());
-  const editable=canManageMember(currentSongMember);memberSongList.innerHTML=list.length?list.map(s=>{
+  const editable=adminMode;memberSongList.innerHTML=list.length?list.map(s=>{
     const refs=[s.youtube_url?'YouTube 링크':'',s.file_name?`첨부 · ${s.file_name}`:''].filter(Boolean).join(' · ')||'링크/파일 없음';
     return `<div class="member-song-row"><div><strong>${esc(s.song_title||'')} · ${esc(s.artist_name||'')}</strong><small>${s.duet_name?`duet ${esc(s.duet_name)} · `:''}${esc(refs)}</small></div><div class="member-song-actions">${memberSongReferenceButtons(s)}${editable?`<button class="mini" onclick="editMemberSong(${s.id})">수정</button><button class="mini danger" onclick="deleteMemberSong(${s.id})">삭제</button>`:''}</div></div>`;
   }).join(''):'<div class="empty">저장된 곡이 없습니다.</div>'
@@ -900,7 +900,7 @@ async function addActivityLog(actionType,targetId,targetName,detail){
   }
 }
 async function saveMemberSong(){
-  if(!currentSongMember||!canManageMember(currentSongMember))return;
+  if(!currentSongMember||!adminMode)return;
   const title=memberSongTitle.value.trim();if(!title){alert('곡명을 입력해주세요.');return}
   const referenceType=selectedMemberSongReferenceType();
   if(!referenceType){alert('재생 자료 방식을 선택해주세요. YouTube 링크 또는 파일 첨부 중 하나를 골라주세요.');return}
@@ -942,7 +942,7 @@ async function saveMemberSong(){
   await loadMemberSongs();resetMemberSongForm();renderMemberSongs()
 }
 async function deleteMemberSong(id){
-  if(!currentSongMember||!canManageMember(currentSongMember))return;
+  if(!currentSongMember||!adminMode)return;
   if(!confirm('이 곡을 공용 곡 목록에서 삭제할까요? 이 곡을 사용하는 버스킹 셋리스트에서도 빠질 수 있습니다.'))return;
   const before=memberSongs.find(x=>String(x.id)===String(id));
   const {error}=await db.from('busking_repertoire').delete().eq('id',id);if(error){alert('삭제 실패\n'+error.message);return}
