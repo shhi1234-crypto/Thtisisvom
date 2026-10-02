@@ -59,7 +59,7 @@ const CONSULTATION_CATEGORIES = new Set([
   "참가비·환불",
   "기타 문의"
 ]);
-const QNA_QUESTION_SELECT = "id,member_id,category,title,content,status,is_public,is_anonymous,channel,created_at,updated_at,vom_qna_answers(id,content,is_public,created_at,updated_at)";
+const QNA_QUESTION_SELECT = "id,member_id,category,title,content,status,is_public,is_anonymous,channel,operator_notified_at,created_at,updated_at,vom_qna_answers(id,content,is_public,created_at,updated_at)";
 
 async function requireLinkedMember(req: Request, admin: any) {
   const user = await requireSignedInUser(req, admin);
@@ -124,6 +124,14 @@ async function sendInquiryPush(admin: any, question: any, memberName: string) {
     }
   }
   return { sent };
+}
+
+async function markInquiryNotified(admin: any, inquiryId: number) {
+  const { error } = await admin
+    .from("vom_qna_questions")
+    .update({ operator_notified_at: new Date().toISOString() })
+    .eq("id", inquiryId);
+  if (error) console.error("inquiry notification timestamp failed", error);
 }
 
 Deno.serve(async (req) => {
@@ -234,6 +242,23 @@ Deno.serve(async (req) => {
         .eq("member_id", member.id)
         .order("created_at", { ascending: false });
       if (error) throw error;
+
+      for (const inquiry of data || []) {
+        const isWaiting = inquiry.status === "신규" || inquiry.status === "대기";
+        if (inquiry.channel !== "CONSULTATION" || !isWaiting || inquiry.operator_notified_at) continue;
+        const push = await sendInquiryPush(
+          admin,
+          inquiry,
+          String(member.name || member.nickname || "회원")
+        ).catch((pushError) => {
+          console.error("missed inquiry push failed", pushError);
+          return { sent: 0 };
+        });
+        if (Number(push.sent || 0) > 0) {
+          await markInquiryNotified(admin, Number(inquiry.id));
+        }
+      }
+
       return response({ inquiries: data || [] }, 200, requestOrigin);
     }
 
@@ -276,6 +301,9 @@ Deno.serve(async (req) => {
         console.error("inquiry push setup failed", pushError);
         return { sent: 0, skipped: true };
       });
+      if (Number(push.sent || 0) > 0) {
+        await markInquiryNotified(admin, Number(inquiry.id));
+      }
 
       return response({ ok: true, inquiry, operator_push: push }, 200, requestOrigin);
     }
