@@ -43,7 +43,7 @@
         color: #777c8d !important;
         cursor: pointer;
         text-decoration: none !important;
-        font: 700 8px/1 "DM Sans", Pretendard, Arial, sans-serif !important;
+        font: 700 10px/1 "DM Sans", Pretendard, Arial, sans-serif !important;
       }
       nav.bottom.vom-global-bottom .nav-icon {
         display: block !important;
@@ -71,6 +71,8 @@
         text-decoration:none !important;
         white-space:nowrap;
       }
+      #menuOverlay{z-index:1000 !important;overflow-y:auto;overscroll-behavior:contain}
+      #menuOverlay .menu-card{max-height:calc(100dvh - 90px);overflow-y:auto;overscroll-behavior:contain}
       .vom-shell-admin-badge .admin-dot{width:7px;height:7px;border-radius:50%;background:#765fe6}
       .member-session-chip {
         display: inline-flex;
@@ -443,7 +445,7 @@
 
   function loadConsultationWidget() {
     if (document.getElementById('vom-consultation-script')) return;
-    if (/^\/(admin-settings|admin|operator-alert|site-log)(\/|$)/.test(path)) return;
+    if (/^\/(me|admin-settings|admin|operator-alert|site-log)(\/|$)/.test(path)) return;
     const script = document.createElement('script');
     script.id = 'vom-consultation-script';
     script.src = '/assets/vom-consultation.js?v=1';

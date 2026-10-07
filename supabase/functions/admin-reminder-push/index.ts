@@ -1,4 +1,4 @@
-import { notifyPendingOT } from "../_shared/ot-push.ts";
+import { notifyPendingOT, notifyPendingApprovals } from "../_shared/ot-push.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import webpush from "npm:web-push@3.6.7";
 
@@ -158,6 +158,7 @@ Deno.serve(async(req)=>{
   }
 
   const otNotifications=await notifyPendingOT(admin).catch(()=>({attempted:0}));
+  await notifyPendingApprovals(admin).catch(()=>({attempted:0}));
   return json({ok:true,matched,sent,date:now.date,ot_notifications:otNotifications});
 });
 

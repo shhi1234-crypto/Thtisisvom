@@ -16,21 +16,40 @@ export async function handle(req: Request, service: any, authClient: any) {
     if (body.action === "login") {
       const name=String(body.login_name||"").trim();
       const password=body.password;
-      if (!name || name.length>80 || typeof password!=="string" || password.length>64 || !password) throw new ApiError(400,"아이디와 개인 비밀번호를 입력해 주세요.");
-      // Verify credentials before consulting private legacy membership records.
-      let result=await authClient.auth.signInWithPassword({email:await applicantEmail(name.toLowerCase()),password:"VOM:"+password});
-      if (result.error) {
-        const {data:member,error}=await service.from("members").select("id,auth_user_id").eq("name",name).eq("is_active",true).maybeSingle();
+      if ((!name && !body.member_id) || name.length>80 || typeof password!=="string" || password.length>64 || !password) throw new ApiError(400,"아이디와 개인 비밀번호를 입력해 주세요.");
+      // A selected public display name resolves to the linked Auth identity on the server.
+      // No email, password hint or account metadata is exposed in the picker.
+      let selected=null;
+      if (body.member_id!==undefined && body.member_id!==null && body.member_id!=="") {
+        const id=Number(body.member_id);
+        if (!Number.isSafeInteger(id)||id<=0) throw new ApiError(400,"회원 이름을 목록에서 선택해 주세요.");
+        const {data,error}=await service.from("members").select("id,auth_user_id").eq("id",id).eq("is_active",true).maybeSingle();
+        if (error) throw new Error("selected_login_lookup_failed");
+        if (!data?.auth_user_id) throw new ApiError(401,"개인 비밀번호를 확인해 주세요. 최초 설정이 필요하다면 운영진에게 개인 설정 링크를 요청해 주세요.");
+        selected=data;
+      } else {
+        const {data,error}=await service.from("members").select("id,auth_user_id").eq("name",name).eq("is_active",true).maybeSingle();
         if (error) throw new Error("legacy_login_lookup_failed");
-        if (member?.auth_user_id) {
-          const email="member-"+member.id+"@member.thisisvom.app";
-          result=await authClient.auth.signInWithPassword({email,password:"VOM:"+password});
-          if (result.error) result=await authClient.auth.signInWithPassword({email,password});
-        }
+        if (data?.auth_user_id) selected=data;
       }
-      if (result.error || !result.data.session) throw new ApiError(401,"아이디 또는 개인 비밀번호를 다시 확인해 주세요.");
+      let result;
+      if (selected) {
+        const {data,error}=await service.auth.admin.getUserById(selected.auth_user_id);
+        if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
+        result=await authClient.auth.signInWithPassword({email:data.user.email,password:"VOM:"+password});
+        if (result.error) result=await authClient.auth.signInWithPassword({email:data.user.email,password});
+        if (!result.error && result.data.session?.user.id!==selected.auth_user_id) throw new ApiError(401,"개인 계정 정보를 다시 확인해 주세요.");
+      } else {
+        result=await authClient.auth.signInWithPassword({email:await applicantEmail(name.toLowerCase()),password:"VOM:"+password});
+      }
+      if (result.error || !result.data.session) throw new ApiError(401,"회원 이름 또는 아이디와 개인 비밀번호를 다시 확인해 주세요.");
       const session=result.data.session;
-      return json(origin,{ok:true,session:{access_token:session.access_token,refresh_token:session.refresh_token},...await memberContext(service,session.user.id)});
+      const context=await memberContext(service,session.user.id);
+      if (!['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(context.state)) {
+        await authClient.auth.signOut({scope:'local'});
+        throw new ApiError(403,context.state==='PENDING'?'가입 검토 중입니다. 승인 안내를 받은 뒤 로그인해 주세요.':'가입이 완료된 개인 계정으로 로그인해 주세요.','approval_required');
+      }
+      return json(origin,{ok:true,session:{access_token:session.access_token,refresh_token:session.refresh_token},...context});
     }
     if (body.action === "activation_info" || body.action === "activate") {
       const token=req.headers.get("x-ot-invite");

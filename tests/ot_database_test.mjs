@@ -67,6 +67,9 @@ try{
   await db.exec(await readFile(new URL('../supabase/migrations/20261007042424_member_schedule_access.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007043043_public_activity_compatibility.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007080215_signup_profile_and_audio.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(await readFile(new URL('../supabase/migrations/20261007085406_public_signup_approval_notifications.sql',import.meta.url),'utf8'));checks++;
+  await db.exec('set role anon');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
+  await db.exec('set role authenticated');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
   assert.equal((await ok('select count(*)::int as count from public.ot_room_operator_access')).rows[0].count,0,'legacy role/account links must not auto-grant OT access');
   // Simulate the explicit administrator grants used by the production UI.
   await db.query('insert into public.ot_room_operator_access(user_id,member_id,granted_by) select auth_user_id,id,$1 from public.members where role=$2',[admin,'운영진']);
