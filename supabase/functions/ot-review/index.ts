@@ -16,7 +16,7 @@ export async function handle(req: Request, service: any) {
 
     if (action === "list") {
       const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }, { data: accessRows, error: ae }] = await Promise.all([
-        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,completed_member_id,completed_at,video_source").order("created_at", { ascending: false }).limit(500),
+        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,completed_member_id,completed_at,video_source,media_kind").order("created_at", { ascending: false }).limit(500),
         service.from("members").select("id,name,nickname,auth_user_id").eq("role", "운영진").eq("is_active", true).order("join_order", { ascending: true }),
         service.from("ot_room_invites").select("id,somoim_nickname,created_at,expires_at,revoked_at,review_id").order("created_at", { ascending: false }).limit(100),
         service.from("ot_room_operator_access").select("member_id,user_id,revoked_at"),
@@ -32,7 +32,7 @@ export async function handle(req: Request, service: any) {
         : { data: [], error: null };
       if (me) throw new Error("member_list_failed");
       const {data:profiles,error:pe}=ids.length ? await service.from("ot_room_applicants")
-        .select("candidate_name,phone,birth_date,region,gender,ot_room_invites!inner(review_id)")
+        .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,profile_photo_path,region,gender,ot_room_invites!inner(review_id)")
         .in("ot_room_invites.review_id",ids) : {data:[],error:null};
       if (pe) throw new Error("applicant_list_failed");
       return json(origin, {
@@ -41,7 +41,7 @@ export async function handle(req: Request, service: any) {
           ot_access: (accessRows || []).some((a: any) => a.member_id === op.id && a.user_id === op.auth_user_id && !a.revoked_at),
         })), invites, members,
         reviews: (reviews || []).map((r: any) => ({ ...r,
-          profile:(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id)||null,
+          profile:(()=>{const p=(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id);if(!p)return null;const {profile_photo_path,ot_room_invites,...safe}=p;return {...safe,has_photo:!!profile_photo_path};})(),
           votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
       });
     }
@@ -85,7 +85,22 @@ export async function handle(req: Request, service: any) {
       return json(origin, { ok: true });
     }
 
-    if (action === "video") {
+    if (action === "photo") {
+      const reviewId=positiveInt(body.review_id);
+      const {data:invitation,error:ie}=await service.from("ot_room_invites").select("id").eq("review_id",reviewId).maybeSingle();
+      if (ie) throw new Error("photo_invite_lookup_failed");
+      if (!invitation) throw new ApiError(404,"가입 정보를 찾지 못했습니다.");
+      const {data:profile,error:pe}=await service.from("ot_room_applicants").select("profile_photo_path").eq("invite_id",invitation.id).maybeSingle();
+      if (pe) throw new Error("photo_lookup_failed");
+      const path=profile?.profile_photo_path;
+      if (typeof path!=="string" || !/^profiles\/[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp)$/.test(path)) throw new ApiError(404,"등록된 본인사진이 없습니다.");
+      const {data:photo,error:de}=await service.storage.from(VIDEO_BUCKET).download(path);
+      if (de || !photo) throw new ApiError(404,"사진을 불러오지 못했습니다.");
+      if (photo.size>5242880 || !["image/jpeg","image/png","image/webp"].includes(photo.type)) throw new ApiError(415,"지원하지 않는 사진입니다.");
+      return new Response(photo,{headers:{...headers(origin),"Content-Type":photo.type,"Content-Length":String(photo.size),"Content-Disposition":"inline"}});
+    }
+
+    if (action === "video" || action === "media") {
       const reviewId = positiveInt(body.review_id);
       const { data: review, error } = await service.from("ot_reviews").select("video_source,video_file_path").eq("id", reviewId).maybeSingle();
       if (error) throw new Error("review_lookup_failed");
@@ -93,9 +108,9 @@ export async function handle(req: Request, service: any) {
       if (review.video_source !== "FILE") throw new ApiError(409, "기존 외부 링크 자료는 관리자에게 확인해 주세요.");
       if (!/^reviews\/[a-zA-Z0-9_./-]+$/.test(review.video_file_path || "") || review.video_file_path.includes("..")) throw new ApiError(400, "영상 정보를 확인해 주세요.");
       const { data: video, error: de } = await service.storage.from(VIDEO_BUCKET).download(review.video_file_path);
-      if (de || !video) throw new ApiError(404, "영상을 불러오지 못했습니다.");
-      const allowed = ["video/mp4","video/quicktime","video/webm","video/3gpp","audio/mp4","audio/mpeg","audio/aac","audio/wav","audio/x-wav"];
-      if (video.size > 104857600 || !allowed.includes(video.type)) throw new ApiError(415, "지원하지 않는 영상 자료입니다.");
+      if (de || !video) throw new ApiError(404, "영상·음성을 불러오지 못했습니다.");
+      const allowed = ["video/mp4","video/quicktime","video/webm","video/3gpp","audio/mp4","audio/mpeg","audio/aac","audio/wav","audio/x-wav","audio/ogg","audio/flac","audio/webm","audio/aiff"];
+      if (video.size > 104857600 || !allowed.includes(video.type)) throw new ApiError(415, "지원하지 않는 영상·음성 자료입니다.");
       // Only authenticated fetch receives bytes. No signed/public Storage URL reaches the browser.
       return new Response(video, { headers: { ...headers(origin), "Content-Type": video.type, "Content-Length": String(video.size), "Content-Disposition": "inline" } });
     }

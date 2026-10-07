@@ -197,6 +197,7 @@ const IMAGE_LIBRARY_CATEGORIES=[
 const IMAGE_LIBRARY_CATEGORY_MAP=Object.fromEntries(IMAGE_LIBRARY_CATEGORIES.map(category=>[category.key,category]));
 const IMAGE_LIBRARY_ALLOWED_TYPES=new Set(['image/jpeg','image/png','image/webp','image/gif']);
 const IMAGE_LIBRARY_MAX_BYTES=15*1024*1024;
+let imageUploadBusy=false,imageLibraryError='';
 const ADMIN_REFERENCE_FILE_BUCKET='admin-reference-files';
 const ADMIN_REFERENCE_FILE_MAX_BYTES=50*1024*1024;
 
@@ -210,10 +211,10 @@ async function start(){
   adminBadge.classList.add('show');
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
-  await Promise.all([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries()]);
-
-  renderResources();
   bindImagePaste();
+  const results=await Promise.allSettled([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries()]);
+  if(results[2].status==='rejected')operationLoadError='일정 운영 정보를 불러오지 못했습니다. 다시 열어 주세요.';
+  renderResources();
 }
 
 async function loadReminders(){
@@ -788,9 +789,7 @@ function defaultBuskingIntro(event){
 }
 
 function koreanToday(){
-  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
-  const get=type=>parts.find(part=>part.type===type)?.value||'';
-  return `${get('year')}-${get('month')}-${get('day')}`;
+  return new Date(Date.now()+9*60*60*1000).toISOString().slice(0,10);
 }
 
 function isIsoDate(value){
@@ -880,7 +879,7 @@ function renderResources(){
       const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:items.filter(item=>item.category===category).length;
       const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:category==='REMINDERS'?`${count}개 활성`:category==='INQUIRIES'?`새 문의 ${count}건`:`${count}건`;
       return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${countLabel}</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
-    }).join('')+`<a class="folder-card" href="/ot-admin/" style="text-decoration:none;color:inherit"><div class="folder-top"><span class="folder-icon">🎥</span><span class="folder-count">가입 검토</span></div><div class="folder-kicker">OT ROOM</div><h2>OT 가입 검토</h2><p>신규 영상 · 개별 등록 링크 · 운영진 심사</p><div class="folder-open"><span>가입 검토 열기</span></div></a>`+loadError;
+    }).join('')+`<a class="folder-card" href="/ot-admin/" style="text-decoration:none;color:inherit"><div class="folder-top"><span class="folder-icon">🎤</span><span class="folder-count">운영진</span></div><div class="folder-kicker">MEMBER REGISTRATION</div><h2>가입 관리</h2><p>가입 정보 · 본인사진 · 라이브 영상·음성 · 운영진 심사</p><div class="folder-open"><span>가입 관리 열기</span></div></a>`+loadError;
 
     return;
   }
@@ -1034,18 +1033,38 @@ function bindReferenceFileDropzone(){
   });
 }
 
+async function listImageLibraryFolder(folder,category){
+  const files=[];const limit=100;
+  for(let offset=0;;offset+=limit){
+    const {data,error}=await db.storage.from(IMAGE_LIBRARY_BUCKET).list(folder,{limit,offset,sortBy:{column:'name',order:'asc'}});
+    if(error)throw new Error('이미지 목록을 불러오지 못했습니다. 운영진 로그인 상태를 확인해 주세요.');
+    for(const file of data||[]){
+      // Root entries also contain folders; their contents are listed above.
+      if(!file.id)continue;
+      const mime=String(file.metadata?.mimetype||'');
+      if(!IMAGE_LIBRARY_ALLOWED_TYPES.has(mime)&&! /\.(jpe?g|png|webp|gif)$/i.test(file.name))continue;
+      files.push({...file,path:folder?`${folder}/${file.name}`:file.name,category:category.key});
+    }
+    if(!data||data.length<limit)break;
+  }
+  return files;
+}
+
 async function loadImageLibrary(){
-  const categoryFiles=await Promise.all([
-    ...IMAGE_LIBRARY_CATEGORIES.map(category=>listImageLibraryFolder(category.folder,category)),
-    listImageLibraryFolder('',IMAGE_LIBRARY_CATEGORY_MAP.ARCHIVE)
-  ]);
-  const files=categoryFiles.flat().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
-  const signed=await Promise.all(files.map(file=>db.storage.from(IMAGE_LIBRARY_BUCKET).createSignedUrl(file.path,60*60)));
-  imageFiles=files.map((file,index)=>({
-    ...file,
-    url:signed[index]?.data?.signedUrl||''
-  })).filter(file=>file.url);
+  imageLibraryError='';
+  try{
+    const categoryFiles=await Promise.all([
+      ...IMAGE_LIBRARY_CATEGORIES.map(category=>listImageLibraryFolder(category.folder,category)),
+      listImageLibraryFolder('',IMAGE_LIBRARY_CATEGORY_MAP.ARCHIVE)
+    ]);
+    const files=categoryFiles.flat().sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+    const signed=await Promise.all(files.map(file=>db.storage.from(IMAGE_LIBRARY_BUCKET).createSignedUrl(file.path,60*60)));
+    imageFiles=files.map((file,index)=>({...file,url:signed[index]?.data?.signedUrl||''})).filter(file=>file.url);
+    if(signed.some(result=>result.error))imageLibraryError='일부 이미지를 불러오지 못했습니다. 목록을 다시 열어 주세요.';
+  }catch(error){imageLibraryError=error.message||'이미지 목록을 불러오지 못했습니다. 다시 시도해 주세요.';}
   render();
+  if(imageLibraryError)setImageDropStatus(imageLibraryError,'error');
+  return !imageLibraryError;
 }
 
 function imageCategoryFiles(category){
@@ -1067,6 +1086,7 @@ function renderImageLibrary(){
   const groups=IMAGE_LIBRARY_CATEGORIES.map(renderImageGroup).join('');
   resourceStack.innerHTML=`<section class="resource-section"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter('HOME')">← 운영 자료</button><div><div class="section-kicker">${imageMeta.kicker}</div><h2>${imageMeta.label}</h2></div></div><span class="section-count">${imageFiles.length}장</span></div><div class="image-library-actions"><p class="image-library-note">카카오톡 사진을 드래그하거나 이 화면에서 Ctrl+V로 붙여넣을 수 있습니다. 먼저 저장할 용도만 골라주세요.</p><label class="image-upload">＋ 이미지 업로드<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onchange="uploadLibraryImages(this.files,this)"></label></div><p class="image-purpose-label">저장할 용도 선택</p><div class="image-category-picker">${picker}</div><div id="imageDropzone" class="image-dropzone"><div><strong>${esc(selected.label)}에 사진을 끌어다 놓으세요</strong><small>선택한 분류로 바로 저장됩니다 · JPG · PNG · WEBP · GIF / 파일당 15MB</small><span id="imageDropStatus" class="image-dropzone-status" role="status">파일 선택 · 카카오톡 드래그 · Ctrl+V 붙여넣기 가능</span></div></div><div class="image-group-grid">${groups}</div></section>`;
   bindImageDropzone();
+  if(imageLibraryError)setImageDropStatus(imageLibraryError,'error');
 }
 
 function renderImageGroup(category){
@@ -1135,43 +1155,41 @@ function bindImagePaste(){
   });
 }
 
+async function libraryImageType(file){
+  if(!file.size||file.size>IMAGE_LIBRARY_MAX_BYTES)throw new Error('JPG · PNG · WEBP · GIF 파일만, 파일당 15MB 이하로 업로드할 수 있습니다.');
+  const b=new Uint8Array(await file.slice(0,16).arrayBuffer());
+  const a=(s,e)=>String.fromCharCode(...b.slice(s,e));
+  if(b[0]===255&&b[1]===216&&b[2]===255)return 'image/jpeg';
+  if([137,80,78,71,13,10,26,10].every((v,i)=>b[i]===v))return 'image/png';
+  if(a(0,4)==='RIFF'&&a(8,12)==='WEBP')return 'image/webp';
+  if(a(0,6)==='GIF87a'||a(0,6)==='GIF89a')return 'image/gif';
+  throw new Error('JPG · PNG · WEBP · GIF 이미지 파일을 선택해 주세요.');
+}
+
 async function uploadLibraryImages(fileList,input){
-  if(!adminMode)return false;
+  if(!adminMode||imageUploadBusy)return false;
   const files=Array.from(fileList||[]).filter(Boolean);
-  if(!files.length){
-    setImageDropStatus('이미지 파일이 확인되지 않았습니다. 파일 선택을 이용해주세요.','error');
-    return false;
-  }
-
-  const invalid=files.find(file=>!IMAGE_LIBRARY_ALLOWED_TYPES.has(String(file.type||''))||Number(file.size||0)>IMAGE_LIBRARY_MAX_BYTES);
-  if(invalid){
-    const message='JPG · PNG · WEBP · GIF 파일만, 파일당 15MB 이하로 업로드할 수 있습니다.';
-    alert(message);
-    setImageDropStatus(message,'error');
-    if(input)input.value='';
-    return false;
-  }
-
-  let uploaded=0;
+  if(!files.length){setImageDropStatus('이미지 파일이 확인되지 않았습니다. 파일 선택을 이용해주세요.','error');return false;}
+  imageUploadBusy=true;
+  let uploaded=0,types=[],failureMessage='';
   const category=IMAGE_LIBRARY_CATEGORY_MAP[imageUploadCategory]||IMAGE_LIBRARY_CATEGORIES[0];
-  for(const file of files){
-    setImageDropStatus(`${files.length}장 중 ${uploaded+1}장 업로드 중…`);
-    const path=`${category.folder}/${createStorageName(file.name)}`;
-    const {error}=await db.storage.from(IMAGE_LIBRARY_BUCKET).upload(path,file,{cacheControl:'3600',upsert:false,contentType:file.type});
-    if(error){
-      alert(`‘${file.name}’ 업로드에 실패했습니다.
-${error.message}`);
-      setImageDropStatus(`‘${file.name}’ 업로드에 실패했습니다.`,'error');
-      break;
+  try{
+    // Check bytes instead of relying on the sometimes empty clipboard MIME type.
+    types=await Promise.all(files.map(libraryImageType));
+    for(let index=0;index<files.length;index++){
+      const file=files[index];
+      setImageDropStatus(`${files.length}장 중 ${index+1}장 업로드 중…`);
+      const path=`${category.folder}/${createStorageName(file.name)}`;
+      const {error}=await db.storage.from(IMAGE_LIBRARY_BUCKET).upload(path,file.slice(0,file.size,types[index]),{cacheControl:'3600',upsert:false,contentType:types[index]});
+      if(error)throw new Error(`‘${file.name}’ 업로드에 실패했습니다. ${error.message||'로그인 상태를 확인하고 다시 시도해 주세요.'}`);
+      uploaded++;
     }
-    uploaded++;
-  }
-
-  if(input)input.value='';
-  if(uploaded){
-    await loadImageLibrary();
-    setImageDropStatus(`${uploaded}장 업로드되었습니다.`,'success');
-  }
+  }catch(error){failureMessage=error.message||'이미지 업로드에 실패했습니다.';}
+  finally{if(input)input.value='';imageUploadBusy=false;}
+  const refreshed=uploaded?await loadImageLibrary():true;
+  if(failureMessage)setImageDropStatus((uploaded?`${uploaded}장은 저장됐습니다. `:'')+failureMessage,'error');
+  else if(!refreshed)setImageDropStatus(`${uploaded}장은 저장됐습니다. 목록을 다시 열어 확인해 주세요.`,'error');
+  else setImageDropStatus(`${uploaded}장 업로드되었습니다.`,'success');
   return uploaded===files.length;
 }
 

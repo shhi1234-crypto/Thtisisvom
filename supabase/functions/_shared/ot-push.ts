@@ -24,7 +24,7 @@ export async function notifyOT(service: any, reviewId: number) {
     if (config && subscriptions?.length) {
       webpush.setVapidDetails(config.subject, config.vapid_public_key, config.vapid_private_key);
       const payload = JSON.stringify({
-        title: "새 OT 영상이 등록됐어요",
+        title: "새 회원가입 신청이 접수됐어요",
         body: `${review.candidate_name}님 · ${review.somoim_nickname}\n운영진 페이지에서 확인해 주세요.`,
         url: `${DEFAULT_ORIGIN}/ot-admin/?id=${review.id}`,
         tag: `vom-ot-review-${review.id}`,

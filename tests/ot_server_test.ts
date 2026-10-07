@@ -1,4 +1,4 @@
-import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo } from "../supabase/functions/_shared/ot-core.ts";
+import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo, validatePhoto, signupDetails } from "../supabase/functions/_shared/ot-core.ts";
 import { handle as room } from "../supabase/functions/ot-room/index.ts";
 import { handle as access } from "../supabase/functions/vom-access/index.ts";
 import { handle as review } from "../supabase/functions/ot-review/index.ts";
@@ -13,7 +13,7 @@ const openNow = () => new Date("2026-10-07T01:00:00Z");
 // A small behavior fake covers trust boundaries; database atomicity is tested
 // separately against PostgreSQL with the actual migration and existing schema.
 function fake(options: Record<string, any> = {}) {
-  const state = { removed: [] as string[], uploaded: [] as string[], rpcCalls: [] as any[], operations: [] as any[], committed: false, deletedUsers:[] as string[] };
+  const state = { removed: [] as string[], uploaded: [] as string[], uploadedTypes: [] as string[], rpcCalls: [] as any[], operations: [] as any[], committed: false, photoPath:null as string|null, deletedUsers:[] as string[] };
   const user = options.user ?? { id: userId };
   function query(table: string) {
     let operation = "select", input: any, columns = "", filters: any[] = [];
@@ -35,7 +35,7 @@ function fake(options: Record<string, any> = {}) {
         if (options.inviteMissing) return { data: null, error: null };
         return { data: { id: inviteId, expires_at: options.expiresAt || "2026-10-09T00:00:00Z", revoked_at: options.revoked ? "2026-10-06T00:00:00Z" : null, review_id: state.committed || options.submitted ? 1 : null, somoim_nickname: "VOM 새 회원", applicant_user_id: options.noAccount ? null : (options.ownerId || userId) }, error: null };
       }
-      if (table === "ot_room_applicants") return { data:{login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null},error:null };
+      if (table === "ot_room_applicants") return { data:{login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null,form_version:options.formVersion||1,profile_photo_path:state.photoPath||options.photoPath||null},error:null };
       if (table === "member_account_settings") return {data:{must_change_password:!!options.mustChange},error:null};
       if (table === "ot_reviews") {
         if (operation === "update" && input.notification_claimed_at) return { data: null, error: null };
@@ -53,14 +53,15 @@ function fake(options: Record<string, any> = {}) {
     rpc: async (name: string, input: any) => {
       state.rpcCalls.push({ name, input });
       if (name==="vom_ot_bind_account") return {data:null,error:null};
+      if (name==="vom_ot_finalize_photo") {state.photoPath=input.p_file_path;return {data:null,error:options.photoCommitLost?{message:"lost"}:null};}
       if (options.commitLost) { state.committed = true; return { data: null, error: { message: "network failure" } }; }
       if (options.rpcClosed) return { data: null, error: { message: "room_closed" } };
       state.committed = true; return { data: { id: 1, status: "IN_REVIEW" }, error: null };
     },
     storage: { from: () => ({
-      upload: async (path: string) => { state.uploaded.push(path); return { error: null }; },
+      upload: async (path: string,body:Blob) => { state.uploaded.push(path);state.uploadedTypes.push(body.type); return { error: null }; },
       remove: async (paths: string[]) => { state.removed.push(...paths); return { error: null }; },
-      download: async () => ({ data: new Blob([new Uint8Array([1,2,3])], { type: "video/mp4" }), error: null }),
+      download: async () => ({ data: new Blob([new Uint8Array([1,2,3])], { type: options.downloadType||"video/mp4" }), error: null }),
     }) },
   };
   return { client, state };
@@ -95,7 +96,7 @@ Deno.test("invite alone never exposes a bound account's private status",async()=
 });
 Deno.test("another applicant JWT cannot upload against this invite",async()=>{const {client,state}=fake({ownerId:"other-user"});await status(await room(uploadRequest(),client,openNow),401);assert(!state.uploaded.length);});
 Deno.test("account signup requires an unused invitation, consent and strong password",async()=>{
- const request=(body:any)=>new Request("https://edge.invalid/ot-room",{method:"POST",headers:{"Content-Type":"application/json","x-ot-invite":token},body:JSON.stringify({action:"create_account",login_name:"new-vom",password:"abc12345",candidate_name:"테스트",somoim_nickname:"테스트별명",consent:true,...body})});
+ const request=(body:any)=>new Request("https://edge.invalid/ot-room",{method:"POST",headers:{"Content-Type":"application/json","x-ot-invite":token},body:JSON.stringify({action:"create_account",login_name:"new-vom",password:"abc12345",candidate_name:"테스트",somoim_nickname:"테스트별명",consent:true,birth_year:"1995",job:"회사원",busking_experience:"0",busking_experience_unit:"COUNT",...body})});
  await status(await room(request({}),fake().client,openNow),409);
  await status(await room(request({consent:false}),fake({noAccount:true}).client,openNow),400);
  await status(await room(request({password:"0000"}),fake({noAccount:true}).client,openNow),400);
@@ -105,3 +106,33 @@ Deno.test("an unapproved Auth account remains pending regardless of role metadat
  const {client}=fake({user:{id:userId,user_metadata:{role:"admin"}}});
  const r=await access(operatorRequest({action:"context"}),client,{});await status(r,200);assert((await r.json()).state==="PENDING");
 });
+
+Deno.test("birth year is four digits, experience permits zero and years but rejects ages/future years/fractional counts",()=>{
+ const base={birth_year:'1995',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT'};
+ assert(signupDetails(base,openNow()).birth_year===1995);assert(signupDetails({...base,busking_experience:'1.5',busking_experience_unit:'YEARS'},openNow()).busking_experience===1.5);
+ for(const changes of [{birth_year:'28'},{birth_year:'1995년'},{birth_year:'2050'},{job:''},{busking_experience:''},{busking_experience:'1.5'},{busking_experience:'-1'},{busking_experience_unit:'OTHER'}]){let rejected=false;try{signupDetails({...base,...changes},openNow());}catch(e){rejected=e instanceof ApiError;}assert(rejected,JSON.stringify(changes));}
+});
+Deno.test("live MP3/M4A/WAV/OGG/FLAC/AAC and video have detected MIME types; forged audio is refused",async()=>{
+ const samples=[['ID3abcdefgh','live.mp3','audio/mpeg'],['OggSabcdefgh','live.ogg','audio/ogg'],['fLaCabcdefgh','live.flac','audio/flac'],['RIFF1234WAVEabcd','live.wav','audio/wav']];
+ for(const [bytes,name,mime] of samples)assert((await validateVideo(new File([bytes],name))).mime===mime);
+ const m4a=videoFile();assert((await validateVideo(new File([m4a],'live.m4a'))).mime==='audio/mp4');
+ assert((await validateVideo(new File([new Uint8Array([255,241,80,0,0,0,0])],'live.aac'))).mime==='audio/aac');
+ let rejected=false;try{await validateVideo(new File(['<html>not audio</html>'],'live.mp3',{type:'audio/mpeg'}));}catch(e){rejected=e instanceof ApiError;}assert(rejected);
+});
+function photoRequest(file=new File([new Uint8Array([255,216,255,224,0,0,0,0])],'me.jpg',{type:'image/jpeg'})){
+ const form=new FormData();form.set('photo',file);return new Request('https://edge.invalid/ot-room?upload=photo',{method:'POST',headers:{'x-ot-invite':token,Authorization:'Bearer legitimate-token'},body:form});
+}
+Deno.test("photo needs its owner, validates bytes, stays private and can be saved after recording hours",async()=>{
+ const {client,state}=fake({formVersion:2});const r=await room(photoRequest(),client,()=>new Date('2026-10-07T10:00:00Z'));await status(r,201);assert(state.rpcCalls[0].name==='vom_ot_finalize_photo');assert(state.uploaded[0].startsWith('profiles/'));assert(!state.removed.length);assert(!/file_path|signedUrl|photo_path/.test(await r.text()));
+ await status(await room(photoRequest(),fake({ownerId:'other'}).client,openNow),401);
+ const invalid=fake();await status(await room(photoRequest(videoFile()),invalid.client,openNow),400);assert(invalid.state.operations.some(o=>o.input?.upload_claim_id===null));
+ let rejected=false;try{await validatePhoto(new File(['<svg></svg>'],'me.png'));}catch(e){rejected=e instanceof ApiError;}assert(rejected);
+});
+Deno.test("new registration cannot submit a recording without its photo",async()=>{const {client,state}=fake({formVersion:2});await status(await room(uploadRequest(),client,openNow),400);assert(!state.uploaded.length);});
+Deno.test("ambiguous photo commit retains the committed picture",async()=>{const {client,state}=fake({photoCommitLost:true});await status(await room(photoRequest(),client,openNow),409);assert(state.photoPath&&!state.removed.length);});
+Deno.test("ordinary members cannot read applicant photos; operator audio is authenticated bytes",async()=>{
+ await status(await review(operatorRequest({action:'photo',review_id:1}),fake({member:{id:8,role:'모임원',is_active:true}}).client),403);
+ const r=await review(operatorRequest({action:'media',review_id:1}),fake({admin:true,downloadType:'audio/mp4'}).client);await status(r,200);assert(r.headers.get('Content-Type')==='audio/mp4');assert(r.headers.get('Cache-Control')==='no-store');
+});
+
+Deno.test("detected audio MIME is applied to stored bytes even when the submitted File is mislabeled",async()=>{const {client,state}=fake();const file=new File(['ID3abcdefghijk'],'라이브.mp3',{type:'application/octet-stream'});await status(await room(uploadRequest(file),client,openNow),201);assert(state.uploadedTypes[0]==='audio/mpeg');assert(state.uploaded[0].endsWith('.mp3'));});
