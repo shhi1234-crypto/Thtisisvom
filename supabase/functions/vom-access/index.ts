@@ -32,6 +32,16 @@ export async function handle(req: Request, service: any, authClient: any) {
         if (error) throw new Error("legacy_login_lookup_failed");
         if (data?.auth_user_id) selected=data;
       }
+      let identity=selected?.auth_user_id;
+      if(!identity){
+        const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq("login_name",name.toLowerCase()).maybeSingle();
+        if(error)throw new Error("login_identity_lookup_failed");
+        identity=data?.auth_user_id;
+      }
+      const attemptKey=await tokenHash(identity?"user:"+identity:"login:"+name.toLowerCase());
+      const {data:allowed,error:attemptError}=await service.rpc("vom_claim_login_attempt",{p_key:attemptKey});
+      if(attemptError)throw new Error("login_attempt_check_failed");
+      if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
       let result;
       if (selected) {
         const {data,error}=await service.auth.admin.getUserById(selected.auth_user_id);
@@ -49,6 +59,7 @@ export async function handle(req: Request, service: any, authClient: any) {
         await authClient.auth.signOut({scope:'local'});
         throw new ApiError(403,context.state==='PENDING'?'가입 검토 중입니다. 승인 안내를 받은 뒤 로그인해 주세요.':'가입이 완료된 개인 계정으로 로그인해 주세요.','approval_required');
       }
+      await service.from("vom_login_attempts").delete().eq("login_hash",attemptKey);
       return json(origin,{ok:true,session:{access_token:session.access_token,refresh_token:session.refresh_token},...context});
     }
     if (body.action === "activation_info" || body.action === "activate") {

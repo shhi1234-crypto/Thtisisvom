@@ -932,167 +932,6 @@ button{
 }
 
 
-/* HOME NEWS */
-
-async function loadHomeNews(){
-
-  const box =
-    document.getElementById('homeNews');
-
-  if(!box){
-    return;
-  }
-
-  const today =
-    todayString();
-
-
-  const eventRequest =
-    db
-      .from('events_public')
-      .select('*')
-      .gte('event_date',today)
-      .order('created_at',{ascending:false})
-      .limit(6);
-
-
-  const campaignRequest =
-    db
-      .from('vom_campaigns')
-      .select('*')
-      .gte('end_date',today)
-      .order('created_at',{ascending:false})
-      .limit(6);
-
-
-  const [
-    eventResponse,
-    campaignResponse
-  ] =
-    await Promise.all([
-      eventRequest,
-      campaignRequest
-    ]);
-
-
-  const news = [];
-
-
-  (eventResponse.data || [])
-    .forEach(row => {
-
-      news.push({
-        kind:'schedule',
-        label:
-          row.event_type === 'VOM LIVE'
-          ? 'VOM LIVE'
-          : row.event_type === 'BUSKING'
-          ? '버스킹'
-          : '일정',
-        title:row.title || row.event_type || '새 일정',
-        href:`/event/?id=${encodeURIComponent(row.id)}`,
-        sortDate:
-          row.created_at ||
-          row.event_date,
-        displayDate:
-          formatHomeNewsDate(
-            row.created_at ||
-            row.event_date
-          )
-      });
-    });
-
-
-  (campaignResponse.data || [])
-    .forEach(row => {
-
-      news.push({
-        kind:'event',
-        label:'EVENT',
-        title:row.title || '새 이벤트',
-        href:'/event/',
-        sortDate:
-          row.created_at ||
-          row.start_date,
-        displayDate:
-          formatHomeNewsDate(
-            row.created_at ||
-            row.start_date
-          )
-      });
-    });
-
-
-  news.sort(
-    (a,b) =>
-      new Date(b.sortDate || 0) -
-      new Date(a.sortDate || 0)
-  );
-
-
-  const list =
-    news.slice(0,3);
-
-
-  if(!list.length){
-
-    box.innerHTML =
-      `<div class="notice-empty">
-        새로 등록된 소식이 없습니다.
-      </div>`;
-
-    return;
-  }
-
-
-  box.innerHTML =
-    list
-      .map(item => `
-        <a
-          href="${escapeAttribute(item.href)}"
-          class="notice-row"
-        >
-          <span class="notice-badge ${item.kind}">
-            ${escapeHtml(item.label)}
-          </span>
-
-          <strong>
-            ${escapeHtml(item.title)}
-          </strong>
-
-          <time>
-            ${escapeHtml(item.displayDate)}
-          </time>
-        </a>
-      `)
-      .join('');
-}
-
-
-function formatHomeNewsDate(value){
-
-  if(!value){
-    return 'NEW';
-  }
-
-
-  const date =
-    new Date(value);
-
-
-  if(Number.isNaN(date.getTime())){
-    return 'NEW';
-  }
-
-
-  return [
-    String(date.getMonth() + 1).padStart(2,'0'),
-    String(date.getDate()).padStart(2,'0')
-  ].join('.');
-}
-
-
-
 /* EVENTS */
 
 .events{
@@ -1940,6 +1779,8 @@ function formatHomeNewsDate(value){
   display:none!important;
 }
 .home-auth-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 20px}.home-auth-actions a{display:inline-flex;align-items:center;justify-content:center;gap:30px;min-height:56px;padding:0 26px;border-radius:16px;text-decoration:none;font-size:17px;font-weight:800}.home-login-button{color:#fff!important;background:#7660dd;box-shadow:0 10px 26px #7660dd2b}.home-signup-button{color:#6650cd!important;background:#f0ebff;border:1px solid #dcd3fb}@media(max-width:480px){.home-auth-actions{gap:10px}.home-auth-actions a{flex:1;padding:0 14px;font-size:16px;gap:16px}}
+
+.birthday-check,.guest-schedule-link{display:inline-flex;align-items:center;min-height:36px;padding:8px 12px;border:1px solid #ded7f5;border-radius:12px;background:#f6f2ff;color:#6c55ca;font-size:12px;font-weight:750;text-decoration:none}.guest-schedule-link{min-height:64px;width:100%;justify-content:space-between}.birthday-check:hover,.guest-schedule-link:hover{background:#eee6ff}
 </style>
 
 <script id="vom-public-mode">
@@ -2111,6 +1952,7 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 }
 </style>
 
+  <script src="/assets/vom-member-context.js?v=1"></script>
 </head>
 
 <body>
@@ -2378,7 +2220,7 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
         <small>QUESTION</small>
       </a>
 
-      <a href="/notice/">
+      <a href="/#homeNews">
         <div class="quick-icon">▤</div>
         <strong>NOTICE</strong>
         <small>UPDATES</small>
@@ -2427,6 +2269,7 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 
 <!-- MENU -->
 
+<section class="section"><div class="section-head"><div><div class="kicker">NOTICE</div><h2 class="section-title">VOM 소식</h2></div></div><div id="homeNews" class="notice"><div class="notice-empty">소식을 불러오고 있어요.</div></div></section>
 <div id="menuOverlay" class="overlay">
 
   <div class="menu-card">
@@ -2463,7 +2306,7 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
       PRACTICE <span>→</span>
     </a>
 
-    <a href="/notice/">
+    <a href="/#homeNews">
       NOTICE <span>→</span>
     </a>
 
@@ -2589,6 +2432,168 @@ const db =
 let locations = [];
 
 
+/* HOME NEWS */
+
+async function loadHomeNews(){
+
+  const box =
+    document.getElementById('homeNews');
+
+  if(!box){
+    return;
+  }
+
+  const today =
+    todayString();
+
+
+  const eventRequest =
+    db
+      .from('events_public')
+      .select('*')
+      .gte('event_date',today)
+      .order('created_at',{ascending:false})
+      .limit(6);
+
+
+  const campaignRequest =
+    db
+      .from('vom_campaigns')
+      .select('*')
+      .gte('end_date',today)
+      .order('created_at',{ascending:false})
+      .limit(6);
+
+
+  const [
+    eventResponse,
+    campaignResponse
+  ] =
+    await Promise.all([
+      eventRequest,
+      campaignRequest
+    ]);
+
+
+  const news = [];
+
+
+  (eventResponse.data || [])
+    .forEach(row => {
+
+      news.push({
+        kind:'schedule',
+        label:
+          row.event_type === 'VOM LIVE'
+          ? 'VOM LIVE'
+          : row.event_type === 'BUSKING'
+          ? '버스킹'
+          : '일정',
+        title:row.title || row.event_type || '새 일정',
+        href:`${row.event_type==='VOM LIVE'?'/live/':row.event_type==='BUSKING'?'/busking/':'/schedule/'}?id=${encodeURIComponent(row.id)}`,
+        sortDate:
+          row.created_at ||
+          row.event_date,
+        displayDate:
+          formatHomeNewsDate(
+            row.created_at ||
+            row.event_date
+          )
+      });
+    });
+
+
+  (campaignResponse.data || [])
+    .forEach(row => {
+
+      news.push({
+        kind:'event',
+        label:'EVENT',
+        title:row.title || '새 이벤트',
+        href:'/event/',
+        sortDate:
+          row.created_at ||
+          row.start_date,
+        displayDate:
+          formatHomeNewsDate(
+            row.created_at ||
+            row.start_date
+          )
+      });
+    });
+
+
+  news.sort(
+    (a,b) =>
+      new Date(b.sortDate || 0) -
+      new Date(a.sortDate || 0)
+  );
+
+
+  const list =
+    news.slice(0,3);
+
+
+  if(!list.length){
+
+    box.innerHTML =
+      `<div class="notice-empty">
+        새로 등록된 소식이 없습니다.
+      </div>`;
+
+    return;
+  }
+
+
+  box.innerHTML =
+    list
+      .map(item => `
+        <a
+          href="${escapeAttribute(item.href)}"
+          class="notice-row"
+        >
+          <span class="notice-badge ${item.kind}">
+            ${escapeHtml(item.label)}
+          </span>
+
+          <strong>
+            ${escapeHtml(item.title)}
+          </strong>
+
+          <time>
+            ${escapeHtml(item.displayDate)}
+          </time>
+        </a>
+      `)
+      .join('');
+}
+
+
+function formatHomeNewsDate(value){
+
+  if(!value){
+    return 'NEW';
+  }
+
+
+  const date =
+    new Date(value);
+
+
+  if(Number.isNaN(date.getTime())){
+    return 'NEW';
+  }
+
+
+  return [
+    String(date.getMonth() + 1).padStart(2,'0'),
+    String(date.getDate()).padStart(2,'0')
+  ].join('.');
+}
+
+
+
+
 /* START */
 
 async function start(){
@@ -2629,40 +2634,14 @@ function parseMemberBirth(v){
 }
 
 async function loadHomeBirthday(){
-  const box=document.getElementById('homeToday');
-  if(!box)return;
-  const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
-  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">회원 정보는 멤버스에서 확인해 주세요.</span>`;
-  const {data,error}=await db.from('members_display').select('*');
-  let birthdayHtml='';
-  if(error){
-    console.error('MEMBER BIRTHDAY:',error);
-    birthdayHtml=`<span class="birthday-mini">🎂 생일 정보를 잠깐 못 불러왔어요 ㅠㅠ</span>`;
-  }else{
-    const list=(data||[]).map(row=>{
-      const birthValue=row.birth_date ?? row.birthday ?? row.birth ?? '';
-      const statusValue=row.status ?? row.activity_status ?? row.active_status ?? '활동중';
-      return {row,b:parseMemberBirth(birthValue),status:String(statusValue)};
-    })
-      .filter(x=>x.b&&x.b.month===mon&&x.status!=='비활동')
-      .sort((a,b)=>a.b.day-b.b.day);
-    const today=list.filter(x=>x.b.day===day);
-    if(today.length){
-      birthdayHtml=`<span class="birthday-mini today">🎉 오늘은 ${today.map(x=>escapeHtml(x.row.name)).join(' · ')}님의 생일이에요!</span>`;
-    }else if(list.length){
-      const upcoming=list.filter(x=>x.b.day>day);
-      if(upcoming.length){
-        const nextDay=upcoming[0].b.day;
-        const nextPeople=upcoming.filter(x=>x.b.day===nextDay);
-        birthdayHtml=`<span class="birthday-mini">🎂 다음 생일 · ${nextPeople.map(x=>escapeHtml(x.row.name)).join(' · ')} ${mon}/${nextDay}</span>`;
-      }else{
-        birthdayHtml=`<span class="birthday-mini">🎂 이번 달 생일은 모두 지나갔어요 :)</span>`;
-      }
-    }else{
-      birthdayHtml=`<span class="birthday-mini">회원 정보는 멤버스에서 확인해 주세요.</span>`;
-    }
-  }
-  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span>${birthdayHtml}`;
+  const box=document.getElementById('homeToday');if(!box)return;
+  const now=new Date(),link='<a class="birthday-check" href="/members/?view=birthday">생일자 확인하기 →</a>';
+  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">생일 날짜 확인 중…</span>${link}`;
+  try{
+    const response=await fetch(SUPABASE_URL+'/functions/v1/birthday-summary',{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({action:'summary'}),cache:'no-store',signal:AbortSignal.timeout(15000)});
+    if(!response.ok)throw new Error('birthday_summary_failed');const data=await response.json(),date=String(data.next_birthday||'').match(/^\d{4}-(\d{2})-(\d{2})$/);
+    box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">${date?'🎂 다음 생일 · '+Number(date[1])+'월 '+Number(date[2])+'일':'🎂 다음 생일 날짜가 아직 없어요'}</span>${link}`;
+  }catch{box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">생일 날짜를 불러오지 못했어요.</span>${link}`;}
 }
 
 
@@ -2971,6 +2950,14 @@ function createPointRow(row){
 /* EVENTS */
 
 async function loadHomeEvents(){
+  const access=await window.vomGetMemberAccess();
+  if(!access.approved){
+    const box=document.getElementById('nextLive');box.classList.remove('has-image');
+    box.innerHTML='<div class="next-empty"><span class="live-tag">VOM SCHEDULE</span><h3>다가오는 일정 확인하기</h3><p>로그인하면 VOM의 다음 일정을 확인할 수 있어요.</p><a class="btn" href="/me/?next=%2Fcalendar%2F">로그인하기 →</a></div>';
+    document.getElementById('upcomingEvents').innerHTML='<a class="guest-schedule-link" href="/live/?upcoming=1">다가오는 VOM LIVE 확인하기 →</a><a class="guest-schedule-link" href="/busking/?upcoming=1">다가오는 BUSKING 확인하기 →</a><a class="guest-schedule-link" href="/calendar/">다가오는 VOM 일정 확인하기 →</a>';
+    return;
+  }
+
 
   const today =
     todayString();
@@ -3733,6 +3720,6 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=9"></script>
+<script src="/assets/vom-shell.js?v=11"></script>
 </body>
 </html>

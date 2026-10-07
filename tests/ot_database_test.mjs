@@ -68,6 +68,17 @@ try{
   await db.exec(await readFile(new URL('../supabase/migrations/20261007043043_public_activity_compatibility.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007080215_signup_profile_and_audio.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007085406_public_signup_approval_notifications.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(`create table public.live_participants(event_id bigint,name text);create table public.live_results(event_id bigint,results jsonb);
+    create table public.busking_setlist_slots(id bigint primary key,event_id bigint);create table public.busking_setlist_slot_songs(id bigint,slot_id bigint);
+    alter table public.live_results enable row level security;create policy "legacy public results" on public.live_results for select to anon,authenticated using(true);
+    alter table public.busking_setlist_slots enable row level security;create policy "legacy public slots" on public.busking_setlist_slots for select to anon,authenticated using(true);
+    alter table public.busking_setlist_slot_songs enable row level security;create policy "legacy public songs" on public.busking_setlist_slot_songs for select to anon,authenticated using(true);
+    create view public.live_vote_breakdown as select lr.event_id,e.title from public.live_results lr join public.events e on e.id=lr.event_id;
+    create view public.live_event_points as select p.event_id,e.title from public.live_participants p join public.events e on e.id=p.event_id;
+    create view public.live_point_hall_of_fame as with expanded as(select lr.event_id,x.item from (live_results lr cross join lateral jsonb_array_elements(lr.results) x(item))) select item->>'name' as name from expanded;
+    grant select on public.live_participants,public.live_results,public.busking_setlist_slots,public.busking_setlist_slot_songs,public.live_vote_breakdown,public.live_event_points,public.live_point_hall_of_fame to anon,authenticated;`);
+  await db.exec(await readFile(new URL('../supabase/migrations/20261007095538_public_archive_and_member_birthdays.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(await readFile(new URL('../supabase/migrations/20261007095552_signup_reservations_and_pin_login.sql',import.meta.url),'utf8'));checks++;
   await db.exec('set role anon');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
   await db.exec('set role authenticated');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
   assert.equal((await ok('select count(*)::int as count from public.ot_room_operator_access')).rows[0].count,0,'legacy role/account links must not auto-grant OT access');
@@ -75,7 +86,7 @@ try{
   await db.query('insert into public.ot_room_operator_access(user_id,member_id,granted_by) select auth_user_id,id,$1 from public.members where role=$2',[admin,'운영진']);
   // Install the exact migration first. Only its clock dependency is then replaced
   // locally so the same SQL body can exercise opening/closing boundaries at any hour.
-  for(const signature of ['public.vom_ot_finalize_upload(uuid,uuid,text,text,text,text)','public.vom_ot_record_vote(bigint,bigint,text,uuid)','public.vom_ot_finalize_photo(uuid,uuid,text,text)']){
+  for(const signature of ['public.vom_ot_finalize_upload(uuid,uuid,text,text,text,text)','public.vom_ot_record_vote(bigint,bigint,text,uuid)','public.vom_ot_finalize_photo(uuid,uuid,text,text)','public.vom_ot_reserve_upload(uuid,uuid,text,text)']){
     const {rows}=await db.query('select pg_get_functiondef($1::regprocedure) as definition',[signature]);
     await db.exec(rows[0].definition.replaceAll('clock_timestamp()','ot_test.clock_timestamp()'));
   }
@@ -167,6 +178,7 @@ try{
   assert.equal((await ok('select count(*)::int as count from public.members')).rows[0].count,0);
   await rejects('select * from public.members_public',[],/permission denied/);
   assert.equal((await ok('select count(*)::int as count from public.events')).rows[0].count,0);
+  await db.exec('reset role');await db.exec("update public.events set event_date='2001-01-01' where id in(2,3)");await db.exec('set role anon');
   const publiclyVisible=(await ok('select * from public.events_public')).rows;assert.equal(publiclyVisible.length,2);assert(publiclyVisible.every(r=>r.title!=='private schedule'));assert.equal(publiclyVisible[0].host_note,'public host announcement');
   const display=(await ok('select * from public.members_display limit 1')).rows[0];assert(!('birth_date' in display));assert(!('phone' in display));
   await db.exec('reset role');
@@ -197,6 +209,10 @@ try{
   await db.query('update public.ot_room_invites set upload_claim_id=$1,upload_claimed_at=now() where id=$2',[audioClaim,audioInvite]);
   await db.exec('set role service_role');
   await rejects(finalize,audioArgs,/room_closed/);
+  await db.exec('reset role');await db.query("update public.ot_room_invites set signup_source='PUBLIC' where id=$1",[audioInvite]);await db.exec('set role service_role');
+  const reserved=(await ok('select public.vom_ot_reserve_upload($1,$2,$3,$4) as receipt',[audioInvite,audioClaim,audioPath,'live.m4a'])).rows[0].receipt;
+  assert.equal(new Date(reserved.scheduled_at).toISOString(),'2026-10-08T00:00:00.000Z');assert.equal((await ok('select status from public.ot_signup_reservations where invite_id=$1',[audioInvite])).rows[0].status,'WAITING');
+
   await db.exec('reset role');await db.query('update ot_test.clock set now_at=$1',['2026-10-07T01:00:00Z']);await db.exec('set role service_role');
   const audioReview=(await ok(finalize,audioArgs)).rows[0].result.id;
   const audioRow=(await ok('select candidate_name,somoim_nickname,media_kind from public.ot_reviews where id=$1',[audioReview])).rows[0];
@@ -206,5 +222,14 @@ try{
   await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(8)]);
   assert.equal((await ok('select * from public.ot_room_applicants where auth_user_id=$1',[audioUser])).rows.length,0);
   await rejects('select public.vom_ot_finalize_photo($1,$2,$3,$4)',[audioInvite,photoClaim,photoPath,'me.jpg'],/permission denied/);
+  await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub','',false)");
+  await db.exec("insert into public.events(id,title,event_type,event_date) values(90,'future private live','VOM LIVE','2099-01-01')");
+  await db.exec("insert into public.live_participants values(90,'future member');insert into public.live_results values(90,'[{\"name\":\"future member\"}]');insert into public.busking_setlist_slots values(1,90);insert into public.busking_setlist_slot_songs values(1,1)");
+  await db.exec('set role anon');assert.equal((await ok('select count(*)::int as count from public.events_public where id=90')).rows[0].count,0);assert.equal((await ok('select private.vom_can_view_event(90) as visible')).rows[0].visible,false);
+  for(const table of ['live_participants','live_results','busking_setlist_slots','busking_setlist_slot_songs','live_vote_breakdown','live_event_points','live_point_hall_of_fame'])assert.equal((await ok('select count(*)::int as count from public.'+table)).rows[0].count,0,table+' must not expose future records');
+  await rejects('select * from public.ot_signup_reservations',[],/permission denied/);await rejects('select public.vom_claim_login_attempt($1)',['a'.repeat(64)],/permission denied/);
+  await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(8)]);await db.exec('set role authenticated');assert.equal((await ok('select count(*)::int as count from public.events_public where id=90')).rows[0].count,1);
+  await db.exec('reset role;set role service_role');for(let n=0;n<5;n++)assert.equal((await ok('select public.vom_claim_login_attempt($1) as allowed',['a'.repeat(64)])).rows[0].allowed,true);assert.equal((await ok('select public.vom_claim_login_attempt($1) as allowed',['a'.repeat(64)])).rows[0].allowed,false);
+  await db.exec('reset role');
   console.log('PostgreSQL migration and security checks passed:',checks);
 }finally{await db.close();}

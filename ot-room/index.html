@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <title>회원가입 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=4">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=5">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#7660dd">
-  <script defer src="/assets/public-signup.js?v=1"></script>
+  <script defer src="/assets/public-signup.js?v=2"></script>
 </head>
 <body class="ot-public">
 <header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><a class="ot-button" href="/me/">로그인하기</a></header>
@@ -19,22 +19,22 @@
 <p class="ot-lead">소모임 가입 인사를 작성하셨나요? 본인사진과 가입 정보, 라이브 영상 또는 음성을 함께 제출해 주세요.</p>
 <div id="roomMessage" class="ot-message" role="status" aria-live="polite">회원가입 신청서를 준비하고 있습니다.</div>
 <section id="accountCard" class="ot-card"><div class="ot-card-heading"><h2>회원가입 신청</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
-<p class="ot-note">본인사진 · 이름 · 소모임 닉네임 · 출생연도 · 직업 · 버스킹 경험 · 라이브 파일은 필수입니다. 지금 설정한 비밀번호로 승인 후 로그인합니다.</p>
-<p class="ot-note">한국시간 오전 9시부터 오후 6시 전까지 신청할 수 있습니다. 오후 6시 전에 파일 전송과 접수가 모두 완료돼야 합니다.</p>
+<p class="ot-note"><span class="ot-required" aria-hidden="true">*</span> 표시는 필수 항목입니다. 지금 설정한 숫자 4자리 비밀번호로 승인 후 로그인합니다.</p>
+<p class="ot-note">접수 시간은 한국시간 오전 9시부터 오후 6시 전까지입니다. 미리 작성해 놓으면 익일 오전 9시에 자동 접수됩니다. 예약하려면 아래 신청서를 제출해 주세요.</p>
 <form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
-        <label>아이디<input name="login_name" autocomplete="username" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" required><small>영문·숫자·._- 조합 4~30자</small></label>
-        <label>개인 비밀번호<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
-        <label>비밀번호 확인<input name="password_confirm" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
-        <label>이름<input name="candidate_name" autocomplete="name" maxlength="60" required></label>
-        <label>소모임 닉네임<input id="accountNickname" name="somoim_nickname" maxlength="80" required></label>
-        <label>연락처 (선택)<input name="phone" type="tel" autocomplete="tel" maxlength="30"></label>
-        <label>출생연도<input name="birth_year" inputmode="numeric" autocomplete="bday-year" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="예: 1995" required><small>나이가 아닌 태어난 연도를 4자리로 입력해 주세요.</small></label>
-        <label>직업<input name="job" maxlength="80" placeholder="예: 회사원, 학생, 프리랜서" required></label>
-        <label>버스킹 경험 단위<select id="experienceUnit" name="busking_experience_unit" required><option value="COUNT">횟수 (회)</option><option value="YEARS">기간 (년)</option></select></label>
-        <label>버스킹 경험<input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다.</small></label>
-        <label>활동 지역 (선택)<input name="region" maxlength="80"></label>
-        <label>성별 (선택)<select name="gender"><option value="">입력하지 않음</option><option>여성</option><option>남성</option><option>기타</option></select></label>
-      </div><label class="ot-file-label">본인사진<input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><label class="ot-file-label">라이브 영상 또는 음성<input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><p id="fileSummary" class="ot-note"></p><label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span>가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
+        <label>이름<span class="ot-required" aria-hidden="true">*</span><input name="candidate_name" autocomplete="name" maxlength="60" required></label>
+        <label>출생연도<span class="ot-required" aria-hidden="true">*</span><input name="birth_year" inputmode="numeric" autocomplete="bday-year" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="예: 1995" required><small>나이가 아닌 태어난 연도를 4자리로 입력해 주세요.</small></label>
+        <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required></label>
+        <label>직업<span class="ot-required" aria-hidden="true">*</span><input name="job" maxlength="80" placeholder="예: 회사원, 학생, 프리랜서" required></label>
+        <label>버스킹 경험 단위<span class="ot-required" aria-hidden="true">*</span><select id="experienceUnit" name="busking_experience_unit" required><option value="COUNT">횟수 (회)</option><option value="YEARS">기간 (년)</option></select></label>
+        <label>버스킹 경험<span class="ot-required" aria-hidden="true">*</span><input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다.</small></label>
+        <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required></label>
+        <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" required></label>
+        <label>성별<span class="ot-required" aria-hidden="true">*</span><select name="gender" required><option value="">선택해 주세요</option><option>여성</option><option>남성</option><option>기타</option></select></label>
+        <label>아이디<span class="ot-required" aria-hidden="true">*</span><input name="login_name" autocomplete="username" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" required><small>영문·숫자·._- 조합 4~30자</small></label>
+        <label>개인 비밀번호<span class="ot-required" aria-hidden="true">*</span><input name="password" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required><small>숫자 4자리로 설정해 주세요.</small></label>
+        <label>비밀번호 확인<span class="ot-required" aria-hidden="true">*</span><input name="password_confirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력" required></label>
+      </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><label class="ot-file-label">라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span><input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><button id="clearVideo" type="button" class="ot-clear-file" hidden>파일 지우기</button><p id="fileSummary" class="ot-note"></p><label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
       <progress id="uploadProgress" max="100" value="0" aria-label="회원가입 파일 업로드 진행률" hidden></progress><button id="accountButton" class="ot-button ot-primary" type="submit">회원가입 신청하기</button></form>
 </section>
 <section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반 승인 시 회원 프로필이 자동 생성됩니다. 승인 전에는 회원 로그인이 제한되며 공개 페이지를 둘러볼 수 있습니다.</p>

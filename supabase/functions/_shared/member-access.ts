@@ -9,6 +9,10 @@ export function newPassword(value: unknown) {
   if (typeof value !== "string" || value.length < 8 || value.length > 64) throw new ApiError(400, "비밀번호는 8~64자로 입력해 주세요.");
   return "VOM:" + value;
 }
+export function signupPassword(value: unknown) {
+  if (typeof value !== "string" || !/^\d{4}$/.test(value)) throw new ApiError(400, "개인 비밀번호는 숫자 4자리로 입력해 주세요.");
+  return "VOM:" + value;
+}
 export async function applicantEmail(name: string) {
   return "join-" + (await tokenHash(name)).slice(0,48) + "@member.thisisvom.app";
 }
