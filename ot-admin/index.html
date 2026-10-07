@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>OT 가입 검토 · VOM</title>
+  <link rel="icon" href="/favicon.png?v=4">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+  <script defer src="/assets/ot-admin.js?v=1"></script>
+</head>
+<body>
+  <header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><div class="ot-actions"><span id="operatorName" class="ot-header-label"></span><a class="ot-button" href="/me/">MY VOM</a></div></header>
+  <main class="ot-page">
+    <div class="ot-admin-top"><div><p class="ot-eyebrow">OPERATORS ONLY</p><h1>OT 가입 검토</h1><p class="ot-lead">신규 영상 확인부터 최종 가입 안내까지.</p></div><button id="refreshButton" type="button" class="ot-button" hidden>목록 새로고침</button></div>
+    <div id="adminMessage" class="ot-message" role="status" aria-live="polite">운영진 권한을 확인하고 있습니다.</div>
+    <section id="loginCard" class="ot-card ot-login" hidden>
+      <h2>운영진 로그인</h2><p class="ot-note">MY VOM에서 운영진 개인 계정으로 로그인한 뒤 이 페이지를 다시 열어 주세요.</p>
+      <a class="ot-button" style="display:inline-block;margin-top:16px;text-decoration:none" href="/me/">MY VOM 로그인</a>
+      <details><summary>기존 관리자 계정으로 로그인</summary><form id="adminLoginForm"><label>관리자 이메일<input id="adminEmail" type="email" autocomplete="username" required></label><label>비밀번호<input id="adminPassword" type="password" autocomplete="current-password" required></label><button id="adminLoginButton" class="ot-button ot-primary" type="submit">관리자 로그인</button></form></details>
+    </section>
+    <div id="adminDashboard" hidden>
+      <div class="ot-invite-layout">
+        <section class="ot-card"><h2>신규 가입자 등록 링크</h2><p class="ot-note">가입 인사 댓글에 안내할 개별 링크입니다. 한 명당 하나씩 발급해 주세요.</p><form id="inviteForm" class="ot-inline-row"><label class="ot-inline-field">소모임 닉네임 <span style="font-weight:400">(선택)</span><input id="inviteNickname" maxlength="80" placeholder="가입 인사에 사용한 닉네임"></label><button id="inviteButton" type="submit" class="ot-button ot-primary">등록 링크 만들기</button></form><div id="newInviteOutput" hidden><input id="newInviteUrl" class="ot-link-output" readonly aria-label="신규 가입자 전용 등록 링크"><p id="newInviteExpires" class="ot-note"></p><button id="copyInviteButton" type="button" class="ot-button" style="margin-top:10px">링크 복사</button></div></section>
+        <section class="ot-card"><h2>등록·검토 안내</h2><p class="ot-note">영상 등록은 한국시간 09:00~18:00에만 가능합니다. 당일 처리를 보장하지 않으며 익일 안내될 수 있습니다.</p><p class="ot-note">푸시는 알림 등록을 완료한 운영진 기기로 발송됩니다. 등록되지 않은 운영진도 이 목록에서 접수 건을 확인할 수 있습니다.</p><button id="retryNotificationButton" type="button" class="ot-button" style="margin-top:16px">대기 중 알림 재시도</button></section>
+      </div>
+      <div class="ot-review-header"><h2>등록된 영상 <span id="pendingCount" class="ot-tag">0건 대기</span></h2><span id="lastRefreshed" class="ot-note" style="margin:0"></span></div>
+      <div class="ot-filters" id="reviewFilters"><button class="ot-filter active" type="button" data-filter="IN_REVIEW">검토 대기</button><button class="ot-filter" type="button" data-filter="APPROVED">승인</button><button class="ot-filter" type="button" data-filter="REJECTED">반려</button><button class="ot-filter" type="button" data-filter="ALL">전체</button></div>
+      <div id="reviewList" class="ot-review-list"></div>
+      <details class="ot-invites"><summary>발급한 등록 링크</summary><div id="inviteList"></div></details>
+      <details id="operatorAccessPanel" class="ot-invites" hidden><summary>운영진 OT 권한 관리</summary><p class="ot-note">본인 계정인지 확인한 뒤 권한을 부여해 주세요. 새 개인 계정 연결만으로는 인증 영상 열람 권한이 생기지 않습니다.</p><div id="operatorAccessList"></div></details>
+    </div>
+  </main>
+</body>
+</html>

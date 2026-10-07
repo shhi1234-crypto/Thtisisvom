@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "check:ot": "deno check supabase/functions/ot-room/index.ts supabase/functions/ot-review/index.ts supabase/functions/admin-reminder-push/index.ts supabase/functions/vom-access/index.ts supabase/functions/member-account/index.ts supabase/functions/public-events/index.ts",
+    "test:ot": "deno test --allow-env=ECE_KEYLOG tests/ot_server_test.ts"
+  }
+}

@@ -1328,7 +1328,7 @@ async function loadPeople(){
 
     const {data,error} =
       await db
-        .from('members_public')
+        .from('members_display')
         .select('*');
 
 

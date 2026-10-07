@@ -1586,7 +1586,7 @@ async function loadAllData(){
 
   const eventRequest =
     db
-      .from('events')
+      .from('events_public')
       .select('*')
       .eq(
         'event_type',
@@ -1614,7 +1614,7 @@ async function loadAllData(){
 
   const memberRequest =
     db
-      .from('members_public')
+      .from('members_display')
       .select('*');
 
 

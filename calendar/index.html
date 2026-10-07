@@ -33,6 +33,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/vom-access.js?v=1"></script>
 
 <style>
 :root{
@@ -3437,6 +3438,8 @@ async function loadMedia(){
 
 
 async function loadEvents(){
+  if(window.vomAccessReady && !(await window.vomAccessReady)) return;
+  const {data:sessionData}=await db.auth.getSession();
 
   const controller = new AbortController();
   const timer = window.setTimeout(
@@ -3455,7 +3458,8 @@ async function loadEvents(){
           credentials:'omit',
           cache:'no-store',
           headers:{
-            'apikey':SUPABASE_KEY
+            'apikey':SUPABASE_KEY,
+            'Authorization':'Bearer '+(sessionData.session?.access_token||'')
           },
           signal:controller.signal
         }
