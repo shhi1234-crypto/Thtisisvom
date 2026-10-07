@@ -1,38 +1,75 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, MAX_VIDEO_BYTES, checkRequest, failure, headers, isRegistrationOpen, json, requireOpen, textField, tokenHash, validToken, validateVideo } from "../_shared/ot-core.ts";
 import { notifyOT } from "../_shared/ot-push.ts";
+import { applicantEmail, loginName, newPassword, signedIn } from "../_shared/member-access.ts";
 
-// This endpoint deliberately accepts an OT invite instead of a member JWT.
-// Invite holders receive no member credentials, member directory, or media read URL.
+// An invite creates one applicant account. Subsequent submissions/status reads
+// require that account's verified JWT; approval alone creates a member profile.
 export async function handle(req: Request, service: any, now = () => new Date()) {
   let origin = DEFAULT_ORIGIN;
   let claim: { inviteId: string; claimId: string; path: string | null; committed: boolean } | null = null;
+  let accountClaim: {inviteId:string;claimId:string;userId:string|null} | null = null;
   try {
     origin = checkRequest(req);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: headers(origin) });
     const rawToken = req.headers.get("x-ot-invite");
-    if (!validToken(rawToken)) throw new ApiError(404, "운영진이 안내한 등록 링크를 확인해 주세요.", "invalid_invite");
-    const { data: invite, error } = await service.from("ot_room_invites")
-      .select("id,expires_at,revoked_at,review_id,somoim_nickname")
-      .eq("token_hash", await tokenHash(rawToken)).maybeSingle();
+    const ownUser = req.headers.get("authorization") ? await signedIn(req,service) : null;
+    let lookup=service.from("ot_room_invites").select("id,expires_at,revoked_at,review_id,somoim_nickname,applicant_user_id");
+    if (validToken(rawToken)) lookup=lookup.eq("token_hash",await tokenHash(rawToken));
+    else if (ownUser) lookup=lookup.eq("applicant_user_id",ownUser.id);
+    else throw new ApiError(404,"운영진이 안내한 등록 링크를 확인하거나 개인 계정으로 로그인해 주세요.","invalid_invite");
+    const { data: invite, error } = await lookup.maybeSingle();
     if (error) throw new Error("invite_lookup_failed");
-    if (!invite || invite.revoked_at || new Date(invite.expires_at) <= now()) throw new ApiError(404, "등록 링크가 만료됐거나 유효하지 않습니다. 운영진에게 다시 안내받아 주세요.", "invalid_invite");
+    if (!invite || invite.revoked_at || (!invite.applicant_user_id && new Date(invite.expires_at) <= now())) throw new ApiError(404, "등록 링크가 만료됐거나 유효하지 않습니다. 운영진에게 다시 안내받아 주세요.", "invalid_invite");
+    const ownsAccount=!!ownUser && ownUser.id===invite.applicant_user_id;
 
     const isMultipart = (req.headers.get("content-type") || "").startsWith("multipart/form-data;");
     if (!isMultipart) {
       let body;
       try { body = await req.json(); } catch { throw new ApiError(400, "요청 내용을 확인해 주세요."); }
-      if (body.action !== "info") throw new ApiError(400, "지원하지 않는 요청입니다.");
+      if (body.action === "create_account") {
+        if (!validToken(rawToken) || invite.applicant_user_id || invite.review_id) throw new ApiError(409,"이미 가입 계정이 설정된 링크입니다. 개인 계정으로 로그인해 주세요.");
+        if (ownUser) throw new ApiError(409,"현재 계정에서 로그아웃한 뒤 신규 가입을 신청해 주세요.");
+        if (body.consent!==true) throw new ApiError(400,"가입 검토 목적의 개인정보 수집·이용에 동의해 주세요.");
+        const name=loginName(body.login_name),password=newPassword(body.password);
+        const profile:any={login_name:name,candidate_name:textField(body.candidate_name,60,"이름"),somoim_nickname:textField(body.somoim_nickname,80,"소모임 닉네임")};
+        for (const [key,max] of [["phone",30],["region",80],["gender",20]] as const) profile[key]=body[key] ? textField(body[key],max,key) : null;
+        const birth=body.birth_date || null;
+        if (birth && (!/^\d{4}-\d{2}-\d{2}$/.test(birth) || !Number.isFinite(Date.parse(birth)) || new Date(birth).toISOString().slice(0,10)!==birth || birth<"1900-01-01" || birth>now().toISOString().slice(0,10))) throw new ApiError(400,"생년월일을 확인해 주세요.");
+        profile.birth_date=birth;
+        const claimId=crypto.randomUUID(),stamp=now().toISOString(),before=new Date(now().getTime()-600000).toISOString();
+        const {data:reserved,error:re}=await service.from("ot_room_invites").update({account_claim_id:claimId,account_claimed_at:stamp})
+          .eq("id",invite.id).is("applicant_user_id",null).is("review_id",null).is("revoked_at",null).gt("expires_at",stamp)
+          .or(`account_claimed_at.is.null,account_claimed_at.lt.${before}`).select("id").maybeSingle();
+        if (re) throw new Error("account_reservation_failed");
+        if (!reserved) throw new ApiError(409,"가입 계정 설정이 진행 중입니다. 잠시 후 확인해 주세요.");
+        accountClaim={inviteId:invite.id,claimId,userId:null};
+        const email=await applicantEmail(name);
+        const {data:created,error:ce}=await service.auth.admin.createUser({email,password,email_confirm:true});
+        if (ce || !created.user) throw new ApiError(409,"사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.");
+        accountClaim.userId=created.user.id;
+        const {error:be}=await service.rpc("vom_ot_bind_account",{p_invite_id:invite.id,p_claim_id:claimId,p_user_id:created.user.id,p_profile:profile});
+        if (be) throw new Error("account_bind_failed");
+        accountClaim=null;
+        return json(origin,{ok:true,login_email:email},201);
+      }
+      if (body.action !== "info") throw new ApiError(400,"지원하지 않는 요청입니다.");
+      if (invite.applicant_user_id && !ownsAccount) return json(origin,{ok:true,account_exists:true,login_required:true,server_time:now().toISOString()});
+      const {data:profile,error:pe}=ownsAccount ? await service.from("ot_room_applicants").select("login_name,candidate_name,somoim_nickname,phone,birth_date,region,gender,member_id").eq("auth_user_id",ownUser.id).single() : {data:null,error:null};
+      if (pe) throw new Error("applicant_lookup_failed");
       let status = null;
       if (invite.review_id) {
         const { data: review, error: re } = await service.from("ot_reviews").select("status,completed_at").eq("id", invite.review_id).single();
         if (re) throw new Error("review_lookup_failed");
         status = review.completed_at ? "JOINED" : review.status;
       }
-      return json(origin, { ok: true, registration_open: isRegistrationOpen(now()), server_time: now().toISOString(), somoim_nickname: invite.somoim_nickname || "", submitted: !!invite.review_id, status });
+      return json(origin, { ok: true, account_exists:!!invite.applicant_user_id,profile,registration_open: isRegistrationOpen(now()), server_time: now().toISOString(), somoim_nickname: invite.somoim_nickname || "", submitted: !!invite.review_id, status });
     }
 
     requireOpen(now());
+    if (!ownsAccount) throw new ApiError(401,"가입 계정을 설정한 뒤 본인 계정으로 영상을 등록해 주세요.","login_required");
+    const {data:profile,error:pe}=await service.from("ot_room_applicants").select("candidate_name,somoim_nickname").eq("auth_user_id",ownUser.id).single();
+    if (pe || !profile) throw new Error("applicant_lookup_failed");
     if (invite.review_id) throw new ApiError(409, "이미 영상이 등록됐습니다. 운영진 안내를 기다려 주세요.", "already_submitted");
     const length = Number(req.headers.get("content-length") || 0);
     if (length > MAX_VIDEO_BYTES + 64 * 1024) throw new ApiError(413, "영상은 50MB 이하로 등록해 주세요.");
@@ -63,8 +100,8 @@ export async function handle(req: Request, service: any, now = () => new Date())
     try { form = await new Response(limitedBody, { headers: { "Content-Type": req.headers.get("content-type") || "" } }).formData(); }
     catch { throw new ApiError(sizeLimitReached ? 413 : 400, sizeLimitReached ? "영상은 50MB 이하로 등록해 주세요." : "영상 파일을 읽지 못했습니다."); }
     requireOpen(now());
-    const candidateName = textField(form.get("candidate_name"), 60, "이름");
-    const nickname = textField(form.get("somoim_nickname"), 80, "소모임 닉네임");
+    const candidateName = profile.candidate_name;
+    const nickname = profile.somoim_nickname;
     if (form.get("consent") !== "yes") throw new ApiError(400, "가입 확인을 위한 영상 검토에 동의해 주세요.");
     const file = form.get("video");
     if (!(file instanceof File)) throw new ApiError(400, "인증 영상을 선택해 주세요.");
@@ -93,6 +130,15 @@ export async function handle(req: Request, service: any, now = () => new Date())
   } catch (error) {
     return failure(origin, error);
   } finally {
+    if (accountClaim) {
+      try {
+        const {data:current,error}=await service.from("ot_room_invites").select("applicant_user_id").eq("id",accountClaim.inviteId).maybeSingle();
+        if (!error && current && !current.applicant_user_id) {
+          if (accountClaim.userId) await service.auth.admin.deleteUser(accountClaim.userId);
+          await service.from("ot_room_invites").update({account_claim_id:null,account_claimed_at:null}).eq("id",accountClaim.inviteId).eq("account_claim_id",accountClaim.claimId).is("applicant_user_id",null);
+        }
+      } catch {console.error("OT account reconciliation deferred");}
+    }
     if (claim && !claim.committed) {
       try {
         // A network failure can hide a successful SQL commit. Reconcile before

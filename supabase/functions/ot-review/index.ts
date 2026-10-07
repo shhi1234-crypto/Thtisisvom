@@ -31,12 +31,18 @@ export async function handle(req: Request, service: any) {
         ? await service.from("members").select("id,name,nickname").eq("is_active", true).order("name")
         : { data: [], error: null };
       if (me) throw new Error("member_list_failed");
+      const {data:profiles,error:pe}=ids.length ? await service.from("ot_room_applicants")
+        .select("candidate_name,phone,birth_date,region,gender,ot_room_invites!inner(review_id)")
+        .in("ot_room_invites.review_id",ids) : {data:[],error:null};
+      if (pe) throw new Error("applicant_list_failed");
       return json(origin, {
         ok: true, actor, operators: (operators || []).map((op: any) => ({
           id: op.id, name: op.name, nickname: op.nickname, has_account: !!op.auth_user_id,
           ot_access: (accessRows || []).some((a: any) => a.member_id === op.id && a.user_id === op.auth_user_id && !a.revoked_at),
         })), invites, members,
-        reviews: (reviews || []).map((r: any) => ({ ...r, votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
+        reviews: (reviews || []).map((r: any) => ({ ...r,
+          profile:(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id)||null,
+          votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
       });
     }
 

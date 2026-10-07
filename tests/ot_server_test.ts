@@ -1,5 +1,6 @@
 import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo } from "../supabase/functions/_shared/ot-core.ts";
 import { handle as room } from "../supabase/functions/ot-room/index.ts";
+import { handle as access } from "../supabase/functions/vom-access/index.ts";
 import { handle as review } from "../supabase/functions/ot-review/index.ts";
 
 function assert(condition: unknown, message = "assertion failed"): asserts condition { if (!condition) throw new Error(message); }
@@ -12,7 +13,7 @@ const openNow = () => new Date("2026-10-07T01:00:00Z");
 // A small behavior fake covers trust boundaries; database atomicity is tested
 // separately against PostgreSQL with the actual migration and existing schema.
 function fake(options: Record<string, any> = {}) {
-  const state = { removed: [] as string[], uploaded: [] as string[], rpcCalls: [] as any[], operations: [] as any[], committed: false };
+  const state = { removed: [] as string[], uploaded: [] as string[], rpcCalls: [] as any[], operations: [] as any[], committed: false, deletedUsers:[] as string[] };
   const user = options.user ?? { id: userId };
   function query(table: string) {
     let operation = "select", input: any, columns = "", filters: any[] = [];
@@ -32,8 +33,10 @@ function fake(options: Record<string, any> = {}) {
           return { data: { id: inviteId }, error: null };
         }
         if (options.inviteMissing) return { data: null, error: null };
-        return { data: { id: inviteId, expires_at: options.expiresAt || "2026-10-09T00:00:00Z", revoked_at: options.revoked ? "2026-10-06T00:00:00Z" : null, review_id: state.committed || options.submitted ? 1 : null, somoim_nickname: "VOM 새 회원" }, error: null };
+        return { data: { id: inviteId, expires_at: options.expiresAt || "2026-10-09T00:00:00Z", revoked_at: options.revoked ? "2026-10-06T00:00:00Z" : null, review_id: state.committed || options.submitted ? 1 : null, somoim_nickname: "VOM 새 회원", applicant_user_id: options.noAccount ? null : (options.ownerId || userId) }, error: null };
       }
+      if (table === "ot_room_applicants") return { data:{login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null},error:null };
+      if (table === "member_account_settings") return {data:{must_change_password:!!options.mustChange},error:null};
       if (table === "ot_reviews") {
         if (operation === "update" && input.notification_claimed_at) return { data: null, error: null };
         return { data: { status: "IN_REVIEW", video_source: "FILE", video_file_path: "reviews/safe/video.mp4", completed_at: null }, error: null };
@@ -45,10 +48,11 @@ function fake(options: Record<string, any> = {}) {
     return q;
   }
   const client: any = {
-    auth: { getUser: async () => ({ data: { user: options.unauthenticated ? null : user }, error: options.unauthenticated ? { message: "bad token" } : null }) },
+    auth: { getUser: async () => ({ data: { user: options.unauthenticated ? null : user }, error: options.unauthenticated ? { message: "bad token" } : null }), admin:{createUser:async()=>({data:{user:options.createError?null:{id:"new-user"}},error:options.createError?{}:null}),deleteUser:async(id:string)=>{state.deletedUsers.push(id);return {error:null};}} },
     from: query,
     rpc: async (name: string, input: any) => {
       state.rpcCalls.push({ name, input });
+      if (name==="vom_ot_bind_account") return {data:null,error:null};
       if (options.commitLost) { state.committed = true; return { data: null, error: { message: "network failure" } }; }
       if (options.rpcClosed) return { data: null, error: { message: "room_closed" } };
       state.committed = true; return { data: { id: 1, status: "IN_REVIEW" }, error: null };
@@ -61,9 +65,9 @@ function fake(options: Record<string, any> = {}) {
   };
   return { client, state };
 }
-function infoRequest(candidateToken = token) { return new Request("https://edge.invalid/ot-room", { method: "POST", headers: { "Content-Type": "application/json", "x-ot-invite": candidateToken }, body: JSON.stringify({ action: "info" }) }); }
+function infoRequest(candidateToken = token, authenticated = true) { return new Request("https://edge.invalid/ot-room", { method: "POST", headers: { "Content-Type": "application/json", "x-ot-invite": candidateToken, ...(authenticated?{Authorization:"Bearer legitimate-token"}:{}) }, body: JSON.stringify({ action: "info" }) }); }
 function videoFile() { const bytes = new Uint8Array(24); bytes.set(new TextEncoder().encode("ftypisom"), 4); return new File([bytes], "voice.mp4", { type: "video/mp4" }); }
-function uploadRequest(file = videoFile()) { const form = new FormData(); form.set("candidate_name", "신규 회원"); form.set("somoim_nickname", "내 소모임 닉네임"); form.set("consent", "yes"); form.set("video", file); return new Request("https://edge.invalid/ot-room", { method: "POST", headers: { "x-ot-invite": token }, body: form }); }
+function uploadRequest(file = videoFile()) { const form = new FormData(); form.set("candidate_name", "신규 회원"); form.set("somoim_nickname", "내 소모임 닉네임"); form.set("consent", "yes"); form.set("video", file); return new Request("https://edge.invalid/ot-room", { method: "POST", headers: { "x-ot-invite": token, Authorization:"Bearer legitimate-token" }, body: form }); }
 function operatorRequest(body: any, withToken = true) { return new Request("https://edge.invalid/ot-review", { method: "POST", headers: { "Content-Type": "application/json", ...(withToken ? { Authorization: "Bearer legitimate-token" } : {}) }, body: JSON.stringify(body) }); }
 
 Deno.test("KST admission boundaries: 09:00 inclusive, 18:00 exclusive and midnight", () => {
@@ -71,7 +75,7 @@ Deno.test("KST admission boundaries: 09:00 inclusive, 18:00 exclusive and midnig
 });
 Deno.test("tokens have 256-bit random input and only hashes are persisted", async () => { const first = newToken(), second = newToken(); assert(/^[a-f0-9]{64}$/.test(first)); assert(first !== second); const hash = await tokenHash(first); assert(hash.length === 64 && hash !== first && hash === await tokenHash(first)); });
 Deno.test("HTML renamed to mp4 and zero byte media are rejected", async () => { for (const file of [new File(["<html>evil</html>"], "looks.mp4", { type: "video/mp4" }), new File([], "empty.mp4")]) { let rejected = false; try { await validateVideo(file); } catch (e) { rejected = e instanceof ApiError; } assert(rejected); } });
-Deno.test("room refuses missing, expired and revoked invitations", async () => { await status(await room(infoRequest("bad"), fake().client, openNow), 404); for (const option of [{ inviteMissing: true }, { expiresAt: "2026-10-06T00:00:00Z" }, { revoked: true }]) await status(await room(infoRequest(), fake(option).client, openNow), 404); });
+Deno.test("room refuses missing, expired and revoked invitations", async () => { await status(await room(infoRequest("bad",false), fake().client, openNow), 404); for (const option of [{ inviteMissing: true }, { expiresAt: "2026-10-06T00:00:00Z" }, { revoked: true }]) await status(await room(infoRequest(), fake({...option,noAccount:true}).client, openNow), 404); });
 Deno.test("applicant status works after closing and contains no media or internal identity", async () => { const response = await room(infoRequest(), fake({ submitted: true }).client, () => new Date("2026-10-07T10:00:00Z")); await status(response, 200); const data = await response.text(); assert(!/file_path|video_url|token_hash|userId|eligible_operator/.test(data)); assert(JSON.parse(data).submitted); });
 Deno.test("18:00 upload rejected before file storage", async () => { const { client, state } = fake(); await status(await room(uploadRequest(), client, () => new Date("2026-10-07T09:00:00Z")), 403); assert(!state.uploaded.length && !state.rpcCalls.length); });
 Deno.test("duplicate and concurrent uploads rejected", async () => { for (const option of [{ submitted: true }, { reserveBusy: true }]) { const { client, state } = fake(option); await status(await room(uploadRequest(), client, openNow), 409); assert(!state.uploaded.length); } });
@@ -85,3 +89,19 @@ Deno.test("operator media is authenticated bytes with no URL and no-store", asyn
 Deno.test("operator cannot vote as another person or auto-complete membership", async () => { const { client, state } = fake({ member: { id: 1, name: "운영진", role: "운영진", is_active: true } }); await status(await review(operatorRequest({ action: "vote", review_id: 1, voter_member_id: 2, decision: "APPROVE" }), client), 403); await status(await review(operatorRequest({ action: "complete", review_id: 1, member_id: 2 }), client), 403); assert(!state.rpcCalls.length); });
 Deno.test("shared administrator proxy vote remains available with audit actor", async () => { const { client, state } = fake({ admin: true }); await status(await review(operatorRequest({ action: "vote", review_id: 1, voter_member_id: 7, decision: "APPROVE" }), client), 200); assert(state.rpcCalls[0].input.p_member_id === 7 && state.rpcCalls[0].input.p_actor_id === userId); });
 Deno.test("signed media URL route is retired", async () => { await status(await review(operatorRequest({ action: "signed_video_url", review_id: 1 }), fake({ admin: true }).client), 410); });
+
+Deno.test("invite alone never exposes a bound account's private status",async()=>{
+ const r=await room(infoRequest(token,false),fake({submitted:true}).client,openNow);await status(r,200);const data=await r.json();assert(data.login_required && !data.submitted && !data.profile && !data.status);
+});
+Deno.test("another applicant JWT cannot upload against this invite",async()=>{const {client,state}=fake({ownerId:"other-user"});await status(await room(uploadRequest(),client,openNow),401);assert(!state.uploaded.length);});
+Deno.test("account signup requires an unused invitation, consent and strong password",async()=>{
+ const request=(body:any)=>new Request("https://edge.invalid/ot-room",{method:"POST",headers:{"Content-Type":"application/json","x-ot-invite":token},body:JSON.stringify({action:"create_account",login_name:"new-vom",password:"abc12345",candidate_name:"테스트",somoim_nickname:"테스트별명",consent:true,...body})});
+ await status(await room(request({}),fake().client,openNow),409);
+ await status(await room(request({consent:false}),fake({noAccount:true}).client,openNow),400);
+ await status(await room(request({password:"0000"}),fake({noAccount:true}).client,openNow),400);
+ const {client,state}=fake({noAccount:true});await status(await room(request({}),client,openNow),201);assert(state.rpcCalls[0].name==="vom_ot_bind_account");assert(!("password" in state.rpcCalls[0].input.p_profile));
+});
+Deno.test("an unapproved Auth account remains pending regardless of role metadata",async()=>{
+ const {client}=fake({user:{id:userId,user_metadata:{role:"admin"}}});
+ const r=await access(operatorRequest({action:"context"}),client,{});await status(r,200);assert((await r.json()).state==="PENDING");
+});

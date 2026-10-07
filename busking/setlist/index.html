@@ -237,9 +237,9 @@ async function start(){
   const createRequested=params.get('create')==='1';
 
   const [e,l,m,r]=await Promise.all([
-    db.from('events').select('*').order('event_date',{ascending:true}),
+    db.from('events_public').select('*').order('event_date',{ascending:true}),
     db.from('locations').select('*'),
-    db.from('members_public').select('*'),
+    db.from('members_display').select('*'),
     db.from('busking_repertoire').select('*').order('updated_at',{ascending:false})
   ]);
 

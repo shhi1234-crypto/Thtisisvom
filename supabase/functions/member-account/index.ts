@@ -1,4 +1,5 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.117.2";
+import { issueActivation } from "../_shared/member-access.ts";
 import webpush from "npm:web-push@3.6.7";
 
 const allowedOrigins = new Set([
@@ -14,7 +15,8 @@ function response(body: Record<string, unknown>, status = 200, origin = "https:/
       "Access-Control-Allow-Origin": origin,
       "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Vary": "Origin"
+      "Vary": "Origin",
+      "Cache-Control": "no-store"
     }
   });
 }
@@ -169,6 +171,8 @@ Deno.serve(async (req) => {
         admin.from("member_account_settings").select("password_hint").eq("member_id", memberId).maybeSingle()
       ]);
       if (memberError || settingError) throw memberError || settingError;
+      const hintUser = await requireSignedInUser(req, admin);
+      if (!member || member.auth_user_id !== hintUser.id) return response({ error: "본인의 힌트만 확인할 수 있습니다." }, 403, requestOrigin);
       if (!member?.auth_user_id) return response({ ready: false, hint: "", message: "아직 개인 설정이 시작되지 않았어요." }, 200, requestOrigin);
       return response({
         ready: true,
@@ -178,49 +182,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "setup") {
-      const memberId = asMemberId(payload.member_id);
-      const initialPassword = String(payload.initial_password || "");
-      const newPassword = String(payload.new_password || "");
-      const hint = String(payload.password_hint || "").trim().slice(0, 100);
-
-      if (!memberId) return response({ error: "회원을 선택해 주세요." }, 400, requestOrigin);
-      if (initialPassword !== "0000") return response({ error: "최초 비밀번호를 확인해 주세요." }, 400, requestOrigin);
-      if (newPassword.length < 4 || newPassword.length > 64) return response({ error: "새 비밀번호는 4~64자로 입력해 주세요." }, 400, requestOrigin);
-
-      const { data: member, error: memberError } = await admin
-        .from("members")
-        .select("id,name,auth_user_id")
-        .eq("id", memberId)
-        .maybeSingle();
-      if (memberError) throw memberError;
-      if (!member) return response({ error: "등록된 회원을 찾지 못했습니다." }, 404, requestOrigin);
-      if (member.auth_user_id) return response({ error: "이미 개인 설정이 완료된 회원입니다. 로그인 또는 운영진 초기화를 이용해 주세요.", code: "already_activated" }, 409, requestOrigin);
-
-      const syntheticEmail = `member-${member.id}@member.thisisvom.app`;
-      const { data: created, error: createError } = await admin.auth.admin.createUser({
-        email: syntheticEmail,
-        password: authPassword(newPassword),
-        email_confirm: true
-      });
-      if (createError || !created.user) throw createError || new Error("계정을 만들지 못했습니다.");
-
-      const { error: linkError } = await admin
-        .from("members")
-        .update({ auth_user_id: created.user.id })
-        .eq("id", member.id);
-      if (linkError) throw linkError;
-
-      const { error: settingError } = await admin
-        .from("member_account_settings")
-        .upsert({
-          member_id: member.id,
-          password_hint: hint || null,
-          must_change_password: false,
-          password_changed_at: new Date().toISOString()
-        }, { onConflict: "member_id" });
-      if (settingError) throw settingError;
-
-      return response({ ok: true, member_id: member.id, member_name: member.name || "", login_email: syntheticEmail }, 200, requestOrigin);
+      return response({ error: "개인 설정은 운영진이 본인에게 발급한 개인 링크에서 진행해 주세요." }, 403, requestOrigin);
     }
 
     if (action === "whoami") {
@@ -392,22 +354,9 @@ Deno.serve(async (req) => {
         .eq("id", memberId)
         .maybeSingle();
       if (memberError) throw memberError;
-      if (!member?.auth_user_id) return response({ error: "아직 개인 설정을 시작하지 않은 회원입니다." }, 400, requestOrigin);
-
-      const { error: passwordError } = await admin.auth.admin.updateUserById(member.auth_user_id, { password: authPassword("0000") });
-      if (passwordError) throw passwordError;
-
-      const { error: settingError } = await admin
-        .from("member_account_settings")
-        .upsert({
-          member_id: member.id,
-          password_hint: null,
-          must_change_password: true,
-          password_changed_at: null
-        }, { onConflict: "member_id" });
-      if (settingError) throw settingError;
-
-      return response({ ok: true, member_name: member.name || "", message: "비밀번호를 0000으로 초기화했습니다." }, 200, requestOrigin);
+      if (!member) return response({ error: "회원 정보를 확인해 주세요." }, 404, requestOrigin);
+      const activation = await issueActivation(admin, member.id, userData.user.id);
+      return response({ ok: true, member_name: member.name || "", ...activation }, 200, requestOrigin);
     }
 
     return response({ error: "지원하지 않는 요청입니다." }, 400, requestOrigin);

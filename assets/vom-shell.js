@@ -359,6 +359,7 @@
         ['BUSKING', '/busking/'],
         ['MEMBERS', '/members/'],
         ['MY VOM', '/me/'],
+        ['가입 신청 · OT Room', '/ot-room/'],
         ['Q&A', '/qna/']
       ];
       if (isAdmin || isOperator) links.push(['OT 가입 검토', '/ot-admin/']);

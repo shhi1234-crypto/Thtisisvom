@@ -8,7 +8,8 @@
   <title>OT Room · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
   <link rel="stylesheet" href="/assets/ot-room.css?v=1">
-  <script defer src="/assets/ot-room.js?v=1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="/assets/ot-room.js?v=2"></script>
 </head>
 <body class="ot-public">
   <header class="ot-header"><div class="ot-brand">VOM <small>VOICE OF MELODY</small></div><span class="ot-header-label">신규 가입 확인</span></header>
@@ -17,13 +18,37 @@
     <h1>OT Room</h1>
     <p class="ot-lead">소모임 가입 인사를 작성한 뒤, 운영진이 안내한 링크로 인증 영상을 등록해 주세요.</p>
     <div id="roomMessage" class="ot-message" role="status" aria-live="polite">등록 링크를 확인하고 있습니다.</div>
+    <section class="ot-card" id="accountCard" hidden>
+      <h2>가입 계정 설정</h2>
+      <p class="ot-note">지금 설정한 아이디와 비밀번호로 신청 상태를 확인하고, 승인 후 회원 기능을 이용합니다.</p>
+      <form id="accountForm"><div class="ot-fields">
+        <label>아이디<input name="login_name" autocomplete="username" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" required><small>영문·숫자·._- 조합 4~30자</small></label>
+        <label>개인 비밀번호<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
+        <label>비밀번호 확인<input name="password_confirm" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
+        <label>이름<input name="candidate_name" autocomplete="name" maxlength="60" required></label>
+        <label>소모임 닉네임<input id="accountNickname" name="somoim_nickname" maxlength="80" required></label>
+        <label>연락처 (선택)<input name="phone" type="tel" autocomplete="tel" maxlength="30"></label>
+        <label>생년월일 (선택)<input name="birth_date" type="date" autocomplete="bday"></label>
+        <label>활동 지역 (선택)<input name="region" maxlength="80"></label>
+        <label>성별 (선택)<select name="gender"><option value="">입력하지 않음</option><option>여성</option><option>남성</option><option>기타</option></select></label>
+      </div><label class="ot-consent"><input name="consent" type="checkbox" required><span>가입 검토 및 회원 관리를 위한 이름·닉네임과 입력한 개인정보의 수집·이용에 동의합니다. 개인정보는 다른 회원에게 공개되지 않습니다.</span></label>
+      <button id="accountButton" class="ot-button ot-primary" type="submit">계정 설정하고 영상 등록하기</button></form>
+    </section>
+    <section class="ot-card" id="roomLogin" hidden>
+      <h2>신청 계정으로 로그인</h2>
+      <form id="roomLoginForm"><div class="ot-fields">
+        <label>아이디<input name="login_name" autocomplete="username" required></label>
+        <label>개인 비밀번호<input name="password" type="password" autocomplete="current-password" required></label>
+      </div><button class="ot-button ot-primary" type="submit">신청 상태 확인</button></form>
+      <p class="ot-note">처음 신청한다면 소모임 가입 인사를 작성하고 운영진이 안내한 개별 링크로 들어와 주세요.</p>
+    </section>
     <section class="ot-card" id="uploadCard" hidden>
       <div class="ot-card-heading"><h2>인증 영상 등록</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
       <p class="ot-note">한국시간 오전 9시부터 오후 6시 전까지 등록할 수 있습니다. 오후 6시 전에 업로드와 등록이 모두 완료돼야 합니다.</p>
       <form id="uploadForm">
         <div class="ot-fields">
-          <label>이름<input id="candidateName" name="candidate_name" autocomplete="name" maxlength="60" required></label>
-          <label>소모임 닉네임<input id="somoimNickname" name="somoim_nickname" maxlength="80" required aria-describedby="nicknameHint"><small id="nicknameHint">가입 인사에 사용한 소모임 닉네임을 입력해 주세요.</small></label>
+          <label>이름<input id="candidateName" name="candidate_name" readonly></label>
+          <label>소모임 닉네임<input id="somoimNickname" name="somoim_nickname" readonly></label>
         </div>
         <label class="ot-file-label">인증 영상<input id="videoFile" name="video" type="file" accept="video/mp4,video/quicktime,video/webm,video/3gpp,.mp4,.mov,.webm,.3gp" required><small>MP4 · MOV · WEBM · 3GP / 최대 50MB</small></label>
         <p id="fileSummary" class="ot-note"></p>
@@ -33,7 +58,8 @@
         <button id="submitButton" class="ot-button ot-primary" type="submit" disabled>영상 등록하기</button>
       </form>
     </section>
-    <p class="ot-processing-note">등록된 영상은 당일 처리가 보장되지 않습니다. 운영진 확인 후 익일 안내될 수 있으며, 최종 가입 안내를 받은 뒤 VOM 회원 기능을 이용해 주세요.</p>
+    <p class="ot-processing-note">등록된 영상은 당일 처리가 보장되지 않습니다. 운영진 확인 후 익일 안내될 수 있습니다. 운영진 과반 승인 시 회원 프로필이 자동 생성됩니다.</p>
+    <div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">MY VOM</a><button class="ot-button" id="roomLogout" hidden type="button">로그아웃</button></div>
   </main>
 </body>
 </html>

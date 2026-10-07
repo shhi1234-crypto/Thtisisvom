@@ -12,3 +12,13 @@ verify_jwt = false
 # Preserve the existing cron-secret authentication in this pre-existing handler.
 [functions.admin-reminder-push]
 verify_jwt = false
+
+# Custom Auth.getUser checks protect membership; login/one-use activation are public.
+[functions.vom-access]
+verify_jwt = false
+
+[functions.member-account]
+verify_jwt = false
+
+[functions.public-events]
+verify_jwt = false
