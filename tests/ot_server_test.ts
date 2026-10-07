@@ -2,6 +2,7 @@ import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo, valid
 import { handle as room } from "../supabase/functions/ot-room/index.ts";
 import { handle as access } from "../supabase/functions/vom-access/index.ts";
 import { handle as review } from "../supabase/functions/ot-review/index.ts";
+import { approvalSubscription } from "../supabase/functions/_shared/public-signup.ts";
 
 function assert(condition: unknown, message = "assertion failed"): asserts condition { if (!condition) throw new Error(message); }
 async function status(response: Response, expected: number) { assert(response.status === expected, "expected " + expected + ", got " + response.status + ": " + await response.clone().text()); }
@@ -22,6 +23,7 @@ function fake(options: Record<string, any> = {}) {
     q.select = (value: string) => { columns = value; return q; };
     q.update = (value: any) => { operation = "update"; input = value; return q; };
     q.insert = (value: any) => { operation = "insert"; input = value; return q; };
+    q.delete = () => {operation='delete';return q;};
     function result() {
       state.operations.push({ table, operation, input, columns, filters });
       if (table === "admins") return { data: options.admin ? { user_id: userId } : null, error: null };
@@ -38,7 +40,7 @@ function fake(options: Record<string, any> = {}) {
       if (table === "ot_room_applicants") return { data:{login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null,form_version:options.formVersion||1,profile_photo_path:state.photoPath||options.photoPath||null},error:null };
       if (table === "member_account_settings") return {data:{must_change_password:!!options.mustChange},error:null};
       if (table === "ot_reviews") {
-        if (operation === "update" && input.notification_claimed_at) return { data: null, error: null };
+        if (operation === "update" && (input.notification_claimed_at || input.approval_notification_claimed_at)) return { data: null, error: null };
         return { data: { status: "IN_REVIEW", video_source: "FILE", video_file_path: "reviews/safe/video.mp4", completed_at: null }, error: null };
       }
       return { data: [], error: null };
@@ -136,3 +138,64 @@ Deno.test("ordinary members cannot read applicant photos; operator audio is auth
 });
 
 Deno.test("detected audio MIME is applied to stored bytes even when the submitted File is mislabeled",async()=>{const {client,state}=fake();const file=new File(['ID3abcdefghijk'],'라이브.mp3',{type:'application/octet-stream'});await status(await room(uploadRequest(file),client,openNow),201);assert(state.uploadedTypes[0]==='audio/mpeg');assert(state.uploaded[0].endsWith('.mp3'));});
+
+function publicRequest(changes:Record<string,any>={}) {
+ const data=new FormData();
+ for(const [key,value] of Object.entries({login_name:'public-test',password:'abc12345',password_confirm:'abc12345',candidate_name:'가입자',somoim_nickname:'가입별명',birth_year:'1995',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT',consent:'yes',...changes})) if(value!==null)data.set(key,value);
+ if(!('photo' in changes))data.set('photo',new File([new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0])],'photo.png',{type:'image/png'}));
+ if(!('video' in changes))data.set('video',videoFile());
+ return new Request('https://edge.invalid/ot-room?signup=public',{method:'POST',body:data});
+}
+Deno.test('public registration opens without an invitation and info exposes no applicant data',async()=>{
+ const response=await room(new Request('https://edge.invalid/ot-room?signup=public',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'info'})}),fake().client,openNow);
+ await status(response,200);const data=await response.json();assert(data.public_signup&&data.registration_open&&!data.profile&&!data.invite_id);
+});
+Deno.test('public signup validates every required field and both files before creating an account',async()=>{
+ for(const changes of [{photo:null},{video:null},{job:''},{birth_year:'31'},{candidate_name:''},{somoim_nickname:''},{busking_experience:''},{consent:null},{password_confirm:'different'}]){
+  const {client,state}=fake();await status(await room(publicRequest(changes),client,openNow),400);assert(!state.rpcCalls.length&&!state.uploaded.length&&!state.deletedUsers.length);
+ }
+});
+Deno.test('public signup commits both private files together and returns no login session or media URL',async()=>{
+ const {client,state}=fake();const response=await room(publicRequest(),client,openNow);await status(response,201);const body=await response.text();assert(state.uploaded.length===2&&state.rpcCalls.length===3);assert(JSON.parse(body).notification_token.length===64);assert(!/login_email|access_token|refresh_token|file_path|signedUrl/.test(body));assert(state.operations.some(x=>x.input?.signup_source==='PUBLIC'));assert(state.uploadedTypes.join(',')==='image/png,video/mp4');
+});
+Deno.test('public signup at 18:00 creates no account and closing commit cleans only the new application',async()=>{
+ const closed=fake();await status(await room(publicRequest(),closed.client,()=>new Date('2026-10-07T09:00:00Z')),403);assert(!closed.state.operations.length);
+ const failed=fake({rpcClosed:true});await status(await room(publicRequest(),failed.client,openNow),403);assert(failed.state.removed.length===2&&failed.state.deletedUsers.length===1);
+});
+Deno.test('public signup never deletes a review after a lost commit response',async()=>{
+ const {client,state}=fake({commitLost:true});await status(await room(publicRequest(),client,openNow),409);assert(state.committed&&!state.removed.length&&!state.deletedUsers.length);
+});
+Deno.test('approval device URLs reject localhost, private networks and arbitrary HTTPS hosts',()=>{
+ const keys={p256dh:'A'.repeat(87),auth:'B'.repeat(22)};
+ assert(approvalSubscription({endpoint:'https://fcm.googleapis.com/fcm/send/device',keys}).endpoint.includes('fcm'));
+ for(const endpoint of ['http://fcm.googleapis.com/fcm/send/x','https://127.0.0.1/private','https://example.com/push','https://fcm.googleapis.com.evil.test/push','https://user:pass@web.push.apple.com/push','https://web.push.apple.com:8080/push']){let denied=false;try{approvalSubscription({endpoint,keys});}catch(error){denied=error instanceof ApiError;}assert(denied);}
+});
+Deno.test('member name picker uses the linked Auth email and preserves legacy personal passwords',async()=>{
+ const {client}=fake({member:{id:8,auth_user_id:'linked-user',is_active:true}});client.auth.admin.getUserById=async(id:string)=>{assert(id==='linked-user');return {data:{user:{email:'original@member.thisisvom.app'}},error:null};};
+ const credentials:any[]=[];const auth={auth:{signInWithPassword:async(value:any)=>{credentials.push(value);return value.password.startsWith('VOM:')?{data:{session:null},error:{}}:{data:{session:{user:{id:'linked-user'},access_token:'access',refresh_token:'refresh'}},error:null};}}};
+ const response=await access(operatorRequest({action:'login',member_id:8,password:'old-password'}),client,auth);await status(response,200);assert(credentials.length===2&&credentials.every(x=>x.email==='original@member.thisisvom.app'));assert((await response.json()).state==='APPROVED');
+});
+Deno.test('pending applicants cannot receive a login session',async()=>{
+ const {client}=fake();let signedOut=false;const auth={auth:{signInWithPassword:async()=>({data:{session:{user:{id:'pending-user'},access_token:'must-not-return',refresh_token:'must-not-return'}},error:null}),signOut:async()=>{signedOut=true;return {error:null};}}};
+ const response=await access(operatorRequest({action:'login',login_name:'public-test',password:'abc12345'}),client,auth);await status(response,403);assert(signedOut&&!(await response.text()).includes('must-not-return'));
+});
+
+Deno.test('approval notifications require final approval, deliver once and retry transient failures',async()=>{
+ const {notifyApproval}=await import('../supabase/functions/_shared/ot-push.ts');
+ const webpush=(await import('npm:web-push@3.6.7')).default;const keys=webpush.generateVAPIDKeys();
+ for(const approved of [false,true]){
+  const row:any={approved,notified:null,lease:null,attempts:0};let deliveries=0,fail=false;
+  const service={from:(table:string)=>{let operation='select',input:any;const filters:any[]=[];const q:any={};for(const method of ['eq','is','lte','or'])q[method]=(...args:any[])=>{filters.push([method,...args]);return q;};q.select=()=>q;q.update=(value:any)=>{operation='update';input=value;return q;};const result=()=>{
+   if(table==='ot_reviews'){
+    if(input?.approval_notification_claimed_at){if(!row.approved||row.notified||row.lease)return {data:null,error:null};row.lease=input.approval_notification_claimed_at;return {data:{id:1,approval_notification_attempts:row.attempts},error:null};}
+    if(operation==='update'){row.notified=input.approval_notified_at;row.lease=input.approval_notification_claimed_at;row.attempts=input.approval_notification_attempts;}
+   }
+   if(table==='ot_room_invites')return {data:{id:inviteId,notification_push_enabled:true},error:null};
+   if(table==='vom_push_config')return {data:{vapid_public_key:keys.publicKey,vapid_private_key:keys.privateKey,subject:'mailto:test@example.invalid'},error:null};
+   if(table==='ot_applicant_push_subscriptions')return {data:{id:'subscription',endpoint:'https://fcm.googleapis.com/fcm/send/test',p256dh:'A'.repeat(87),auth:'B'.repeat(22)},error:null};
+   return {data:null,error:null};};q.maybeSingle=async()=>result();q.then=(resolve:any,reject:any)=>Promise.resolve(result()).then(resolve,reject);return q;}};
+  const send:any=async(_subscription:any,payload:string)=>{if(fail)throw {statusCode:503};deliveries++;assert(JSON.parse(payload).url.endsWith('/me/'));assert(!payload.includes('candidate_name'));};
+  if(approved){fail=true;await notifyApproval(service,1,send);assert(!row.notified&&row.attempts===1&&!row.lease);fail=false;}
+  await notifyApproval(service,1,send);await notifyApproval(service,1,send);assert(deliveries===(approved?1:0));if(approved)assert(row.notified&&row.attempts===2);
+ }
+});

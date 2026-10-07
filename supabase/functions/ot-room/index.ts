@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, signupDetails, validatePhoto, checkRequest, failure, headers, isRegistrationOpen, json, requireOpen, textField, tokenHash, validToken, validateVideo } from "../_shared/ot-core.ts";
 import { notifyOT } from "../_shared/ot-push.ts";
 import { applicantEmail, loginName, newPassword, signedIn } from "../_shared/member-access.ts";
+import { publicSignup } from "../_shared/public-signup.ts";
 
 // An invite creates one applicant account. Subsequent submissions/status reads
 // require that account's verified JWT; approval alone creates a member profile.
@@ -12,6 +13,7 @@ export async function handle(req: Request, service: any, now = () => new Date())
   try {
     origin = checkRequest(req);
     if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: headers(origin) });
+    if (new URL(req.url).searchParams.get('signup')==='public') return await publicSignup(req,service,origin,now);
     const rawToken = req.headers.get("x-ot-invite");
     const ownUser = req.headers.get("authorization") ? await signedIn(req,service) : null;
     let lookup=service.from("ot_room_invites").select("id,expires_at,revoked_at,review_id,somoim_nickname,applicant_user_id");

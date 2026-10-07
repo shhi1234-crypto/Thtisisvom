@@ -7,21 +7,21 @@
   <meta name="referrer" content="no-referrer">
   <title>회원가입 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=2">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
-  <script defer src="/assets/ot-room.js?v=3"></script>
+  <link rel="stylesheet" href="/assets/ot-room.css?v=4">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#7660dd">
+  <script defer src="/assets/public-signup.js?v=1"></script>
 </head>
 <body class="ot-public">
-  <header class="ot-header"><div class="ot-brand">VOM <small>VOICE OF MELODY</small></div><span class="ot-header-label">회원가입</span></header>
-  <main class="ot-page ot-applicant">
-    <p class="ot-eyebrow">WELCOME TO VOM</p>
-    <h1>회원가입</h1>
-    <p class="ot-lead">소모임 가입 인사를 작성한 뒤, 운영진이 안내한 링크로 회원가입을 신청해 주세요. 본인사진과 가입 정보를 입력하고 라이브 영상 또는 음성을 등록합니다.</p>
-    <div id="roomMessage" class="ot-message" role="status" aria-live="polite">등록 링크를 확인하고 있습니다.</div>
-    <section class="ot-card" id="accountCard" hidden>
-      <h2>회원가입 신청</h2>
-      <p class="ot-note">지금 설정한 아이디와 비밀번호로 신청 상태를 확인하고, 승인 후 회원 기능을 이용합니다.</p>
-      <form id="accountForm"><div class="ot-fields">
+<header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><a class="ot-button" href="/me/">로그인하기</a></header>
+<main class="ot-page ot-applicant"><p class="ot-eyebrow">WELCOME TO VOM</p><h1>회원가입</h1>
+<p class="ot-lead">소모임 가입 인사를 작성하셨나요? 본인사진과 가입 정보, 라이브 영상 또는 음성을 함께 제출해 주세요.</p>
+<div id="roomMessage" class="ot-message" role="status" aria-live="polite">회원가입 신청서를 준비하고 있습니다.</div>
+<section id="accountCard" class="ot-card"><div class="ot-card-heading"><h2>회원가입 신청</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
+<p class="ot-note">본인사진 · 이름 · 소모임 닉네임 · 출생연도 · 직업 · 버스킹 경험 · 라이브 파일은 필수입니다. 지금 설정한 비밀번호로 승인 후 로그인합니다.</p>
+<p class="ot-note">한국시간 오전 9시부터 오후 6시 전까지 신청할 수 있습니다. 오후 6시 전에 파일 전송과 접수가 모두 완료돼야 합니다.</p>
+<form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
         <label>아이디<input name="login_name" autocomplete="username" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" required><small>영문·숫자·._- 조합 4~30자</small></label>
         <label>개인 비밀번호<input name="password" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
         <label>비밀번호 확인<input name="password_confirm" type="password" autocomplete="new-password" minlength="8" maxlength="64" required></label>
@@ -34,39 +34,12 @@
         <label>버스킹 경험<input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다.</small></label>
         <label>활동 지역 (선택)<input name="region" maxlength="80"></label>
         <label>성별 (선택)<select name="gender"><option value="">입력하지 않음</option><option>여성</option><option>남성</option><option>기타</option></select></label>
-      </div><label class="ot-file-label">본인사진<input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><label class="ot-consent"><input name="consent" type="checkbox" required><span>가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
-      <button id="accountButton" class="ot-button ot-primary" type="submit">계정 설정하고 라이브 파일 등록하기</button></form>
-    </section>
-    <section class="ot-card" id="roomLogin" hidden>
-      <h2>신청 계정으로 로그인</h2>
-      <form id="roomLoginForm"><div class="ot-fields">
-        <label>아이디<input name="login_name" autocomplete="username" required></label>
-        <label>개인 비밀번호<input name="password" type="password" autocomplete="current-password" required></label>
-      </div><button class="ot-button ot-primary" type="submit">신청 상태 확인</button></form>
-      <p class="ot-note">처음 신청한다면 소모임 가입 인사를 작성하고 운영진이 안내한 개별 링크로 들어와 주세요.</p>
-    </section>
-    <section class="ot-card" id="photoCard" hidden>
-      <h2>본인사진 등록</h2><p class="ot-note">계정은 설정됐습니다. 본인사진을 등록한 뒤 라이브 영상·음성을 제출해 주세요.</p>
-      <form id="photoForm"><label class="ot-file-label">본인사진<input name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>JPG / PNG / WEBP · 최대 5MB</small></label><button id="photoButton" type="submit" class="ot-button ot-primary">본인사진 등록하기</button></form>
-    </section>
-    <section class="ot-card" id="uploadCard" hidden>
-      <div class="ot-card-heading"><h2>라이브 영상·음성 등록</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
-      <p class="ot-note">한국시간 오전 9시부터 오후 6시 전까지 등록할 수 있습니다. 오후 6시 전에 업로드와 등록이 모두 완료돼야 합니다.</p>
-      <form id="uploadForm">
-        <div class="ot-fields">
-          <label>이름<input id="candidateName" name="candidate_name" readonly></label>
-          <label>소모임 닉네임<input id="somoimNickname" name="somoim_nickname" readonly></label>
-        </div>
-        <label class="ot-file-label">라이브 영상 또는 음성<input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label>
-        <p id="fileSummary" class="ot-note"></p>
-        <label class="ot-consent"><input id="consent" name="consent" type="checkbox" value="yes" required><span>가입 확인을 위해 운영진이 라이브 영상·음성을 검토하는 데 동의합니다.</span></label>
-        <p class="ot-note">본인사진과 라이브 영상·음성은 회원 게시판에 공개되지 않으며, 운영진만 검토할 수 있습니다.</p>
-        <progress id="uploadProgress" max="100" value="0" aria-label="라이브 파일 업로드 진행률" hidden></progress>
-        <button id="submitButton" class="ot-button ot-primary" type="submit" disabled>라이브 파일 등록하기</button>
-      </form>
-    </section>
-    <p class="ot-processing-note">접수된 회원가입 신청은 당일 처리가 보장되지 않습니다. 운영진 확인 후 익일 안내될 수 있습니다. 운영진 과반 승인 시 회원 프로필이 자동 생성됩니다.</p>
-    <div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">MY VOM</a><button class="ot-button" id="roomLogout" hidden type="button">로그아웃</button></div>
-  </main>
-</body>
-</html>
+      </div><label class="ot-file-label">본인사진<input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><label class="ot-file-label">라이브 영상 또는 음성<input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><p id="fileSummary" class="ot-note"></p><label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span>가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
+      <progress id="uploadProgress" max="100" value="0" aria-label="회원가입 파일 업로드 진행률" hidden></progress><button id="accountButton" class="ot-button ot-primary" type="submit">회원가입 신청하기</button></form>
+</section>
+<section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반 승인 시 회원 프로필이 자동 생성됩니다. 승인 전에는 회원 로그인이 제한되며 공개 페이지를 둘러볼 수 있습니다.</p>
+<button id="approvalNotifyButton" type="button" class="ot-button ot-primary">휴대폰으로 승인 알림 받기</button><p id="approvalNotifyMessage" class="ot-note" role="status"></p>
+<p class="ot-note">알림을 등록하지 않으면 소모임에서 운영진 안내를 확인해 주세요. 아이폰은 이 페이지를 홈 화면에 추가한 후 앱으로 열어 알림을 등록해 주세요.</p></section>
+<p class="ot-processing-note">당일 처리를 보장하지 않으며 익일 안내될 수 있습니다. 가입 정보·본인사진·라이브 파일은 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</p>
+<div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">이미 회원이신가요? 로그인하기</a></div>
+</main></body></html>

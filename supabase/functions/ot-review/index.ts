@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, checkRequest, failure, headers, json, newToken, positiveInt, requireOperator, textField, tokenHash } from "../_shared/ot-core.ts";
-import { notifyPendingOT } from "../_shared/ot-push.ts";
+import { notifyPendingOT, notifyApproval, notifyPendingApprovals } from "../_shared/ot-push.ts";
 
 export async function handle(req: Request, service: any) {
   let origin = DEFAULT_ORIGIN;
@@ -16,9 +16,9 @@ export async function handle(req: Request, service: any) {
 
     if (action === "list") {
       const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }, { data: accessRows, error: ae }] = await Promise.all([
-        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,completed_member_id,completed_at,video_source,media_kind").order("created_at", { ascending: false }).limit(500),
+        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,approval_notified_at,completed_member_id,completed_at,video_source,media_kind").order("created_at", { ascending: false }).limit(500),
         service.from("members").select("id,name,nickname,auth_user_id").eq("role", "운영진").eq("is_active", true).order("join_order", { ascending: true }),
-        service.from("ot_room_invites").select("id,somoim_nickname,created_at,expires_at,revoked_at,review_id").order("created_at", { ascending: false }).limit(100),
+        service.from("ot_room_invites").select("id,somoim_nickname,created_at,expires_at,revoked_at,review_id,signup_source").eq('signup_source','INVITE').order("created_at", { ascending: false }).limit(100),
         service.from("ot_room_operator_access").select("member_id,user_id,revoked_at"),
       ]);
       if (re || oe || ie || ae) throw new Error("ot_list_failed");
@@ -32,7 +32,7 @@ export async function handle(req: Request, service: any) {
         : { data: [], error: null };
       if (me) throw new Error("member_list_failed");
       const {data:profiles,error:pe}=ids.length ? await service.from("ot_room_applicants")
-        .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,profile_photo_path,region,gender,ot_room_invites!inner(review_id)")
+        .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,profile_photo_path,region,gender,ot_room_invites!inner(review_id,notification_push_enabled)")
         .in("ot_room_invites.review_id",ids) : {data:[],error:null};
       if (pe) throw new Error("applicant_list_failed");
       return json(origin, {
@@ -41,7 +41,7 @@ export async function handle(req: Request, service: any) {
           ot_access: (accessRows || []).some((a: any) => a.member_id === op.id && a.user_id === op.auth_user_id && !a.revoked_at),
         })), invites, members,
         reviews: (reviews || []).map((r: any) => ({ ...r,
-          profile:(()=>{const p=(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id);if(!p)return null;const {profile_photo_path,ot_room_invites,...safe}=p;return {...safe,has_photo:!!profile_photo_path};})(),
+          profile:(()=>{const p=(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id);if(!p)return null;const {profile_photo_path,ot_room_invites,...safe}=p;return {...safe,has_photo:!!profile_photo_path,approval_push_enabled:!!ot_room_invites.notification_push_enabled};})(),
           votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
       });
     }
@@ -125,6 +125,7 @@ export async function handle(req: Request, service: any) {
       if (!["APPROVE", "REJECT", "HOLD"].includes(body.decision)) throw new ApiError(400, "심사 의견을 확인해 주세요.");
       const { data, error } = await service.rpc("vom_ot_record_vote", { p_review_id: reviewId, p_member_id: voterId, p_decision: body.decision, p_actor_id: actor.userId });
       if (error) throw new ApiError(409, "이미 확정됐거나 심사 대상이 변경됐습니다. 목록을 새로 확인해 주세요.");
+      try {await notifyApproval(service,reviewId);} catch {console.error('Approval notification queued');}
       return json(origin, { ok: true, ...data });
     }
 
@@ -142,7 +143,7 @@ export async function handle(req: Request, service: any) {
       return json(origin, { ok: true });
     }
 
-    if (action === "retry_notifications") return json(origin, { ok: true, ...(await notifyPendingOT(service)) });
+    if (action === "retry_notifications") {const operator=await notifyPendingOT(service),applicant=await notifyPendingApprovals(service);return json(origin,{ok:true,attempted:operator.attempted+applicant.attempted});}
     throw new ApiError(400, "지원하지 않는 요청입니다.");
   } catch (error) {
     return failure(origin, error);
