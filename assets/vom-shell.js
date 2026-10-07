@@ -359,10 +359,10 @@
         ['BUSKING', '/busking/'],
         ['MEMBERS', '/members/'],
         ['MY VOM', '/me/'],
-        ['가입 신청 · OT Room', '/ot-room/'],
+        ['회원가입', '/ot-room/'],
         ['Q&A', '/qna/']
       ];
-      if (isAdmin || isOperator) links.push(['OT 가입 검토', '/ot-admin/']);
+      if (isAdmin || isOperator) links.push(['가입 관리', '/ot-admin/']);
       if (isAdmin) links.push(['운영자료 · ADMIN SETTINGS', '/admin-settings/']);
       links.forEach(function (item) {
         const link = document.createElement('a');
