@@ -27,7 +27,7 @@ try{
     grant select on public.members,public.admins to anon,authenticated;
     create view public.members_public with(security_invoker=true,security_barrier=true) as select id,created_at,name,nickname,profile_image_url,joined_at,is_active,role,birth_date,region,gender,favorite_singers,join_order,job from public.members;
     grant select on public.members_public to anon,authenticated;
-    create table public.events(id bigint primary key,created_at timestamptz,title text,event_type text,event_date date,start_time time,end_time time,location text,location_id bigint,image_url text,somoim_apply_enabled boolean,somoim_apply_url text,host_note text);
+    create table public.events(id bigint primary key,created_at timestamptz,title text,event_type text,event_date date,start_time time,end_time time,location text,location_id bigint,image_url text,somoim_apply_enabled boolean,somoim_apply_url text,host_note text,description text,somoim_open_at timestamptz,somoim_open_enabled boolean);
     alter table public.events enable row level security;
     create policy "everyone can read events" on public.events for select to anon,authenticated using(true);
     grant select on public.events to anon,authenticated;
@@ -65,6 +65,7 @@ try{
   await db.exec(migration);checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007040802_ot_accounts_and_member_privacy.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007042424_member_schedule_access.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(await readFile(new URL('../supabase/migrations/20261007043043_public_activity_compatibility.sql',import.meta.url),'utf8'));checks++;
   assert.equal((await ok('select count(*)::int as count from public.ot_room_operator_access')).rows[0].count,0,'legacy role/account links must not auto-grant OT access');
   // Simulate the explicit administrator grants used by the production UI.
   await db.query('insert into public.ot_room_operator_access(user_id,member_id,granted_by) select auth_user_id,id,$1 from public.members where role=$2',[admin,'운영진']);
@@ -146,12 +147,12 @@ try{
   assert.equal((await ok('select count(*)::int as count from public.members where auth_user_id=$1',[applicant])).rows[0].count,1);
   await db.exec('reset role');
   await db.query("update public.members set phone='other-private-phone',birth_date='1990-01-01',region='private-region' where id=8");
-  await db.query("insert into public.events(id,title,event_type,host_note) values(1,'private schedule','OTHER','operator-only'),(2,'public listing','BUSKING','operator-only')");
+  await db.query("insert into public.events(id,title,event_type,host_note) values(1,'private schedule','OTHER','operator-only'),(2,'public listing','BUSKING','public host announcement'),(3,'VOM OPEN MIC #01','OTHER','public host announcement')");
   await db.query("select set_config('request.jwt.claim.sub',$1,false)",[applicant]);await db.exec('set role authenticated');
   assert.deepEqual((await ok('select id from public.members')).rows.map(r=>r.id),[linked.id]);
   const other=(await ok('select birth_date,region from public.members_public where id=8')).rows[0];assert.equal(other.birth_date,null);assert.equal(other.region,null);
   assert.equal((await ok('select phone from public.ot_room_applicants')).rows[0].phone,'private-phone');
-  assert.equal((await ok('select count(*)::int as count from public.events')).rows[0].count,2);
+  assert.equal((await ok('select count(*)::int as count from public.events')).rows[0].count,3);
   await rejects("update public.ot_room_applicants set member_id=8",[],/permission denied/);
   await rejects("select public.vom_ot_bind_account($1,$2,$3,$4)",[newInvite,accountClaim,applicant,{}],/permission denied/);
   await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(50)]);await db.exec('set role authenticated');
@@ -162,7 +163,7 @@ try{
   assert.equal((await ok('select count(*)::int as count from public.members')).rows[0].count,0);
   await rejects('select * from public.members_public',[],/permission denied/);
   assert.equal((await ok('select count(*)::int as count from public.events')).rows[0].count,0);
-  const publiclyVisible=(await ok('select * from public.events_public')).rows;assert.equal(publiclyVisible.length,1);assert(!('host_note' in publiclyVisible[0]));
+  const publiclyVisible=(await ok('select * from public.events_public')).rows;assert.equal(publiclyVisible.length,2);assert(publiclyVisible.every(r=>r.title!=='private schedule'));assert.equal(publiclyVisible[0].host_note,'public host announcement');
   const display=(await ok('select * from public.members_display limit 1')).rows[0];assert(!('birth_date' in display));assert(!('phone' in display));
   await db.exec('reset role');
   console.log('PostgreSQL migration and security checks passed:',checks);

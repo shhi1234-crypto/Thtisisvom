@@ -2630,7 +2630,7 @@ async function loadHomeBirthday(){
   const box=document.getElementById('homeToday');
   if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
-  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">🎂 이번 달 생일을 확인하는 중...</span>`;
+  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">회원 정보는 멤버스에서 확인해 주세요.</span>`;
   const {data,error}=await db.from('members_display').select('*');
   let birthdayHtml='';
   if(error){
@@ -2657,7 +2657,7 @@ async function loadHomeBirthday(){
         birthdayHtml=`<span class="birthday-mini">🎂 이번 달 생일은 모두 지나갔어요 :)</span>`;
       }
     }else{
-      birthdayHtml=`<span class="birthday-mini">🎂 이번 달 생일자는 없어요 ㅠㅠ</span>`;
+      birthdayHtml=`<span class="birthday-mini">회원 정보는 멤버스에서 확인해 주세요.</span>`;
     }
   }
   box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span>${birthdayHtml}`;
