@@ -28,12 +28,8 @@ create table public.ot_room_operator_access (
 alter table public.ot_room_operator_access enable row level security;
 revoke all on public.ot_room_operator_access from public,anon,authenticated;
 grant all on public.ot_room_operator_access to service_role;
--- Preserve already linked operators, skip ambiguous links, and never auto-grant
--- access to accounts created after this migration. Admins retain their own access.
-insert into public.ot_room_operator_access(user_id,member_id,granted_by)
-  select m.auth_user_id,m.id,(select a.user_id from public.admins a order by a.created_at limit 1)
-  from public.members m where m.role='운영진' and m.is_active is true and m.auth_user_id is not null
-  and not exists(select 1 from public.members other where other.auth_user_id=m.auth_user_id and other.id<>m.id);
+-- OT access starts with existing admins. Personal operator accounts require
+-- explicit administrator verification, including accounts linked before rollout.
 
 alter table public.ot_reviews
   add column operator_notified_at timestamptz,

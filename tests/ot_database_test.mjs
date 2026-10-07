@@ -49,6 +49,9 @@ try{
   }
   const migration=await readFile(new URL('../supabase/migrations/20261007010721_ot_room_private_invites.sql',import.meta.url),'utf8');
   await db.exec(migration);checks++;
+  assert.equal((await ok('select count(*)::int as count from public.ot_room_operator_access')).rows[0].count,0,'legacy role/account links must not auto-grant OT access');
+  // Simulate the explicit administrator grants used by the production UI.
+  await db.query('insert into public.ot_room_operator_access(user_id,member_id,granted_by) select auth_user_id,id,$1 from public.members where role=$2',[admin,'운영진']);
   // Install the exact migration first. Only its clock dependency is then replaced
   // locally so the same SQL body can exercise opening/closing boundaries at any hour.
   for(const signature of ['public.vom_ot_finalize_upload(uuid,uuid,text,text,text,text)','public.vom_ot_record_vote(bigint,bigint,text,uuid)']){
