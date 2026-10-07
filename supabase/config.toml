@@ -1,0 +1,14 @@
+project_id = "aqfmhqultzpakfqwzulj"
+
+# ot-room authenticates a per-applicant secret invite; ot-review validates each
+# user's JWT with Auth and checks the existing admin / active operator records.
+# Publishable keys are not JWTs, so gateway JWT checks are intentionally disabled.
+[functions.ot-room]
+verify_jwt = false
+
+[functions.ot-review]
+verify_jwt = false
+
+# Preserve the existing cron-secret authentication in this pre-existing handler.
+[functions.admin-reminder-push]
+verify_jwt = false

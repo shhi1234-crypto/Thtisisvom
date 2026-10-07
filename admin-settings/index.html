@@ -880,7 +880,7 @@ function renderResources(){
       const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:items.filter(item=>item.category===category).length;
       const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:category==='REMINDERS'?`${count}개 활성`:category==='INQUIRIES'?`새 문의 ${count}건`:`${count}건`;
       return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${countLabel}</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
-    }).join('')+loadError;
+    }).join('')+`<a class="folder-card" href="/ot-admin/" style="text-decoration:none;color:inherit"><div class="folder-top"><span class="folder-icon">🎥</span><span class="folder-count">가입 검토</span></div><div class="folder-kicker">OT ROOM</div><h2>OT 가입 검토</h2><p>신규 영상 · 개별 등록 링크 · 운영진 심사</p><div class="folder-open"><span>가입 검토 열기</span></div></a>`+loadError;
 
     return;
   }

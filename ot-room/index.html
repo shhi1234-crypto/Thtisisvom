@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>OT Room · VOM</title>
+  <link rel="icon" href="/favicon.png?v=4">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=1">
+  <script defer src="/assets/ot-room.js?v=1"></script>
+</head>
+<body class="ot-public">
+  <header class="ot-header"><div class="ot-brand">VOM <small>VOICE OF MELODY</small></div><span class="ot-header-label">신규 가입 확인</span></header>
+  <main class="ot-page ot-applicant">
+    <p class="ot-eyebrow">WELCOME TO VOM</p>
+    <h1>OT Room</h1>
+    <p class="ot-lead">소모임 가입 인사를 작성한 뒤, 운영진이 안내한 링크로 인증 영상을 등록해 주세요.</p>
+    <div id="roomMessage" class="ot-message" role="status" aria-live="polite">등록 링크를 확인하고 있습니다.</div>
+    <section class="ot-card" id="uploadCard" hidden>
+      <div class="ot-card-heading"><h2>인증 영상 등록</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
+      <p class="ot-note">한국시간 오전 9시부터 오후 6시 전까지 등록할 수 있습니다. 오후 6시 전에 업로드와 등록이 모두 완료돼야 합니다.</p>
+      <form id="uploadForm">
+        <div class="ot-fields">
+          <label>이름<input id="candidateName" name="candidate_name" autocomplete="name" maxlength="60" required></label>
+          <label>소모임 닉네임<input id="somoimNickname" name="somoim_nickname" maxlength="80" required aria-describedby="nicknameHint"><small id="nicknameHint">가입 인사에 사용한 소모임 닉네임을 입력해 주세요.</small></label>
+        </div>
+        <label class="ot-file-label">인증 영상<input id="videoFile" name="video" type="file" accept="video/mp4,video/quicktime,video/webm,video/3gpp,.mp4,.mov,.webm,.3gp" required><small>MP4 · MOV · WEBM · 3GP / 최대 50MB</small></label>
+        <p id="fileSummary" class="ot-note"></p>
+        <label class="ot-consent"><input id="consent" name="consent" type="checkbox" value="yes" required><span>가입 확인을 위해 운영진이 인증 영상을 검토하는 데 동의합니다.</span></label>
+        <p class="ot-note">인증 영상은 회원 게시판에 공개되지 않으며, 운영진만 검토할 수 있습니다.</p>
+        <progress id="uploadProgress" max="100" value="0" aria-label="영상 업로드 진행률" hidden></progress>
+        <button id="submitButton" class="ot-button ot-primary" type="submit" disabled>영상 등록하기</button>
+      </form>
+    </section>
+    <p class="ot-processing-note">등록된 영상은 당일 처리가 보장되지 않습니다. 운영진 확인 후 익일 안내될 수 있으며, 최종 가입 안내를 받은 뒤 VOM 회원 기능을 이용해 주세요.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@supabase/supabase-js": "2.117.2",
+    "web-push": "3.6.7"
+  },
+  "private": true,
+  "name": "vom-ot-verification"
+}

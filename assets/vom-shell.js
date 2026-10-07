@@ -346,7 +346,7 @@
     window.closeMenu = window.closeMenu || close;
   }
 
-  function setUnifiedMenu(isAdmin) {
+  function setUnifiedMenu(isAdmin, isOperator) {
     document.querySelectorAll('.menu-card, .vom-shell-fallback-card').forEach(function (card) {
       const top = card.querySelector('.menu-top');
       if (!top) return;
@@ -361,6 +361,7 @@
         ['MY VOM', '/me/'],
         ['Q&A', '/qna/']
       ];
+      if (isAdmin || isOperator) links.push(['OT 가입 검토', '/ot-admin/']);
       if (isAdmin) links.push(['운영자료 · ADMIN SETTINGS', '/admin-settings/']);
       links.forEach(function (item) {
         const link = document.createElement('a');
@@ -394,7 +395,16 @@
       const admins = adminRes.ok ? await adminRes.json() : [];
       const isAdmin = Array.isArray(admins) && admins.length > 0;
       if (isAdmin) addAdminBadge();
-      setUnifiedMenu(isAdmin);
+      let isOperator = isAdmin;
+      if (!isAdmin) {
+        const operatorRes = await window.fetch(SUPABASE_URL + '/functions/v1/ot-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ action: 'context' })
+        });
+        isOperator = operatorRes.ok;
+      }
+      setUnifiedMenu(isAdmin, isOperator);
       return isAdmin;
     } catch (_) {
       setUnifiedMenu(false);
