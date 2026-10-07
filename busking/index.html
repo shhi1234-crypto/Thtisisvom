@@ -688,7 +688,10 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 @media(max-width:850px){.u-guide-common{grid-template-columns:1fr 1fr}.u-scale-grid{grid-template-columns:1fr}}
 @media(max-width:600px){.u-guide{margin-top:46px}.u-guide-common{grid-template-columns:1fr 1fr}.u-guide-chip{padding:14px}.u-scale-card{padding:22px 20px}.u-scale-info{grid-template-columns:1fr}.u-equipment{align-items:flex-start;flex-direction:column}.eq-badges{justify-content:flex-start}.u-tip-grid{grid-template-columns:1fr}.u-tip-card{padding:21px 18px}}
 
+
+.guest-schedule-link{display:flex;flex-direction:column;gap:8px;padding:24px;border:1px solid #e2daf7;border-radius:20px;background:#f7f3ff;color:#6c55ca;font-weight:800}.guest-schedule-link small{font-size:12px;font-weight:500;color:#80758e}
 </style>
+  <script src="/assets/vom-member-context.js?v=1"></script>
 </head>
 <body>
 <div class="aurora"></div>
@@ -770,6 +773,7 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 <script>
 const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
 
+let memberAccess={approved:false};
 let adminMode=false;let currentMemberId=null;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
@@ -779,9 +783,11 @@ let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,current
 async function start(){
   await checkAdmin();
   await loadCurrentMember();
+  memberAccess=await window.vomGetMemberAccess();
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
   const intro=params.get('intro');
+  if(!memberAccess.approved&&params.get('upcoming')==='1'){location.replace('/me/?next='+encodeURIComponent(location.pathname+location.search));return;}
 
   const [e,l,m,r]=await Promise.all([
     db.from('events_public').select('*').order('event_date',{ascending:true}),
@@ -798,6 +804,7 @@ async function start(){
   if(intro==='1'){
     renderBuskingIntro();
   }else if(id){
+    if(!memberAccess.approved&&!events.some(event=>String(event.id)===String(id))){location.replace('/me/?next='+encodeURIComponent(location.pathname+location.search));return;}
     currentEventId=id;
     await loadBoard(id);
     await loadOperationTasks(id);
@@ -1100,7 +1107,7 @@ function renderBuskingList(){
           <h2>다가오는 BUSKING</h2>
         </div>
         <div class="u-list">
-          ${upcoming.length?upcoming.map(e=>card(e,false)).join(''):`<div class="u-empty">예정된 BUSKING이 없습니다.</div>`}
+          ${!memberAccess.approved?`<a class="guest-schedule-link" href="/busking/?upcoming=1">다가오는 BUSKING 확인하기 →<small>로그인 후 일정을 확인할 수 있어요.</small></a>`:upcoming.length?upcoming.map(e=>card(e,false)).join(''):`<div class="u-empty">예정된 BUSKING이 없습니다.</div>`}
         </div>
       </div>
 
@@ -1996,6 +2003,6 @@ function closeMenu(){menuOverlay.classList.remove('open')}
 start();
 </script>
 <script src="/assets/vom-somoim.js?v=1"></script>
-<script src="/assets/vom-shell.js?v=9"></script>
+<script src="/assets/vom-shell.js?v=11"></script>
 </body>
 </html>

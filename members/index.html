@@ -454,6 +454,7 @@
 }
 </style>
 
+  <script src="/assets/vom-member-context.js?v=1"></script>
 </head>
 <body>
 <div class="aurora"></div>
@@ -573,7 +574,7 @@
 <script>
 const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);let adminMode=false,members=[],memberSongs=[],currentSongMember=null,currentProfileMember=null,currentMemberId=null;
 const pick=(o,...ks)=>{for(const k of ks)if(o&&o[k]!=null&&o[k]!=='')return o[k];return ''};const ord=m=>Number(pick(m,'join_order','join_sequence','member_order','order_no','sequence','join_number'))||999999;const rawRole=m=>String(pick(m,'role','member_role','type')||'모임원');const role=m=>String(m?.name||'').trim()==='이시현'?'모임장':rawRole(m);const stat=m=>{const value=pick(m,'status','activity_status','active_status');return value!==''?String(value):(m?.is_active===false?'비활동':'활동중')};const join=m=>String(pick(m,'join_date','joined_at','created_at')).slice(0,10);const birth=m=>String(pick(m,'birth_date','birthday','birth'));const reg=m=>String(pick(m,'region','area','location')||'기타');const gen=m=>String(pick(m,'gender','sex')||'-');const sing=m=>String(pick(m,'favorite_singers','favorite_singer','favorite_artist','singer')||'-');const job=m=>String(pick(m,'job','occupation')||'-');const phone=m=>String(pick(m,'phone','phone_number')||'');const memo=m=>String(pick(m,'memo','note','notes')||'');
-async function start(){const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){location.replace('/me/#mySetlistWorkspace');return}await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions()}
+async function start(){const mine=new URLSearchParams(location.search).get('mine');if(mine==='1'){location.replace('/me/#mySetlistWorkspace');return}await checkAdmin();await loadCurrentMember();await Promise.all([load(),loadMemberSongs()]);render();fillMemberNameOptions();setView(new URLSearchParams(location.search).get('view'))}
 async function loadMemberSongs(){const {data,error}=await db.from('busking_repertoire').select('*').order('updated_at',{ascending:false});if(error){console.error(error);memberSongs=[]}else memberSongs=data||[]}
 function fillMemberNameOptions(){const el=document.getElementById('memberNameOptions');if(el)el.innerHTML=members.map(m=>`<option value="${esc(m.name||'')}"></option>`).join('')}async function invokeMemberAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error)throw new Error(data?.error||error.message||'요청을 처리하지 못했습니다.');if(data?.error)throw new Error(data.error);return data}
 async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}try{const account=await invokeMemberAccount({action:'whoami'});currentMemberId=account?.member_id||null}catch(error){console.warn(error);currentMemberId=null}}function canManageMember(m){return !!m&&(adminMode||String(m.id)===String(currentMemberId))}async function checkAdmin(){const {data}=await db.auth.getSession();const s=data.session;if(!s){setAdmin(false);return}const {data:a}=await db.from('admins').select('user_id').eq('user_id',s.user.id).maybeSingle();setAdmin(!!a)}function setAdmin(v){adminMode=v;document.getElementById('adminBadge').classList.toggle('show',v);document.getElementById('page').classList.toggle('admin-mode',v);document.body.classList.toggle('admin-mode',v);const a=document.getElementById('adminLoginButton'),l=document.getElementById('logoutButton');if(a)a.style.display=v?'none':'block';if(l)l.style.display=v?'block':'none';render()}
@@ -606,8 +607,17 @@ async function load(){
       String(a.name||'').localeCompare(String(b.name||''),'ko')
     );
   }
+  await loadMemberBirthdays();
 }function render(){summary();birthdayNow();table();birthdayView();ageView();regionView()}
 
+async function loadMemberBirthdays(){
+  try{const {data}=await db.auth.getSession();const token=data.session?.access_token;if(!token)return;
+    const response=await fetch(SUPABASE_URL+'/functions/v1/birthday-summary',{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action:'people'}),cache:'no-store',signal:AbortSignal.timeout(15000)});
+    if(!response.ok)throw new Error('birthday_people_failed');const result=await response.json(),map=new Map((result.birthdays||[]).map(person=>[String(person.id),{month:person.month,day:person.day}]));
+    members.forEach(member=>{member._birthday=map.get(String(member.id))||null});
+  }catch(error){console.warn('Member birthdays unavailable',error);}
+}
+function memberBirthday(member){return member._birthday||parseBirth(birth(member));}
 function setView(view){
   const allowed=['all','birthday','age','region'];
   const next=allowed.includes(view)?view:'all';
@@ -629,11 +639,11 @@ function setView(view){
 }
 
 
-function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,staffTotal=staff+leader,b=members.filter(m=>parseBirth(birth(m))?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><button class="staff-summary-btn" type="button" onclick="openStaffRoles()">모임장 + 운영진 <b>${staffTotal}명</b><span class="staff-summary-arrow">역할 보기 →</span></button><span>이번 달 생일 <b>${b}명</b></span>`}
+function summary(){const mon=new Date().getMonth()+1;const active=members.filter(m=>stat(m)==='활동중').length,staff=members.filter(m=>role(m)==='운영진').length,leader=members.filter(m=>role(m)==='모임장').length,staffTotal=staff+leader,b=members.filter(m=>memberBirthday(m)?.month===mon).length;document.getElementById('summary').innerHTML=`<span>전체 <b>${members.length}명</b></span><span>활동중 <b>${active}명</b></span><button class="staff-summary-btn" type="button" onclick="openStaffRoles()">모임장 + 운영진 <b>${staffTotal}명</b><span class="staff-summary-arrow">역할 보기 →</span></button><span>이번 달 생일 <b>${b}명</b></span>`}
 function birthdayNow(){
   const box=document.getElementById('birthdayNow');if(!box)return;
   const now=new Date(),mon=now.getMonth()+1,day=now.getDate();
-  const list=members.map(m=>({m,b:parseBirth(birth(m))})).filter(x=>x.b&&x.b.month===mon).sort((a,b)=>a.b.day-b.b.day);
+  const list=members.map(m=>({m,b:memberBirthday(m)})).filter(x=>x.b&&x.b.month===mon).sort((a,b)=>a.b.day-b.b.day);
   const today=list.filter(x=>x.b.day===day);
   if(today.length){
     box.classList.add('today');
@@ -709,7 +719,7 @@ async function savePublicProfile(){
   if(error){alert('저장 실패\n'+error.message);return}
   closeProfileEditor();await load();render();
 }
-function birthdayView(){const g={};members.forEach(m=>{const b=parseBirth(birth(m));if(!b)return;(g[b.month]??=[]).push({...m,_d:b.day})});document.getElementById('birthdayGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(mon=>`<div class="group-card"><h3>${mon}월</h3><div class="chips">${g[mon].sort((a,b)=>a._d-b._d).map(m=>`<span class="chip">${m._d}일 · ${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">생일 정보가 없습니다.</div>'}
+function birthdayView(){const g={};members.forEach(m=>{const b=memberBirthday(m);if(!b)return;(g[b.month]??=[]).push({...m,_d:b.day})});document.getElementById('birthdayGrid').innerHTML=Object.keys(g).sort((a,b)=>a-b).map(mon=>`<div class="group-card"><h3>${mon}월</h3><div class="chips">${g[mon].sort((a,b)=>a._d-b._d).map(m=>`<span class="chip">${m._d}일 · ${esc(m.name)}</span>`).join('')}</div></div>`).join('')||'<div class="empty">생일 정보가 없습니다.</div>'}
 function ageView(){
   const y=new Date().getFullYear(),g={};
   members.forEach(m=>{
@@ -990,6 +1000,6 @@ async function adminLogin(){
 async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu()}
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});staffRoleOverlay.addEventListener('click',e=>{if(e.target===staffRoleOverlay)closeStaffRoles()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}start();
 </script>
-<script src="/assets/vom-shell.js?v=9"></script>
+<script src="/assets/vom-shell.js?v=11"></script>
 </body>
 </html>

@@ -16,6 +16,7 @@
 *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 92% 3%,#d7f1f0 0,transparent 31%),radial-gradient(circle at 6% 100%,#eee6ff 0,transparent 34%),#f8f7fb}
 main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#725ddd;font-size:12px;font-weight:800;letter-spacing:.08em}.logo{font-size:52px;font-weight:900;letter-spacing:-.07em;margin:8px 0 1px}.sub{font-size:10px;letter-spacing:.3em;font-weight:800}.card{margin-top:38px;padding:27px;border:1px solid #fff;border-radius:27px;background:rgba(255,255,255,.82);box-shadow:0 22px 55px rgba(46,43,91,.11)}h1{font-size:25px;margin:0 0 8px;letter-spacing:-.06em}.copy{margin:0;color:var(--muted);font-size:14px;line-height:1.7}.steps{display:grid;gap:11px;margin:23px 0}.step{display:flex;gap:11px;padding:12px;border-radius:15px;background:#f7f5fb;color:#50566c;font-size:13px;line-height:1.55}.num{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;color:#fff;background:#826ee8;font-size:11px;font-weight:800}button,.guide-link{display:block;width:100%;border:0;border-radius:15px;padding:15px;background:linear-gradient(135deg,#7d64e4,#7284e7);color:#fff;font-size:15px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none}button+button{margin-top:10px}button.secondary{background:#f0edff;color:#6754ce}.guide-link{margin-bottom:10px;background:#f0edff;color:#6754ce}button:disabled{opacity:.48;cursor:default}.status{min-height:23px;margin:18px 2px 0;color:#6d668d;font-size:13px;line-height:1.6}.fine{margin:19px 2px 0;color:#9b9eab;font-size:11px;line-height:1.65}.hidden{display:none}@media(max-width:420px){main{padding-top:58px}.logo{font-size:47px}.card{padding:23px}}
 </style>
+  <script src="/assets/vom-member-context.js?v=1"></script>
 </head>
 <body>
 <main>
@@ -63,6 +64,6 @@ async function setup(){try{if(isIOS&&!isStandalone){setStatus('아이폰은 홈 
 async function sendTest(){if(!registered)return;try{testBtn.disabled=true;setStatus('테스트 알림을 보내는 중입니다.');await call('test');setStatus('발송했습니다. 잠금화면 또는 상단 알림창을 확인해주세요.');}catch(e){console.error(e);setStatus('테스트 발송에 실패했습니다. 다시 시도해주세요.');}finally{testBtn.disabled=false}}
 setupBtn.addEventListener('click',setup);testBtn.addEventListener('click',sendTest);refresh();
 </script>
-<script src="/assets/vom-shell.js?v=7"></script>
+<script src="/assets/vom-shell.js?v=11"></script>
 </body>
 </html>

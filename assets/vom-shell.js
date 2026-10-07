@@ -148,6 +148,10 @@
         text-decoration:none;
         font:700 13px "DM Sans",Pretendard,"Noto Sans KR",Arial,sans-serif;
       }
+      .menu-card > a,.vom-shell-fallback-card > a{color:#6d57cd !important;border-color:#eee7fa !important;text-decoration:none !important}
+      .menu-card > a.active,.vom-shell-fallback-card > a.active{background:#f5f0ff;color:#5d43c3 !important;border-radius:10px}
+      .menu-card > a.vom-menu-account,.vom-shell-fallback-card > a.vom-menu-account{font-weight:800;font-size:15px}
+      .vom-legacy-admin-menu{display:none !important}
       .vom-shell-fallback-card > a.active{color:#6755d9}
       .vom-shell-menu-trigger{
         width:46px;height:46px;border:1px solid rgba(255,255,255,.92);border-radius:50%;
@@ -183,11 +187,14 @@
     if (path === '/') return 'home';
     if (path === '/calendar' || path.startsWith('/calendar/')) return 'calendar';
     if (path === '/members' || path.startsWith('/members/')) return 'members';
+    if (path === '/me' || path.startsWith('/me/')) return 'me';
+    if (path === '/ot-room' || path.startsWith('/ot-room/')) return 'join';
+    if (path === '/info' || path.startsWith('/info/')) return 'info';
     if (path === '/event' || path.startsWith('/event/')) return 'event';
     return '';
   }
 
-  function normalizeBottomNavigation() {
+  function normalizeBottomNavigation(approved=false) {
     const nav = document.querySelector('nav.bottom');
     if (!nav) return;
 
@@ -197,11 +204,9 @@
 
     nav.classList.add('vom-global-bottom');
     nav.setAttribute('aria-label', '주요 메뉴');
-    nav.innerHTML =
-      item('home', '/', '⌂', 'HOME') +
-      item('calendar', '/calendar/', '◫', 'CALENDAR') +
-      item('members', '/members/', '♙', 'MEMBERS') +
-      item('event', '/event/', '✦', 'EVENT') +
+    nav.innerHTML = (approved
+      ? item('home','/','⌂','HOME')+item('calendar','/calendar/','◫','CALENDAR')+item('members','/members/','♙','MEMBERS')+item('me','/me/','♡','MY VOM')
+      : item('me','/me/','↪','로그인하기')+item('join','/ot-room/','＋','회원가입하기')+item('home','/','⌂','HOME')+item('info','/info/','ⓘ','INFO'))+
       '<button type="button" aria-label="전체 메뉴 열기"><span class="nav-icon">☰</span>MENU</button>';
 
     nav.querySelector('button').addEventListener('click', function () {
@@ -252,7 +257,7 @@
     const menuButton = document.querySelector('.header .menu-btn');
     const host = (menuButton && menuButton.parentElement) ||
       document.querySelector('.header-actions, .header-right, .header');
-    if (!host || host.querySelector('.member-session-chip')) return;
+    if (!host) return;host.querySelector('.member-session-chip')?.remove();
 
     const chip = document.createElement('a');
     chip.className = 'member-session-chip' + (loggedIn ? '' : ' is-guest');
@@ -348,100 +353,40 @@
     window.closeMenu = window.closeMenu || close;
   }
 
-  function setUnifiedMenu(isAdmin, isOperator) {
-    document.querySelectorAll('.menu-card, .vom-shell-fallback-card').forEach(function (card) {
-      const top = card.querySelector('.menu-top');
-      if (!top) return;
-      card.querySelectorAll(':scope > a').forEach(function (link) { link.remove(); });
-      const links = [
-        ['HOME', '/'],
-        ['INFO', '/info/'],
-        ['CALENDAR', '/calendar/'],
-        ['VOM LIVE', '/live/'],
-        ['BUSKING', '/busking/'],
-        ['MEMBERS', '/members/'],
-        ['MY VOM', '/me/'],
-        ['회원가입', '/ot-room/'],
-        ['Q&A', '/qna/']
-      ];
-      if (isAdmin || isOperator) links.push(['가입 관리', '/ot-admin/']);
-      if (isAdmin) links.push(['운영자료 · ADMIN SETTINGS', '/admin-settings/']);
-      links.forEach(function (item) {
-        const link = document.createElement('a');
-        link.href = item[1];
-        if (path === item[1].replace(/\/$/, '') || (item[1] !== '/' && path.indexOf(item[1].replace(/\/$/, '')) === 0)) link.classList.add('active');
-        link.innerHTML = '<span>' + item[0] + '</span><span>→</span>';
-        card.appendChild(link);
+  function setUnifiedMenu(isAdmin=false,isOperator=false,approved=false) {
+    document.querySelectorAll('.menu-card, .vom-shell-fallback-card').forEach(function(card){
+      const top=card.querySelector('.menu-top,.modal-head,.modal-top');if(!top)return;
+      card.querySelectorAll(':scope > a').forEach(link=>link.remove());
+      card.querySelectorAll(':scope > button').forEach(button=>{
+        const logout=/logout|로그아웃/i.test(button.id+' '+button.textContent);
+        button.classList.toggle('vom-legacy-admin-menu',!isAdmin||!logout);
+      });
+      const links=approved?[['MY VOM','/me/'],['MEMBERS','/members/'],['CALENDAR','/calendar/']]:[['로그인하기','/me/'],['회원가입하기','/ot-room/']];
+      links.push(['HOME','/'],['INFO','/info/'],['VOM LIVE','/live/'],['BUSKING','/busking/'],['PRACTICE','/practice/'],['NOTICE','/#homeNews'],['Q&A','/qna/'],['EVENT','/event/']);
+      if(isAdmin||isOperator)links.push(['가입 관리','/ot-admin/']);
+      if(isAdmin)links.push(['운영자료 · ADMIN SETTINGS','/admin-settings/'],['SITE LOG','/site-log/']);
+      links.forEach(item=>{
+        const link=document.createElement('a');link.href=item[1];const target=item[1].replace(/\/$/,'')||'/';
+        if(path===target||(target!=='/'&&path.startsWith(target+'/')))link.classList.add('active');
+        if(item[1]==='/me/'||item[1]==='/ot-room/')link.classList.add('vom-menu-account');
+        link.innerHTML='<span>'+item[0]+'</span><span>→</span>';card.appendChild(link);
       });
     });
   }
 
-  async function checkAdminShell() {
-    const token = storedAccessToken();
-    if (!token) {
-      setUnifiedMenu(false);
-      return false;
+  async function refreshShell(){
+    let context={approved:false,isAdmin:false,member:null};
+    try{context=await window.vomGetMemberAccess();}catch(_){}
+    normalizeBottomNavigation(context.approved);
+    let operator=context.isAdmin;
+    if(context.approved&&!operator){
+      try{const response=await fetch(SUPABASE_URL+'/functions/v1/ot-review',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,Authorization:'Bearer '+storedAccessToken()},body:JSON.stringify({action:'context'})});operator=response.ok;}catch(_){}
     }
-    try {
-      const userRes = await window.fetch(SUPABASE_URL + '/auth/v1/user', {
-        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token }
-      });
-      if (!userRes.ok) {
-        setUnifiedMenu(false);
-        return false;
-      }
-      const user = await userRes.json();
-      const adminRes = await window.fetch(
-        SUPABASE_URL + '/rest/v1/admins?select=user_id&user_id=eq.' + encodeURIComponent(user.id),
-        { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token } }
-      );
-      const admins = adminRes.ok ? await adminRes.json() : [];
-      const isAdmin = Array.isArray(admins) && admins.length > 0;
-      if (isAdmin) addAdminBadge();
-      let isOperator = isAdmin;
-      if (!isAdmin) {
-        const operatorRes = await window.fetch(SUPABASE_URL + '/functions/v1/ot-review', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + token },
-          body: JSON.stringify({ action: 'context' })
-        });
-        isOperator = operatorRes.ok;
-      }
-      setUnifiedMenu(isAdmin, isOperator);
-      return isAdmin;
-    } catch (_) {
-      setUnifiedMenu(false);
-      return false;
-    }
+    setUnifiedMenu(context.isAdmin,operator,context.approved);
+    addMemberStatus(context.member?.name||context.member?.nickname||(context.isAdmin?'관리자':'회원'),context.approved);
+    if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
-
-  async function showCurrentMember() {
-    const accessToken = storedAccessToken();
-    if (!accessToken) {
-      addMemberStatus('', false);
-      return;
-    }
-
-    try {
-      const response = await window.fetch(SUPABASE_URL + '/functions/v1/member-account', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + accessToken
-        },
-        body: JSON.stringify({ action: 'whoami' })
-      });
-      if (!response.ok) return;
-
-      const data = await response.json();
-      const member = data && (data.member || (data.data && data.data.member) || data);
-      const name = member && member.name;
-      if (name) addMemberStatus(name, true);
-    } catch (_) {
-      // 로그인 표시는 보조 기능이므로 본문 사용을 막지 않습니다.
-    }
-  }
+  window.vomRefreshShell=refreshShell;
 
   function loadConsultationWidget() {
     if (document.getElementById('vom-consultation-script')) return;
@@ -459,8 +404,8 @@
     normalizeBackLinks();
     keepBackLinksNormalized();
     ensureFallbackMenu();
-    checkAdminShell();
-    showCurrentMember();
+    setUnifiedMenu();
+    refreshShell();
     loadConsultationWidget();
   }
 
