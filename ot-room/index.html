@@ -11,16 +11,16 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#7660dd">
-  <script defer src="/assets/public-signup.js?v=4"></script>
+  <script defer src="/assets/public-signup.js?v=5"></script>
 </head>
 <body class="ot-public">
 <header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><a class="ot-button" href="/me/">로그인하기</a></header>
 <main class="ot-page ot-applicant"><p class="ot-eyebrow">WELCOME TO VOM</p><h1>회원가입</h1>
-<p class="ot-lead">소모임 가입 인사를 작성하셨나요? 본인사진과 가입 정보, 라이브 영상 또는 음성을 함께 제출해 주세요.</p>
+<p class="ot-lead">소모임 가입 인사를 작성하셨나요? 가입 정보와 본인사진, 라이브 영상 또는 음성 파일을 제출해 주세요.</p>
 <div id="roomMessage" class="ot-message" role="status" aria-live="polite">회원가입 신청서를 준비하고 있습니다.</div>
 <section id="accountCard" class="ot-card"><div class="ot-card-heading"><h2>회원가입 신청</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
-<p class="ot-note"><span class="ot-required" aria-hidden="true">*</span> 표시는 필수 항목입니다. 지금 설정한 숫자 4자리 비밀번호로 승인 후 로그인합니다.</p>
-<p class="ot-note">접수 시간은 한국시간 오전 9시부터 오후 6시 전까지입니다. 미리 작성해 놓으면 익일 오전 9시에 자동 접수됩니다. 예약하려면 아래 신청서를 제출해 주세요.</p>
+<p class="ot-note"><span class="ot-required" aria-hidden="true">*</span> 표시는 필수 항목입니다. 가입이 승인되면 신청 시 설정한 비밀번호로 로그인할 수 있습니다.</p>
+<p class="ot-note">접수 시간은 오전 9시부터 오후 6시 전까지입니다(한국시간). 그 외 시간에 제출한 신청서는 다음 날 오전 9시에 자동 접수됩니다. 가입 결과는 접수 후 3시간 이내에 확인할 수 있습니다.</p>
 <form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
         <label>이름<span class="ot-required" aria-hidden="true">*</span><input name="candidate_name" autocomplete="name" maxlength="60" required></label>
         <label>출생연도<span class="ot-required" aria-hidden="true">*</span><input name="birth_year" inputmode="numeric" autocomplete="bday-year" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="예: 1995" required><small>나이가 아닌 태어난 연도를 4자리로 입력해 주세요.</small></label>
@@ -37,14 +37,15 @@
       </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><label class="ot-file-label">라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span><input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><button id="clearVideo" type="button" class="ot-clear-file" hidden>파일 지우기</button><p id="fileSummary" class="ot-note"></p><label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
       <progress id="uploadProgress" max="100" value="0" aria-label="회원가입 파일 업로드 진행률" hidden></progress><button id="accountButton" class="ot-button ot-primary" type="submit">회원가입 신청하기</button></form>
 </section>
-<section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반 승인 시 회원 프로필이 자동 생성됩니다. 승인 전에는 회원 로그인이 제한되며 공개 페이지를 둘러볼 수 있습니다.</p>
+<section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반수가 승인하면 가입이 완료되고 회원 프로필이 생성됩니다. 승인 전에도 홈페이지의 공개 페이지는 둘러볼 수 있습니다.</p>
 <p id="receiptCheckTime" class="ot-note"></p><div class="ot-review-controls"><a class="ot-button ot-primary" href="/ot-room/?result=1">가입 결과 확인하기</a></div>
 <button id="approvalNotifyButton" type="button" class="ot-button ot-primary">휴대폰으로 승인 알림 받기</button><p id="approvalNotifyMessage" class="ot-note" role="status"></p>
-<p class="ot-note">알림을 등록하지 않아도 가입 결과 확인에서 직접 확인할 수 있습니다. 아이폰은 이 페이지를 홈 화면에 추가한 후 앱으로 열어 알림을 등록해 주세요.</p></section>
-<section id="applicationStatusCard" class="ot-card" hidden><h2>가입 결과 확인</h2><p class="ot-note">회원 로그인 없이, 승인 전에도 확인할 수 있습니다. 신청 때 설정한 아이디(회원이름)와 비밀번호로 본인의 신청을 확인해 주세요.</p>
-<form id="applicationStatusForm" method="post" autocomplete="off"><div class="ot-fields"><label>아이디(회원이름)<input id="statusLoginName" name="application_name" autocomplete="off" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" placeholder="회원가입 신청 때 설정한 회원이름" required></label><label>신청 비밀번호<input id="statusPassword" name="application_password" type="password" inputmode="numeric" autocomplete="off" maxlength="64" placeholder="신청 때 설정한 숫자 4자리" required><small>본인 신청 확인에 사용하는 비밀번호입니다.</small></label></div><button id="applicationStatusButton" class="ot-button ot-primary" type="submit">가입 결과 확인하기</button></form>
+<p class="ot-note">승인 알림을 등록하지 않아도 가입 결과를 직접 확인할 수 있습니다. 아이폰에서는 이 페이지를 홈 화면에 추가한 뒤, VOM 앱으로 열어 알림을 등록해 주세요.</p></section>
+<section id="applicationStatusCard" class="ot-card" hidden><h2>가입 결과 확인</h2><p class="ot-note">회원가입 신청 시 설정한 아이디(회원이름)와 비밀번호를 입력해 주세요.</p>
+<form id="applicationStatusForm" method="post" autocomplete="off"><div class="ot-fields"><label>아이디(회원이름)<input id="statusLoginName" name="application_name" autocomplete="off" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" placeholder="신청 시 설정한 회원이름" required></label><label>비밀번호<input id="statusPassword" name="application_password" type="password" inputmode="numeric" autocomplete="off" maxlength="64" placeholder="숫자 4자리" required><small>회원가입 신청 시 설정한 비밀번호입니다.</small></label></div><button id="applicationStatusButton" class="ot-button ot-primary" type="submit">가입 결과 확인하기</button></form>
 <div id="applicationStatusOutput" role="status" aria-live="polite" hidden><h3 id="applicationStatusTitle"></h3><p id="applicationStatusDetail" class="ot-note"></p><p id="applicationStatusTime" class="ot-note"></p><a id="applicationLoginLink" class="ot-button ot-primary" href="/me/" hidden>로그인하기</a></div></section>
-<p class="ot-processing-note">정식 접수 완료 후 3시간 이후 가입 결과를 직접 확인해 주세요. 예약 신청은 익일 오전 9시 접수 기준으로 낮 12시 이후 확인합니다. 검토가 끝나지 않은 경우 검토 중으로 표시되며 익일 안내될 수 있습니다. 가입 정보·본인사진·라이브 파일은 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</p>
+<p class="ot-processing-note">예약 신청은 다음 날 오전 9시에 자동 접수되며, 낮 12시까지 가입 결과를 확인할 수 있습니다. 검토가 지연되면 ‘검토 중’으로 표시되며, 다음 날 안내될 수 있습니다.</p>
+<p class="ot-processing-note">가입 정보와 제출한 사진·라이브 파일은 운영진만 확인할 수 있으며, 다른 회원에게 공개되지 않습니다.</p>
 <div class="ot-review-controls"><a id="applicationResultLink" class="ot-button" href="/ot-room/?result=1">이미 신청하셨나요? 가입 결과 확인</a><a id="applicationSignupLink" class="ot-button" href="/ot-room/" hidden>회원가입 신청하기</a></div>
 <div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">이미 회원이신가요? 로그인하기</a></div>
 </main></body></html>
