@@ -35,15 +35,32 @@ export async function handle(req: Request, service: any) {
         .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,profile_photo_path,region,gender,ot_room_invites!inner(review_id,notification_push_enabled)")
         .in("ot_room_invites.review_id",ids) : {data:[],error:null};
       if (pe) throw new Error("applicant_list_failed");
+      const {data:pushDevices,error:pde}=actor.isAdmin?await service.from('vom_push_subscriptions')
+        .select('id,vom_push_invites!inner(recipient_name,is_active)').eq('is_active',true).eq('vom_push_invites.is_active',true):{data:[],error:null};
+      if(pde)throw new Error('operator_push_list_failed');
       return json(origin, {
         ok: true, actor, operators: (operators || []).map((op: any) => ({
           id: op.id, name: op.name, nickname: op.nickname, has_account: !!op.auth_user_id,
           ot_access: (accessRows || []).some((a: any) => a.member_id === op.id && a.user_id === op.auth_user_id && !a.revoked_at),
+          push_devices:actor.isAdmin?(pushDevices||[]).filter((d:any)=>d.vom_push_invites?.recipient_name===op.name).length:undefined,
         })), invites, members,
         reviews: (reviews || []).map((r: any) => ({ ...r,
           profile:(()=>{const p=(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id);if(!p)return null;const {profile_photo_path,ot_room_invites,...safe}=p;return {...safe,has_photo:!!profile_photo_path,approval_push_enabled:!!ot_room_invites.notification_push_enabled};})(),
           votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
       });
+    }
+
+    if(action==='operator_push_invite'){
+      if(!actor.isAdmin)throw new ApiError(403,'관리자만 운영진 알림 등록 링크를 발급할 수 있습니다.');
+      const memberId=positiveInt(body.member_id);
+      const {data:member,error:me}=await service.from('members').select('name').eq('id',memberId).eq('role','운영진').eq('is_active',true).maybeSingle();
+      if(me||!member)throw new ApiError(400,'활동 중인 운영진을 선택해 주세요.');
+      const {data:existing,error:ie}=await service.from('vom_push_invites').select('invite_token')
+        .eq('recipient_name',member.name).eq('is_active',true).order('created_at',{ascending:false}).limit(1).maybeSingle();
+      if(ie)throw new Error('operator_push_invite_lookup_failed');
+      const token=existing?.invite_token||newToken();
+      if(!existing){const {error}=await service.from('vom_push_invites').insert({recipient_name:member.name,invite_token:token,is_active:true});if(error)throw new Error('operator_push_invite_create_failed');}
+      return json(origin,{ok:true,url:DEFAULT_ORIGIN+'/operator-alert/?t='+encodeURIComponent(token)});
     }
 
     if (action === "issue_invite") {

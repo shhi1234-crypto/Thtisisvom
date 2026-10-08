@@ -7,9 +7,9 @@
   <meta name="referrer" content="no-referrer">
   <title>가입 관리 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=4">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=6">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
-  <script defer src="/assets/ot-admin.js?v=4"></script>
+  <script defer src="/assets/ot-admin.js?v=5"></script>
 </head>
 <body>
   <header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><div class="ot-actions"><span id="operatorName" class="ot-header-label"></span><a class="ot-button" href="/me/">MY VOM</a></div></header>
@@ -24,12 +24,13 @@
     <div id="adminDashboard" hidden>
       <div class="ot-invite-layout">
         <section class="ot-card"><h2>홈페이지에서 바로 회원가입</h2><p class="ot-note">가입 인사 댓글에는 VOM 홈페이지를 안내해 주세요. 신규 가입자가 회원가입 신청서를 제출하면 이 목록에 자동으로 접수됩니다.</p><a class="ot-button ot-primary" style="display:inline-flex;margin-top:16px;text-decoration:none" href="/ot-room/">회원가입 페이지 보기</a></section>
-        <section class="ot-card"><h2>등록·검토 안내</h2><p class="ot-note">영상·음성 등록은 한국시간 09:00~18:00에만 가능합니다. 당일 처리를 보장하지 않으며 익일 안내될 수 있습니다.</p><p class="ot-note">푸시는 알림 등록을 완료한 운영진 기기로 발송됩니다. 등록되지 않은 운영진도 이 목록에서 접수 건을 확인할 수 있습니다. 신청자의 승인 알림 미등록 시 소모임으로 가입 완료를 안내해 주세요.</p><button id="retryNotificationButton" type="button" class="ot-button" style="margin-top:16px">대기 중 알림 재시도</button></section>
+        <section class="ot-card"><h2>등록·검토 안내</h2><p class="ot-note">정식 접수는 한국시간 09:00~18:00이며, 그 외에는 익일 오전 9시 접수를 예약합니다. 접수 후 3시간 이내 검토를 목표로 합니다.</p><p class="ot-note">푸시는 알림 등록을 완료한 운영진 기기로 발송됩니다. 등록되지 않은 운영진도 이 목록에서 접수 건을 확인할 수 있습니다. 신청자는 가입 결과 확인에서 직접 확인할 수 있습니다. 검토가 늦어지면 익일 안내될 수 있습니다.</p><button id="retryNotificationButton" type="button" class="ot-button" style="margin-top:16px">대기 중 알림 재시도</button></section>
       </div>
       <div class="ot-review-header"><h2>접수된 가입 신청 <span id="pendingCount" class="ot-tag">0건 대기</span></h2><span id="lastRefreshed" class="ot-note" style="margin:0"></span></div>
       <div class="ot-filters" id="reviewFilters"><button class="ot-filter active" type="button" data-filter="IN_REVIEW">검토 대기</button><button class="ot-filter" type="button" data-filter="APPROVED">승인</button><button class="ot-filter" type="button" data-filter="REJECTED">반려</button><button class="ot-filter" type="button" data-filter="ALL">전체</button></div>
       <div id="reviewList" class="ot-review-list"></div>
 
+      <details id="operatorPushPanel" class="ot-invites" hidden><summary>운영진 휴대폰 알림 등록</summary><p class="ot-note">각 운영진에게 본인용 등록 링크를 안내해 주세요. 사용하는 휴대폰에서 알림을 허용해야 새 회원가입 신청 알림을 받을 수 있습니다.</p><div id="operatorPushList"></div></details>
       <details id="operatorAccessPanel" class="ot-invites" hidden><summary>운영진 가입 관리 권한</summary><p class="ot-note">본인 계정인지 확인한 뒤 권한을 부여해 주세요. 새 개인 계정 연결만으로는 사진·라이브 파일 열람 권한이 생기지 않습니다.</p><div id="operatorAccessList"></div></details>
     </div>
   </main>

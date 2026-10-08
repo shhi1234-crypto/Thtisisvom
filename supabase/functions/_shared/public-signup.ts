@@ -15,7 +15,7 @@ export function approvalSubscription(value: any) {
 }
 
 export async function publicSignup(req: Request, service: any, origin: string, now=()=>new Date()) {
-  let createdUser: string|null=null,inviteId: string|null=null,committed=false,scheduledAt:string|null=null;
+  let createdUser: string|null=null,inviteId: string|null=null,committed=false,scheduledAt:string|null=null,submittedAt:string|null=null,checkAt:string|null=null;
   const paths:string[]=[];
   try {
     if (!(req.headers.get('content-type')||'').startsWith('multipart/form-data;')) {
@@ -85,13 +85,14 @@ export async function publicSignup(req: Request, service: any, origin: string, n
         else if(fe)throw new ApiError(409,'신청 결과를 확인하지 못했습니다. 운영진에게 접수 여부를 확인해 주세요.');
         else if(!isPhoto){
           committed=true;
+          submittedAt=data?.submitted_at||null;checkAt=data?.check_at||null;
           const reviewId=Number(Array.isArray(data)?data[0]?.id:data?.id);
           if(reviewId)try{await notifyOT(service,reviewId);}catch{console.error('OT notification queued');}
         }
       }
     }
     const {data:config}=await service.from('vom_push_config').select('vapid_public_key').eq('id',1).maybeSingle();
-    return json(origin,{ok:true,submitted:true,status:scheduledAt?'SCHEDULED':'IN_REVIEW',scheduled_at:scheduledAt,notification_token:notificationToken,push_public_key:config?.vapid_public_key||null,message:scheduledAt?'신청이 예약됐습니다. 익일 오전 9시에 자동 접수되며 승인 후 로그인할 수 있습니다.':'회원가입 신청이 접수됐습니다. 승인 후 로그인할 수 있습니다. 당일 처리를 보장하지 않으며 익일 안내될 수 있습니다.'},201);
+    return json(origin,{ok:true,submitted:true,status:scheduledAt?'SCHEDULED':'IN_REVIEW',scheduled_at:scheduledAt,submitted_at:submittedAt,check_at:checkAt||(scheduledAt?new Date(Date.parse(scheduledAt)+3*3600000).toISOString():null),notification_token:notificationToken,push_public_key:config?.vapid_public_key||null,message:scheduledAt?'신청이 예약됐습니다. 익일 오전 9시에 자동 접수되며 승인 후 로그인할 수 있습니다.':'회원가입 신청이 접수됐습니다. 정식 접수 후 3시간 이후 가입 결과를 직접 확인해 주세요. 검토 중이면 익일 안내될 수 있습니다.'},201);
   } finally {
     if (createdUser && !committed) {
       try {

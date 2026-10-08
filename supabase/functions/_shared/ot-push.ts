@@ -2,7 +2,7 @@ import webpush from "npm:web-push@3.6.7";
 import { DEFAULT_ORIGIN } from "./ot-core.ts";
 
 // Registration is committed before this runs. Failed notification attempts never undo an upload.
-export async function notifyOT(service: any, reviewId: number) {
+export async function notifyOT(service: any, reviewId: number, send=webpush.sendNotification.bind(webpush)) {
   const now = new Date().toISOString();
   const leaseBefore = new Date(Date.now() - 120_000).toISOString();
   const { data: review, error: claimError } = await service.from("ot_reviews")
@@ -10,47 +10,60 @@ export async function notifyOT(service: any, reviewId: number) {
     .eq("id", reviewId).is("operator_notified_at", null)
     .lte("notification_next_attempt_at", now)
     .or(`notification_claimed_at.is.null,notification_claimed_at.lt.${leaseBefore}`)
-    .select("id,candidate_name,somoim_nickname,notification_attempts").maybeSingle();
+    .select("id,candidate_name,eligible_operator_ids,notification_attempts").maybeSingle();
   if (claimError || !review) return { sent: 0, pending: true };
 
-  let sent = 0;
+  let sent = 0, complete = false;
   try {
-    const [{ data: config, error: ce }, { data: subscriptions, error: se }] = await Promise.all([
+    const [{ data: config, error: ce }, { data: subscriptions, error: se }, {data:operators,error:oe}, {data:deliveries,error:de}] = await Promise.all([
       service.from("vom_push_config").select("vapid_public_key,vapid_private_key,subject").eq("id", 1).maybeSingle(),
-      service.from("vom_push_subscriptions").select("id,endpoint,p256dh,auth,vom_push_invites!inner(is_active)")
+      service.from("vom_push_subscriptions").select("id,endpoint,p256dh,auth,vom_push_invites!inner(is_active,recipient_name)")
         .eq("is_active", true).eq("vom_push_invites.is_active", true),
+      service.from('members').select('id,name').eq('role','운영진').eq('is_active',true).in('id',review.eligible_operator_ids||[]),
+      service.from('ot_operator_push_deliveries').select('subscription_id').eq('review_id',reviewId),
     ]);
-    if (ce || se) throw new Error("push_config_failed");
-    if (config && subscriptions?.length) {
+    if (ce || se || oe || de) throw new Error("push_config_failed");
+    const names=new Set((operators||[]).map((op:any)=>op.name));
+    const targets=(subscriptions||[]).filter((sub:any)=>names.has(sub.vom_push_invites?.recipient_name));
+    const delivered=new Set((deliveries||[]).map((row:any)=>String(row.subscription_id)));
+    if (config && targets.length) {
       webpush.setVapidDetails(config.subject, config.vapid_public_key, config.vapid_private_key);
       const payload = JSON.stringify({
         title: "새 회원가입 신청이 접수됐어요",
-        body: `${review.candidate_name}님 · ${review.somoim_nickname}\n운영진 페이지에서 확인해 주세요.`,
+        body: `${review.candidate_name}님이 신청했습니다.\n3시간 이내에 확인해 주세요.`,
         url: `${DEFAULT_ORIGIN}/ot-admin/?id=${review.id}`,
         tag: `vom-ot-review-${review.id}`,
       });
-      await Promise.all(subscriptions.map(async (subscription: any) => {
+      let failed=0;
+      await Promise.all(targets.map(async (subscription: any) => {
+        if(delivered.has(String(subscription.id)))return;
         try {
-          await webpush.sendNotification({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, payload, { TTL: 7200, timeout: 10_000 });
+          await send({ endpoint: subscription.endpoint, keys: { p256dh: subscription.p256dh, auth: subscription.auth } }, payload, { TTL: 10800, timeout: 10_000 });
+          const {error}=await service.from('ot_operator_push_deliveries').upsert({review_id:reviewId,subscription_id:subscription.id,sent_at:new Date().toISOString()},{onConflict:'review_id,subscription_id'});
+          if(error)throw new Error('push_delivery_record_failed');
           sent++;
         } catch (error: any) {
-          if (error?.statusCode === 404 || error?.statusCode === 410) await service.from("vom_push_subscriptions").update({ is_active: false, updated_at: now }).eq("id", subscription.id);
+          if (error?.statusCode === 404 || error?.statusCode === 410) {
+            const {error:disabled}=await service.from("vom_push_subscriptions").update({ is_active: false, updated_at: now }).eq("id", subscription.id);
+            if(disabled)failed++;
+          } else failed++;
           console.error("OT push delivery failed", Number(error?.statusCode) || 0);
         }
       }));
+      complete=failed===0&&(sent>0||targets.some((sub:any)=>delivered.has(String(sub.id))));
     }
   } catch {
     console.error("OT notification attempt failed");
   } finally {
     const { error } = await service.from("ot_reviews").update({
-      operator_notified_at: sent ? new Date().toISOString() : null,
+      operator_notified_at: complete ? new Date().toISOString() : null,
       notification_attempts: Number(review.notification_attempts || 0) + 1,
       notification_next_attempt_at: new Date(Date.now() + 300_000).toISOString(),
       notification_claimed_at: null,
     }).eq("id", reviewId).eq("notification_claimed_at", now);
     if (error) console.error("OT notification state update failed");
   }
-  return { sent, pending: !sent };
+  return { sent, pending: !complete };
 }
 
 export async function notifyPendingOT(service: any) {

@@ -7,7 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="VOM 운영">
-<link rel="manifest" href="/operator-alert/vom-ops-8e2d88b58fc5.webmanifest">
+<link rel="manifest" href="/operator-alert/manifest.webmanifest">
+<meta name="referrer" content="no-referrer">
 <link rel="apple-touch-icon" href="/favicon.png?v=4">
 <link rel="icon" href="/favicon.png?v=4">
 <title>VOM 운영 알림</title>
@@ -43,11 +44,12 @@ main{width:min(560px,100%);margin:auto;padding:86px 22px 56px}.eyebrow{color:#72
     <button id="setupBtn" type="button">이 기기에서 알림 받기</button>
     <button id="testBtn" class="secondary" type="button" disabled>테스트 알림 보내기</button>
     <div id="status" class="status">등록 정보를 확인하는 중입니다.</div>
-    <div class="fine">등록 후에는 따로 홈페이지를 열지 않아도 운영 마감 알림이 폰으로 옵니다. 폰을 바꾸거나 알림을 껐다면 이 링크로 다시 등록하면 됩니다.</div>
+    <div class="fine">등록 후에는 신규 회원가입 신청과 운영 마감 알림이 폰으로 옵니다. 신청 알림에는 신청자의 이름이 표시됩니다. 폰을 바꾸거나 알림을 껐다면 본인용 링크로 다시 등록해 주세요.</div>
   </section>
 </main>
 <script>
 const token=new URLSearchParams(location.search).get('t')||'';
+if(/^[A-Za-z0-9_-]{32,200}$/.test(token))document.querySelector('link[rel="manifest"]').href='/api/operator-manifest?t='+encodeURIComponent(token);
 const endpoint='https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/operator-push';
 const setupBtn=document.getElementById('setupBtn'),testBtn=document.getElementById('testBtn'),status=document.getElementById('status');
 const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent);

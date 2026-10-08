@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, DEFAULT_ORIGIN, checkRequest, failure, headers, json, tokenHash, validToken } from "../_shared/ot-core.ts";
-import { applicantEmail, memberContext, newPassword, signedIn } from "../_shared/member-access.ts";
+import { applicantEmail, loginName, memberContext, newPassword, signedIn } from "../_shared/member-access.ts";
+import { applicationStatus } from "../_shared/application-status.ts";
 
 export async function handle(req: Request, service: any, authClient: any) {
   let origin = DEFAULT_ORIGIN;
@@ -13,21 +14,22 @@ export async function handle(req: Request, service: any, authClient: any) {
       const user=await signedIn(req,service);
       return json(origin,{ok:true,...await memberContext(service,user.id)});
     }
-    if (body.action === "login") {
-      const name=String(body.login_name||"").trim();
+    if (body.action === "login" || body.action === "application_status") {
+      const lookup=body.action==='application_status';
+      const name=lookup?loginName(body.login_name):String(body.login_name||"").trim();
       const password=body.password;
       if ((!name && !body.member_id) || name.length>80 || typeof password!=="string" || password.length>64 || !password) throw new ApiError(400,"아이디와 개인 비밀번호를 입력해 주세요.");
       // A selected public display name resolves to the linked Auth identity on the server.
       // No email, password hint or account metadata is exposed in the picker.
       let selected=null;
-      if (body.member_id!==undefined && body.member_id!==null && body.member_id!=="") {
+      if (!lookup && body.member_id!==undefined && body.member_id!==null && body.member_id!=="") {
         const id=Number(body.member_id);
         if (!Number.isSafeInteger(id)||id<=0) throw new ApiError(400,"회원 이름을 목록에서 선택해 주세요.");
         const {data,error}=await service.from("members").select("id,auth_user_id").eq("id",id).eq("is_active",true).maybeSingle();
         if (error) throw new Error("selected_login_lookup_failed");
         if (!data?.auth_user_id) throw new ApiError(401,"개인 비밀번호를 확인해 주세요. 최초 설정이 필요하다면 운영진에게 개인 설정 링크를 요청해 주세요.");
         selected=data;
-      } else {
+      } else if (!lookup) {
         const {data,error}=await service.from("members").select("id,auth_user_id").eq("name",name).eq("is_active",true).maybeSingle();
         if (error) throw new Error("legacy_login_lookup_failed");
         if (data?.auth_user_id) selected=data;
@@ -54,6 +56,14 @@ export async function handle(req: Request, service: any, authClient: any) {
       }
       if (result.error || !result.data.session) throw new ApiError(401,"회원 이름 또는 아이디와 개인 비밀번호를 다시 확인해 주세요.");
       const session=result.data.session;
+      if(lookup){
+        try {
+          if(!identity||session.user.id!==identity)throw new ApiError(401,'신청 아이디와 비밀번호를 다시 확인해 주세요.');
+          const status=await applicationStatus(service,session.user.id);
+          await service.from('vom_login_attempts').delete().eq('login_hash',attemptKey);
+          return json(origin,{ok:true,...status});
+        } finally {await authClient.auth.signOut({scope:'local'});}
+      }
       const context=await memberContext(service,session.user.id);
       if (!['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(context.state)) {
         await authClient.auth.signOut({scope:'local'});

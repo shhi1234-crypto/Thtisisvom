@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <title>회원가입 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=5">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=6">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#7660dd">
-  <script defer src="/assets/public-signup.js?v=2"></script>
+  <script defer src="/assets/public-signup.js?v=3"></script>
 </head>
 <body class="ot-public">
 <header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><a class="ot-button" href="/me/">로그인하기</a></header>
@@ -38,8 +38,13 @@
       <progress id="uploadProgress" max="100" value="0" aria-label="회원가입 파일 업로드 진행률" hidden></progress><button id="accountButton" class="ot-button ot-primary" type="submit">회원가입 신청하기</button></form>
 </section>
 <section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반 승인 시 회원 프로필이 자동 생성됩니다. 승인 전에는 회원 로그인이 제한되며 공개 페이지를 둘러볼 수 있습니다.</p>
+<p id="receiptCheckTime" class="ot-note"></p><div class="ot-review-controls"><a class="ot-button ot-primary" href="/ot-room/?result=1">가입 결과 확인하기</a></div>
 <button id="approvalNotifyButton" type="button" class="ot-button ot-primary">휴대폰으로 승인 알림 받기</button><p id="approvalNotifyMessage" class="ot-note" role="status"></p>
-<p class="ot-note">알림을 등록하지 않으면 소모임에서 운영진 안내를 확인해 주세요. 아이폰은 이 페이지를 홈 화면에 추가한 후 앱으로 열어 알림을 등록해 주세요.</p></section>
-<p class="ot-processing-note">당일 처리를 보장하지 않으며 익일 안내될 수 있습니다. 가입 정보·본인사진·라이브 파일은 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</p>
+<p class="ot-note">알림을 등록하지 않아도 가입 결과 확인에서 직접 확인할 수 있습니다. 아이폰은 이 페이지를 홈 화면에 추가한 후 앱으로 열어 알림을 등록해 주세요.</p></section>
+<section id="applicationStatusCard" class="ot-card" hidden><h2>가입 결과 확인</h2><p class="ot-note">회원가입 신청 때 설정한 아이디와 비밀번호를 입력해 주세요.</p>
+<form id="applicationStatusForm" method="post" autocomplete="on"><div class="ot-fields"><label>신청 아이디<input id="statusLoginName" name="username" autocomplete="username" minlength="4" maxlength="30" required></label><label>신청 비밀번호<input id="statusPassword" name="password" type="password" inputmode="numeric" autocomplete="current-password" maxlength="64" required><small>회원가입 신청 때 설정한 숫자 4자리입니다.</small></label></div><button id="applicationStatusButton" class="ot-button ot-primary" type="submit">가입 결과 확인하기</button></form>
+<div id="applicationStatusOutput" role="status" aria-live="polite" hidden><h3 id="applicationStatusTitle"></h3><p id="applicationStatusDetail" class="ot-note"></p><p id="applicationStatusTime" class="ot-note"></p><a id="applicationLoginLink" class="ot-button ot-primary" href="/me/" hidden>로그인하기</a></div></section>
+<p class="ot-processing-note">정식 접수 완료 후 3시간 이후 가입 결과를 직접 확인해 주세요. 예약 신청은 익일 오전 9시 접수 기준으로 낮 12시 이후 확인합니다. 검토가 끝나지 않은 경우 검토 중으로 표시되며 익일 안내될 수 있습니다. 가입 정보·본인사진·라이브 파일은 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</p>
+<div class="ot-review-controls"><a id="applicationResultLink" class="ot-button" href="/ot-room/?result=1">이미 신청하셨나요? 가입 결과 확인</a><a id="applicationSignupLink" class="ot-button" href="/ot-room/" hidden>회원가입 신청하기</a></div>
 <div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">이미 회원이신가요? 로그인하기</a></div>
 </main></body></html>
