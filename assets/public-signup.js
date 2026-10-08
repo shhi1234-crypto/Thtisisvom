@@ -6,7 +6,7 @@
   let busy=false,offset=0,ready=false,receipt=null,preview='';
   const resultMode=new URLSearchParams(location.search).get('result')==='1';
   const kst=value=>{const date=new Date(Date.parse(value)+9*3600000);return Number.isFinite(date.getTime())?`${date.getUTCMonth()+1}월 ${date.getUTCDate()}일 ${String(date.getUTCHours()).padStart(2,'0')}:${String(date.getUTCMinutes()).padStart(2,'0')}`:'';};
-  if(resultMode){document.title='가입 결과 확인 · VOM';document.querySelector('h1').textContent='가입 결과 확인';document.querySelector('.ot-lead').textContent='신청한 본인의 가입 결과를 확인해 주세요.';document.getElementById('accountCard').hidden=true;document.getElementById('applicationStatusCard').hidden=false;document.getElementById('applicationResultLink').hidden=true;document.getElementById('applicationSignupLink').hidden=false;message.textContent='정식 접수 완료 후 3시간 이후 확인해 주세요.';}
+  if(resultMode){document.title='가입 결과 확인 · VOM';document.querySelector('h1').textContent='가입 결과 확인';document.querySelector('.ot-lead').textContent='회원 로그인 없이 본인의 가입 결과를 확인할 수 있습니다.';document.getElementById('accountCard').hidden=true;document.getElementById('applicationStatusCard').hidden=false;document.getElementById('applicationResultLink').hidden=true;document.getElementById('applicationSignupLink').hidden=false;message.textContent='신청 때 설정한 회원이름과 비밀번호로 확인해 주세요. 정식 접수 완료 후 3시간 이후 확인 가능합니다.';}
   document.getElementById('applicationStatusForm').addEventListener('submit',async event=>{
     event.preventDefault();const submit=document.getElementById('applicationStatusButton'),output=document.getElementById('applicationStatusOutput');if(submit.disabled)return;submit.disabled=true;output.hidden=true;say('가입 결과를 확인하고 있습니다.');
     try{
