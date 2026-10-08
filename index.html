@@ -1781,6 +1781,7 @@ button{
 .home-auth-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 20px}.home-auth-actions a{display:inline-flex;align-items:center;justify-content:center;gap:30px;min-height:56px;padding:0 26px;border-radius:16px;text-decoration:none;font-size:17px;font-weight:800}.home-login-button{color:#fff!important;background:#7660dd;box-shadow:0 10px 26px #7660dd2b}.home-signup-button{color:#6650cd!important;background:#f0ebff;border:1px solid #dcd3fb}@media(max-width:480px){.home-auth-actions{gap:10px}.home-auth-actions a{flex:1;padding:0 14px;font-size:16px;gap:16px}}
 
 .birthday-check,.guest-schedule-link{display:inline-flex;align-items:center;min-height:36px;padding:8px 12px;border:1px solid #ded7f5;border-radius:12px;background:#f6f2ff;color:#6c55ca;font-size:12px;font-weight:750;text-decoration:none}.guest-schedule-link{min-height:64px;width:100%;justify-content:space-between}.birthday-check:hover,.guest-schedule-link:hover{background:#eee6ff}
+.home-result-link{display:inline-flex;align-items:center;gap:10px;min-height:40px;margin:0 0 12px;color:#6c55ca;font-size:14px;font-weight:700;text-decoration:none}.home-result-link small{font-size:12px;font-weight:500;color:#858197}.home-result-link:hover{text-decoration:underline}.home-result-link[hidden],.home-auth-actions [hidden]{display:none!important}
 </style>
 
 <script id="vom-public-mode">
@@ -2011,7 +2012,8 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
         음악으로 이어지는 VOM의 이야기.
       </div>
 
-      <div class="home-auth-actions"><a class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
+      <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
+      <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
       <div id="homeToday" class="home-today">
         <span class="today-date">오늘을 불러오는 중...</span>
       </div>
@@ -2603,6 +2605,11 @@ async function start(){
   }
 
   await restoreAdmin();
+
+  const access=await window.vomGetMemberAccess();
+  document.getElementById('homeLoginButton').innerHTML=access.approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
+  document.getElementById('homeSignupButton').hidden=access.approved;
+  document.getElementById('homeResultLink').hidden=access.approved;
 
   loadHomeBirthday();
 
@@ -3294,9 +3301,7 @@ async function restoreAdmin(){
     setAdminUI(true);
 
   }else{
-
-    await db.auth.signOut();
-
+    // A regular member keeps their session when opening the public homepage.
     setAdminUI(false);
 
   }
