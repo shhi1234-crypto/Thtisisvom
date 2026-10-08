@@ -130,6 +130,15 @@ Deno.test("birth year is four digits, experience permits zero and years but reje
  assert(signupDetails(base,openNow()).birth_year===1995);assert(signupDetails({...base,busking_experience:'1.5',busking_experience_unit:'YEARS'},openNow()).busking_experience===1.5);
  for(const changes of [{birth_year:'28'},{birth_year:'1995년'},{birth_year:'2050'},{job:''},{busking_experience:''},{busking_experience:'1.5'},{busking_experience:'-1'},{busking_experience_unit:'OTHER'}]){let rejected=false;try{signupDetails({...base,...changes},openNow());}catch(e){rejected=e instanceof ApiError;}assert(rejected,JSON.stringify(changes));}
 });
+Deno.test('selected birthday rejects missing parts, invalid calendar days and future dates while keeping cached year-only forms compatible',()=>{
+ const base={birth_year:'2000',birth_month:'2',birth_day:'29',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT'};
+ assert(signupDetails(base,openNow()).birth_date==='2000-02-29');
+ for(const changes of [{birth_year:'1900'},{birth_year:'2001'},{birth_month:''},{birth_day:''},{birth_month:'13'},{birth_month:'4',birth_day:'31'},{birth_day:'0'},{birth_day:'029'},{birth_year:'2026',birth_month:'10',birth_day:'8'}]){
+  let rejected=false;try{signupDetails({...base,...changes},openNow());}catch(e){rejected=e instanceof ApiError;}assert(rejected,JSON.stringify(changes));
+ }
+ assert(signupDetails({...base,birth_year:'2026',birth_month:'10',birth_day:'7'},openNow()).birth_date==='2026-10-07');
+ assert(!('birth_date' in signupDetails({...base,birth_month:undefined,birth_day:undefined},openNow())));
+});
 Deno.test("live MP3/M4A/WAV/OGG/FLAC/AAC and video have detected MIME types; forged audio is refused",async()=>{
  const samples=[['ID3abcdefgh','live.mp3','audio/mpeg'],['OggSabcdefgh','live.ogg','audio/ogg'],['fLaCabcdefgh','live.flac','audio/flac'],['RIFF1234WAVEabcd','live.wav','audio/wav']];
  for(const [bytes,name,mime] of samples)assert((await validateVideo(new File([bytes],name))).mime===mime);
@@ -157,7 +166,7 @@ Deno.test("detected audio MIME is applied to stored bytes even when the submitte
 
 function publicRequest(changes:Record<string,any>={}) {
  const data=new FormData();
- for(const [key,value] of Object.entries({login_name:'public-test',password:'1234',password_confirm:'1234',phone:'01012345678',region:'서울',gender:'기타',candidate_name:'가입자',somoim_nickname:'가입별명',birth_year:'1995',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT',consent:'yes',live_confirmed:'yes',media_source:'FILE',...changes})) if(value!==null)data.set(key,value);
+ for(const [key,value] of Object.entries({login_name:'public-test',password:'1234',password_confirm:'1234',phone:'01012345678',region:'서울',gender:'기타',candidate_name:'가입자',somoim_nickname:'가입별명',birth_year:'1995',birth_month:'2',birth_day:'20',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT',consent:'yes',live_confirmed:'yes',media_source:'FILE',...changes})) if(value!==null)data.set(key,value);
  if(!('photo' in changes))data.set('photo',new File([new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0])],'photo.png',{type:'image/png'}));
  if(!('video' in changes))data.set('video',videoFile());
  return new Request('https://edge.invalid/ot-room?signup=public',{method:'POST',body:data});
@@ -167,7 +176,7 @@ Deno.test('public registration opens without an invitation and info exposes no a
  await status(response,200);const data=await response.json();assert(data.public_signup&&data.registration_open&&!data.profile&&!data.invite_id);
 });
 Deno.test('public signup validates every required field and both files before creating an account',async()=>{
- for(const changes of [{photo:null},{video:null},{phone:''},{region:''},{gender:''},{password:'abcd',password_confirm:'abcd'},{job:''},{birth_year:'31'},{candidate_name:''},{somoim_nickname:''},{busking_experience:''},{consent:null},{password_confirm:'different'}]){
+ for(const changes of [{photo:null},{video:null},{phone:''},{region:''},{gender:''},{password:'abcd',password_confirm:'abcd'},{job:''},{birth_year:'31'},{birth_month:''},{birth_day:''},{birth_month:'2',birth_day:'30'},{candidate_name:''},{somoim_nickname:''},{busking_experience:''},{consent:null},{password_confirm:'different'}]){
   const {client,state}=fake();await status(await room(publicRequest(changes),client,openNow),400);assert(!state.rpcCalls.length&&!state.uploaded.length&&!state.deletedUsers.length);
  }
 });
@@ -184,6 +193,7 @@ Deno.test('public signup uses an internal account key when no ID is supplied',as
  const {client,state}=fake();await status(await room(publicRequest({login_name:null}),client,openNow),201);
  const profile=state.rpcCalls.find(call=>call.name==='vom_ot_bind_account').input.p_profile;
  assert(profile.candidate_name==='가입자'&&/^join-[a-f0-9]{24}$/.test(profile.login_name));
+ assert(profile.birth_date==='1995-02-20');
 });
 
 Deno.test('applicants check their result with their real name and PIN, including existing accounts',async()=>{

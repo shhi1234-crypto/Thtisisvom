@@ -56,11 +56,20 @@ export function signupDetails(body: any, now = new Date()) {
   const year = String(body.birth_year ?? "");
   const currentYear = Number(new Intl.DateTimeFormat("en", { timeZone: "Asia/Seoul", year: "numeric" }).format(now));
   if (!/^\d{4}$/.test(year) || Number(year) < 1900 || Number(year) > currentYear) throw new ApiError(400, "출생연도를 4자리로 입력해 주세요. 예: 1995");
+  // Older cached forms contain only a birth year; new forms require all three date parts.
+  let birthDate: string | undefined;
+  if (body.birth_month !== undefined || body.birth_day !== undefined) {
+    const month=String(body.birth_month??''),day=String(body.birth_day??'');
+    if (!/^(?:0?[1-9]|1[0-2])$/.test(month) || !/^(?:0?[1-9]|[12]\d|3[01])$/.test(day)) throw new ApiError(400, '생년월일을 모두 선택해 주세요.');
+    birthDate=year+'-'+month.padStart(2,'0')+'-'+day.padStart(2,'0');
+    const parsed=new Date(birthDate+'T00:00:00Z'),today=new Date(now.getTime()+9*3600000).toISOString().slice(0,10);
+    if (!Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0,10)!==birthDate || birthDate>today) throw new ApiError(400, '올바른 생년월일을 선택해 주세요.');
+  }
   const unit = body.busking_experience_unit;
   const raw = String(body.busking_experience ?? "");
   const value = Number(raw);
   if (!["COUNT", "YEARS"].includes(unit) || !/^\d+(?:\.\d{1,2})?$/.test(raw) || !Number.isFinite(value) || value < 0 || value > (unit === "COUNT" ? 10000 : 100) || (unit === "COUNT" && !Number.isInteger(value))) throw new ApiError(400, "버스킹 경험을 횟수 또는 년수로 입력해 주세요. 경험이 없으면 0을 입력합니다.");
-  return { birth_year: Number(year), job: textField(body.job, 80, "직업"), busking_experience: value, busking_experience_unit: unit, form_version: 2 };
+  return { birth_year: Number(year), ...(birthDate?{birth_date:birthDate}:{}), job: textField(body.job, 80, "직업"), busking_experience: value, busking_experience_unit: unit, form_version: 2 };
 }
 
 export async function validatePhoto(file: File): Promise<{ mime: string; extension: string }> {

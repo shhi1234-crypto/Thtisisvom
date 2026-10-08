@@ -7,11 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <title>회원가입 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=8">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=9">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#7660dd">
-  <script defer src="/assets/public-signup.js?v=7"></script>
+  <script defer src="/assets/public-signup.js?v=8"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body class="ot-public">
@@ -24,7 +24,7 @@
 <p class="ot-note">접수 시간은 오전 9시부터 오후 6시 전까지입니다(한국시간). 그 외 시간에 제출한 신청서는 다음 날 오전 9시에 자동 접수됩니다. 가입 결과는 접수 후 3시간 이내에 확인할 수 있습니다.</p>
 <form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
         <label>이름<span class="ot-required" aria-hidden="true">*</span><input name="candidate_name" autocomplete="name" maxlength="60" required></label>
-        <label>출생연도<span class="ot-required" aria-hidden="true">*</span><input name="birth_year" inputmode="numeric" autocomplete="bday-year" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="예: 1995" required><small>나이가 아닌 태어난 연도를 4자리로 입력해 주세요.</small></label>
+        <fieldset class="ot-birthday-field"><legend>생년월일<span class="ot-required" aria-hidden="true">*</span></legend><div class="ot-birthday-selects"><select id="birthYear" name="birth_year" autocomplete="bday-year" aria-label="태어난 연도" required><option value="">년</option></select><select id="birthMonth" name="birth_month" autocomplete="bday-month" aria-label="태어난 월" required><option value="">월</option></select><select id="birthDay" name="birth_day" autocomplete="bday-day" aria-label="태어난 일" required disabled><option value="">일</option></select></div><small>태어난 연도·월·일을 선택해 주세요.</small></fieldset>
         <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required></label>
         <label>직업<span class="ot-required" aria-hidden="true">*</span><input name="job" maxlength="80" placeholder="예: 회사원, 학생, 프리랜서" required></label>
         <label>버스킹 경험 단위<span class="ot-required" aria-hidden="true">*</span><select id="experienceUnit" name="busking_experience_unit" required><option value="COUNT">횟수 (회)</option><option value="YEARS">기간 (년)</option></select></label>
@@ -41,7 +41,7 @@
 <div id="mediaLinkPanel" class="ot-media-panel" hidden><label>라이브 자료 링크<input id="mediaUrl" name="media_url" type="url" inputmode="url" pattern="https://.+" maxlength="2048" placeholder="https://..." autocomplete="off" disabled><small>유튜브·드라이브 등 운영진이 로그인 없이 열 수 있는 링크를 입력해 주세요. 전체 공개 대신 링크 보유자만 볼 수 있도록 설정해 주세요.</small></label></div>
 <label class="ot-consent ot-live-confirm"><input name="live_confirmed" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가창 부분이 30초 이상이며, 믹싱·튠 등 보정 없는 라이브 자료임을 확인했습니다.</span></label>
 </fieldset>
-<label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·출생연도·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
+<label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·생년월일·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
       <progress id="uploadProgress" max="100" value="0" aria-label="회원가입 파일 업로드 진행률" hidden></progress><button id="accountButton" class="ot-button ot-primary" type="submit">회원가입 신청하기</button></form>
 </section>
 <section id="approvalCard" class="ot-card" hidden><h2>가입 신청이 접수됐어요</h2><p class="ot-note">운영진 과반수가 승인하면 가입이 완료되고 회원 프로필이 생성됩니다. 승인 전에도 홈페이지의 공개 페이지는 둘러볼 수 있습니다.</p>
