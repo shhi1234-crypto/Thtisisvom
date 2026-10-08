@@ -102,12 +102,23 @@ Deno.test("invite alone never exposes a bound account's private status",async()=
  const r=await room(infoRequest(token,false),fake({submitted:true}).client,openNow);await status(r,200);const data=await r.json();assert(data.login_required && !data.submitted && !data.profile && !data.status);
 });
 Deno.test("another applicant JWT cannot upload against this invite",async()=>{const {client,state}=fake({ownerId:"other-user"});await status(await room(uploadRequest(),client,openNow),401);assert(!state.uploaded.length);});
-Deno.test("account signup requires an unused invitation, consent and strong password",async()=>{
- const request=(body:any)=>new Request("https://edge.invalid/ot-room",{method:"POST",headers:{"Content-Type":"application/json","x-ot-invite":token},body:JSON.stringify({action:"create_account",login_name:"new-vom",password:"abc12345",candidate_name:"테스트",somoim_nickname:"테스트별명",consent:true,birth_year:"1995",job:"회사원",busking_experience:"0",busking_experience_unit:"COUNT",...body})});
+Deno.test("account signup requires an unused invitation, consent and a four-digit personal password",async()=>{
+ const request=(body:any)=>new Request("https://edge.invalid/ot-room",{method:"POST",headers:{"Content-Type":"application/json","x-ot-invite":token},body:JSON.stringify({action:"create_account",login_name:"new-vom",password:"0123",candidate_name:"테스트",somoim_nickname:"테스트별명",consent:true,birth_year:"1995",job:"회사원",busking_experience:"0",busking_experience_unit:"COUNT",...body})});
  await status(await room(request({}),fake().client,openNow),409);
  await status(await room(request({consent:false}),fake({noAccount:true}).client,openNow),400);
- await status(await room(request({password:"0000"}),fake({noAccount:true}).client,openNow),400);
+ for(const password of ["123","12345","abcd","abc12345",1234]) await status(await room(request({password}),fake({noAccount:true}).client,openNow),400);
  const {client,state}=fake({noAccount:true});await status(await room(request({}),client,openNow),201);assert(state.rpcCalls[0].name==="vom_ot_bind_account");assert(!("password" in state.rpcCalls[0].input.p_profile));
+});
+Deno.test('activation sets a four-digit password only on the member bound to the private invite, preserving leading zeroes',async()=>{
+ for(const linked of [true,false]){
+  const writes:any[]=[];
+  const service:any={from:(table:string)=>{let updating=false;const q:any={};for(const method of ['select','eq','is','gt','or'])q[method]=()=>q;q.update=()=>{updating=true;return q;};q.maybeSingle=async()=>({data:table==='members'?{id:8,name:'회원',auth_user_id:linked?userId:null}:updating?{id:inviteId}:{id:inviteId,member_id:8,expires_at:'2099-01-01T00:00:00Z',consumed_at:null,revoked_at:null},error:null});return q;},auth:{admin:{updateUserById:async(id:string,input:any)=>{writes.push({id,...input});return {data:{user:{email:'original@member.thisisvom.app'}},error:null};},createUser:async(input:any)=>{writes.push(input);return {data:{user:{id:userId}},error:null};}}},rpc:async(name:string,input:any)=>{assert(name==='vom_activate_member'&&input.p_invite_id===inviteId&&input.p_user_id===userId);return {error:null};}};
+  const request=(password:any)=>new Request('https://edge.invalid/vom-access',{method:'POST',headers:{'Content-Type':'application/json','x-ot-invite':token},body:JSON.stringify({action:'activate',password})});
+  for(const password of ['123','12345','abcd','abc12345',1234]) await status(await access(request(password),service,{}),400);
+  assert(writes.length===0);
+  await status(await access(request('0123'),service,{}),200);assert(Number(writes.length)===1&&writes[0].password==='VOM:0123');
+  assert(linked?writes[0].id===userId:writes[0].email==='member-8@member.thisisvom.app');
+ }
 });
 Deno.test("an unapproved Auth account remains pending regardless of role metadata",async()=>{
  const {client}=fake({user:{id:userId,user_metadata:{role:"admin"}}});
