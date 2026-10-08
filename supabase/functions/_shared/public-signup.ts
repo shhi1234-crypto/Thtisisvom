@@ -1,4 +1,4 @@
-import { ApiError, VIDEO_BUCKET, MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, signupDetails, validatePhoto, validateVideo, isRegistrationOpen, textField, tokenHash, newToken, validToken, json } from './ot-core.ts';
+import { ApiError, VIDEO_BUCKET, MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, signupDetails, validatePhoto, validateVideo, mediaLink, isRegistrationOpen, textField, tokenHash, newToken, validToken, json } from './ot-core.ts';
 import { applicantEmail, loginName, signupPassword } from './member-access.ts';
 import { notifyOT, notifyApproval } from './ot-push.ts';
 import { nextRegistrationAt } from './signup-reservations.ts';
@@ -46,13 +46,16 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     try {form=await new Response(stream,{headers:{'Content-Type':req.headers.get('content-type')||''}}).formData();}catch {throw new ApiError(oversized?413:400,oversized?'본인사진과 라이브 파일의 용량을 확인해 주세요.':'회원가입 신청 내용을 읽지 못했습니다.');}
     const fields=Object.fromEntries(form);
     if (fields.consent!=='yes') throw new ApiError(400,'가입 정보와 제출 자료의 수집·검토에 동의해 주세요.');
+    if (fields.live_confirmed!=='yes') throw new ApiError(400,'가창 부분 30초 이상, 믹싱·튠 보정 없는 라이브 자료인지 확인해 주세요.');
     if (fields.password!==fields.password_confirm) throw new ApiError(400,'비밀번호 확인이 일치하지 않습니다.');
     const name=loginName(fields.login_name),password=signupPassword(fields.password);
     const profile:any={...signupDetails(fields,now()),login_name:name,candidate_name:textField(fields.candidate_name,60,'이름'),somoim_nickname:textField(fields.somoim_nickname,80,'소모임 닉네임')};
     for (const [key,max,label] of [['phone',30,'연락처'],['region',80,'활동 지역'],['gender',20,'성별']] as const) profile[key]=textField(fields[key],max,label);
-    const photo=form.get('photo'),media=form.get('video');
-    if (!(photo instanceof File) || !(media instanceof File)) throw new ApiError(400,'본인사진과 라이브 영상 또는 음성 파일을 모두 선택해 주세요.');
-    const photoType=await validatePhoto(photo),mediaType=await validateVideo(media);
+    const source=fields.media_source||'FILE',photo=form.get('photo'),media=form.get('video');
+    if (!['FILE','LINK'].includes(String(source))) throw new ApiError(400,'라이브 자료 제출 방법을 선택해 주세요.');
+    if (!(photo instanceof File) || (source==='FILE'&&!(media instanceof File))) throw new ApiError(400,'본인사진과 라이브 영상·음성 파일 또는 링크를 등록해 주세요.');
+    const photoType=await validatePhoto(photo),mediaType=source==='FILE'?await validateVideo(media as File):null;
+    const link=source==='LINK'?mediaLink(fields.media_url):null;
     const {data:created,error:ce}=await service.auth.admin.createUser({email:await applicantEmail(name),password,email_confirm:true});
     if (ce || !created.user) throw new ApiError(409,'사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.');
     createdUser=created.user.id;
@@ -62,7 +65,9 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     if (ie) throw new Error('public_signup_record_failed');
     const {error:be}=await service.rpc('vom_ot_bind_account',{p_invite_id:inviteId,p_claim_id:claimId,p_user_id:createdUser,p_profile:profile});
     if (be) throw new Error('public_signup_bind_failed');
-    for (const [file,type,isPhoto] of [[photo,photoType,true],[media,mediaType,false]] as const) {
+    const uploads:{file:File,type:{mime:string,extension:string},isPhoto:boolean}[]=[{file:photo,type:photoType,isPhoto:true}];
+    if(mediaType)uploads.push({file:media as File,type:mediaType,isPhoto:false});
+    for (const {file,type,isPhoto} of uploads) {
         const uploadClaim=crypto.randomUUID(),path=`${isPhoto?'profiles':'reviews'}/${inviteId}/${uploadClaim}.${type.extension}`;
       const {data:reserved,error:re}=await service.from('ot_room_invites').update({upload_claim_id:uploadClaim,upload_claimed_at:now().toISOString()}).eq('id',inviteId).is('review_id',null).is('upload_claim_id',null).select('id').maybeSingle();
       if (re || !reserved) throw new Error('public_signup_upload_claim_failed');
@@ -91,8 +96,29 @@ export async function publicSignup(req: Request, service: any, origin: string, n
         }
       }
     }
+    if(link){
+      const claim=crypto.randomUUID();
+      const {data:claimed,error:claimError}=await service.from('ot_room_invites').update({upload_claim_id:claim,upload_claimed_at:now().toISOString()}).eq('id',inviteId).is('review_id',null).is('upload_claim_id',null).select('id').maybeSingle();
+      if(claimError||!claimed)throw new Error('public_signup_link_claim_failed');
+      const args={p_invite_id:inviteId,p_claim_id:claim,p_media_url:link};
+      const reserveLink=async()=>{
+        const {data,error}=await service.rpc('vom_ot_reserve_link',args);
+        if(error||!data?.scheduled_at)throw new ApiError(409,'예약 결과를 확인하지 못했습니다. 운영진에게 접수 여부를 확인해 주세요.');
+        scheduledAt=data.scheduled_at;committed=true;
+      };
+      if(!isRegistrationOpen(now()))await reserveLink();
+      else {
+        const {data,error}=await service.rpc('vom_ot_finalize_link',args);
+        if(error?.message?.includes('room_closed'))await reserveLink();
+        else if(error)throw new ApiError(409,'신청 결과를 확인하지 못했습니다. 운영진에게 접수 여부를 확인해 주세요.');
+        else {
+          committed=true;submittedAt=data?.submitted_at||null;checkAt=data?.check_at||null;
+          const reviewId=Number(data?.id);if(reviewId)try{await notifyOT(service,reviewId);}catch{console.error('OT notification queued');}
+        }
+      }
+    }
     const {data:config}=await service.from('vom_push_config').select('vapid_public_key').eq('id',1).maybeSingle();
-    return json(origin,{ok:true,submitted:true,status:scheduledAt?'SCHEDULED':'IN_REVIEW',scheduled_at:scheduledAt,submitted_at:submittedAt,check_at:checkAt||(scheduledAt?new Date(Date.parse(scheduledAt)+3*3600000).toISOString():null),notification_token:notificationToken,push_public_key:config?.vapid_public_key||null,message:scheduledAt?'신청이 예약됐습니다. 익일 오전 9시에 자동 접수되며 승인 후 로그인할 수 있습니다.':'회원가입 신청이 접수됐습니다. 정식 접수 후 3시간 이후 가입 결과를 직접 확인해 주세요. 검토 중이면 익일 안내될 수 있습니다.'},201);
+    return json(origin,{ok:true,submitted:true,status:scheduledAt?'SCHEDULED':'IN_REVIEW',scheduled_at:scheduledAt,submitted_at:submittedAt,check_at:checkAt||(scheduledAt?new Date(Date.parse(scheduledAt)+3*3600000).toISOString():null),notification_token:notificationToken,push_public_key:config?.vapid_public_key||null,message:scheduledAt?'신청이 예약되었습니다. 다음 날 오전 9시에 자동 접수됩니다.':'가입 신청이 접수되었습니다. 접수 후 3시간 이내에 가입 결과를 확인할 수 있습니다.'},201);
   } finally {
     if (createdUser && !committed) {
       try {

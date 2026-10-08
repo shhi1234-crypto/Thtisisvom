@@ -1,4 +1,4 @@
-import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo, validatePhoto, signupDetails } from "../supabase/functions/_shared/ot-core.ts";
+import { ApiError, isRegistrationOpen, newToken, tokenHash, validateVideo, validatePhoto, signupDetails, mediaLink } from "../supabase/functions/_shared/ot-core.ts";
 import { handle as room } from "../supabase/functions/ot-room/index.ts";
 import { handle as access } from "../supabase/functions/vom-access/index.ts";
 import { handle as review } from "../supabase/functions/ot-review/index.ts";
@@ -44,7 +44,7 @@ function fake(options: Record<string, any> = {}) {
       if (table === "member_account_settings") return {data:{must_change_password:!!options.mustChange},error:null};
       if (table === "ot_reviews") {
         if (operation === "update" && (input.notification_claimed_at || input.approval_notification_claimed_at)) return { data: null, error: null };
-        return { data: { status: options.reviewStatus||"IN_REVIEW", created_at:"2026-10-08T00:00:00Z", video_source: "FILE", video_file_path: "reviews/safe/video.mp4", completed_at: options.reviewCompleted||null }, error: null };
+        return { data: { status: options.reviewStatus||"IN_REVIEW", created_at:"2026-10-08T00:00:00Z", video_source: options.videoSource||"FILE", video_url:options.videoUrl||null, video_file_path: "reviews/safe/video.mp4", completed_at: options.reviewCompleted||null }, error: null };
       }
       return { data: [], error: null };
     }
@@ -58,7 +58,7 @@ function fake(options: Record<string, any> = {}) {
     rpc: async (name: string, input: any) => {
       state.rpcCalls.push({ name, input });
       if(name==="vom_claim_login_attempt")return {data:options.blockLogin?false:true,error:null};
-      if(name==="vom_ot_reserve_upload"){state.reserved=true;return {data:{scheduled_at:"2026-10-08T00:00:00Z"},error:options.reserveLost?{message:"lost"}:null};}
+      if(name==="vom_ot_reserve_upload"||name==="vom_ot_reserve_link"){state.reserved=true;return {data:{scheduled_at:"2026-10-08T00:00:00Z"},error:options.reserveLost?{message:"lost"}:null};}
       if (name==="vom_ot_bind_account") return {data:null,error:null};
       if (name==="vom_ot_finalize_photo") {state.photoPath=input.p_file_path;return {data:null,error:options.photoCommitLost?{message:"lost"}:null};}
       if (options.commitLost) { state.committed = true; return { data: null, error: { message: "network failure" } }; }
@@ -146,7 +146,7 @@ Deno.test("detected audio MIME is applied to stored bytes even when the submitte
 
 function publicRequest(changes:Record<string,any>={}) {
  const data=new FormData();
- for(const [key,value] of Object.entries({login_name:'public-test',password:'1234',password_confirm:'1234',phone:'01012345678',region:'서울',gender:'기타',candidate_name:'가입자',somoim_nickname:'가입별명',birth_year:'1995',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT',consent:'yes',...changes})) if(value!==null)data.set(key,value);
+ for(const [key,value] of Object.entries({login_name:'public-test',password:'1234',password_confirm:'1234',phone:'01012345678',region:'서울',gender:'기타',candidate_name:'가입자',somoim_nickname:'가입별명',birth_year:'1995',job:'회사원',busking_experience:'0',busking_experience_unit:'COUNT',consent:'yes',live_confirmed:'yes',media_source:'FILE',...changes})) if(value!==null)data.set(key,value);
  if(!('photo' in changes))data.set('photo',new File([new Uint8Array([137,80,78,71,13,10,26,10,0,0,0,0])],'photo.png',{type:'image/png'}));
  if(!('video' in changes))data.set('video',videoFile());
  return new Request('https://edge.invalid/ot-room?signup=public',{method:'POST',body:data});
@@ -266,15 +266,23 @@ Deno.test('public birthday summary contains only the next KST date, while people
 });
 Deno.test('reservation worker runs during registration hours, renews private claims and commits once',async()=>{
  const {processSignupReservations}=await import('../supabase/functions/_shared/signup-reservations.ts');
+ for(const linked of [false,true]){
  let statusValue='WAITING',reviewId=0,finalized=0,reads=0;
  const service:any={from:(table:string)=>{let operation='select',input:any;const q:any={};for(const method of ['eq','is','in','lte','or','order','limit','select'])q[method]=()=>q;q.update=(v:any)=>{operation='update';input=v;return q;};const result=()=>{
   reads++;if(table==='ot_signup_reservations'){
    if(operation==='update'){statusValue=input.status||statusValue;return {data:{invite_id:inviteId},error:null};}
-   return {data:statusValue==='COMPLETE'?[]:[{invite_id:inviteId,claim_id:token,media_path:'reviews/private/live.mp3',file_name:'live.mp3'}],error:null};
+   return {data:statusValue==='COMPLETE'?[]:[{invite_id:inviteId,claim_id:token,media_path:linked?null:'reviews/private/live.mp3',file_name:'live.mp3',media_source:linked?'LINK':'FILE',media_url:linked?'https://youtu.be/live-test':null}],error:null};
   }
   if(table==='ot_room_invites')return {data:{review_id:reviewId,revoked_at:null,expires_at:'2026-10-09T00:00:00Z'},error:null};
-  return {data:null,error:null};};q.maybeSingle=async()=>result();q.then=(a:any,b:any)=>Promise.resolve(result()).then(a,b);return q;},rpc:async(name:string)=>{assert(name==='vom_ot_finalize_upload');reviewId=1;finalized++;return {data:{id:1},error:null};}};
+  return {data:null,error:null};};q.maybeSingle=async()=>result();q.then=(a:any,b:any)=>Promise.resolve(result()).then(a,b);return q;},rpc:async(name:string)=>{assert(name===(linked?'vom_ot_finalize_link':'vom_ot_finalize_upload'));reviewId=1;finalized++;return {data:{id:1},error:null};}};
  assert(await processSignupReservations(service,()=>new Date('2026-10-07T09:00:00Z'))===0&&reads===0);
  assert(await processSignupReservations(service,openNow)===1&&statusValue==='COMPLETE'&&finalized===1);
  assert(await processSignupReservations(service,openNow)===0&&finalized===1);
+ }
 });
+
+Deno.test('live criteria confirmation is required before any signup side effects',async()=>{const {client,state}=fake();await status(await room(publicRequest({live_confirmed:null}),client,openNow),400);assert(state.uploaded.length===0&&state.rpcCalls.length===0);});
+Deno.test('HTTPS live links upload only the photo and create a private ordinary review',async()=>{const {client,state}=fake();const response=await room(publicRequest({media_source:'LINK',media_url:'https://youtu.be/live-test',video:null}),client,openNow);await status(response,201);assert(state.uploaded.length===1&&state.uploaded[0].startsWith('profiles/'));assert(state.rpcCalls.some(x=>x.name==='vom_ot_finalize_link'&&x.input.p_media_url==='https://youtu.be/live-test'));assert(!state.rpcCalls.some(x=>x.name==='vom_ot_finalize_upload'));assert(!(await response.text()).includes('youtu.be'));});
+Deno.test('live links preserve after-hours reservations and uncertain commit recovery',async()=>{for(const reserveLost of [false,true]){const {client,state}=fake({reserveLost});const response=await room(publicRequest({media_source:'LINK',media_url:'https://drive.google.com/file/d/test/view',video:null}),client,()=>new Date('2026-10-07T10:00:00Z'));await status(response,reserveLost?409:201);assert(state.reserved&&state.uploaded.length===1&&!state.removed.length&&!state.deletedUsers.length);if(!reserveLost)assert((await response.json()).status==='SCHEDULED');}});
+Deno.test('unsafe or missing live links never create accounts or upload files',async()=>{for(const link of ['', 'javascript:alert(1)','http://youtu.be/test','https://user:secret@example.com/live','https://localhost/live','https://127.0.0.1/live','https://[::1]/live','https://example.com/'+ 'a'.repeat(2050)]){const {client,state}=fake();await status(await room(publicRequest({media_source:'LINK',media_url:link,video:null}),client,openNow),400);assert(!state.uploaded.length&&!state.rpcCalls.length);}});
+Deno.test('only authenticated approved operators can retrieve submitted live links',async()=>{const options={videoSource:'LINK',videoUrl:'https://youtu.be/live-test'};await status(await review(operatorRequest({action:'media_link',review_id:1},false),fake(options).client),401);await status(await review(operatorRequest({action:'media_link',review_id:1}),fake({...options,member:{id:8,role:'모임원',is_active:true}}).client),403);const response=await review(operatorRequest({action:'media_link',review_id:1}),fake({...options,admin:true}).client);await status(response,200);assert((await response.json()).url==='https://youtu.be/live-test'&&response.headers.get('Cache-Control')==='no-store');});

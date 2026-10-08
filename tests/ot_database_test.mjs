@@ -84,9 +84,11 @@ try{
   await db.exec(await readFile(new URL('../supabase/migrations/20261007095538_public_archive_and_member_birthdays.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261007095552_signup_reservations_and_pin_login.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261008012032_signup_result_and_operator_notifications.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(await readFile(new URL('../supabase/migrations/20261008051703_signup_live_links.sql',import.meta.url),'utf8'));checks++;
   for(const role of ['anon','authenticated']){await db.exec('set role '+role);await rejects('select * from public.ot_operator_push_deliveries',[],/permission denied/);await db.exec('reset role');}
   assert.equal((await ok('select char_length(invite_token) as length from public.vom_push_invites where id=1')).rows[0].length,64);
   assert.equal((await ok('select invite_id from public.vom_push_subscriptions where id=1')).rows[0].invite_id,1);
+  for(const role of ['anon','authenticated']){await db.exec('set role '+role);for(const fn of ['vom_ot_finalize_link','vom_ot_reserve_link'])await rejects('select public.'+fn+'($1,$2,$3)',[uid(99),uid(99),'https://youtu.be/private'],/permission denied/);await db.exec('reset role');}
   await db.exec('set role anon');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
   await db.exec('set role authenticated');await rejects('select * from public.ot_applicant_push_subscriptions',[],/permission denied/);await db.exec('reset role');
   assert.equal((await ok('select count(*)::int as count from public.ot_room_operator_access')).rows[0].count,0,'legacy role/account links must not auto-grant OT access');
@@ -94,7 +96,7 @@ try{
   await db.query('insert into public.ot_room_operator_access(user_id,member_id,granted_by) select auth_user_id,id,$1 from public.members where role=$2',[admin,'운영진']);
   // Install the exact migration first. Only its clock dependency is then replaced
   // locally so the same SQL body can exercise opening/closing boundaries at any hour.
-  for(const signature of ['public.vom_ot_finalize_upload(uuid,uuid,text,text,text,text)','public.vom_ot_record_vote(bigint,bigint,text,uuid)','public.vom_ot_finalize_photo(uuid,uuid,text,text)','public.vom_ot_reserve_upload(uuid,uuid,text,text)']){
+  for(const signature of ['public.vom_ot_finalize_upload(uuid,uuid,text,text,text,text)','public.vom_ot_record_vote(bigint,bigint,text,uuid)','public.vom_ot_finalize_photo(uuid,uuid,text,text)','public.vom_ot_reserve_upload(uuid,uuid,text,text)','public.vom_ot_finalize_link(uuid,uuid,text)','public.vom_ot_reserve_link(uuid,uuid,text)']){
     const {rows}=await db.query('select pg_get_functiondef($1::regprocedure) as definition',[signature]);
     await db.exec(rows[0].definition.replaceAll('clock_timestamp()','ot_test.clock_timestamp()'));
   }
@@ -241,5 +243,28 @@ try{
   await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(8)]);await db.exec('set role authenticated');assert.equal((await ok('select count(*)::int as count from public.events_public where id=90')).rows[0].count,1);
   await db.exec('reset role;set role service_role');for(let n=0;n<5;n++)assert.equal((await ok('select public.vom_claim_login_attempt($1) as allowed',['a'.repeat(64)])).rows[0].allowed,true);assert.equal((await ok('select public.vom_claim_login_attempt($1) as allowed',['a'.repeat(64)])).rows[0].allowed,false);
   await db.exec('reset role');
+  for(const reservedLink of [false,true]){
+    await db.exec('reset role');
+    const linkInvite=uid(reservedLink?702:701),linkClaim=uid(reservedLink?802:801),linkUser=uid(reservedLink?902:901);
+    await db.query('insert into auth.users(id) values($1)',[linkUser]);
+    await db.query("insert into public.ot_room_invites(id,token_hash,issued_by,expires_at,signup_source,applicant_user_id,upload_claim_id,upload_claimed_at) values($1,$2,$3,$4,'PUBLIC',$5,$6,now())",[linkInvite,String(reservedLink?702:701).padStart(64,'0'),admin,'2026-10-10T00:00:00Z',linkUser,linkClaim]);
+    await db.query("insert into public.ot_room_applicants(invite_id,auth_user_id,login_name,candidate_name,somoim_nickname,form_version,profile_photo_path,profile_photo_name,birth_year,job,busking_experience,busking_experience_unit) values($1,$2,$3,'링크 가입자','링크 별명',2,'profiles/test/me.png','me.png',1995,'회사원',0,'COUNT')",[linkInvite,linkUser,reservedLink?'reserved-link':'open-link']);
+    await db.query('update ot_test.clock set now_at=$1',[reservedLink?'2026-10-07T10:00:00Z':'2026-10-07T01:00:00Z']);
+    await db.exec('set role service_role');
+    await rejects('select public.vom_ot_finalize_link($1,$2,$3)',[linkInvite,uid(999),'https://youtu.be/private'],/invalid_link_claim/);
+    await rejects('select public.vom_ot_finalize_link($1,$2,$3)',[linkInvite,linkClaim,'javascript:alert(1)'],/invalid_media_link/);
+    if(reservedLink){
+      await rejects('select public.vom_ot_finalize_link($1,$2,$3)',[linkInvite,linkClaim,'https://youtu.be/private'],/room_closed/);
+      const receipt=(await ok('select public.vom_ot_reserve_link($1,$2,$3) as data',[linkInvite,linkClaim,'https://youtu.be/private'])).rows[0].data;
+      assert.equal(new Date(receipt.scheduled_at).toISOString(),'2026-10-08T00:00:00.000Z');
+      const row=(await ok('select media_source,media_path,media_url from public.ot_signup_reservations where invite_id=$1',[linkInvite])).rows[0];assert.equal(row.media_source,'LINK');assert.equal(row.media_path,null);assert.equal(row.media_url,'https://youtu.be/private');
+      await db.exec('reset role');await db.query('update ot_test.clock set now_at=$1',['2026-10-08T00:00:00Z']);await db.exec('set role service_role');
+    }
+    const receipt=(await ok('select public.vom_ot_finalize_link($1,$2,$3) as data',[linkInvite,linkClaim,'https://youtu.be/private'])).rows[0].data;
+    const row=(await ok('select candidate_name,video_source,video_file_path,video_url,required_majority from public.ot_reviews where id=$1',[receipt.id])).rows[0];
+    assert.equal(row.video_source,'LINK');assert.equal(row.video_file_path,null);assert.equal(row.video_url,'https://youtu.be/private');assert.equal(row.candidate_name,'링크 가입자');assert.equal(row.required_majority,4);assert.equal(Date.parse(receipt.check_at)-Date.parse(receipt.submitted_at),3*3600000);
+    await rejects('select public.vom_ot_finalize_link($1,$2,$3)',[linkInvite,linkClaim,'https://youtu.be/private'],/invalid_link_claim/);
+    await db.exec('reset role');
+  }
   console.log('PostgreSQL migration and security checks passed:',checks);
 }finally{await db.close();}
