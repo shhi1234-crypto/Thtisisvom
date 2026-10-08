@@ -56,9 +56,10 @@ h1{margin:7px 0 7px;font-size:48px;line-height:1}.sub{margin:0 0 28px;color:var(
 @media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.stats .stat:last-child{grid-column:1/-1}.grid{grid-template-columns:1fr}.page{padding-top:30px}.day{grid-template-columns:58px 1fr 50px 50px}}
 </style>
   <script src="/assets/vom-member-context.js?v=1"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
-<header class="header"><a class="brand" href="/"><strong>VOM</strong><small>VOICE OF MELODY</small></a><a class="back" href="/members/">MEMBERS →</a></header>
+<header class="header vom-header"><a class="brand vom-header-brand" href="/"><strong>VOM</strong><small>VOICE OF MELODY</small></a><div class="vom-header-actions"><a class="back" href="/members/">MEMBERS →</a></div></header>
 <main class="page">
   <div class="eyebrow">ADMIN ONLY</div>
   <h1>Site Log</h1>
@@ -145,6 +146,6 @@ function fmt(v){return Number(v||0).toLocaleString('ko-KR')}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 start();
 </script>
-<script src="/assets/vom-shell.js?v=11"></script>
+<script src="/assets/vom-shell.js?v=12"></script>
 </body>
 </html>

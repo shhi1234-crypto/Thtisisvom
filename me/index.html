@@ -25,12 +25,13 @@
 .admin-login-panel{margin-top:24px;padding-top:18px;border-top:1px solid #e9e4f1}.admin-login-panel summary{display:flex;justify-content:space-between;color:#7059cc;font-size:14px;font-weight:750;cursor:pointer}.admin-login-panel form{display:grid;gap:16px;margin-top:18px}.admin-login-panel summary::marker{content:""}
 </style>
   <script src="/assets/vom-member-context.js?v=1"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
 <div class="aurora"></div>
-<header class="header">
-  <a class="brand" href="/"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
-  <div class="header-actions"><button class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button></div>
+<header class="header vom-header">
+  <a class="brand vom-header-brand" href="/"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <div class="header-actions vom-header-actions"><button class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button></div>
 </header>
 <main class="page">
   <p class="eyebrow">PERSONAL SPACE</p>
@@ -49,8 +50,8 @@ const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
 const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const app=document.getElementById('app');
-let loginMembers=[],loginMembersError='',loginMode='MEMBER',pickerIndex=-1;try{if(localStorage.getItem('vom-login-mode')==='ID')loginMode='ID';}catch(_){}
-let members=[],session=null,myMember=null,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false;
+let loginMembers=[],loginMembersError='',pickerIndex=-1;
+let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false;
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function say(message,isError=false){const el=document.getElementById('toast');el.textContent=message;el.className='toast show'+(isError?' error':'');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.className='toast',3400)}
@@ -63,10 +64,11 @@ function memberName(id){const m=members.find(x=>String(x.id)===String(id));retur
 async function invokeAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error){let message=error.message||'요청을 처리하지 못했습니다.';try{const text=await error.context?.text?.();const parsed=JSON.parse(text);message=parsed.error||message}catch(_){ }throw new Error(message)}if(data?.error)throw new Error(data.error);return data}
 async function loadMembers(){const {data,error}=await db.from('members_public').select('id,name,nickname,region,role,profile_image_url,favorite_singers,job,join_order').order('join_order',{ascending:true});if(error)throw error;members=data||[]}
 async function loadSession(){
- const {data}=await db.auth.getSession();session=data.session||null;myMember=null;accountSetting=null;mySongs=[];editingMySongId=null;if(!session)return;
+ const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;if(!session)return;
  let context;try{context=await requestAccess({action:'context'},session.access_token);}catch(error){if(error.status===401||error.status===403){await db.auth.signOut({scope:'local'});session=null;return;}throw error;}
  if(context.state==='PENDING'){await db.auth.signOut({scope:'local'});session=null;return;}
  if(!['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(context.state))return;
+ if(context.is_admin===true){isAdministrator=true;return;}
  const account=await invokeAccount({action:'whoami'});myMember=account.member||null;
  if(myMember){const {data:setting,error}=await db.from('member_account_settings').select('password_hint,must_change_password,password_changed_at').eq('member_id',myMember.id).maybeSingle();if(error)throw error;accountSetting=setting||null;}
 }
@@ -83,26 +85,27 @@ async function loadMySongs(){
   mySongs=data||[];
 }
 
-function render(){if(myMember)renderDashboard();else renderWelcome()}
+function render(){
+ document.querySelector('.eyebrow').textContent=isAdministrator?'ADMIN SPACE':'PERSONAL SPACE';
+ document.querySelector('.title').textContent=isAdministrator?'관리자 공간':'MY VOM';
+ document.querySelector('.lead').textContent=isAdministrator?'운영 자료와 가입 신청을 한곳에서 관리해요.':'내 프로필과 MY SETLIST, 문의를 한곳에서 관리해요.';
+ if(isAdministrator)renderAdminDashboard();else if(myMember)renderDashboard();else renderWelcome();
+}
+function renderAdminDashboard(){
+ app.innerHTML='<section class="card login-main"><h2>관리자로 로그인되어 있어요.</h2><p class="card-intro">필요한 운영 메뉴를 선택해 주세요.</p><div class="quick-links"><a class="quick-link" href="/admin-settings/"><div><b>운영 자료</b><small>운영 자료 · 이미지 보관함 · 알림 관리</small></div><span>→</span></a><a class="quick-link" href="/ot-admin/"><div><b>가입 관리</b><small>가입 신청 확인 · 사진과 라이브 자료 검토</small></div><span>→</span></a><a class="quick-link" href="/members/"><div><b>회원 관리</b><small>회원 정보 · 개인 계정 관리</small></div><span>→</span></a></div><button class="logout-button" onclick="logout()">로그아웃</button></section>';
+}
 
 function renderWelcome(){
  app.innerHTML=`<section class="card login-main"><div class="login-heading"><h2>개인 로그인 <span class="en">MY VOM</span></h2><p class="card-intro">회원 이름을 검색해 선택하고, 기존 개인 비밀번호를 입력해 주세요.</p></div>
- <div class="login-tabs" role="tablist" aria-label="로그인 방법"><button id="memberLoginTab" type="button" role="tab" aria-selected="true" aria-controls="memberLoginPanel" onclick="setLoginMode('MEMBER')">회원 이름으로 로그인</button><button id="idLoginTab" type="button" role="tab" aria-selected="false" aria-controls="idLoginPanel" onclick="setLoginMode('ID')">가입 아이디로 로그인</button></div>
  <form id="memberLoginForm" name="login" method="post" action="/me/" autocomplete="on" onsubmit="event.preventDefault();loginAccount()"><div class="login-fields">
- <div class="field"><div id="memberLoginPanel" role="tabpanel" aria-labelledby="memberLoginTab"><label for="loginNameSearch">아이디(회원이름)</label><div id="loginMemberPicker" class="member-picker"><input id="loginNameSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="loginMemberOptions" name="username" autocomplete="username" placeholder="이름 또는 닉네임 검색" maxlength="80" required><button id="memberPickerToggle" type="button" class="picker-toggle" aria-label="회원 이름 목록 열기">⌄</button><input id="loginMemberId" type="hidden"><div id="loginMemberOptions" class="member-options" role="listbox" aria-label="회원 이름 검색 결과" hidden></div></div><p id="memberPickerNote" class="help"></p></div>
- <div id="idLoginPanel" role="tabpanel" aria-labelledby="idLoginTab" hidden><label for="loginName">아이디(회원이름)</label><input id="loginName" name="username" autocomplete="username" maxlength="80" placeholder="회원가입 때 설정한 아이디" disabled><p class="help">가입이 승인된 뒤 신청 때 설정한 아이디로 로그인할 수 있어요.</p></div></div>
+ <div class="field"><label for="loginNameSearch">회원 이름</label><div id="loginMemberPicker" class="member-picker"><input id="loginNameSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="loginMemberOptions" name="username" autocomplete="username" placeholder="회원 이름 검색" maxlength="80" required><button id="memberPickerToggle" type="button" class="picker-toggle" aria-label="회원 이름 목록 열기">⌄</button><input id="loginMemberId" type="hidden"><div id="loginMemberOptions" class="member-options" role="listbox" aria-label="회원 이름 검색 결과" hidden></div></div><p id="memberPickerNote" class="help"></p></div>
  <div class="field"><label for="loginPassword">개인 비밀번호</label><input id="loginPassword" name="password" type="password" autocomplete="current-password" maxlength="64" required></div></div><p id="loginMessage" class="login-message" role="alert" hidden></p><button id="loginButton" class="primary" type="submit">로그인</button></form>
  <p class="account-note">최초 비밀번호 설정이나 비밀번호 재설정은 운영진이 발급한 개인 링크에서 진행해 주세요.</p><div class="signup-guide"><div><strong>처음 오셨나요?</strong><p>사진과 라이브 파일을 제출하고 VOM에 함께해요.</p></div><a class="login-signup" href="/ot-room/">회원가입하기 <span>→</span></a></div>
  <p class="account-note">이미 신청하셨나요? <a href="/ot-room/?result=1">가입 결과 확인하기 · 로그인 없이 확인</a></p><details class="admin-login-panel"><summary>관리자 로그인 <span>⌄</span></summary><form id="adminLoginForm" method="post" action="/me/" autocomplete="on" onsubmit="event.preventDefault();loginAdministrator()"><div class="field"><label for="adminEmail">관리자 이메일</label><input id="adminEmail" name="username" type="email" autocomplete="username" required></div><div class="field"><label for="adminPassword">관리자 비밀번호</label><input id="adminPassword" name="password" type="password" autocomplete="current-password" required></div><p id="adminLoginNotice" class="login-message" role="alert" hidden></p><button id="adminLoginSubmit" class="primary" type="submit">관리자 로그인</button></form></details></section>`;
- bindMemberPicker();setLoginMode(loginMode);
+ bindMemberPicker();
 }
 function loginNotice(message){const el=document.getElementById('loginMessage');if(el){el.textContent=message;el.hidden=!message;}}
 async function loadLoginMembers(){const {data,error}=await db.from('members_display').select('id,name,nickname').eq('is_active',true).order('join_order',{ascending:true});if(error)throw new Error('회원 목록을 불러오지 못했습니다. 잠시 후 다시 시도하거나 가입 아이디로 로그인해 주세요.');loginMembers=data||[];loginMembersError='';}
-function setLoginMode(mode){
- loginMode=mode;try{localStorage.setItem('vom-login-mode',mode);}catch(_){}const member=mode==='MEMBER';document.getElementById('memberLoginPanel').hidden=!member;document.getElementById('idLoginPanel').hidden=member;
- document.getElementById('loginNameSearch').disabled=!member;document.getElementById('loginNameSearch').required=member;document.getElementById('loginName').disabled=member;document.getElementById('loginName').required=!member;
- document.getElementById('memberLoginTab').setAttribute('aria-selected',String(member));document.getElementById('idLoginTab').setAttribute('aria-selected',String(!member));closeMemberPicker();loginNotice('');
-}
 function pickerMatches(){const query=document.getElementById('loginNameSearch').value.trim().replace(/\s+/g,'').toLowerCase();return loginMembers.filter(member=>[member.name,member.nickname].some(name=>String(name||'').replace(/\s+/g,'').toLowerCase().includes(query)));}
 function closeMemberPicker(){const input=document.getElementById('loginNameSearch');if(!input)return;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');document.getElementById('loginMemberOptions').hidden=true;pickerIndex=-1;}
 function drawMemberPicker(){
@@ -344,7 +347,7 @@ async function loginAdministrator(){
 async function loginAccount(){
  const form=document.getElementById('memberLoginForm');if(!form.reportValidity())return;
  const btn=document.getElementById('loginButton');if(btn.disabled)return;let memberId=null,name='';
- if(loginMode==='MEMBER'){memberId=Number(document.getElementById('loginMemberId').value)||null;if(!memberId){const typed=document.getElementById('loginNameSearch').value.trim();const exact=loginMembers.filter(member=>member.name===typed||member.nickname===typed);if(exact.length===1){chooseLoginMember(exact[0].id);memberId=Number(exact[0].id);}}if(!memberId){drawMemberPicker();loginNotice('회원 이름을 검색한 뒤 목록에서 선택해 주세요.');return;}name=document.getElementById('loginNameSearch').value;}else name=document.getElementById('loginName').value;
+ memberId=Number(document.getElementById('loginMemberId').value)||null;if(!memberId){const typed=document.getElementById('loginNameSearch').value.trim();const exact=loginMembers.filter(member=>member.name===typed);if(exact.length===1){chooseLoginMember(exact[0].id);memberId=Number(exact[0].id);}}if(!memberId){drawMemberPicker();loginNotice('회원 이름을 검색한 뒤 목록에서 선택해 주세요.');return;}name=document.getElementById('loginNameSearch').value;
  btn.disabled=true;btn.textContent='로그인 확인 중…';loginNotice('');closeMemberPicker();
  try{
   const data=await requestAccess({action:'login',login_name:name,...(memberId?{member_id:memberId}:{}),password:document.getElementById('loginPassword').value});
@@ -357,12 +360,12 @@ async function loginAccount(){
 
 async function saveProfile(){if(!myMember)return;const favorite=document.getElementById('profileFavorite').value.trim();const job=document.getElementById('profileJob').value.trim();const {error}=await db.from('members').update({favorite_singers:favorite||null,job:job||null}).eq('id',myMember.id);if(error)return say(error.message||'프로필을 저장하지 못했습니다.',true);myMember.favorite_singers=favorite;myMember.job=job;say('프로필을 저장했어요.')}
 async function changePassword(){const password=document.getElementById('newPassword').value;const confirm=document.getElementById('newPasswordConfirm').value;const hint=document.getElementById('newHint').value.trim();if(password.length<8||password.length>64)return say('새 비밀번호는 8~64자로 입력해 주세요.',true);if(password!==confirm)return say('새 비밀번호 확인이 일치하지 않습니다.',true);const {error}=await db.auth.updateUser({password:authPassword(password)});if(error)return say(error.message||'비밀번호를 바꾸지 못했습니다.',true);const {error:settingError}=await db.from('member_account_settings').update({password_hint:hint||null,must_change_password:false,password_changed_at:new Date().toISOString()}).eq('member_id',myMember.id);if(settingError)return say(settingError.message||'힌트를 저장하지 못했습니다.',true);accountSetting={...(accountSetting||{}),password_hint:hint,must_change_password:false};render();say('개인 비밀번호를 저장했어요.')}
-async function logout(){await db.auth.signOut();session=null;myMember=null;accountSetting=null;mySongs=[];editingMySongId=null;render();window.vomRefreshShell?.();say('로그아웃했어요.')}
+async function logout(){await db.auth.signOut();session=null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();window.vomRefreshShell?.();say('로그아웃했어요.')}
 function openMenu(){const el=document.getElementById('menuOverlay');el.classList.add('open');el.setAttribute('aria-hidden','false')}
 function closeMenu(){const el=document.getElementById('menuOverlay');el.classList.remove('open');el.setAttribute('aria-hidden','true')}
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
-(async()=>{try{await loadSession();if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();}}catch(error){try{await loadLoginMembers();}catch(_){}renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
+(async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();}}catch(error){try{await loadLoginMembers();}catch(_){}renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
-<script src="/assets/vom-shell.js?v=11"></script>
+<script src="/assets/vom-shell.js?v=12"></script>
 </body>
 </html>

@@ -16,9 +16,10 @@ export async function handle(req: Request, service: any, authClient: any) {
     }
     if (body.action === "login" || body.action === "application_status") {
       const lookup=body.action==='application_status';
-      const name=lookup?loginName(body.login_name):String(body.login_name||"").trim();
+      const byName=lookup&&body.candidate_name!==undefined;
+      const name=byName?String(body.candidate_name||'').trim():lookup?loginName(body.login_name):String(body.login_name||"").trim();
       const password=body.password;
-      if ((!name && !body.member_id) || name.length>80 || typeof password!=="string" || password.length>64 || !password) throw new ApiError(400,"아이디와 개인 비밀번호를 입력해 주세요.");
+      if ((!name && !body.member_id) || name.length>(byName?60:80) || /[\x00-\x1f\x7f]/.test(name) || typeof password!=="string" || password.length>64 || !password) throw new ApiError(400,"이름과 개인 비밀번호를 입력해 주세요.");
       // A selected public display name resolves to the linked Auth identity on the server.
       // No email, password hint or account metadata is exposed in the picker.
       let selected=null;
@@ -36,8 +37,8 @@ export async function handle(req: Request, service: any, authClient: any) {
       }
       let identity=selected?.auth_user_id;
       if(!identity){
-        const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq("login_name",name.toLowerCase()).maybeSingle();
-        if(error)throw new Error("login_identity_lookup_failed");
+        const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq(byName?'candidate_name':'login_name',byName?name:name.toLowerCase()).maybeSingle();
+        if(error){if(byName&&error.code==='PGRST116')throw new ApiError(400,'이름만으로 신청을 확인하기 어렵습니다. 소모임 운영진에게 확인해 주세요.');throw new Error("login_identity_lookup_failed");}
         identity=data?.auth_user_id;
       }
       const attemptKey=await tokenHash(identity?"user:"+identity:"login:"+name.toLowerCase());
@@ -45,20 +46,23 @@ export async function handle(req: Request, service: any, authClient: any) {
       if(attemptError)throw new Error("login_attempt_check_failed");
       if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
       let result;
-      if (selected) {
-        const {data,error}=await service.auth.admin.getUserById(selected.auth_user_id);
+      const resolvedId=selected?.auth_user_id||(byName?identity:null);
+      if (resolvedId) {
+        const {data,error}=await service.auth.admin.getUserById(resolvedId);
         if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
         result=await authClient.auth.signInWithPassword({email:data.user.email,password:"VOM:"+password});
         if (result.error) result=await authClient.auth.signInWithPassword({email:data.user.email,password});
-        if (!result.error && result.data.session?.user.id!==selected.auth_user_id) throw new ApiError(401,"개인 계정 정보를 다시 확인해 주세요.");
+        if (!result.error && result.data.session?.user.id!==resolvedId){await authClient.auth.signOut({scope:'local'});throw new ApiError(401,"개인 계정 정보를 다시 확인해 주세요.");}
+      } else if(byName){
+        throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
       } else {
         result=await authClient.auth.signInWithPassword({email:await applicantEmail(name.toLowerCase()),password:"VOM:"+password});
       }
-      if (result.error || !result.data.session) throw new ApiError(401,"회원 이름 또는 아이디와 개인 비밀번호를 다시 확인해 주세요.");
+      if (result.error || !result.data.session) throw new ApiError(401,"회원 이름과 개인 비밀번호를 다시 확인해 주세요.");
       const session=result.data.session;
       if(lookup){
         try {
-          if(!identity||session.user.id!==identity)throw new ApiError(401,'신청 아이디와 비밀번호를 다시 확인해 주세요.');
+          if(!identity||session.user.id!==identity)throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
           const status=await applicationStatus(service,session.user.id);
           await service.from('vom_login_attempts').delete().eq('login_hash',attemptKey);
           return json(origin,{ok:true,...status});

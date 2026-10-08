@@ -7,14 +7,15 @@
   <meta name="referrer" content="no-referrer">
   <title>회원가입 · VOM</title>
   <link rel="icon" href="/favicon.png?v=4">
-  <link rel="stylesheet" href="/assets/ot-room.css?v=7">
+  <link rel="stylesheet" href="/assets/ot-room.css?v=8">
   <link rel="manifest" href="/manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#7660dd">
-  <script defer src="/assets/public-signup.js?v=6"></script>
+  <script defer src="/assets/public-signup.js?v=7"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body class="ot-public">
-<header class="ot-header"><a class="ot-brand" href="/">VOM <small>VOICE OF MELODY</small></a><a class="ot-button" href="/me/">로그인하기</a></header>
+<header class="ot-header vom-header"><a class="ot-brand vom-header-brand" href="/">VOM <small>VOICE OF MELODY</small></a><div class="vom-header-actions"><button type="button" class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button></div></header>
 <main class="ot-page ot-applicant"><p class="ot-eyebrow">WELCOME TO VOM</p><h1>회원가입</h1>
 <p class="ot-lead">소모임 가입 인사를 작성하셨나요? 가입 정보와 본인사진, 라이브 영상·음성 파일 또는 링크를 제출해 주세요.</p>
 <div id="roomMessage" class="ot-message" role="status" aria-live="polite">회원가입 신청서를 준비하고 있습니다.</div>
@@ -31,7 +32,6 @@
         <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required></label>
         <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" required></label>
         <label>성별<span class="ot-required" aria-hidden="true">*</span><select name="gender" required><option value="">선택해 주세요</option><option>여성</option><option>남성</option><option>기타</option></select></label>
-        <label>아이디(회원이름)<span class="ot-required" aria-hidden="true">*</span><input name="login_name" autocomplete="username" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" required><small>로그인과 가입 결과 확인에 사용할 회원이름 · 영문·숫자·._- 조합 4~30자</small></label>
         <label>개인 비밀번호<span class="ot-required" aria-hidden="true">*</span><input name="password" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required><small>숫자 4자리로 설정해 주세요.</small></label>
         <label>비밀번호 확인<span class="ot-required" aria-hidden="true">*</span><input name="password_confirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력" required></label>
       </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><fieldset class="ot-media-choice"><legend>라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span></legend>
@@ -48,11 +48,13 @@
 <p id="receiptCheckTime" class="ot-note"></p><div class="ot-review-controls"><a class="ot-button ot-primary" href="/ot-room/?result=1">가입 결과 확인하기</a></div>
 <button id="approvalNotifyButton" type="button" class="ot-button ot-primary">휴대폰으로 승인 알림 받기</button><p id="approvalNotifyMessage" class="ot-note" role="status"></p>
 <p class="ot-note">승인 알림을 등록하지 않아도 가입 결과를 직접 확인할 수 있습니다. 아이폰에서는 이 페이지를 홈 화면에 추가한 뒤, VOM 앱으로 열어 알림을 등록해 주세요.</p></section>
-<section id="applicationStatusCard" class="ot-card" hidden><h2>가입 결과 확인</h2><p class="ot-note">회원가입 신청 시 설정한 아이디(회원이름)와 비밀번호를 입력해 주세요.</p>
-<form id="applicationStatusForm" method="post" autocomplete="off"><div class="ot-fields"><label>아이디(회원이름)<input id="statusLoginName" name="application_name" autocomplete="off" minlength="4" maxlength="30" pattern="[a-zA-Z0-9][a-zA-Z0-9_.\-]{3,29}" placeholder="신청 시 설정한 회원이름" required></label><label>비밀번호<input id="statusPassword" name="application_password" type="password" inputmode="numeric" autocomplete="off" maxlength="64" placeholder="숫자 4자리" required><small>회원가입 신청 시 설정한 비밀번호입니다.</small></label></div><button id="applicationStatusButton" class="ot-button ot-primary" type="submit">가입 결과 확인하기</button></form>
+<section id="applicationStatusCard" class="ot-card" hidden><h2>가입 결과 확인</h2><p class="ot-note">회원가입 신청 시 작성한 이름과 비밀번호를 입력해 주세요.</p>
+<form id="applicationStatusForm" method="post" autocomplete="off"><div class="ot-fields"><label>이름<input id="statusLoginName" name="application_name" autocomplete="off" maxlength="60" placeholder="신청 시 작성한 이름" required></label><label>비밀번호<input id="statusPassword" name="application_password" type="password" inputmode="numeric" autocomplete="off" maxlength="64" placeholder="숫자 4자리" required><small>회원가입 신청 시 설정한 비밀번호입니다.</small></label></div><button id="applicationStatusButton" class="ot-button ot-primary" type="submit">가입 결과 확인하기</button></form>
 <div id="applicationStatusOutput" role="status" aria-live="polite" hidden><h3 id="applicationStatusTitle"></h3><p id="applicationStatusDetail" class="ot-note"></p><p id="applicationStatusTime" class="ot-note"></p><a id="applicationLoginLink" class="ot-button ot-primary" href="/me/" hidden>로그인하기</a></div></section>
 <p class="ot-processing-note">예약 신청은 다음 날 오전 9시에 자동 접수되며, 낮 12시까지 가입 결과를 확인할 수 있습니다. 검토가 지연되면 ‘검토 중’으로 표시되며, 다음 날 안내될 수 있습니다.</p>
 <p class="ot-processing-note">가입 정보와 제출한 사진·라이브 파일은 운영진만 확인할 수 있으며, 다른 회원에게 공개되지 않습니다.</p>
 <div class="ot-review-controls"><a id="applicationResultLink" class="ot-button" href="/ot-room/?result=1">이미 신청하셨나요? 가입 결과 확인</a><a id="applicationSignupLink" class="ot-button" href="/ot-room/" hidden>회원가입 신청하기</a></div>
 <div class="ot-review-controls"><a class="ot-button" href="/">홈페이지 둘러보기</a><a class="ot-button" href="/me/">이미 회원이신가요? 로그인하기</a></div>
-</main></body></html>
+</main><script src="/assets/vom-member-context.js?v=1"></script>
+<script src="/assets/vom-shell.js?v=12"></script>
+</body></html>

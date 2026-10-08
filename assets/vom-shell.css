@@ -1,0 +1,18 @@
+/* One header geometry for public, member and operator pages. */
+.vom-header{box-sizing:border-box!important;width:min(1080px,100%)!important;max-width:1080px!important;border:0!important;height:80px!important;min-height:80px!important;margin:0 auto!important;padding:0 24px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:16px!important}
+.vom-header-brand{display:flex!important;flex:0 0 auto;flex-direction:column!important;align-items:flex-start!important;gap:0!important;text-decoration:none!important;color:#22243b!important;font:800 28px/1 "DM Sans",Pretendard,"Noto Sans KR",Arial,sans-serif!important;letter-spacing:-1.2px!important}
+.vom-header-brand strong{font:inherit!important;letter-spacing:inherit!important}
+.vom-header-brand small{display:block!important;margin:6px 0 0!important;font:700 8px/1 "DM Sans",Arial,sans-serif!important;letter-spacing:2.6px!important}
+.vom-header-actions{display:flex!important;flex:0 1 auto;min-width:0;align-items:center!important;justify-content:flex-end!important;gap:8px!important;flex-wrap:nowrap!important;margin-left:auto}
+.vom-header .menu-btn,.vom-header .vom-shell-menu-trigger{box-sizing:border-box!important;display:grid!important;place-items:center!important;flex:0 0 44px!important;width:44px!important;height:44px!important;min-height:44px!important;margin:0!important;padding:0!important;border:1px solid #e5e0f2!important;border-radius:50%!important;background:#fff!important;color:#6756cf!important;font:700 18px/1 Arial,sans-serif!important;box-shadow:0 6px 18px rgba(78,67,141,.06)!important;cursor:pointer}
+.vom-header .member-session-chip{box-sizing:border-box!important;flex:0 1 auto;max-width:150px;height:34px!important;min-height:34px!important;margin:0!important;font-size:11px!important;line-height:1!important}
+/* The account chip already identifies the admin; retain legacy IDs for access logic. */
+.vom-header #adminBadge,.vom-header .vom-shell-admin-badge,.vom-header #operatorName,.vom-header .header-link[href="/me/"]{display:none!important}
+.vom-header .back{flex:0 0 auto;white-space:nowrap;text-decoration:none;font-size:11px;color:#6756cf}
+@media(max-width:640px){.vom-header{height:72px!important;min-height:72px!important;padding:0 18px!important;gap:10px!important}.vom-header-brand{font-size:27px!important}.vom-header .member-session-chip{max-width:106px!important;font-size:10px!important}.vom-header .back{font-size:10px}}
+
+/* Intro grids stay within the viewport when fonts or long titles change. */
+.u-hero{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)!important}.u-hero>*{min-width:0}.u-title,.u-visual .script{overflow-wrap:anywhere}
+@media(max-width:900px){.u-hero{grid-template-columns:minmax(0,1fr)!important}}
+
+.hero>*{min-width:0}.hero h1,.hero-visual .script{overflow-wrap:anywhere}

@@ -14,6 +14,17 @@ export async function handle(req: Request, service: any) {
 
     if (action === "context") return json(origin, { ok: true, actor });
 
+    if(action==='device_notification_status'){
+      const endpoint=textField(body.endpoint,2048,'이 기기의 알림 구독');
+      const {data,error}=await service.from('vom_push_subscriptions').select('vom_push_invites!inner(recipient_name,is_active)')
+        .eq('endpoint',endpoint).eq('is_active',true).eq('vom_push_invites.is_active',true).maybeSingle();
+      if(error)throw new Error('device_notification_lookup_failed');
+      const recipient=data?.vom_push_invites?.recipient_name;
+      const {data:operator,error:oe}=recipient?await service.from('members').select('id').eq('name',recipient).eq('role','운영진').eq('is_active',true).maybeSingle():{data:null,error:null};
+      if(oe)throw new Error('device_notification_operator_failed');
+      return json(origin,{ok:true,registered:!!operator&&(actor.isAdmin||Number(operator.id)===Number(actor.memberId))});
+    }
+
     if (action === "list") {
       const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }, { data: accessRows, error: ae }] = await Promise.all([
         service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,approval_notified_at,completed_member_id,completed_at,video_source,media_kind").order("created_at", { ascending: false }).limit(500),
