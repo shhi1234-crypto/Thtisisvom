@@ -43,6 +43,15 @@ export function positiveInt(value: unknown) {
   return parsed;
 }
 
+export function mediaLink(value: unknown): string {
+  if (typeof value !== 'string' || value.length > 2048 || /[\x00-\x20\x7f]/.test(value.trim())) throw new ApiError(400, '라이브 자료의 HTTPS 링크를 입력해 주세요.');
+  let url: URL;
+  try { url = new URL(value.trim()); } catch { throw new ApiError(400, '올바른 라이브 자료 링크를 입력해 주세요.'); }
+  const host = url.hostname.toLowerCase();
+  if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443') || !host.includes('.') || host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') || host.startsWith('[') || /^[0-9.]+$/.test(host)) throw new ApiError(400, '로그인 없이 확인할 수 있는 외부 HTTPS 링크를 입력해 주세요.');
+  return url.href;
+}
+
 export function signupDetails(body: any, now = new Date()) {
   const year = String(body.birth_year ?? "");
   const currentYear = Number(new Intl.DateTimeFormat("en", { timeZone: "Asia/Seoul", year: "numeric" }).format(now));

@@ -1,5 +1,5 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
-import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, checkRequest, failure, headers, json, newToken, positiveInt, requireOperator, textField, tokenHash } from "../_shared/ot-core.ts";
+import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, checkRequest, failure, headers, json, mediaLink, newToken, positiveInt, requireOperator, textField, tokenHash } from "../_shared/ot-core.ts";
 import { notifyPendingOT, notifyApproval, notifyPendingApprovals } from "../_shared/ot-push.ts";
 
 export async function handle(req: Request, service: any) {
@@ -115,6 +115,14 @@ export async function handle(req: Request, service: any) {
       if (de || !photo) throw new ApiError(404,"사진을 불러오지 못했습니다.");
       if (photo.size>5242880 || !["image/jpeg","image/png","image/webp"].includes(photo.type)) throw new ApiError(415,"지원하지 않는 사진입니다.");
       return new Response(photo,{headers:{...headers(origin),"Content-Type":photo.type,"Content-Length":String(photo.size),"Content-Disposition":"inline"}});
+    }
+
+    if(action==='media_link'){
+      const reviewId=positiveInt(body.review_id);
+      const {data:review,error}=await service.from('ot_reviews').select('video_source,video_url').eq('id',reviewId).maybeSingle();
+      if(error)throw new Error('review_link_lookup_failed');
+      if(!review||review.video_source!=='LINK')throw new ApiError(404,'등록된 라이브 링크가 없습니다.');
+      return json(origin,{ok:true,url:mediaLink(review.video_url)});
     }
 
     if (action === "video" || action === "media") {

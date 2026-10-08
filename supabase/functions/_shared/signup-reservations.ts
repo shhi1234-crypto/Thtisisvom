@@ -1,4 +1,4 @@
-import { isRegistrationOpen } from './ot-core.ts';
+import { isRegistrationOpen, mediaLink } from './ot-core.ts';
 import { notifyOT } from './ot-push.ts';
 
 export function nextRegistrationAt(now = new Date()) {
@@ -10,7 +10,7 @@ export function nextRegistrationAt(now = new Date()) {
 export async function processSignupReservations(service: any, now = () => new Date()) {
   if (!isRegistrationOpen(now())) return 0;
   const stamp = now().toISOString(), lease = new Date(now().getTime() - 120000).toISOString();
-  const { data: rows, error } = await service.from('ot_signup_reservations').select('invite_id,claim_id,media_path,file_name')
+  const { data: rows, error } = await service.from('ot_signup_reservations').select('invite_id,claim_id,media_path,file_name,media_source,media_url')
     .in('status', ['WAITING', 'PROCESSING']).lte('scheduled_at', stamp).lte('next_attempt_at', stamp)
     .or(`claimed_at.is.null,claimed_at.lt.${lease}`).order('scheduled_at').limit(10);
   if (error) throw new Error('signup_reservations_lookup_failed');
@@ -31,9 +31,10 @@ export async function processSignupReservations(service: any, now = () => new Da
         const { error: renewError } = await service.from('ot_room_invites').update({ upload_claimed_at: now().toISOString() })
           .eq('id', row.invite_id).eq('upload_claim_id', row.claim_id).is('review_id', null);
         if (renewError) throw new Error('reservation_claim_refresh_failed');
-        const { data, error: finalizeError } = await service.rpc('vom_ot_finalize_upload', {
-          p_invite_id: row.invite_id, p_claim_id: row.claim_id, p_candidate_name: '', p_somoim_nickname: '', p_file_path: row.media_path, p_file_name: row.file_name,
-        });
+        const linked=row.media_source==='LINK';
+        const { data, error: finalizeError } = await service.rpc(linked?'vom_ot_finalize_link':'vom_ot_finalize_upload', linked?{
+          p_invite_id:row.invite_id,p_claim_id:row.claim_id,p_media_url:mediaLink(row.media_url),
+        }:{p_invite_id: row.invite_id, p_claim_id: row.claim_id, p_candidate_name: '', p_somoim_nickname: '', p_file_path: row.media_path, p_file_name: row.file_name});
         if (finalizeError) throw new Error('reservation_finalize_failed');
         reviewId = Number(Array.isArray(data) ? data[0]?.id : data?.id);
         if (!reviewId) throw new Error('reservation_review_missing');
