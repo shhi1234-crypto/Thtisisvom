@@ -85,6 +85,7 @@ try{
   await db.exec(await readFile(new URL('../supabase/migrations/20261007095552_signup_reservations_and_pin_login.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261008012032_signup_result_and_operator_notifications.sql',import.meta.url),'utf8'));checks++;
   await db.exec(await readFile(new URL('../supabase/migrations/20261008051703_signup_live_links.sql',import.meta.url),'utf8'));checks++;
+  await db.exec(await readFile(new URL('../supabase/migrations/20261008072557_signup_birthday_to_member_profile.sql',import.meta.url),'utf8'));checks++;
   for(const role of ['anon','authenticated']){await db.exec('set role '+role);await rejects('select * from public.ot_operator_push_deliveries',[],/permission denied/);await db.exec('reset role');}
   assert.equal((await ok('select char_length(invite_token) as length from public.vom_push_invites where id=1')).rows[0].length,64);
   assert.equal((await ok('select invite_id from public.vom_push_subscriptions where id=1')).rows[0].invite_id,1);
@@ -199,7 +200,7 @@ try{
   const audioUser=uid(60),audioInvite=uid(61),audioClaim=uid(62),photoClaim=uid(63);
   await db.query('insert into auth.users(id) values($1)',[audioUser]);
   await db.query('insert into public.ot_room_invites(id,token_hash,issued_by,expires_at,account_claim_id,account_claimed_at) values($1,$2,$3,$4,$5,now())',[audioInvite,'d'.repeat(64),admin,'2099-10-09T00:00:00Z',audioClaim]);
-  const newProfile={login_name:'audio-vom',candidate_name:'Private audio name',somoim_nickname:'Audio nickname',birth_year:1995,job:'Private job',busking_experience:0,busking_experience_unit:'COUNT',form_version:2};
+  const newProfile={login_name:'audio-vom',candidate_name:'Private audio name',somoim_nickname:'Audio nickname',birth_year:1995,birth_date:'1995-02-20',job:'Private job',busking_experience:0,busking_experience_unit:'COUNT',form_version:2};
   await db.exec('set role service_role');
   await rejects('select public.vom_ot_bind_account($1,$2,$3,$4)',[audioInvite,audioClaim,audioUser,{...newProfile,job:null}],/applicant_required_details/);
   await ok('select public.vom_ot_bind_account($1,$2,$3,$4)',[audioInvite,audioClaim,audioUser,newProfile]);
@@ -230,7 +231,8 @@ try{
   const audioRow=(await ok('select candidate_name,somoim_nickname,media_kind from public.ot_reviews where id=$1',[audioReview])).rows[0];
   assert.equal(audioRow.media_kind,'AUDIO');assert.equal(audioRow.candidate_name,newProfile.candidate_name);assert.equal(audioRow.somoim_nickname,newProfile.somoim_nickname);
   for(let n=1;n<=4;n++)await ok(vote,[audioReview,n,'APPROVE',admin]);
-  assert.equal((await ok('select job from public.members where auth_user_id=$1',[audioUser])).rows[0].job,newProfile.job);
+  const approvedProfile=(await ok('select job,birth_date from public.members where auth_user_id=$1',[audioUser])).rows[0];
+  assert.equal(approvedProfile.job,newProfile.job);assert.equal(new Date(approvedProfile.birth_date).toISOString().slice(0,10),newProfile.birth_date);
   await db.exec('reset role;set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid(8)]);
   assert.equal((await ok('select * from public.ot_room_applicants where auth_user_id=$1',[audioUser])).rows.length,0);
   await rejects('select public.vom_ot_finalize_photo($1,$2,$3,$4)',[audioInvite,photoClaim,photoPath,'me.jpg'],/permission denied/);
