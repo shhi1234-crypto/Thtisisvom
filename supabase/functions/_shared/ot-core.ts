@@ -1,7 +1,7 @@
 export const VIDEO_BUCKET = "ot-review-videos";
 export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-export const REVIEW_MINUTES = 120;
+export const REVIEW_MINUTES = 180;
 export const APP_ORIGINS = new Set(["https://thisisvom.vercel.app", "https://www.thisisvom.vercel.app"]);
 export const DEFAULT_ORIGIN = "https://thisisvom.vercel.app";
 

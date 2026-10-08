@@ -1,1 +1,1 @@
-{"name":"VOM 운영","short_name":"VOM 운영","start_url":"/operator-alert/?t=_dcGKr69ZZ2FHhB_9X60m8KUU1Xa4Ln5I10OxRg_IBc","scope":"/operator-alert/","display":"standalone","background_color":"#f8f7fb","theme_color":"#7d68e8","icons":[{"src":"/favicon.png?v=4","sizes":"512x512","type":"image/png"}]}
+{"id":"/operator-alert/","name":"VOM 운영","short_name":"VOM 운영","start_url":"/operator-alert/","scope":"/operator-alert/","display":"standalone","background_color":"#f8f7fb","theme_color":"#7d68e8","icons":[{"src":"/favicon.png?v=4","sizes":"512x512","type":"image/png"}]}

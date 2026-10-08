@@ -27,7 +27,7 @@ function fake(options: Record<string, any> = {}) {
     function result() {
       state.operations.push({ table, operation, input, columns, filters });
       if (table === "admins") return { data: options.admin ? { user_id: userId } : null, error: null };
-      if (table === "ot_signup_reservations") return {data:state.reserved?{invite_id:inviteId}:null,error:null};
+      if (table === "ot_signup_reservations") return {data:options.reservation||(state.reserved?{invite_id:inviteId}:null),error:null};
       if (table === "members" && columns.includes("birth_date")) return {data:options.birthdays||[],error:null};
       if (table === "members") return { data: options.member || null, error: null };
       if (table === "ot_room_operator_access") return { data: options.member && options.operatorAccess !== false ? { member_id: options.member.id } : null, error: null };
@@ -36,14 +36,15 @@ function fake(options: Record<string, any> = {}) {
           if (input.upload_claim_id && options.reserveBusy) return { data: null, error: null };
           return { data: { id: inviteId }, error: null };
         }
+        if (filters.some(f=>f[1]==="applicant_user_id"&&f[2]!== (options.ownerId||userId))) return {data:null,error:null};
         if (options.inviteMissing) return { data: null, error: null };
         return { data: { id: inviteId, expires_at: options.expiresAt || "2026-10-09T00:00:00Z", revoked_at: options.revoked ? "2026-10-06T00:00:00Z" : null, review_id: state.committed || options.submitted ? 1 : null, somoim_nickname: "VOM 새 회원", applicant_user_id: options.noAccount ? null : (options.ownerId || userId) }, error: null };
       }
-      if (table === "ot_room_applicants") return { data:{login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null,form_version:options.formVersion||1,profile_photo_path:state.photoPath||options.photoPath||null},error:null };
+      if (table === "ot_room_applicants") return { data:{auth_user_id:options.identity||userId,login_name:"new-vom",candidate_name:"신규 회원",somoim_nickname:"내 소모임 닉네임",member_id:null,form_version:options.formVersion||1,profile_photo_path:state.photoPath||options.photoPath||null},error:null };
       if (table === "member_account_settings") return {data:{must_change_password:!!options.mustChange},error:null};
       if (table === "ot_reviews") {
         if (operation === "update" && (input.notification_claimed_at || input.approval_notification_claimed_at)) return { data: null, error: null };
-        return { data: { status: "IN_REVIEW", video_source: "FILE", video_file_path: "reviews/safe/video.mp4", completed_at: null }, error: null };
+        return { data: { status: options.reviewStatus||"IN_REVIEW", created_at:"2026-10-08T00:00:00Z", video_source: "FILE", video_file_path: "reviews/safe/video.mp4", completed_at: options.reviewCompleted||null }, error: null };
       }
       return { data: [], error: null };
     }
@@ -211,6 +212,45 @@ Deno.test('approval notifications require final approval, deliver once and retry
 Deno.test('login throttling rejects before attempting Auth and also covers selected member identities',async()=>{
  const {client}=fake({blockLogin:true,member:{id:8,auth_user_id:'linked-user',is_active:true}});let attempted=false;
  await status(await access(operatorRequest({action:'login',member_id:8,password:'1234'}),client,{auth:{signInWithPassword:()=>{attempted=true;}}}),429);assert(!attempted);
+});
+
+Deno.test('application results require the applicant password and never return a login session or another applicant data',async()=>{
+ for(const [option,expected,stateValue] of [[{submitted:true},200,'IN_REVIEW'],[{submitted:true,reviewStatus:'APPROVED',reviewCompleted:'2026-10-08T01:00:00Z'},200,'APPROVED'],[{submitted:true,reviewStatus:'REJECTED'},200,'REJECTED'],[{reservation:{status:'WAITING',scheduled_at:'2026-10-09T00:00:00Z'}},200,'SCHEDULED'],[{ownerId:'other'},404,null],[{identity:'other'},401,null]] as any[]){
+  const {client}=fake(option);let scope='';
+  const auth={auth:{signInWithPassword:async()=>({error:null,data:{session:{user:{id:userId},access_token:'private-jwt',refresh_token:'private-refresh'}}}),signOut:async(value:any)=>{scope=value.scope;return {error:null};}}};
+  const response=await access(operatorRequest({action:'application_status',login_name:'new-vom',password:'1234',member_id:8,auth_user_id:'other'}),client,auth);await status(response,expected);
+  const text=await response.text();assert(scope==='local');assert(!/access_token|refresh_token|private-jwt|candidate_name|phone|video|file_path|eligible_operator/.test(text));
+  if(expected===200){const data=JSON.parse(text);assert(data.state===stateValue);assert(data.check_at===(stateValue==='SCHEDULED'?'2026-10-09T03:00:00.000Z':'2026-10-08T03:00:00.000Z'));}
+ }
+ let called=false;const auth={auth:{signInWithPassword:async()=>{called=true;return {error:{},data:{session:null}};}}};
+ await status(await access(operatorRequest({action:'application_status',login_name:'new-vom',password:'wrong'}),fake().client,auth),401);assert(called);
+ called=false;await status(await access(operatorRequest({action:'application_status',login_name:'new-vom',password:'1234'}),fake({blockLogin:true}).client,auth),429);assert(!called);
+});
+
+Deno.test('new signup alerts name the applicant and retry failed operator devices without repeating successful ones',async()=>{
+ const {notifyOT}=await import('../supabase/functions/_shared/ot-push.ts');
+ const webpush=(await import('npm:web-push@3.6.7')).default,keys=webpush.generateVAPIDKeys();
+ const delivered=new Set<number>(),sent:number[]=[];let fail=true,notified:any=null,lease:any=null;
+ const subscriptions=[{id:1,vom_push_invites:{recipient_name:'운영진1'}},{id:2,vom_push_invites:{recipient_name:'운영진2'}},{id:3,vom_push_invites:{recipient_name:'다른 모임'}}].map(s=>({...s,endpoint:'https://fcm.googleapis.com/fcm/send/'+s.id,p256dh:'test',auth:'test'}));
+ const service:any={from:(table:string)=>{let input:any,operation='select';const q:any={};for(const method of ['eq','is','lte','or','in','select'])q[method]=()=>q;q.update=(v:any)=>{operation='update';input=v;return q;};q.upsert=(v:any)=>{operation='upsert';input=v;return q;};const result=()=>{
+  if(table==='ot_reviews'){
+   if(input?.notification_claimed_at){if(notified||lease)return {data:null,error:null};lease=input.notification_claimed_at;return {data:{id:1,candidate_name:'홍길동',eligible_operator_ids:[1,2],notification_attempts:0},error:null};}
+   if(input){notified=input.operator_notified_at;lease=null;}return {data:null,error:null};
+  }
+  if(table==='vom_push_config')return {data:{vapid_public_key:keys.publicKey,vapid_private_key:keys.privateKey,subject:'mailto:test@example.invalid'},error:null};
+  if(table==='members')return {data:[{id:1,name:'운영진1'},{id:2,name:'운영진2'}],error:null};
+  if(table==='vom_push_subscriptions')return {data:subscriptions,error:null};
+  if(table==='ot_operator_push_deliveries'){if(operation==='upsert'){delivered.add(input.subscription_id);return {error:null};}return {data:[...delivered].map(subscription_id=>({subscription_id})),error:null};}
+  return {data:null,error:null};};q.maybeSingle=async()=>result();q.then=(a:any,b:any)=>Promise.resolve(result()).then(a,b);return q;}};
+ const send:any=async(sub:any,payload:string,options:any)=>{const id=Number(sub.endpoint.split('/').pop());sent.push(id);assert(id!==3);assert(JSON.parse(payload).body==='홍길동님이 신청했습니다.\n3시간 이내에 확인해 주세요.');assert(options.TTL===10800);if(id===2&&fail)throw {statusCode:503};};
+ const first=await notifyOT(service,1,send);assert(first.pending&&!notified&&delivered.has(1));fail=false;
+ const second=await notifyOT(service,1,send);assert(!second.pending&&!!notified);await notifyOT(service,1,send);assert(sent.join(',')==='1,2,2');
+});
+
+Deno.test('notification registration links can only be issued by an administrator for an active operator',async()=>{
+ await status(await review(operatorRequest({action:'operator_push_invite',member_id:1}),fake({member:{id:1,name:'운영진',role:'운영진',is_active:true}}).client),403);
+ await status(await review(operatorRequest({action:'operator_push_invite',member_id:1}),fake({admin:true}).client),400);
+ const response=await review(operatorRequest({action:'operator_push_invite',member_id:1}),fake({admin:true,member:{id:1,name:'운영진',role:'운영진',is_active:true}}).client);await status(response,200);assert((await response.json()).url.startsWith('https://thisisvom.vercel.app/operator-alert/?t='));
 });
 
 Deno.test('public birthday summary contains only the next KST date, while people require approved login',async()=>{
