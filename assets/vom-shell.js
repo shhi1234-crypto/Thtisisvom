@@ -253,23 +253,23 @@
     }
   }
 
-  function addMemberStatus(label, loggedIn) {
-    const menuButton = document.querySelector('.header .menu-btn');
+  function addMemberStatus(label, loggedIn, isAdmin=false) {
+    const menuButton = document.querySelector('.vom-header .menu-btn, .vom-header .vom-shell-menu-trigger');
     const host = (menuButton && menuButton.parentElement) ||
-      document.querySelector('.header-actions, .header-right, .header');
+      document.querySelector('.vom-header-actions, .header-actions, .header-right');
     if (!host) return;host.querySelector('.member-session-chip')?.remove();
 
     const chip = document.createElement('a');
     chip.className = 'member-session-chip' + (loggedIn ? '' : ' is-guest');
-    chip.href = '/me/';
+    chip.href = isAdmin ? '/admin-settings/' : '/me/';
     chip.setAttribute(
       'aria-label',
-      loggedIn ? '현재 로그인: ' + label + '. MY VOM으로 이동' : '현재 로그인 전입니다. MY VOM으로 이동'
+      loggedIn ? '현재 로그인: ' + label + (isAdmin ? '. 운영자료로 이동' : '. MY VOM으로 이동') : '로그인하기'
     );
 
     const nameText = document.createElement('span');
     nameText.className = 'member-session-name';
-    nameText.textContent = loggedIn ? label + '님' : '로그인 전';
+    nameText.textContent = loggedIn ? label + '님' : '로그인하기';
     chip.appendChild(nameText);
 
     if (menuButton && menuButton.parentElement === host) {
@@ -281,7 +281,7 @@
 
 
   function adminBadgeHost() {
-    return document.querySelector('.header-right, .header-actions, .header');
+    return document.querySelector('.vom-header-actions, .header-right, .header-actions');
   }
 
   function addAdminBadge() {
@@ -383,14 +383,14 @@
       try{const response=await fetch(SUPABASE_URL+'/functions/v1/ot-review',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,Authorization:'Bearer '+storedAccessToken()},body:JSON.stringify({action:'context'})});operator=response.ok;}catch(_){}
     }
     setUnifiedMenu(context.isAdmin,operator,context.approved);
-    addMemberStatus(context.member?.name||context.member?.nickname||(context.isAdmin?'관리자':'회원'),context.approved);
+    addMemberStatus(context.member?.name||context.member?.nickname||(context.isAdmin?'관리자':'회원'),context.approved,context.isAdmin);
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
   window.vomRefreshShell=refreshShell;
 
   function loadConsultationWidget() {
     if (document.getElementById('vom-consultation-script')) return;
-    if (/^\/(me|admin-settings|admin|operator-alert|site-log)(\/|$)/.test(path)) return;
+    if (/^\/(me|admin-settings|admin|operator-alert|site-log|ot-room|ot-admin)(\/|$)/.test(path)) return;
     const script = document.createElement('script');
     script.id = 'vom-consultation-script';
     script.src = '/assets/vom-consultation.js?v=1';

@@ -12,7 +12,7 @@
   const when=value=>{if(!value)return '';const date=new Date(Date.parse(value)+9*60*60*1000);if(!Number.isFinite(date.getTime()))return '';return `${date.getUTCMonth()+1}/${date.getUTCDate()} ${String(date.getUTCHours()).padStart(2,'0')}:${String(date.getUTCMinutes()).padStart(2,'0')}`;};
   const decisionLabel={APPROVE:'승인',REJECT:'반려',HOLD:'보류'};
   const statusLabel={IN_REVIEW:'검토 대기',APPROVED:'승인',REJECTED:'반려'};
-  function say(text,kind=''){message.textContent=text;message.className='ot-message'+(kind?' '+kind:'');}
+  function say(text,kind=''){message.textContent=text;message.hidden=!text;message.className='ot-message'+(kind?' '+kind:'');}
   async function request(body,binary=false){
     const {data}=await db.auth.getSession();
     if(!data.session)throw Object.assign(new Error('운영진 로그인이 필요합니다.'),{status:401});
@@ -36,7 +36,7 @@
     const completion=review.status==='APPROVED'&&!review.completed_at&&state.actor.isAdmin?'<div class="ot-completion"><p class="ot-note" style="margin:0">이전 수동 등록 건입니다. 기존 회원과 연결해 주세요. 신규 계정 신청 건은 과반 승인 시 자동 가입됩니다.</p><div class="ot-review-controls"><select id="member-'+id+'" aria-label="최종 가입 완료 회원"><option value="">가입 완료 회원 선택</option>'+state.members.map(m=>'<option value="'+Number(m.id)+'">'+esc(m.name)+(m.nickname?' · '+esc(m.nickname):'')+'</option>').join('')+'</select><button class="ot-button ot-primary" data-action="complete" data-id="'+id+'">최종 가입 연결</button></div></div>':'';
     const profile=review.profile;
     const details=profile?[['출생연도',profile.birth_year?profile.birth_year+'년생':profile.birth_date||'미입력'],['직업',profile.job||'미입력'],['버스킹 경험',profile.busking_experience!=null?profile.busking_experience+(profile.busking_experience_unit==='YEARS'?'년':'회'):'미입력'],['연락처',profile.phone||'미입력'],['활동 지역',profile.region||'미입력'],['성별',profile.gender||'미입력']].map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join(''):'';
-    return '<article id="review-'+id+'" class="ot-card"><div class="ot-review-top"><div><h3>'+esc(review.candidate_name)+'</h3><p>소모임 · '+esc(review.somoim_nickname)+'</p></div><span class="ot-tag">'+(review.completed_at?'가입 완료':statusLabel[review.status])+'</span></div><div class="ot-review-meta"><span>등록 '+when(review.created_at)+'</span>'+(pending?'<span>검토 목표 '+when(review.due_at)+(Date.parse(review.due_at)<Date.now()?' · 목표 시간 경과':'')+'</span>':'')+'<span>승인 '+approved+' · 반려 '+rejected+' / 과반 '+Number(review.required_majority)+'명</span><span>'+(review.operator_notified_at?'알림 발송됨':'알림 대기')+'</span></div>'+(review.status==='APPROVED'?'<p class="ot-note">'+(review.approval_notified_at?'신청자 승인 알림 발송됨':profile?.approval_push_enabled?'신청자 승인 알림 재시도 대기':'승인 알림 미등록 · 신청자가 가입 결과 확인에서 직접 확인 가능')+'</p>':'')+(details?'<dl class="ot-profile-details">'+details+'</dl>':'')+'<div class="ot-review-controls">'+(profile?.has_photo?'<button class="ot-button" data-action="photo" data-id="'+id+'">본인사진 보기</button>':'')+'<button class="ot-button" data-action="video" data-id="'+id+'">'+(review.video_source==='LINK'?'라이브 링크 확인':review.media_kind==='AUDIO'?'라이브 음성 듣기':'라이브 영상 보기')+'</button>'+voteControls+'</div><div class="ot-photo-host" id="photo-'+id+'"></div><div class="ot-video-host" id="video-'+id+'"></div><div class="ot-votes">'+votes+'</div>'+completion+'</article>';
+    return '<article id="review-'+id+'" class="ot-card"><div class="ot-review-top"><div><h3>'+esc(review.candidate_name)+'</h3><p>소모임 · '+esc(review.somoim_nickname)+'</p></div><span class="ot-tag">'+(review.completed_at?'가입 완료':statusLabel[review.status])+'</span></div><div class="ot-review-meta"><span>등록 '+when(review.created_at)+'</span>'+(pending?'<span>검토 목표 '+when(review.due_at)+(Date.parse(review.due_at)<Date.now()?' · 목표 시간 경과':'')+'</span>':'')+'<span>승인 '+approved+' · 반려 '+rejected+' / 과반 '+Number(review.required_majority)+'명</span><span>'+(review.operator_notified_at?'알림 서버 전송 완료':'알림 대기')+'</span></div>'+(review.status==='APPROVED'?'<p class="ot-note">'+(review.approval_notified_at?'신청자 승인 알림 발송됨':profile?.approval_push_enabled?'신청자 승인 알림 재시도 대기':'승인 알림 미등록 · 신청자가 가입 결과 확인에서 직접 확인 가능')+'</p>':'')+(details?'<dl class="ot-profile-details">'+details+'</dl>':'')+'<div class="ot-review-controls">'+(profile?.has_photo?'<button class="ot-button" data-action="photo" data-id="'+id+'">본인사진 보기</button>':'')+'<button class="ot-button" data-action="video" data-id="'+id+'">'+(review.video_source==='LINK'?'라이브 링크 확인':review.media_kind==='AUDIO'?'라이브 음성 듣기':'라이브 영상 보기')+'</button>'+voteControls+'</div><div class="ot-photo-host" id="photo-'+id+'"></div><div class="ot-video-host" id="video-'+id+'"></div><div class="ot-votes">'+votes+'</div>'+completion+'</article>';
 
   }
   function render(){
@@ -63,7 +63,7 @@
   }
   async function refresh(showMessage=true,background=false){
     if(refreshing||(background&&(media.size||photos.size||reviewList.contains(document.activeElement))))return;refreshing=true;
-    try{state=await request({action:'list'});login.hidden=true;dashboard.hidden=false;document.getElementById('refreshButton').hidden=false;document.getElementById('operatorName').textContent=state.actor.name;render();document.getElementById('lastRefreshed').textContent=when(new Date().toISOString())+' 확인';if(showMessage)say('운영진 전용 목록입니다. 가입 신청 접수 후 익일 안내될 수 있습니다.');}
+    try{state=await request({action:'list'});login.hidden=true;dashboard.hidden=false;document.getElementById('refreshButton').hidden=false;document.getElementById('operatorName').textContent=state.actor.name;render();document.getElementById('lastRefreshed').textContent=when(new Date().toISOString())+' 확인';if(showMessage)say('');window.vomRefreshShell?.();}
     catch(error){denied(error);}finally{refreshing=false;}
   }
   document.getElementById('adminLoginForm').addEventListener('submit',async event=>{
@@ -88,6 +88,20 @@
     }catch(error){denied(error);}finally{actionBusy=false;if(button.isConnected)button.disabled=false;}
   });
   document.getElementById('refreshButton').addEventListener('click',()=>refresh());
+  document.getElementById('checkDeviceNotificationButton').addEventListener('click',async event=>{
+    const button=event.currentTarget,note=document.getElementById('deviceNotificationStatus');button.disabled=true;
+    try{
+      const ios=/iPad|iPhone|iPod/.test(navigator.userAgent),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+      if(ios&&!standalone){note.textContent='아이폰은 홈 화면에 추가한 VOM 아이콘에서 알림을 등록하고 확인해 주세요. Safari에서 연 화면은 별도의 기기로 취급됩니다.';return;}
+      if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window)){note.textContent='이 브라우저에서는 휴대폰 알림을 사용할 수 없습니다. 지원하는 브라우저에서 알림 등록 링크를 열어 주세요.';return;}
+      if(Notification.permission!=='granted'){note.textContent=Notification.permission==='denied'?'이 기기의 알림 권한이 꺼져 있습니다. 기기 설정에서 VOM 알림을 허용해 주세요.':'이 기기는 알림 허용이 완료되지 않았습니다. 본인용 알림 등록 링크에서 알림을 허용해 주세요.';return;}
+      const registration=await navigator.serviceWorker.getRegistration('/'),subscription=registration&&await registration.pushManager.getSubscription();
+      if(!subscription){note.textContent='이 기기에 등록된 알림 구독이 없습니다. 운영진 본인용 알림 등록 링크에서 다시 등록해 주세요.';return;}
+      const result=await request({action:'device_notification_status',endpoint:subscription.endpoint});
+      note.textContent=result.registered?'이 기기의 알림 권한과 서버 등록이 확인됐습니다. 알림이 표시되지 않으면 기기 설정의 VOM 알림 허용과 집중 모드를 확인해 주세요.':'이 기기의 구독이 서버에 연결되어 있지 않습니다. 본인용 알림 등록 링크에서 다시 등록해 주세요.';
+      registration.update().catch(()=>{});
+    }catch(error){note.textContent=error.message||'알림 상태를 확인하지 못했습니다.';if(error.status===401||error.status===403)denied(error);}finally{button.disabled=false;}
+  });
   document.getElementById('retryNotificationButton').addEventListener('click',async event=>{event.target.disabled=true;try{await request({action:'retry_notifications'});await refresh(false);say('대기 중인 알림을 재시도했습니다.');}catch(error){denied(error);}finally{event.target.disabled=false;}});
   db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){clearMedia();state=null;dashboard.hidden=true;login.hidden=false;reviewList.replaceChildren();document.getElementById('operatorName').textContent='';document.getElementById('operatorPushList').replaceChildren();document.getElementById('operatorAccessList').replaceChildren();document.getElementById('refreshButton').hidden=true;say('로그아웃됐습니다. 운영진 계정으로 다시 로그인해 주세요.');}});
   window.addEventListener('pagehide',clearMedia);

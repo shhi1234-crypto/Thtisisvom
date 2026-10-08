@@ -455,10 +455,11 @@
 </style>
 
   <script src="/assets/vom-member-context.js?v=1"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
 <div class="aurora"></div>
-<header class="header"><a href="/" class="brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><div class="header-right"><div id="adminBadge" class="admin-badge">ADMIN MODE</div><button class="menu-btn" onclick="openMenu()">☰</button></div></header>
+<header class="header vom-header"><a href="/" class="brand vom-header-brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><div class="header-right vom-header-actions"><div id="adminBadge" class="admin-badge">ADMIN MODE</div><button class="menu-btn" onclick="openMenu()">☰</button></div></header>
 <main id="page" class="page">
 <section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div><div id="birthdayNow" class="birthday-now"></div></section>
 <div class="toolbar"><div class="tabs"><button class="tab active" data-view="all" onclick="setView('all')">전체 명단</button><button class="tab" data-view="birthday" onclick="setView('birthday')">생일</button><button class="tab" data-view="age" onclick="setView('age')">나이별</button><button class="tab" data-view="region" onclick="setView('region')">지역별</button></div><div class="toolbar-actions"><a class="member-account-link" href="/me/">회원계정 로그인 <span>→</span></a><button class="add-btn" onclick="openEditor()">＋ 멤버 추가</button></div></div>
@@ -1000,6 +1001,6 @@ async function adminLogin(){
 async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu()}
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});staffRoleOverlay.addEventListener('click',e=>{if(e.target===staffRoleOverlay)closeStaffRoles()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}start();
 </script>
-<script src="/assets/vom-shell.js?v=11"></script>
+<script src="/assets/vom-shell.js?v=12"></script>
 </body>
 </html>

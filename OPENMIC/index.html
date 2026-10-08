@@ -492,11 +492,12 @@ header{
 
 </style>
   <script src="/assets/vom-member-context.js?v=1"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
-<header>
-  <a href="/" class="brand">VOM</a>
-  <div style="display:flex;align-items:center;gap:12px">
+<header class="vom-header">
+  <a href="/" class="brand vom-header-brand">VOM<small>VOICE OF MELODY</small></a>
+  <div class="vom-header-actions">
     <div id="adminBadge" class="admin-badge">● ADMIN MODE</div>
     <button class="menu-btn" onclick="openMenu()">☰</button>
   </div>
@@ -917,6 +918,6 @@ async function saveWinners(){
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}
 start();
 </script>
-<script src="/assets/vom-shell.js?v=11"></script>
+<script src="/assets/vom-shell.js?v=12"></script>
 </body>
 </html>

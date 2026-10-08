@@ -48,7 +48,8 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     if (fields.consent!=='yes') throw new ApiError(400,'가입 정보와 제출 자료의 수집·검토에 동의해 주세요.');
     if (fields.live_confirmed!=='yes') throw new ApiError(400,'가창 부분 30초 이상, 믹싱·튠 보정 없는 라이브 자료인지 확인해 주세요.');
     if (fields.password!==fields.password_confirm) throw new ApiError(400,'비밀번호 확인이 일치하지 않습니다.');
-    const name=loginName(fields.login_name),password=signupPassword(fields.password);
+    // Keep existing account identifiers internally; new applicants enter only their name.
+    const name=fields.login_name?loginName(fields.login_name):'join-'+crypto.randomUUID().replace(/-/g,'').slice(0,24),password=signupPassword(fields.password);
     const profile:any={...signupDetails(fields,now()),login_name:name,candidate_name:textField(fields.candidate_name,60,'이름'),somoim_nickname:textField(fields.somoim_nickname,80,'소모임 닉네임')};
     for (const [key,max,label] of [['phone',30,'연락처'],['region',80,'활동 지역'],['gender',20,'성별']] as const) profile[key]=textField(fields[key],max,label);
     const source=fields.media_source||'FILE',photo=form.get('photo'),media=form.get('video');
@@ -57,7 +58,7 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     const photoType=await validatePhoto(photo),mediaType=source==='FILE'?await validateVideo(media as File):null;
     const link=source==='LINK'?mediaLink(fields.media_url):null;
     const {data:created,error:ce}=await service.auth.admin.createUser({email:await applicantEmail(name),password,email_confirm:true});
-    if (ce || !created.user) throw new ApiError(409,'사용할 수 없는 아이디입니다. 다른 아이디를 입력해 주세요.');
+    if (ce || !created.user) throw new ApiError(409,'가입 계정을 만들지 못했습니다. 잠시 후 다시 시도해 주세요.');
     createdUser=created.user.id;
     inviteId=crypto.randomUUID();
     const claimId=crypto.randomUUID(),notificationToken=newToken();

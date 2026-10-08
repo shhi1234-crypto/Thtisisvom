@@ -168,6 +168,38 @@ Deno.test('public signup at 18:00 and a closing commit create durable reservatio
   const {client,state}=fake(option);const response=await room(publicRequest(),client,time);await status(response,201);const data=await response.json();assert(data.status==='SCHEDULED'&&data.scheduled_at==='2026-10-08T00:00:00Z');assert(state.reserved&&!state.committed&&state.uploaded.length===2&&!state.removed.length&&!state.deletedUsers.length);
  }
 });
+
+Deno.test('public signup uses an internal account key when no ID is supplied',async()=>{
+ const {client,state}=fake();await status(await room(publicRequest({login_name:null}),client,openNow),201);
+ const profile=state.rpcCalls.find(call=>call.name==='vom_ot_bind_account').input.p_profile;
+ assert(profile.candidate_name==='가입자'&&/^join-[a-f0-9]{24}$/.test(profile.login_name));
+});
+
+Deno.test('applicants check their result with their real name and PIN, including existing accounts',async()=>{
+ const {client,state}=fake({submitted:true});
+ client.auth.admin.getUserById=async(id:string)=>{assert(id===userId);return {data:{user:{email:'existing-account@member.thisisvom.app'}},error:null};};
+ let signedOut=false;
+ const auth={auth:{signInWithPassword:async(value:any)=>{assert(value.email==='existing-account@member.thisisvom.app'&&value.password==='VOM:1234');return {data:{session:{user:{id:userId}}},error:null};},signOut:async()=>{signedOut=true;}}};
+ const response=await access(operatorRequest({action:'application_status',candidate_name:'신규 회원',password:'1234'}),client,auth);await status(response,200);
+ assert(signedOut&&(await response.json()).state==='IN_REVIEW');
+ assert(state.operations.some(op=>op.table==='ot_room_applicants'&&op.filters.some((f:any)=>f[1]==='candidate_name'&&f[2]==='신규 회원')));
+});
+
+Deno.test('duplicate applicant names cannot reveal a result without a unique identity',async()=>{
+ const {client}=fake();client.from=()=>({select(){return this;},eq(){return this;},maybeSingle:async()=>({data:null,error:{code:'PGRST116'}})});
+ let attempted=false;await status(await access(operatorRequest({action:'application_status',candidate_name:'동명이인',password:'1234'}),client,{auth:{signInWithPassword:()=>{attempted=true;}}}),400);assert(!attempted);
+});
+
+Deno.test('device notification checks require operator access and disclose only the registration state',async()=>{
+ for(const [actorId,recipientId,registered] of [[8,8,true],[8,9,false]] as const){
+  const {client}=fake({member:{id:actorId,name:'운영진',role:'운영진',is_active:true}}),original=client.from;
+  client.from=(table:string)=>{if(table==='vom_push_subscriptions')return {select(){return this;},eq(){return this;},maybeSingle:async()=>({data:{vom_push_invites:{recipient_name:'수신 운영진'}},error:null})};
+   if(table==='members'){let columns='';const q=original(table),select=q.select;q.select=(value:string)=>{columns=value;return select(value);};const single=q.maybeSingle;q.maybeSingle=async()=>columns==='id'?{data:{id:recipientId},error:null}:single();return q;}return original(table);};
+  const response=await review(operatorRequest({action:'device_notification_status',endpoint:'https://web.push.apple.com/test-device'}),client);await status(response,200);assert(JSON.stringify(await response.json())===JSON.stringify({ok:true,registered}));
+ }
+ await status(await review(operatorRequest({action:'device_notification_status',endpoint:'https://web.push.apple.com/test-device'}),fake({unauthenticated:true}).client),401);
+ await status(await review(operatorRequest({action:'device_notification_status',endpoint:'https://web.push.apple.com/test-device'}),fake({member:{id:8,role:'모임원',is_active:true}}).client),403);
+});
 Deno.test('lost reservation receipt never removes reserved private files or account',async()=>{
  const {client,state}=fake({reserveLost:true});await status(await room(publicRequest(),client,()=>new Date('2026-10-07T09:00:00Z')),409);assert(state.reserved&&!state.removed.length&&!state.deletedUsers.length);
 });
