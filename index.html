@@ -475,6 +475,65 @@ button{
   line-height:1.8;
 }
 
+/* Guest-only schedule card: prevent inline text collisions. */
+.next-live .next-empty:has(.live-tag){
+  min-height:255px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:13px;
+  padding:12px 8px;
+  text-align:center;
+}
+.next-live .next-empty:has(.live-tag) .live-tag{
+  display:inline-block;
+  color:#7968ce;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.16em;
+  line-height:1.5;
+}
+.next-live .next-empty:has(.live-tag) h3{
+  margin:0;
+  color:#27243e;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:clamp(19px,2.2vw,24px);
+  font-weight:800;
+  line-height:1.4;
+  letter-spacing:-.04em;
+}
+.next-live .next-empty:has(.live-tag) p{
+  max-width:270px;
+  margin:0;
+  color:#686b80;
+  font-size:12px;
+  line-height:1.75;
+  overflow-wrap:keep-all;
+}
+.next-live .next-empty:has(.live-tag) a.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  margin-top:3px;
+  padding:10px 19px;
+  border-radius:999px;
+  background:#7560df;
+  color:#fff;
+  font-family:"Noto Sans KR",sans-serif;
+  font-size:12px;
+  font-weight:700;
+  line-height:1.4;
+  text-decoration:none;
+  box-shadow:0 8px 18px rgba(117,96,223,.17);
+}
+@media(max-width:700px){
+  .next-live .next-empty:has(.live-tag){min-height:205px;gap:10px}
+  .next-live .next-empty:has(.live-tag) h3{font-size:20px}
+}
+
 /* RANKING */
 
 .ranking-section{
