@@ -13,6 +13,14 @@
   <meta name="theme-color" content="#7660dd">
   <script defer src="/assets/public-signup.js?v=8"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
+<style>
+/* OT Room: make the selected upload method clear without changing form behavior. */
+.ot-media-tabs label{transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease}
+.ot-media-tabs label:has(input:checked){border-color:#8068dd;background:#eee9fc;box-shadow:0 0 0 1px rgba(128,104,221,.2);color:#52409c;font-weight:700}
+.ot-media-tabs label:focus-within{outline:2px solid #8e7be5;outline-offset:2px}
+@media(max-width:480px){.ot-media-tabs label{flex:1;justify-content:center;min-height:44px;text-align:center}}
+@media(prefers-reduced-motion:reduce){.ot-media-tabs label{transition:none}}
+</style>
 </head>
 <body class="ot-public">
 <header class="ot-header vom-header"><a class="ot-brand vom-header-brand" href="/">VOM <small>VOICE OF MELODY</small></a><div class="vom-header-actions"><button type="button" class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button></div></header>
