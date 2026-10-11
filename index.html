@@ -332,6 +332,22 @@ button{
   .home-today .today-date,.home-today .birthday-mini{padding:6px 9px}
 }
 
+/* Home birthday: show next birthday member names to approved members. */
+.home-today .birthday-people{
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(180,163,238,.32);
+  color:#5947bb;
+  font-size:11px;
+  font-weight:800;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+@media(max-width:640px){
+  .home-today .birthday-people{padding:6px 9px}
+}
+
 /* NEXT SCHEDULE */
 
 .next-live{
@@ -2673,7 +2689,7 @@ async function start(){
   document.getElementById('homeSignupButton').hidden=access.approved;
   document.getElementById('homeResultLink').hidden=access.approved;
 
-  loadHomeBirthday();
+  loadHomeBirthday(access);
 
   await Promise.all([
     loadOpenMicRanking(),
@@ -2702,17 +2718,49 @@ function parseMemberBirth(v){
   return m?{month:Number(m[2]),day:Number(m[3])}:null;
 }
 
-async function loadHomeBirthday(){
-  const box=document.getElementById('homeToday');if(!box)return;
-  const now=new Date(),link='<a class="birthday-check" href="/members/?view=birthday">생일자 확인하기 →</a>';
-  box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">생일 날짜 확인 중…</span>${link}`;
+async function loadHomeBirthday(access){
+  const box=document.getElementById('homeToday');
+  if(!box)return;
+  const now=new Date();
+  const approved=access?.approved===true;
+  const dateMarkup=`<span class="today-date">${formatHomeToday(now)}</span>`;
+  const guestLink='<a class="birthday-check" href="/members/?view=birthday">생일자 확인하기 →</a>';
+  box.innerHTML=dateMarkup+'<span class="birthday-mini">생일을 불러오는 중…</span>'+(approved?'':guestLink);
   try{
-    const response=await fetch(SUPABASE_URL+'/functions/v1/birthday-summary',{method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({action:'summary'}),cache:'no-store',signal:AbortSignal.timeout(15000)});
-    if(!response.ok)throw new Error('birthday_summary_failed');const data=await response.json(),date=String(data.next_birthday||'').match(/^\d{4}-(\d{2})-(\d{2})$/);
-    box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">${date?'🎂 다음 생일 · '+Number(date[1])+'월 '+Number(date[2])+'일':'🎂 다음 생일 날짜가 아직 없어요'}</span>${link}`;
-  }catch{box.innerHTML=`<span class="today-date">${formatHomeToday(now)}</span><span class="birthday-mini">생일 날짜를 불러오지 못했어요.</span>${link}`;}
+    const headers={apikey:SUPABASE_KEY,'Content-Type':'application/json'};
+    if(approved){
+      const {data}=await db.auth.getSession();
+      const token=data?.session?.access_token;
+      if(!token)throw new Error('birthday_session_missing');
+      headers.Authorization='Bearer '+token;
+    }
+    const response=await fetch(SUPABASE_URL+'/functions/v1/birthday-summary',{
+      method:'POST',headers,body:JSON.stringify({action:approved?'people':'summary'}),
+      cache:'no-store',signal:AbortSignal.timeout(15000)
+    });
+    if(!response.ok)throw new Error('birthday_summary_failed');
+    const data=await response.json();
+    const date=String(data.next_birthday||'').match(/^\d{4}-(\d{2})-(\d{2})$/);
+    if(!date){
+      box.innerHTML=dateMarkup+'<span class="birthday-mini">🎂 등록된 생일이 아직 없어요</span>'+(approved?'':guestLink);
+      return;
+    }
+    const todayKorea=new Date(now.getTime()+9*3600000).toISOString().slice(0,10);
+    const today=data.next_birthday===todayKorea;
+    const label=today?'🎉 오늘 생일':'🎂 다음 생일 · '+Number(date[1])+'월 '+Number(date[2])+'일';
+    let names='';
+    if(approved){
+      const people=Array.isArray(data.birthdays)?data.birthdays:[];
+      const matching=people.filter(person=>Number(person.month)===Number(date[1])&&Number(person.day)===Number(date[2]));
+      if(matching.length){
+        names='<span class="birthday-people">'+matching.map(person=>escapeHtml(String(person.name||'').trim())+'님').join(' · ')+'</span>';
+      }
+    }
+    box.innerHTML=dateMarkup+`<span class="birthday-mini${today?' today':''}">${label}</span>`+names+(approved?'':guestLink);
+  }catch{
+    box.innerHTML=dateMarkup+'<span class="birthday-mini">생일 정보를 불러오지 못했어요.</span>'+(approved?'':guestLink);
+  }
 }
-
 
 function normalizeName(value){
   return String(value || '').replace(/\s+/g,'').toLowerCase();
