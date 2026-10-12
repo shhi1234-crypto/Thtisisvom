@@ -45,6 +45,32 @@
 .ot-name-fields small{grid-column:1/-1}
 @media(max-width:480px){.ot-name-fields{gap:10px}}
 
+/* Signup form readability: inline required marks and consistent help hierarchy. */
+#accountForm .ot-fields{column-gap:16px;row-gap:23px;margin:22px 0 24px;align-items:start}
+#accountForm .ot-fields label{display:block;min-width:0;font-size:14px;line-height:1.45;font-weight:750;color:#262842}
+#accountForm .ot-fields label>.ot-required,
+#accountForm>.ot-file-label>.ot-required{display:inline;margin-left:3px;vertical-align:baseline}
+#accountForm .ot-fields label>input,
+#accountForm .ot-fields label>select{display:block;width:100%;margin:9px 0 0;min-height:48px}
+#accountForm .ot-fields label>small,
+#accountForm .ot-name-fields>small,
+#accountForm .ot-birthday-field>small{display:block;margin-top:7px;font-size:12px;font-weight:400;line-height:1.6;color:#85899a}
+#accountForm .ot-name-fields{row-gap:0;column-gap:12px}
+#accountForm .ot-name-fields>small{grid-column:1/-1}
+#accountForm .ot-birthday-field legend{width:auto;margin-bottom:9px;font-size:14px;line-height:1.45;color:#262842}
+#accountForm .ot-birthday-field select{min-height:48px}
+#accountForm>.ot-file-label,
+#accountForm .ot-media-panel .ot-file-label{display:block;font-size:14px;line-height:1.45}
+#accountForm>.ot-file-label>input,
+#accountForm .ot-media-panel .ot-file-label>input{display:block;margin-top:10px}
+#accountForm>.ot-file-label>small,
+#accountForm .ot-media-panel .ot-file-label>small{display:block;margin-top:8px;font-size:12px;line-height:1.6}
+#accountForm .ot-photo-tip{margin-top:9px!important;padding:9px 11px;font-size:12px;line-height:1.65}
+@media(max-width:700px){
+  #accountForm .ot-fields{row-gap:21px}
+  #accountForm .ot-name-fields{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
+}
+
 </style>
 </head>
 <body class="ot-public">
@@ -75,23 +101,23 @@
         <div class="ot-name-fields" role="group" aria-label="본인 실명 입력">
           <label>성<span class="ot-required" aria-hidden="true">*</span><input id="candidateFamilyName" name="family_name" autocomplete="family-name" placeholder="예: 김" maxlength="30" required></label>
           <label>이름<span class="ot-required" aria-hidden="true">*</span><input id="candidateGivenName" name="given_name" autocomplete="given-name" placeholder="예: 철수" maxlength="30" required></label>
-          <small>별명이 아닌 본인 실명을 입력해 주세요. ‘김철수’라면 성 ‘김’, 이름 ‘철수’로 나누어 작성합니다.</small>
+          <small>예: 김 + 철수 → 김철수 (실명 입력)</small>
         </div>
-        <fieldset class="ot-birthday-field"><legend>생년월일<span class="ot-required" aria-hidden="true">*</span></legend><div class="ot-birthday-selects"><select id="birthYear" name="birth_year" autocomplete="bday-year" aria-label="태어난 연도" required><option value="">년</option></select><select id="birthMonth" name="birth_month" autocomplete="bday-month" aria-label="태어난 월" required><option value="">월</option></select><select id="birthDay" name="birth_day" autocomplete="bday-day" aria-label="태어난 일" required disabled><option value="">일</option></select></div><small>태어난 연도·월·일을 선택해 주세요.</small></fieldset>
-        <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required><small>회원 이력 확인 및 탈퇴자 관리에 필요하므로 현재 소모임 닉네임을 정확하게 입력해 주세요.</small></label>
+        <fieldset class="ot-birthday-field"><legend>생년월일<span class="ot-required" aria-hidden="true">*</span></legend><div class="ot-birthday-selects"><select id="birthYear" name="birth_year" autocomplete="bday-year" aria-label="태어난 연도" required><option value="">년</option></select><select id="birthMonth" name="birth_month" autocomplete="bday-month" aria-label="태어난 월" required><option value="">월</option></select><select id="birthDay" name="birth_day" autocomplete="bday-day" aria-label="태어난 일" required disabled><option value="">일</option></select></div></fieldset>
+        <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required><small>가입·탈퇴 이력 확인용 · 현재 닉네임</small></label>
         <label>직업<span class="ot-required" aria-hidden="true">*</span><input name="job" maxlength="80" placeholder="예: 회사원, 학생, 프리랜서" required></label>
         <label>버스킹 경험 단위<span class="ot-required" aria-hidden="true">*</span><select id="experienceUnit" name="busking_experience_unit" required><option value="COUNT">횟수 (회)</option><option value="YEARS">기간 (년)</option></select></label>
-        <label>버스킹 경험<span class="ot-required" aria-hidden="true">*</span><input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다. 경험이 없다면 0을 입력해도 됩니다.</small></label>
-        <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required><small>가입 안내를 받을 수 있는 본인 연락처를 입력해 주세요.</small></label>
-        <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" placeholder="예: 인천 구월동 / 부천" required><small>주로 모임에 참여할 수 있는 지역을 적어주세요.</small></label>
+        <label>버스킹 경험<span class="ot-required" aria-hidden="true">*</span><input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>경험이 없다면 0을 입력해 주세요.</small></label>
+        <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required></label>
+        <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" placeholder="예: 인천 구월동 / 부천" required></label>
         <label>성별<span class="ot-required" aria-hidden="true">*</span><select name="gender" required><option value="">선택해 주세요</option><option>여성</option><option>남성</option><option>기타</option></select></label>
-        <label>개인 비밀번호<span class="ot-required" aria-hidden="true">*</span><input name="password" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required><small>숫자 4자리로 설정해 주세요.</small></label>
+        <label>개인 비밀번호<span class="ot-required" aria-hidden="true">*</span><input name="password" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required></label>
         <label>비밀번호 확인<span class="ot-required" aria-hidden="true">*</span><input name="password_confirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력" required></label>
-      </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>얼굴을 알아볼 수 있는 본인 1인 사진 · JPG / PNG / WEBP · 최대 5MB</small><span class="ot-photo-tip"><b>✅ 권장:</b> 얼굴이 밝고 선명하게 보이는 사진<br><b>⚠️ 피해주세요:</b> 단체사진, 멀리서 찍어 얼굴이 작은 사진, 마스크·스티커·과한 보정으로 얼굴이 가려진 사진</span></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><fieldset class="ot-media-choice"><legend>라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span></legend>
-<p class="ot-note">본인이 직접 노래한 부분이 <strong>30초 이상</strong>인 라이브 영상 또는 음성을 제출해 주세요. 영상이 아니어도 <strong>목소리가 잘 들리는 음성 녹음</strong>이면 가능합니다. 다만 믹싱·튠 등으로 목소리를 보정한 자료는 제출할 수 없습니다.</p>
+      </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>얼굴이 선명한 본인 1인 사진 · JPG/PNG/WEBP · 5MB 이하</small><span class="ot-photo-tip">단체사진이나 얼굴이 가려진 사진은 피해주세요. 자세한 기준은 상단 ⓘ 가이드를 확인해 주세요.</span></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><fieldset class="ot-media-choice"><legend>라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span></legend>
+<p class="ot-note">본인의 <strong>30초 이상 무보정 라이브 가창</strong>을 영상 또는 음성으로 제출해 주세요. 믹싱·튠으로 보정한 자료는 사용할 수 없습니다.</p>
 <div class="ot-media-tabs"><label><input type="radio" name="media_source" value="FILE" checked>파일 업로드</label><label><input type="radio" name="media_source" value="LINK">링크 첨부</label></div>
 <div id="mediaFilePanel" class="ot-media-panel"><label class="ot-file-label">라이브 파일<input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><button id="clearVideo" type="button" class="ot-clear-file" hidden>파일 지우기</button><p id="fileSummary" class="ot-note"></p></div>
-<div id="mediaLinkPanel" class="ot-media-panel" hidden><label>라이브 자료 링크<input id="mediaUrl" name="media_url" type="url" inputmode="url" pattern="https://.+" maxlength="2048" placeholder="https://..." autocomplete="off" disabled><small>유튜브·드라이브 등 운영진이 로그인 없이 열 수 있는 HTTPS 링크를 입력해 주세요. 전체 공개 대신 링크 보유자만 볼 수 있도록 설정해 주세요. 제출 전에 다른 계정이나 시크릿 창에서 열리는지 확인해 주세요.</small></label></div>
+<div id="mediaLinkPanel" class="ot-media-panel" hidden><label>라이브 자료 링크<input id="mediaUrl" name="media_url" type="url" inputmode="url" pattern="https://.+" maxlength="2048" placeholder="https://..." autocomplete="off" disabled><small>로그인 없이 열 수 있는 HTTPS 링크 · 링크 보유자 공개 설정</small></label></div>
 <label class="ot-consent ot-live-confirm"><input name="live_confirmed" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가창 부분이 30초 이상이며, 믹싱·튠 등 보정 없는 라이브 자료임을 확인했습니다.</span></label>
 </fieldset>
 <label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 이력·탈퇴자 관리에 필요한 본인사진·실명·소모임 닉네임·생년월일·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
