@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>참가 신청 · VOM</title><link rel="icon" href="/favicon.png?v=4">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 85% 0,#eee9ff,transparent 45%),#f8f7fb;color:#262842}
+main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-decoration:none}.top{display:flex;justify-content:space-between;align-items:center;font-weight:800}.eyebrow{color:#785fdb;letter-spacing:.13em;font-size:12px;margin-top:45px}h1{font-size:34px;margin:9px 0 22px}.card{padding:25px;border:1px solid #ece7fa;background:#fff;border-radius:23px;box-shadow:0 15px 42px #4034790e;margin-bottom:15px}.event-name{font-size:23px;font-weight:800;line-height:1.4}.meta{margin:15px 0;color:#707388;font-size:13px;line-height:1.9}.info{border-radius:12px;background:#f3f0fc;color:#6553bd;padding:12px 14px;font-size:13px;line-height:1.6;margin:15px 0}h2{font-size:18px}button{border:0;border-radius:12px;padding:12px 19px;background:#7763de;color:white;font:700 14px Arial,sans-serif;cursor:pointer}button:disabled{opacity:.5;cursor:default}.secondary{background:#eeeafa;color:#6553bd}.danger{background:#fff0f0;color:#ba5260}.actions{display:flex;gap:8px;flex-wrap:wrap}.muted{color:#7c8092;font-size:13px;line-height:1.7}.hide{display:none!important}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #f0eef7;font-size:13px}.row small{color:#818397}.admin-actions{display:flex;gap:5px}input{width:100%;margin:6px 0 13px;padding:12px;border:1px solid #ddd8ee;border-radius:10px;font-size:15px}.status{font-weight:bold;color:#7157c7}#notice{margin:13px 0;min-height:20px;color:#ae4558;font-size:13px}
+</style></head><body><main><div class="top"><a href="/">VOM</a><a href="/calendar/">← CALENDAR</a></div><div class="eyebrow">VOICE OF MELODY</div><h1>참가 신청</h1><div id="content" class="card"><p class="muted">참가 신청 정보를 불러오는 중...</p></div><div id="notice" role="status" aria-live="polite"></div><section id="admin" class="card hide"><h2>운영진 신청 관리</h2><p class="muted">입금 확인 후 신청자를 확정할 수 있습니다.</p><div id="adminRows"></div></section></main>
+<script>
+const base='https://aqfmhqultzpakfqwzulj.supabase.co',key='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+const db=supabase.createClient(base,key);
+const eventId=Number(new URLSearchParams(location.search).get('id'));
+const content=document.getElementById('content'),notice=document.getElementById('notice');
+let current=null;
+const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const when=v=>v?new Date(v).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+async function request(action,extra={}){
+ const {data,error}=await db.auth.getSession();if(error||!data.session)throw new Error('로그인 후 신청할 수 있습니다.');
+ const response=await fetch(base+'/functions/v1/event-application',{method:'POST',headers:{'Content-Type':'application/json',apikey:key,Authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action,event_id:eventId,...extra}),cache:'no-store'});
+ const result=await response.json();if(!response.ok)throw new Error(result.error||'처리하지 못했습니다.');return result;
+}
+async function load(){
+ if(!Number.isSafeInteger(eventId)||eventId<1){content.textContent='올바른 일정에서 다시 접속해 주세요.';return}
+ notice.textContent='';
+ try{const result=await request('view');current=result;render(result)}
+ catch(error){content.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p><a href="/me/?next='+encodeURIComponent('/apply/?id='+eventId)+'">로그인하기 →</a>';}
+}
+function render(r){
+ const e=r.event,active=['APPLIED','CONFIRMED'].includes(r.mine?.status),cap=e.application_capacity;
+ const now=Date.parse(r.now),open=Date.parse(e.application_opens_at||'2026-10-19T11:00:00Z'),close=Date.parse(e.application_closes_at||'9999-12-31T00:00:00Z');
+ const canApply=e.application_enabled&&e.event_date>='2026-11-01'&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10);
+ let status=e.application_enabled?'접수 준비 중':'신청을 받지 않는 일정';
+ if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
+ content.innerHTML='<div class="event-name">'+escapeHtml(e.title||'VOM 일정')+'</div><div class="meta">📅 '+escapeHtml(e.event_date)+' · '+escapeHtml(String(e.start_time||'').slice(0,5))+'<br>📍 '+escapeHtml(e.location||'장소 미정')+'</div><div class="info">'+escapeHtml(status)+(cap?' · '+r.count+' / '+cap+'명':'')+'</div>'+
+ (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 입금 확인 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">참가 신청하기</button></div>')+
+ (e.application_opens_at?'<p class="muted">오픈: '+when(e.application_opens_at)+'</p>':'')+
+ '<p class="muted">참가 신청은 본인 계정으로만 가능하며, 입금 확인 후 운영진이 확정합니다.</p>';
+ const admin=document.getElementById('admin');admin.classList.toggle('hide',!r.is_admin);
+ if(r.is_admin){
+ document.getElementById('adminRows').innerHTML=(r.applications||[]).map(a=>'<div class="row"><div><b>'+escapeHtml(a.name)+'</b><br><small>'+escapeHtml(a.status==='CONFIRMED'?'확정':a.status==='APPLIED'?'신청':'취소')+'</small></div><div class="admin-actions">'+(a.status==='APPLIED'?'<button onclick="manage('+a.id+',\'confirm\')">확정</button>':a.status==='CONFIRMED'?'<button class="secondary" onclick="manage('+a.id+',\'unconfirm\')">확정 해제</button>':'')+'</div></div>').join('')||'<p class="muted">신청자가 없습니다.</p>';
+ }
+}
+async function change(action){
+ if(action==='cancel'&&!confirm('참가 신청을 취소할까요?'))return;
+ try{notice.textContent='처리 중...';await request(action);await load()}catch(error){notice.textContent=error.message}
+}
+async function manage(id,action){
+ if(!confirm(action==='confirm'?'입금을 확인했고 참가를 확정할까요?':'참가 확정을 해제할까요?'))return;
+ try{notice.textContent='처리 중...';await request(action,{application_id:id});await load()}catch(error){notice.textContent=error.message}
+}
+load();
+</script></body></html>
