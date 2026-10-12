@@ -1142,6 +1142,7 @@ function renderDetail(id){
     <section class="detail">
       <div class="type">BUSKING</div>
       <h1>${esc(row.title||'')}</h1>
+      ${String(row.event_date||'')>='2026-11-01'?'<a href="/apply/?id='+Number(row.id)+'" class="setlist-cta" style="display:block;padding:16px;margin:17px 0;text-decoration:none;background:#eeeaff;color:#6653cb;font-weight:800">🎤 홈페이지 참가 신청 · 신청 현황 →</a>':''}
       ${img?`<div class="detail-image"><img src="${attr(img)}" alt=""></div>`:`<div class="detail-image">Voice of Melody</div>`}
       <div class="detail-meta">
         <div class="info"><small>DATE</small><strong>${esc(formatDate(row.event_date))}</strong></div>
