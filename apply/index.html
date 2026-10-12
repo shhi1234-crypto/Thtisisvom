@@ -41,7 +41,7 @@ async function load(){
  try{const result=await request('view');current=result;render(result)}
  catch(error){content.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p><a href="/me/?next='+encodeURIComponent('/apply/?id='+eventId)+'">로그인하기 →</a>';}
 }
-function paymentText(status,fee){return fee===0?'무료 일정':({UNPAID:'미입금',PAID:'입금 확인',REFUND_PENDING:'환불 대기',REFUNDED:'환불 완료'}[status]||'미입금')}
+function paymentText(status,fee){return fee===null?'참가비 설정 대기':fee===0?'무료 일정':({UNPAID:'미입금',PAID:'입금 확인',REFUND_PENDING:'환불 대기',REFUNDED:'환불 완료'}[status]||'미입금')}
 function render(r){
  const e=r.event,p=r.payment||{},fee=Number.isInteger(p.fee_won)?p.fee_won:null,active=['APPLIED','CONFIRMED'].includes(r.mine?.status),cap=e.application_capacity;
  const now=Date.parse(r.now),open=Date.parse(e.application_opens_at||'2026-10-19T11:00:00Z'),close=Date.parse(e.application_closes_at||'9999-12-31T00:00:00Z');
@@ -49,12 +49,12 @@ function render(r){
  let status=e.application_enabled?'접수 준비 중':'신청을 받지 않는 일정';
  if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
  content.innerHTML='<div class="event-name">'+escapeHtml(e.title||'VOM 일정')+'</div><div class="meta">📅 '+escapeHtml(e.event_date)+' · '+escapeHtml(String(e.start_time||'').slice(0,5))+'<br>📍 '+escapeHtml(e.location||'장소 미정')+'</div><div class="info">'+escapeHtml(status)+(cap?' · '+r.count+' / '+cap+'명':'')+'</div>'+
- (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 입금 확인 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">참가 신청하기</button></div>')+
+ (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 운영진 확정 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">참가 신청하기</button></div>')+
  (e.application_opens_at?'<p class="muted">오픈: '+when(e.application_opens_at)+'</p>':'')+
- '<p class="muted">참가 신청은 본인 계정으로만 가능하며, 입금 확인 후 운영진이 확정합니다.</p>';
+ '<p class="muted">참가 신청은 본인 계정으로 진행하며, 입금 및 참가 확정은 운영진이 확인합니다.</p>';
  const payInfo='<div class="payment-box"><strong>참가비 · '+(fee===null?'설정 대기':fee===0?'무료':fee.toLocaleString('ko-KR')+'원')+'</strong>'
  +(fee>0?'<div class="payment-detail">'+escapeHtml(p.payment_instructions||'입금 안내를 준비 중입니다.')+'</div>':'')
- +(p.payment_due_at?'<p class="muted">입금 기한 · '+escapeHtml(when(p.payment_due_at))+'</p>':'')
+ +(fee>0&&p.payment_due_at?'<p class="muted">입금 기한 · '+escapeHtml(when(p.payment_due_at))+'</p>':'')
  +(p.refund_instructions?'<p class="payment-detail">취소·환불 · '+escapeHtml(p.refund_instructions)+'</p>':'')
  +(r.mine?'<p class="muted">내 입금·환불 상태 · '+escapeHtml(paymentText(r.mine.payment_status,fee))+'</p>':'')
  +(r.mine?.payment_status==='REFUND_PENDING'?'<p class="muted">취소 접수됨 · 환불을 기다리는 중이며 실제 환불이 완료된 상태는 아닙니다.</p>':'')+'</div>';
