@@ -65,7 +65,17 @@ async function invokeAccount(body){const {data,error}=await db.functions.invoke(
 async function loadMembers(){const {data,error}=await db.from('members_public').select('id,name,nickname,region,role,profile_image_url,favorite_singers,job,join_order').order('join_order',{ascending:true});if(error)throw error;members=data||[]}
 async function loadSession(){
  const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;if(!session)return;
- let context;try{context=await requestAccess({action:'context'},session.access_token);}catch(error){if(error.status===401||error.status===403){await db.auth.signOut({scope:'local'});session=null;return;}throw error;}
+ let context;
+ try{
+   context=await requestAccess({action:'context'},session.access_token);
+ }catch(error){
+   // A temporary access-check failure must not destroy a valid local login.
+   if(error.status!==401)throw error;
+   const {data:refreshed,error:refreshError}=await db.auth.refreshSession();
+   if(refreshError||!refreshed?.session)throw error;
+   session=refreshed.session;
+   context=await requestAccess({action:'context'},session.access_token);
+ }
  if(context.state==='PENDING'){await db.auth.signOut({scope:'local'});session=null;return;}
  if(!['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(context.state))return;
  if(context.is_admin===true){isAdministrator=true;return;}
