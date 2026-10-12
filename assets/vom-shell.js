@@ -374,14 +374,18 @@
     });
   }
 
+  let shellRefreshVersion=0;
   async function refreshShell(){
+    const version=++shellRefreshVersion;
     let context={approved:false,isAdmin:false,member:null};
     try{context=await window.vomGetMemberAccess();}catch(_){}
-    normalizeBottomNavigation(context.approved);
     let operator=context.isAdmin;
     if(context.approved&&!operator){
       try{const response=await fetch(SUPABASE_URL+'/functions/v1/ot-review',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,Authorization:'Bearer '+storedAccessToken()},body:JSON.stringify({action:'context'})});operator=response.ok;}catch(_){}
     }
+    // Only the latest login state may update the shared navigation.
+    if(version!==shellRefreshVersion)return;
+    normalizeBottomNavigation(context.approved);
     setUnifiedMenu(context.isAdmin,operator,context.approved);
     addMemberStatus(context.member?.name||context.member?.nickname||(context.isAdmin?'관리자':'회원'),context.approved,context.isAdmin);
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
