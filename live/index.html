@@ -2503,6 +2503,8 @@ async function renderDetail(id){
         ${escapeHtml(event.title || '')}
       </h1>
 
+      ${String(event.event_date||'')>='2026-11-01' ? '<a href="/apply/?id='+Number(event.id)+'" style="display:block;margin:18px 0;padding:15px 19px;border-radius:15px;background:#eeeaff;color:#6653cb;font-weight:800;text-decoration:none">🎤 홈페이지 참가 신청 · 신청 현황 →</a>' : ''}
+
       <div class="detail-image">
 
         ${
