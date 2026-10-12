@@ -2028,7 +2028,7 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 }
 </style>
 
-  <script src="/assets/vom-member-context.js?v=1"></script>
+  <script src="/assets/vom-member-context.js?v=2"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 
@@ -3541,6 +3541,13 @@ async function adminLogout(){
 
   closeMenu();
 
+  // Refresh the homepage controls after an explicit logout.
+  document.getElementById('homeLoginButton').innerHTML='로그인하기 <span>→</span>';
+  document.getElementById('homeSignupButton').hidden=false;
+  document.getElementById('homeResultLink').hidden=false;
+  loadHomeBirthday({approved:false});
+  window.vomRefreshShell?.();
+
 }
 
 
@@ -3835,6 +3842,6 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=12"></script>
+<script src="/assets/vom-shell.js?v=13"></script>
 </body>
 </html>
