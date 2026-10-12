@@ -351,7 +351,7 @@ async function loginAdministrator(){
  const form=document.getElementById('adminLoginForm');if(!form.reportValidity())return;const btn=document.getElementById('adminLoginSubmit'),note=document.getElementById('adminLoginNotice');if(btn.disabled)return;btn.disabled=true;note.hidden=true;
  try{const {data,error}=await db.auth.signInWithPassword({email:document.getElementById('adminEmail').value.trim(),password:document.getElementById('adminPassword').value});if(error)throw new Error('관리자 이메일과 비밀번호를 확인해 주세요.');
    const context=await requestAccess({action:'context'},data.session.access_token);if(!context.is_admin){await db.auth.signOut({scope:'local'});throw new Error('관리자 계정으로 로그인해 주세요.');}
-   const next=new URLSearchParams(location.search).get('next');location.replace(next&&/^\/(members|calendar|schedule|live|busking)(\/|$)/.test(next)?next:'/admin-settings/');
+   const next=new URLSearchParams(location.search).get('next');location.replace(next&&/^\/(members|calendar|schedule|live|busking|apply)(\/|$)/.test(next)?next:'/admin-settings/');
  }catch(error){await db.auth.signOut({scope:'local'});note.textContent=error.message||'관리자 로그인을 확인하지 못했습니다.';note.hidden=false;}finally{btn.disabled=false;}
 }
 async function loginAccount(){
@@ -364,7 +364,7 @@ async function loginAccount(){
   const result=await db.auth.setSession(data.session);if(result.error)throw result.error;
   if(data.state==='PENDING'){await db.auth.signOut({scope:'local'});throw new Error('가입 승인 안내를 받은 뒤 로그인해 주세요.');}
   await loadSession();if(!myMember)throw new Error('로그인 계정과 회원 정보의 연결을 확인하지 못했습니다. 운영진에게 확인해 주세요.');const warning=await loadWorkspace();render();window.vomRefreshShell?.();if(warning)say(warning,true);
-  const next=new URLSearchParams(location.search).get('next');if(data.state==='APPROVED'&&next&&/^\/(members|calendar|schedule|live|busking)(\/|$)/.test(next))location.replace(next);
+  const next=new URLSearchParams(location.search).get('next');if(data.state==='APPROVED'&&next&&/^\/(members|calendar|schedule|live|busking|apply)(\/|$)/.test(next))location.replace(next);
  }catch(error){loginNotice(error.message);say(error.message,true);}finally{if(btn.isConnected){btn.disabled=false;btn.textContent='로그인';}}
 }
 
