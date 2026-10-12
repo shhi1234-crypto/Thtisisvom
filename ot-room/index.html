@@ -20,15 +20,25 @@
 .ot-media-tabs label:focus-within{outline:2px solid #8e7be5;outline-offset:2px}
 @media(max-width:480px){.ot-media-tabs label{flex:1;justify-content:center;min-height:44px;text-align:center}}
 @media(prefers-reduced-motion:reduce){.ot-media-tabs label{transition:none}}
-/* Concise guidance, visible only on the signup form. */
-.ot-signup-guide{margin:17px 0 22px;padding:17px 19px;border-radius:16px;border:1px solid #dfd8f7;background:linear-gradient(130deg,#f7f3ff,#f2f9f8)}
-.ot-signup-guide h3{margin:0 0 11px;color:#493d83;font-size:15px;font-weight:800}
-.ot-signup-guide ul{margin:0;padding-left:19px;color:#535b70;font-size:12px;line-height:1.85;overflow-wrap:break-word}
-.ot-signup-guide li+li{margin-top:5px}
-.ot-signup-guide strong{color:#5946ad}
+/* Collapsible signup information: native details keeps the form script unchanged. */
+.ot-signup-guide{margin:17px 0 22px;border-radius:16px;border:1px solid #dfd8f7;background:linear-gradient(130deg,#f7f3ff,#f2f9f8);overflow:hidden}
+.ot-signup-guide summary{display:flex;align-items:center;gap:12px;padding:15px 17px;cursor:pointer;list-style:none}
+.ot-signup-guide summary::-webkit-details-marker{display:none}
+.ot-signup-guide summary:focus-visible{outline:3px solid #9a87e8;outline-offset:-3px}
+.ot-guide-icon{flex:0 0 29px;width:29px;height:29px;display:grid;place-items:center;border-radius:50%;background:#765ed9;color:#fff;font-size:17px;font-weight:900;line-height:1}
+.ot-guide-head{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.ot-guide-head strong{color:#493d83;font-size:13px;line-height:1.5}
+.ot-guide-head small{color:#81779e;font-size:11px;line-height:1.5}
+.ot-guide-arrow{color:#7563ba;font-size:19px;transition:transform .15s}
+.ot-signup-guide[open] .ot-guide-arrow{transform:rotate(180deg)}
+.ot-guide-content{padding:0 19px 18px 55px}
+.ot-guide-content ul{margin:0;padding-left:18px;color:#535b70;font-size:12px;line-height:1.85;overflow-wrap:break-word}
+.ot-guide-content li+li{margin-top:5px}
+.ot-guide-content strong{color:#5946ad}
 .ot-photo-tip{display:block;margin-top:8px!important;padding:10px 12px;border-radius:11px;background:#f5f1ff;color:#524a79;font-size:12px;line-height:1.75}
 .ot-photo-tip b{color:#5944b2}
-@media(max-width:480px){.ot-signup-guide{padding:14px 15px}.ot-signup-guide ul{font-size:11.5px}}
+@media(max-width:480px){.ot-signup-guide summary{padding:13px 14px;gap:10px}.ot-guide-content{padding:0 15px 15px 43px}.ot-guide-content ul{font-size:11.5px}}
+@media(prefers-reduced-motion:reduce){.ot-guide-arrow{transition:none}}
 </style>
 </head>
 <body class="ot-public">
@@ -39,15 +49,21 @@
 <section id="accountCard" class="ot-card"><div class="ot-card-heading"><h2>회원가입 신청</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
 <p class="ot-note"><span class="ot-required" aria-hidden="true">*</span> 표시는 필수 항목입니다. 가입이 승인되면 신청 시 설정한 비밀번호로 로그인할 수 있습니다.</p>
 <p class="ot-note">접수 시간은 오전 9시부터 오후 6시 전까지입니다(한국시간). 그 외 시간에 제출한 신청서는 다음 날 오전 9시에 자동 접수됩니다. 가입 결과는 접수 후 3시간 이내에 확인할 수 있습니다.</p>
-<div class="ot-signup-guide" aria-labelledby="otSignupGuideTitle">
-  <h3 id="otSignupGuideTitle">📋 신청 전 준비사항</h3>
-  <ul>
-    <li><strong>이름·소모임 닉네임:</strong> 소모임 가입 인사에 사용한 정보와 일치하도록 입력해 주세요.</li>
-    <li><strong>본인사진:</strong> 얼굴이 선명하게 보이는 본인 1인 사진을 준비해 주세요. 단체사진이나 얼굴이 가려진 사진은 피해주세요.</li>
-    <li><strong>가창 자료:</strong> 실제로 노래한 부분이 30초 이상인 무보정 영상 또는 음성 파일을 준비해 주세요. 파일 대신 운영진이 열 수 있는 링크도 가능합니다.</li>
-    <li><strong>개인 비밀번호:</strong> 숫자 4자리로 설정하며, 승인 후 로그인과 가입 결과 확인에 사용합니다.</li>
-  </ul>
-</div>
+<details class="ot-signup-guide" aria-labelledby="otSignupGuideTitle">
+  <summary id="otSignupGuideTitle">
+    <span class="ot-guide-icon" aria-hidden="true">!</span>
+    <span class="ot-guide-head"><strong>가이드를 확인하고 안내에 맞게 작성 부탁드립니다.</strong><small>가입 가이드 보기 · 사진 및 라이브 자료 제출 기준</small></span>
+    <span class="ot-guide-arrow" aria-hidden="true">⌄</span>
+  </summary>
+  <div class="ot-guide-content">
+    <ul>
+      <li><strong>이름·소모임 닉네임:</strong> 소모임 가입 인사에 사용한 정보와 일치하도록 입력해 주세요.</li>
+      <li><strong>본인사진:</strong> 얼굴이 선명하게 보이는 본인 1인 사진을 준비해 주세요. 단체사진이나 얼굴이 가려진 사진은 피해주세요.</li>
+      <li><strong>가창 자료:</strong> 실제로 노래한 부분이 30초 이상인 무보정 영상 또는 음성 파일을 준비해 주세요. 파일 대신 운영진이 열 수 있는 링크도 가능합니다.</li>
+      <li><strong>개인 비밀번호:</strong> 숫자 4자리로 설정하며, 승인 후 로그인과 가입 결과 확인에 사용합니다.</li>
+    </ul>
+  </div>
+</details>
 <form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
         <label>이름<span class="ot-required" aria-hidden="true">*</span><input name="candidate_name" autocomplete="name" maxlength="60" required></label>
         <fieldset class="ot-birthday-field"><legend>생년월일<span class="ot-required" aria-hidden="true">*</span></legend><div class="ot-birthday-selects"><select id="birthYear" name="birth_year" autocomplete="bday-year" aria-label="태어난 연도" required><option value="">년</option></select><select id="birthMonth" name="birth_month" autocomplete="bday-month" aria-label="태어난 월" required><option value="">월</option></select><select id="birthDay" name="birth_day" autocomplete="bday-day" aria-label="태어난 일" required disabled><option value="">일</option></select></div><small>태어난 연도·월·일을 선택해 주세요.</small></fieldset>
