@@ -24,7 +24,7 @@
 
 .admin-login-panel{margin-top:24px;padding-top:18px;border-top:1px solid #e9e4f1}.admin-login-panel summary{display:flex;justify-content:space-between;color:#7059cc;font-size:14px;font-weight:750;cursor:pointer}.admin-login-panel form{display:grid;gap:16px;margin-top:18px}.admin-login-panel summary::marker{content:""}
 </style>
-  <script src="/assets/vom-member-context.js?v=1"></script>
+  <script src="/assets/vom-member-context.js?v=2"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
@@ -376,6 +376,6 @@ function closeMenu(){const el=document.getElementById('menuOverlay');el.classLis
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();}}catch(error){try{await loadLoginMembers();}catch(_){}renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
-<script src="/assets/vom-shell.js?v=12"></script>
+<script src="/assets/vom-shell.js?v=13"></script>
 </body>
 </html>
