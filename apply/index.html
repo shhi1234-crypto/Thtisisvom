@@ -5,7 +5,23 @@
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 85% 0,#eee9ff,transparent 45%),#f8f7fb;color:#262842}
 main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-decoration:none}.top{display:flex;justify-content:space-between;align-items:center;font-weight:800}.eyebrow{color:#785fdb;letter-spacing:.13em;font-size:12px;margin-top:45px}h1{font-size:34px;margin:9px 0 22px}.card{padding:25px;border:1px solid #ece7fa;background:#fff;border-radius:23px;box-shadow:0 15px 42px #4034790e;margin-bottom:15px}.event-name{font-size:23px;font-weight:800;line-height:1.4}.meta{margin:15px 0;color:#707388;font-size:13px;line-height:1.9}.info{border-radius:12px;background:#f3f0fc;color:#6553bd;padding:12px 14px;font-size:13px;line-height:1.6;margin:15px 0}h2{font-size:18px}button{border:0;border-radius:12px;padding:12px 19px;background:#7763de;color:white;font:700 14px Arial,sans-serif;cursor:pointer}button:disabled{opacity:.5;cursor:default}.secondary{background:#eeeafa;color:#6553bd}.danger{background:#fff0f0;color:#ba5260}.actions{display:flex;gap:8px;flex-wrap:wrap}.muted{color:#7c8092;font-size:13px;line-height:1.7}.hide{display:none!important}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #f0eef7;font-size:13px}.row small{color:#818397}.admin-actions{display:flex;gap:5px}input{width:100%;margin:6px 0 13px;padding:12px;border:1px solid #ddd8ee;border-radius:10px;font-size:15px}.status{font-weight:bold;color:#7157c7}#notice{margin:13px 0;min-height:20px;color:#ae4558;font-size:13px}
-</style></head><body><main><div class="top"><a href="/">VOM</a><a href="/calendar/">← CALENDAR</a></div><div class="eyebrow">VOICE OF MELODY</div><h1>참가 신청</h1><div id="content" class="card"><p class="muted">참가 신청 정보를 불러오는 중...</p></div><div id="notice" role="status" aria-live="polite"></div><section id="admin" class="card hide"><h2>운영진 신청 관리</h2><p class="muted">입금 확인 후 신청자를 확정할 수 있습니다.</p><div id="adminRows"></div></section></main>
+
+<style>
+.payment-box{background:#f8f6fe;border:1px solid #e7e1f7;border-radius:15px;padding:16px;margin:15px 0;font-size:13px;line-height:1.8}
+.payment-box strong{font-size:17px}.payment-detail{white-space:pre-wrap;overflow-wrap:anywhere;color:#51576d}
+.payment-box .muted{margin:7px 0}.admin-sub{border-top:1px solid #eeeaf7;margin-top:19px;padding-top:18px}
+.admin-sub label{display:block;font-size:12px;font-weight:700;margin:11px 0 3px;color:#5b5b72}
+.admin-sub textarea{display:block;width:100%;min-height:66px;padding:11px;border:1px solid #ddd8ee;border-radius:10px;font:14px/1.5 Arial,sans-serif;resize:vertical}
+.admin-sub input{margin:3px 0}.admin-actions{flex-wrap:wrap}.admin-actions button{font-size:12px;padding:9px 11px}
+@media(max-width:600px){.row{align-items:flex-start;flex-direction:column}.card{padding:19px}}
+</style></head><body><main><div class="top"><a href="/">VOM</a><a href="/calendar/">← CALENDAR</a></div><div class="eyebrow">VOICE OF MELODY</div><h1>참가 신청</h1><div id="content" class="card"><p class="muted">참가 신청 정보를 불러오는 중...</p></div><div id="notice" role="status" aria-live="polite"></div><section id="admin" class="card hide"><h2>운영진 신청 관리</h2><p class="muted">입금·환불을 실제로 확인한 뒤 상태를 변경해 주세요. 여기서는 송금·환불이 자동 실행되지 않습니다.</p>
+<div class="admin-sub"><h2>참가비 설정</h2><p class="muted">무료 일정은 반드시 0원으로 입력해 주세요.</p>
+<label for="feeWon">참가비 (원)</label><input id="feeWon" type="number" min="0" max="1000000" step="1" placeholder="무료 0 / 유료 10000">
+<label for="payDue">입금 기한 (선택)</label><input id="payDue" type="datetime-local">
+<label for="payInstruction">입금 안내 · 계좌 (선택)</label><textarea id="payInstruction" maxlength="500"></textarea>
+<label for="refundInstruction">취소·환불 안내 (선택)</label><textarea id="refundInstruction" maxlength="500"></textarea>
+<button style="margin-top:14px" onclick="savePaymentConfig()">설정 저장</button></div>
+<div class="admin-sub"><h2>신청자 상태 관리</h2><div id="adminRows"></div></div></section></main>
 <script>
 const base='https://aqfmhqultzpakfqwzulj.supabase.co',key='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(base,key);
@@ -25,28 +41,66 @@ async function load(){
  try{const result=await request('view');current=result;render(result)}
  catch(error){content.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p><a href="/me/?next='+encodeURIComponent('/apply/?id='+eventId)+'">로그인하기 →</a>';}
 }
+function paymentText(status,fee){return fee===0?'무료 일정':({UNPAID:'미입금',PAID:'입금 확인',REFUND_PENDING:'환불 대기',REFUNDED:'환불 완료'}[status]||'미입금')}
 function render(r){
- const e=r.event,active=['APPLIED','CONFIRMED'].includes(r.mine?.status),cap=e.application_capacity;
+ const e=r.event,p=r.payment||{},fee=Number.isInteger(p.fee_won)?p.fee_won:null,active=['APPLIED','CONFIRMED'].includes(r.mine?.status),cap=e.application_capacity;
  const now=Date.parse(r.now),open=Date.parse(e.application_opens_at||'2026-10-19T11:00:00Z'),close=Date.parse(e.application_closes_at||'9999-12-31T00:00:00Z');
- const canApply=e.application_enabled&&e.event_date>='2026-11-01'&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10);
+ const canApply=e.application_enabled&&e.event_date>='2026-11-01'&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10)&&r.mine?.payment_status!=='REFUND_PENDING';
  let status=e.application_enabled?'접수 준비 중':'신청을 받지 않는 일정';
  if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
  content.innerHTML='<div class="event-name">'+escapeHtml(e.title||'VOM 일정')+'</div><div class="meta">📅 '+escapeHtml(e.event_date)+' · '+escapeHtml(String(e.start_time||'').slice(0,5))+'<br>📍 '+escapeHtml(e.location||'장소 미정')+'</div><div class="info">'+escapeHtml(status)+(cap?' · '+r.count+' / '+cap+'명':'')+'</div>'+
  (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 입금 확인 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">참가 신청하기</button></div>')+
  (e.application_opens_at?'<p class="muted">오픈: '+when(e.application_opens_at)+'</p>':'')+
  '<p class="muted">참가 신청은 본인 계정으로만 가능하며, 입금 확인 후 운영진이 확정합니다.</p>';
+ const payInfo='<div class="payment-box"><strong>참가비 · '+(fee===null?'설정 대기':fee===0?'무료':fee.toLocaleString('ko-KR')+'원')+'</strong>'
+ +(fee>0?'<div class="payment-detail">'+escapeHtml(p.payment_instructions||'입금 안내를 준비 중입니다.')+'</div>':'')
+ +(p.payment_due_at?'<p class="muted">입금 기한 · '+escapeHtml(when(p.payment_due_at))+'</p>':'')
+ +(p.refund_instructions?'<p class="payment-detail">취소·환불 · '+escapeHtml(p.refund_instructions)+'</p>':'')
+ +(r.mine?'<p class="muted">내 입금·환불 상태 · '+escapeHtml(paymentText(r.mine.payment_status,fee))+'</p>':'')
+ +(r.mine?.payment_status==='REFUND_PENDING'?'<p class="muted">취소 접수됨 · 환불을 기다리는 중이며 실제 환불이 완료된 상태는 아닙니다.</p>':'')+'</div>';
+ content.insertAdjacentHTML('beforeend',payInfo);
  const admin=document.getElementById('admin');admin.classList.toggle('hide',!r.is_admin);
  if(r.is_admin){
- document.getElementById('adminRows').innerHTML=(r.applications||[]).map(a=>'<div class="row"><div><b>'+escapeHtml(a.name)+'</b><br><small>'+escapeHtml(a.status==='CONFIRMED'?'확정':a.status==='APPLIED'?'신청':'취소')+'</small></div><div class="admin-actions">'+(a.status==='APPLIED'?'<button onclick="manage('+a.id+',\'confirm\')">확정</button>':a.status==='CONFIRMED'?'<button class="secondary" onclick="manage('+a.id+',\'unconfirm\')">확정 해제</button>':'')+'</div></div>').join('')||'<p class="muted">신청자가 없습니다.</p>';
+  document.getElementById('feeWon').value=fee===null?'':String(fee);
+  document.getElementById('payInstruction').value=p.payment_instructions||'';
+  document.getElementById('refundInstruction').value=p.refund_instructions||'';
+  const dt=p.payment_due_at?new Date(p.payment_due_at):null;
+  document.getElementById('payDue').value=dt?new Date(dt.getTime()-dt.getTimezoneOffset()*60000).toISOString().slice(0,16):'';
+  document.getElementById('adminRows').innerHTML=(r.applications||[]).map(a=>{
+   const id=Number(a.id),isPaid=fee>0&&a.payment_status==='PAID';
+   let buttons='';
+   if(a.status==='APPLIED'){
+     if(fee>0&&a.payment_status==='UNPAID')buttons+='<button onclick="manage('+id+',\'mark_paid\')">입금 확인</button>';
+     if(isPaid)buttons+='<button class="secondary" onclick="manage('+id+',\'mark_unpaid\')">입금 취소</button>';
+     if(fee!==null&&(fee===0||isPaid))buttons+='<button onclick="manage('+id+',\'confirm\')">참가 확정</button>';
+   }
+   if(a.status==='CONFIRMED')buttons+='<button class="secondary" onclick="manage('+id+',\'unconfirm\')">확정 해제</button>';
+   if(a.status==='CANCELLED'&&a.payment_status==='REFUND_PENDING')buttons+='<button class="danger" onclick="manage('+id+',\'refund_complete\')">환불 완료 기록</button>';
+   return '<div class="row"><div><b>'+escapeHtml(a.name)+'</b><br><small>'+escapeHtml(a.status==='CONFIRMED'?'확정':a.status==='APPLIED'?'신청':'취소')+' · '+escapeHtml(paymentText(a.payment_status,fee))+'</small></div><div class="admin-actions">'+buttons+'</div></div>';
+  }).join('')||'<p class="muted">신청자가 없습니다.</p>';
+
  }
 }
 async function change(action){
- if(action==='cancel'&&!confirm('참가 신청을 취소할까요?'))return;
+ if(action==='cancel'&&!confirm(current?.mine?.payment_status==='PAID'?'취소하면 환불 대기로 전환됩니다. 실제 환불은 운영진이 처리합니다. 취소할까요?':'참가 신청을 취소할까요?'))return;
  try{notice.textContent='처리 중...';await request(action);await load()}catch(error){notice.textContent=error.message}
 }
 async function manage(id,action){
- if(!confirm(action==='confirm'?'입금을 확인했고 참가를 확정할까요?':'참가 확정을 해제할까요?'))return;
+ const prompts={mark_paid:'실제 입금 내역을 확인했나요?',mark_unpaid:'입금 확인을 취소할까요?',confirm:'참가를 확정할까요?',unconfirm:'확정을 해제할까요?',refund_complete:'환불 송금을 실제로 마쳤나요? 버튼은 기록만 변경하며 송금을 실행하지 않습니다.'};
+ if(!confirm(prompts[action]||'변경할까요?'))return;
  try{notice.textContent='처리 중...';await request(action,{application_id:id});await load()}catch(error){notice.textContent=error.message}
+}
+async function savePaymentConfig(){
+ const raw=document.getElementById('feeWon').value.trim(),fee=raw===''?null:Number(raw);
+ if(fee!==null&&(!Number.isInteger(fee)||fee<0||fee>1000000)){notice.textContent='참가비는 0원부터 100만원까지 입력해 주세요.';return}
+ const due=document.getElementById('payDue').value;
+ try{
+  notice.textContent='설정 저장 중...';
+  await request('payment_config',{fee_won:fee,payment_instructions:document.getElementById('payInstruction').value,
+   refund_instructions:document.getElementById('refundInstruction').value,
+   payment_due_at:due?new Date(due).toISOString():null});
+  await load();notice.textContent='참가비 안내를 저장했습니다.';
+ }catch(e){notice.textContent=e.message}
 }
 load();
 </script></body></html>
