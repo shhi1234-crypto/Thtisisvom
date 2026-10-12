@@ -20,6 +20,15 @@
 .ot-media-tabs label:focus-within{outline:2px solid #8e7be5;outline-offset:2px}
 @media(max-width:480px){.ot-media-tabs label{flex:1;justify-content:center;min-height:44px;text-align:center}}
 @media(prefers-reduced-motion:reduce){.ot-media-tabs label{transition:none}}
+/* Concise guidance, visible only on the signup form. */
+.ot-signup-guide{margin:17px 0 22px;padding:17px 19px;border-radius:16px;border:1px solid #dfd8f7;background:linear-gradient(130deg,#f7f3ff,#f2f9f8)}
+.ot-signup-guide h3{margin:0 0 11px;color:#493d83;font-size:15px;font-weight:800}
+.ot-signup-guide ul{margin:0;padding-left:19px;color:#535b70;font-size:12px;line-height:1.85;overflow-wrap:break-word}
+.ot-signup-guide li+li{margin-top:5px}
+.ot-signup-guide strong{color:#5946ad}
+.ot-photo-tip{display:block;margin-top:8px!important;padding:10px 12px;border-radius:11px;background:#f5f1ff;color:#524a79;font-size:12px;line-height:1.75}
+.ot-photo-tip b{color:#5944b2}
+@media(max-width:480px){.ot-signup-guide{padding:14px 15px}.ot-signup-guide ul{font-size:11.5px}}
 </style>
 </head>
 <body class="ot-public">
@@ -30,23 +39,32 @@
 <section id="accountCard" class="ot-card"><div class="ot-card-heading"><h2>회원가입 신청</h2><span id="windowLabel" class="ot-tag">09:00~18:00</span></div>
 <p class="ot-note"><span class="ot-required" aria-hidden="true">*</span> 표시는 필수 항목입니다. 가입이 승인되면 신청 시 설정한 비밀번호로 로그인할 수 있습니다.</p>
 <p class="ot-note">접수 시간은 오전 9시부터 오후 6시 전까지입니다(한국시간). 그 외 시간에 제출한 신청서는 다음 날 오전 9시에 자동 접수됩니다. 가입 결과는 접수 후 3시간 이내에 확인할 수 있습니다.</p>
+<div class="ot-signup-guide" aria-labelledby="otSignupGuideTitle">
+  <h3 id="otSignupGuideTitle">📋 신청 전 준비사항</h3>
+  <ul>
+    <li><strong>이름·소모임 닉네임:</strong> 소모임 가입 인사에 사용한 정보와 일치하도록 입력해 주세요.</li>
+    <li><strong>본인사진:</strong> 얼굴이 선명하게 보이는 본인 1인 사진을 준비해 주세요. 단체사진이나 얼굴이 가려진 사진은 피해주세요.</li>
+    <li><strong>가창 자료:</strong> 실제로 노래한 부분이 30초 이상인 무보정 영상 또는 음성 파일을 준비해 주세요. 파일 대신 운영진이 열 수 있는 링크도 가능합니다.</li>
+    <li><strong>개인 비밀번호:</strong> 숫자 4자리로 설정하며, 승인 후 로그인과 가입 결과 확인에 사용합니다.</li>
+  </ul>
+</div>
 <form id="accountForm" autocomplete="on" method="post"><div class="ot-fields">
         <label>이름<span class="ot-required" aria-hidden="true">*</span><input name="candidate_name" autocomplete="name" maxlength="60" required></label>
         <fieldset class="ot-birthday-field"><legend>생년월일<span class="ot-required" aria-hidden="true">*</span></legend><div class="ot-birthday-selects"><select id="birthYear" name="birth_year" autocomplete="bday-year" aria-label="태어난 연도" required><option value="">년</option></select><select id="birthMonth" name="birth_month" autocomplete="bday-month" aria-label="태어난 월" required><option value="">월</option></select><select id="birthDay" name="birth_day" autocomplete="bday-day" aria-label="태어난 일" required disabled><option value="">일</option></select></div><small>태어난 연도·월·일을 선택해 주세요.</small></fieldset>
-        <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required></label>
+        <label>소모임 닉네임<span class="ot-required" aria-hidden="true">*</span><input id="accountNickname" name="somoim_nickname" maxlength="80" required><small>소모임에서 현재 사용 중인 닉네임을 그대로 적어주세요.</small></label>
         <label>직업<span class="ot-required" aria-hidden="true">*</span><input name="job" maxlength="80" placeholder="예: 회사원, 학생, 프리랜서" required></label>
         <label>버스킹 경험 단위<span class="ot-required" aria-hidden="true">*</span><select id="experienceUnit" name="busking_experience_unit" required><option value="COUNT">횟수 (회)</option><option value="YEARS">기간 (년)</option></select></label>
-        <label>버스킹 경험<span class="ot-required" aria-hidden="true">*</span><input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다.</small></label>
-        <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required></label>
-        <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" required></label>
+        <label>버스킹 경험<span class="ot-required" aria-hidden="true">*</span><input id="experienceValue" name="busking_experience" type="number" min="0" max="10000" step="1" placeholder="예: 3 / 경험이 없으면 0" required><small>횟수 또는 활동 기간 중 하나로 입력합니다. 경험이 없다면 0을 입력해도 됩니다.</small></label>
+        <label>연락처<span class="ot-required" aria-hidden="true">*</span><input name="phone" type="tel" autocomplete="tel" maxlength="30" required><small>가입 안내를 받을 수 있는 본인 연락처를 입력해 주세요.</small></label>
+        <label>활동 지역<span class="ot-required" aria-hidden="true">*</span><input name="region" maxlength="80" placeholder="예: 인천 구월동 / 부천" required><small>주로 모임에 참여할 수 있는 지역을 적어주세요.</small></label>
         <label>성별<span class="ot-required" aria-hidden="true">*</span><select name="gender" required><option value="">선택해 주세요</option><option>여성</option><option>남성</option><option>기타</option></select></label>
         <label>개인 비밀번호<span class="ot-required" aria-hidden="true">*</span><input name="password" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리" required><small>숫자 4자리로 설정해 주세요.</small></label>
         <label>비밀번호 확인<span class="ot-required" aria-hidden="true">*</span><input name="password_confirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력" required></label>
-      </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>본인을 확인할 수 있는 사진 · JPG / PNG / WEBP · 최대 5MB</small></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><fieldset class="ot-media-choice"><legend>라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span></legend>
-<p class="ot-note">가창 부분이 30초 이상인 라이브 자료를 제출해 주세요. 믹싱·튠 등으로 목소리를 보정한 자료는 제출할 수 없습니다.</p>
+      </div><label class="ot-file-label">본인사진<span class="ot-required" aria-hidden="true">*</span><input id="accountPhoto" name="photo" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" required><small>얼굴을 알아볼 수 있는 본인 1인 사진 · JPG / PNG / WEBP · 최대 5MB</small><span class="ot-photo-tip"><b>✅ 권장:</b> 얼굴이 밝고 선명하게 보이는 사진<br><b>⚠️ 피해주세요:</b> 단체사진, 멀리서 찍어 얼굴이 작은 사진, 마스크·스티커·과한 보정으로 얼굴이 가려진 사진</span></label><button id="clearPhoto" type="button" class="ot-clear-file" hidden>사진 지우기</button><img id="accountPhotoPreview" class="ot-photo" alt="선택한 본인사진" hidden><fieldset class="ot-media-choice"><legend>라이브 영상 또는 음성<span class="ot-required" aria-hidden="true">*</span></legend>
+<p class="ot-note">본인이 직접 노래한 부분이 <strong>30초 이상</strong>인 라이브 영상 또는 음성을 제출해 주세요. 영상이 아니어도 <strong>목소리가 잘 들리는 음성 녹음</strong>이면 가능합니다. 다만 믹싱·튠 등으로 목소리를 보정한 자료는 제출할 수 없습니다.</p>
 <div class="ot-media-tabs"><label><input type="radio" name="media_source" value="FILE" checked>파일 업로드</label><label><input type="radio" name="media_source" value="LINK">링크 첨부</label></div>
 <div id="mediaFilePanel" class="ot-media-panel"><label class="ot-file-label">라이브 파일<input id="videoFile" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.m4b,.wav,.aac,.ogg,.flac,.aif,.aiff" required><small>영상: MP4 · MOV · WEBM · 3GP<br>음성: MP3 · M4A · WAV · AAC · OGG · FLAC · AIFF / 최대 50MB</small></label><button id="clearVideo" type="button" class="ot-clear-file" hidden>파일 지우기</button><p id="fileSummary" class="ot-note"></p></div>
-<div id="mediaLinkPanel" class="ot-media-panel" hidden><label>라이브 자료 링크<input id="mediaUrl" name="media_url" type="url" inputmode="url" pattern="https://.+" maxlength="2048" placeholder="https://..." autocomplete="off" disabled><small>유튜브·드라이브 등 운영진이 로그인 없이 열 수 있는 링크를 입력해 주세요. 전체 공개 대신 링크 보유자만 볼 수 있도록 설정해 주세요.</small></label></div>
+<div id="mediaLinkPanel" class="ot-media-panel" hidden><label>라이브 자료 링크<input id="mediaUrl" name="media_url" type="url" inputmode="url" pattern="https://.+" maxlength="2048" placeholder="https://..." autocomplete="off" disabled><small>유튜브·드라이브 등 운영진이 로그인 없이 열 수 있는 HTTPS 링크를 입력해 주세요. 전체 공개 대신 링크 보유자만 볼 수 있도록 설정해 주세요. 제출 전에 다른 계정이나 시크릿 창에서 열리는지 확인해 주세요.</small></label></div>
 <label class="ot-consent ot-live-confirm"><input name="live_confirmed" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가창 부분이 30초 이상이며, 믹싱·튠 등 보정 없는 라이브 자료임을 확인했습니다.</span></label>
 </fieldset>
 <label class="ot-consent"><input name="consent" value="yes" type="checkbox" required><span><span class="ot-required" aria-hidden="true">*</span> 가입 검토 및 회원 관리를 위한 본인사진·이름·닉네임·생년월일·직업·버스킹 경험 및 라이브 영상·음성의 수집·검토, 입력한 개인정보의 수집·이용에 동의합니다. 가입 정보와 제출 자료는 운영진이 검토하며 다른 회원에게 공개되지 않습니다.</span></label>
