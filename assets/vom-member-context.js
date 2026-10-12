@@ -1,15 +1,57 @@
-/* A saved token alone never makes a visitor an approved member. */
+/* Read the live Supabase session, not a possibly expired stored access token. */
 (function(){
   'use strict';
-  let cachedToken='',pending=null;
-  window.vomGetMemberAccess=function(){
-    let token='';try{token=JSON.parse(localStorage.getItem('sb-aqfmhqultzpakfqwzulj-auth-token')||'null')?.access_token||'';}catch(_){}
-    if(!token)return Promise.resolve({approved:false,isAdmin:false,member:null});
-    if(pending&&cachedToken===token)return pending;
-    cachedToken=token;
-    pending=fetch('https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/vom-access',{method:'POST',headers:{apikey:'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R','Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action:'context'}),cache:'no-store',signal:AbortSignal.timeout(15000)})
-      .then(async response=>{if(!response.ok)return {approved:false,isAdmin:false,member:null};const data=await response.json();return {approved:data.state==='APPROVED',isAdmin:data.state==='APPROVED'&&data.is_admin===true,member:data.state==='APPROVED'?data.member:null};})
-      .catch(()=>{pending=null;return {approved:false,isAdmin:false,member:null};});
-    return pending;
+  const url='https://aqfmhqultzpakfqwzulj.supabase.co';
+  const key='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+  const guest={approved:false,isAdmin:false,member:null};
+  let fallbackClient=null, inFlight=null, inFlightToken='';
+
+  function authClient(){
+    // Reuse a page's Supabase client so token refresh remains consistent.
+    try{
+      if(typeof db!=='undefined' && db?.auth?.getSession)return db;
+    }catch(_){}
+    if(!window.supabase?.createClient)return null;
+    if(!fallbackClient)fallbackClient=window.supabase.createClient(url,key);
+    return fallbackClient;
+  }
+
+  async function currentToken(){
+    const client=authClient();
+    if(client){
+      const {data,error}=await client.auth.getSession();
+      if(error)throw error;
+      return data?.session?.access_token||'';
+    }
+    // Some public pages don't load the SDK; preserve their existing behavior.
+    try{
+      return JSON.parse(localStorage.getItem('sb-aqfmhqultzpakfqwzulj-auth-token')||'null')?.access_token||'';
+    }catch(_){return '';}
+  }
+
+  window.vomGetMemberAccess=async function(){
+    let token='';
+    try{token=await currentToken();}catch(_){return guest;}
+    if(!token)return guest;
+    if(inFlight&&inFlightToken===token)return inFlight;
+
+    inFlightToken=token;
+    const request=fetch(url+'/functions/v1/vom-access',{
+      method:'POST',
+      headers:{apikey:key,'Content-Type':'application/json',Authorization:'Bearer '+token},
+      body:JSON.stringify({action:'context'}),
+      cache:'no-store',signal:AbortSignal.timeout(15000)
+    }).then(async response=>{
+      if(!response.ok)return guest;
+      const data=await response.json();
+      return {
+        approved:data.state==='APPROVED',
+        isAdmin:data.state==='APPROVED'&&data.is_admin===true,
+        member:data.state==='APPROVED'?data.member:null
+      };
+    }).catch(()=>guest);
+    inFlight=request;
+    try{return await request;}
+    finally{if(inFlight===request)inFlight=null;}
   };
 })();
