@@ -1,4 +1,4 @@
-/* VOM · 소모임 앱 참가 안내 */
+/* VOM · event registration routing: website from November, Somoim for earlier events */
 (function () {
   'use strict';
 
@@ -17,7 +17,10 @@
   }
 
   function shouldShow(event) {
-    return !isPracticeEvent(event) && (!event || event.somoim_open_enabled !== false);
+    if (event && event.event_date && event.event_date < '2026-11-01') {
+      return !isPracticeEvent(event) && event.somoim_open_enabled !== false;
+    }
+    return true;
   }
 
   function installStyle() {
@@ -36,29 +39,39 @@
     document.head.appendChild(style);
   }
 
-  function bridgeCopy() {
-    if (path === '/calendar') {
+  function bridgeCopy(event) {
+    if (event && event.event_date && event.event_date < '2026-11-01') {
       return {
-        title: '일정 참가 신청은 소모임 앱에서',
-        detail: '원하는 날짜의 VOM 정모에서 참석 신청해 주세요.'
+        title: '소모임 앱에서 참가 신청하기',
+        detail: '10월까지의 일정은 해당 소모임 모집글에서 신청해 주세요.',
+        url: SOMOIM_URL, mark: 'S', label: 'VOM × SOMOIM', external: true
+      };
+    }
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id && /^[0-9]+$/.test(id) && event && event.event_date >= '2026-11-01') {
+      return {
+        title: '홈페이지에서 참가 신청하기',
+        detail: '이 일정의 신청 · 취소 · 확정 현황을 확인하세요.',
+        url: '/apply/?id=' + encodeURIComponent(id), mark: 'V', label: 'VOM WEBSITE', external: false
       };
     }
     return {
-      title: '소모임 앱에서 참가 신청하기',
-      detail: '참가 신청은 해당 일정의 VOM 정모에서 진행돼요.'
+      title: '11월 일정부터 홈페이지에서 참가 신청',
+      detail: '참가할 일정을 선택해 홈페이지에서 신청해 주세요.',
+      url: '/calendar/#calendarContainer', mark: 'V', label: 'VOM WEBSITE', external: false
     };
   }
 
-  function createBridge() {
-    const copy = bridgeCopy();
+  function createBridge(event) {
+    const copy = bridgeCopy(event);
     const section = document.createElement('section');
     section.id = 'vom-somoim-bridge';
     section.className = 'vom-somoim-bridge';
     section.innerHTML =
-      '<a href="' + SOMOIM_URL + '" target="_blank" rel="noopener noreferrer">' +
-        '<span class="vsm-mark" aria-hidden="true">S</span>' +
-        '<span class="vsm-copy"><span>VOM × SOMOIM</span><strong>' + copy.title + '</strong><small>' + copy.detail + '</small></span>' +
-        '<b class="vsm-arrow" aria-hidden="true">↗</b>' +
+      '<a href="' + copy.url + '"' + (copy.external ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+        '<span class="vsm-mark" aria-hidden="true">' + copy.mark + '</span>' +
+        '<span class="vsm-copy"><span>' + copy.label + '</span><strong>' + copy.title + '</strong><small>' + copy.detail + '</small></span>' +
+        '<b class="vsm-arrow" aria-hidden="true">' + (copy.external ? '↗' : '→') + '</b>' +
       '</a>';
     return section;
   }
@@ -79,7 +92,7 @@
     if (!main || !pageReady(main)) return false;
     if (existing) return true;
 
-    const bridge = createBridge();
+    const bridge = createBridge(event);
     const children = Array.from(main.children);
 
     if (path === '/calendar') {
@@ -102,7 +115,7 @@
 
     try {
       const response = await fetch(
-        SUPABASE_URL + '/rest/v1/events?select=event_type%2Ctitle%2Csomoim_open_enabled&id=eq.' + encodeURIComponent(id),
+        SUPABASE_URL + '/rest/v1/events?select=event_date%2Cevent_type%2Ctitle%2Csomoim_open_enabled&id=eq.' + encodeURIComponent(id),
         { headers: { apikey: SUPABASE_KEY } }
       );
       if (!response.ok) return {};
