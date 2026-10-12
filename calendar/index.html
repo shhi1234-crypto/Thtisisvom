@@ -2892,6 +2892,22 @@ button{
       </div>
 
       <div class="field">
+        <label>홈페이지 참가 신청</label>
+        <select id="applicationEnabled" class="pretty-select" onchange="syncApplicationControls()">
+          <option value="NO">비활성 · 신청받지 않음</option>
+          <option value="YES">활성 · 11월 이후 일정만</option>
+        </select>
+        <div id="applicationControls" hidden>
+          <label style="font-size:9px;color:#7f8392;">정원 (명)</label>
+          <input id="applicationCapacity" type="number" min="1" max="500" class="text-input" placeholder="예: 12">
+          <label style="font-size:9px;color:#7f8392;">신청 오픈 일시 (선택 · 미입력 시 10/19 20시 이후)</label>
+          <input id="applicationOpensAt" type="datetime-local" class="text-input">
+          <label style="font-size:9px;color:#7f8392;">신청 마감 일시 (선택)</label>
+          <input id="applicationClosesAt" type="datetime-local" class="text-input">
+        </div>
+        <div style="font-size:10px;color:#80799a;margin-top:7px">오픈 전까지 비활성 상태이며, 소모임 게시 여부와 독립적으로 관리됩니다.</div>
+      </div>
+      <div class="field">
         <label>소모임 안내글 (선택)</label>
         <select id="somoimOpenMode" class="pretty-select" onchange="syncSomoimOpenMode()">
           <option value="OPEN">소모임에도 게시할 예정</option>
@@ -4564,6 +4580,8 @@ async function openScheduleDetail(item){
 
       ${setlistCta}
 
+      ${String(item.event_date||'')>='2026-11-01' ? '<a class="schedule-setlist-cta" href="/apply/?id='+Number(item.id)+'"><div><strong>참가 신청 · 신청 현황</strong><small>홈페이지에서 신청 및 취소, 확정 상태를 확인해요</small></div><span>→</span></a>' : ''}
+
       ${
         item.host_note
         ? `<div class="host-note"><div class="host-note-label">HOST NOTE</div><div class="host-note-title">주최자 안내</div><div class="host-note-body">${escapeHtml(item.host_note).replace(/\n/g,'<br>')}</div></div>`
@@ -4649,6 +4667,14 @@ function makeTime(item){
    EVENT TYPE
 ====================================================== */
 
+function syncApplicationControls(){
+  const on=document.getElementById('applicationEnabled')?.value==='YES';
+  const section=document.getElementById('applicationControls');
+  if(section)section.hidden=!on;
+}
+function applicationDateInput(value){
+  return value ? new Date(value).toISOString().slice(0,16) : null;
+}
 function isSomoimOpenEnabled(){
   return document.getElementById('somoimOpenMode')?.value!=='NONE';
 }
@@ -6375,6 +6401,11 @@ function clearForm(){
     )
     .value = '';
     document.getElementById('eventHostNote').value = '';
+    document.getElementById('applicationEnabled').value='NO';
+    document.getElementById('applicationCapacity').value='';
+    document.getElementById('applicationOpensAt').value='';
+    document.getElementById('applicationClosesAt').value='';
+    syncApplicationControls();
     document.getElementById('somoimOpenMode').value = 'NONE';
     document.getElementById('somoimOpenAt').value = '';
     syncSomoimOpenMode();
@@ -6531,7 +6562,25 @@ async function saveEvent(){
     }
 
 
+    const applicationEnabled=document.getElementById('applicationEnabled').value==='YES';
+    const capacity=Number(document.getElementById('applicationCapacity').value);
+    if(applicationEnabled&&(eventDate<'2026-11-01'||!Number.isInteger(capacity)||capacity<1||capacity>500)){
+      alert('홈페이지 신청은 11월 이후 일정만 가능하며, 정원은 1~500명으로 설정해야 합니다.');
+      return;
+    }
+    const opensInput=document.getElementById('applicationOpensAt').value;
+    const closesInput=document.getElementById('applicationClosesAt').value;
+    if(opensInput&&closesInput&&opensInput>=closesInput){
+      alert('신청 마감은 오픈 일시보다 늦어야 합니다.');
+      return;
+    }
+
     const payload = {
+
+      application_enabled:applicationEnabled,
+      application_capacity:applicationEnabled?capacity:null,
+      application_opens_at:applicationEnabled&&opensInput?new Date(opensInput).toISOString():null,
+      application_closes_at:applicationEnabled&&closesInput?new Date(closesInput).toISOString():null,
 
       event_type:
         currentEventType,
@@ -6796,6 +6845,11 @@ function editEvent(id){
     .value =
     item.description || '';
     document.getElementById('eventHostNote').value = item.host_note || '';
+    document.getElementById('applicationEnabled').value=item.application_enabled?'YES':'NO';
+    document.getElementById('applicationCapacity').value=item.application_capacity||'';
+    document.getElementById('applicationOpensAt').value=toLocalDateTimeInput(item.application_opens_at);
+    document.getElementById('applicationClosesAt').value=toLocalDateTimeInput(item.application_closes_at);
+    syncApplicationControls();
     document.getElementById('somoimOpenMode').value = item.somoim_open_enabled===false ? 'NONE' : 'OPEN';
     document.getElementById('somoimOpenAt').value = toLocalDateTimeInput(item.somoim_open_at);
     syncSomoimOpenMode();
