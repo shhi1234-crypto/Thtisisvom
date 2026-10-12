@@ -51,6 +51,14 @@ export async function handle(req:Request,service:any){
       const fee=body.fee_won===null?null:Number(body.fee_won);
       if(fee!==null&&(!Number.isSafeInteger(fee)||fee<0||fee>1000000))
         err('참가비는 0원(무료)부터 100만원까지 입력해 주세요.',400);
+      // Never rewrite the fee of a confirmed or previously paid application.
+      if(payment?.fee_won!==fee){
+        const {data:existing,error:existingError}=await service.from('event_applications')
+          .select('id,status,payment_status').eq('event_id',eventId);
+        if(existingError)throw existingError;
+        if((existing||[]).some((a:any)=>a.status==='CONFIRMED'||['PAID','REFUND_PENDING','REFUNDED'].includes(a.payment_status)))
+          err('확정 또는 입금 내역이 있는 일정의 참가비는 변경할 수 없습니다.',409);
+      }
       const instructions=String(body.payment_instructions||'').trim();
       const refundInstructions=String(body.refund_instructions||'').trim();
       if(instructions.length>500||refundInstructions.length>500)err('안내 문구는 500자 이내로 작성해 주세요.',400);
@@ -71,7 +79,7 @@ export async function handle(req:Request,service:any){
       return reply(origin,{ok:true,...data});
     }
     if(['mark_paid','mark_unpaid','refund_complete'].includes(body.action)){
-      if(payment?.fee_won==null||payment.fee_won<=0)err('유료 일정의 참가비 설정을 먼저 완료해 주세요.',409);
+      if(body.action!=='refund_complete'&&(payment?.fee_won==null||payment.fee_won<=0))err('유료 일정의 참가비 설정을 먼저 완료해 주세요.',409);
       const appId=numberId(body.application_id);
       const paid=body.action==='mark_paid',unpaid=body.action==='mark_unpaid';
       const patch=paid?{payment_status:'PAID',paid_at:new Date().toISOString(),paid_recorded_by:userId,updated_at:new Date().toISOString()}
