@@ -2892,17 +2892,17 @@ button{
       </div>
 
       <div class="field">
-        <label>소모임 진행</label>
+        <label>소모임 안내글 (선택)</label>
         <select id="somoimOpenMode" class="pretty-select" onchange="syncSomoimOpenMode()">
-          <option value="OPEN">소모임 열기</option>
-          <option value="NONE">이번 일정은 소모임 미오픈 (연습모임 등)</option>
+          <option value="OPEN">소모임에도 게시할 예정</option>
+          <option value="NONE">소모임 게시 여부와 무관하게 일정 등록</option>
         </select>
         <div id="somoimOpenDetails" class="somoim-open-details">
-          <label style="font-size:9px;color:#7f8392;">정식 오픈 일시</label>
+          <label style="font-size:9px;color:#7f8392;">소모임 게시 예정 일시 (선택)</label>
           <input id="somoimOpenAt" class="text-input" type="datetime-local">
-          <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">이 시간에 맞춰 ‘모집글 정식 오픈 · 인원 제한 해제’ 작업이 생성됩니다.</div>
+          <div style="margin-top:7px;color:#999cab;font-size:9px;line-height:1.65;">홈페이지 일정 등록 및 참가 신청과는 관계없는 안내용 정보입니다.</div>
         </div>
-        <div id="somoimNoOpenNote" class="somoim-no-open-note" hidden>연습모임은 소모임 앱에 따로 올리지 않습니다. 이 일정은 소모임 관련 체크리스트와 주황 안내에서 제외됩니다.</div>
+        <div id="somoimNoOpenNote" class="somoim-no-open-note" hidden>소모임 게시 여부와 관계없이 홈페이지 일정은 정상 등록됩니다.</div>
       </div>
 
 
@@ -3674,8 +3674,7 @@ function eventMissingFields(item){
   if(!item.location)add('location','장소');
   if(!item.start_time||!item.end_time)add('time','진행 시간');
   if(!item.host_member_id)add('host_member_id','주최자');
-  if(!isPracticeEvent(item)&&item.somoim_open_enabled!==false&&!item.somoim_open_at)add('somoim_open_at','소모임 오픈 일시');
-  return missing;
+   return missing;
 }
 
 function renderEventReadinessAlert(){
@@ -3684,7 +3683,7 @@ function renderEventReadinessAlert(){
   const incomplete=events.map(item=>({item,missing:eventMissingFields(item)})).filter(entry=>entry.missing.length);
   if(!incomplete.length)return '';
 
-  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>공개 일정에 필요한 기본 정보가 비어 있습니다. 연습모임과 소모임 미오픈 일정은 이 안내에서 제외됩니다.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>{const hasSomoim=entry.missing.some(field=>field.key==='somoim_open_at');return '<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.map(field=>field.label).join(' · '))+'</small></div><div class="event-readiness-actions"><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button>'+(hasSomoim?'<button class="event-readiness-skip" type="button" onclick="markEventSomoimNotOpen('+Number(entry.item.id)+')">소모임 미오픈</button>':'')+'</div></div>';}).join('')+'</div></section>';
+  return '<section class="event-readiness-alert"><div class="event-readiness-head"><div><b>일정 작성 확인 필요</b><p>제목·날짜·장소·진행 시간·주최자 등 홈페이지 일정 기본 정보를 확인하세요.</p></div><span class="event-readiness-count">'+incomplete.length+'건</span></div><div class="event-readiness-list">'+incomplete.map(entry=>'<div class="event-readiness-row"><div><strong>'+escapeHtml(entry.item.title||'제목 없는 일정')+'</strong><small>미입력 · '+escapeHtml(entry.missing.map(field=>field.label).join(' · '))+'</small></div><div class="event-readiness-actions"><button type="button" onclick="editEvent('+Number(entry.item.id)+')">바로 입력</button></div></div>').join('')+'</div></section>';
 }
 
 async function markEventSomoimNotOpen(eventId){
@@ -3719,7 +3718,7 @@ function renderMonthlyOperationsGuide(){
       ? month+' 일정이 모두 등록되었는지 확인해주세요.'
       : '등록된 일정들이 공지방에 모두 안내됐는지 확인해주세요.';
 
-    return '<section class="monthly-ops-guide"><div class="monthly-ops-head"><div><b>다음 달 운영 준비</b><p class="monthly-ops-copy">① 홈페이지 일정 등록 → ② 공지방 월간 공지 → ③ 소모임 모집글 예약·정식 오픈</p></div><span>'+status+'</span></div><div class="monthly-ops-list">'+(list.length?list.map(item=>'<div class="monthly-ops-item">'+escapeHtml(item.title||'일정')+'<small>'+formatKoreanDate(item.event_date)+'</small></div>').join(''):'<div class="monthly-ops-item">등록된 일정이 없습니다.</div>')+'</div><div class="monthly-ops-warning">'+warning+'</div><button class="monthly-copy-btn" type="button" onclick="copyNextMonthNotice()">공지 확인문 복사</button></section>';
+    return '<section class="monthly-ops-guide"><div class="monthly-ops-head"><div><b>다음 달 운영 준비</b><p class="monthly-ops-copy">① 홈페이지 일정 등록 → ② 공지방 월간 공지 → ③ 홈페이지 참가 신청 관리</p></div><span>'+status+'</span></div><div class="monthly-ops-list">'+(list.length?list.map(item=>'<div class="monthly-ops-item">'+escapeHtml(item.title||'일정')+'<small>'+formatKoreanDate(item.event_date)+'</small></div>').join(''):'<div class="monthly-ops-item">등록된 일정이 없습니다.</div>')+'</div><div class="monthly-ops-warning">'+warning+'</div><button class="monthly-copy-btn" type="button" onclick="copyNextMonthNotice()">공지 확인문 복사</button></section>';
   }catch(error){
     console.warn('운영 준비 안내를 표시하지 못했습니다.',error);
     return '';
@@ -6376,7 +6375,7 @@ function clearForm(){
     )
     .value = '';
     document.getElementById('eventHostNote').value = '';
-    document.getElementById('somoimOpenMode').value = 'OPEN';
+    document.getElementById('somoimOpenMode').value = 'NONE';
     document.getElementById('somoimOpenAt').value = '';
     syncSomoimOpenMode();
     resetOwnerFields();
@@ -6936,6 +6935,9 @@ async function notifyNewEvent(event){
 const SOMOIM_TASK_KEYS=['somoim-open-time','somoim-draft','somoim-open'];
 
 function buildSomoimOperationTasks(event){
+  // From November 2026, VOM registration is independent of Somoim posting.
+  // Keep the legacy checklist unchanged for events before the transition.
+  if(String(event.event_date||'')>='2026-11-01')return [];
   if(isPracticeEvent(event)||event.somoim_open_enabled===false)return [];
   const eventDate=new Date(event.event_date+'T12:00:00');
   const registerBy=new Date(eventDate.getFullYear(),eventDate.getMonth()-1,25);
