@@ -50,7 +50,7 @@ const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
 const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const app=document.getElementById('app');
-let loginMembers=[],loginMembersError='',pickerIndex=-1;
+
 let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false;
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -106,38 +106,14 @@ function renderAdminDashboard(){
 }
 
 function renderWelcome(){
- app.innerHTML=`<section class="card login-main"><div class="login-heading"><h2>개인 로그인 <span class="en">MY VOM</span></h2><p class="card-intro">회원 이름을 검색해 선택하고, 본인이 정한 숫자 4자리 비밀번호를 입력해 주세요.</p></div>
+ app.innerHTML=`<section class="card login-main"><div class="login-heading"><h2>개인 로그인 <span class="en">MY VOM</span></h2><p class="card-intro">멤버스에 등록된 본인 이름을 직접 입력하고, 숫자 4자리 비밀번호를 입력해 주세요.</p></div>
  <form id="memberLoginForm" name="login" method="post" action="/me/" autocomplete="on" onsubmit="event.preventDefault();loginAccount()"><div class="login-fields">
- <div class="field"><label for="loginNameSearch">회원 이름</label><div id="loginMemberPicker" class="member-picker"><input id="loginNameSearch" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="loginMemberOptions" name="username" autocomplete="username" placeholder="회원 이름 검색" maxlength="80" required><button id="memberPickerToggle" type="button" class="picker-toggle" aria-label="회원 이름 목록 열기">⌄</button><input id="loginMemberId" type="hidden"><div id="loginMemberOptions" class="member-options" role="listbox" aria-label="회원 이름 검색 결과" hidden></div></div><p id="memberPickerNote" class="help"></p></div>
+ <div class="field"><label for="loginNameSearch">회원 이름</label><input id="loginNameSearch" name="username" autocomplete="username" placeholder="이름을 직접 입력" maxlength="80" required><p id="memberPickerNote" class="help">멤버스에 등록된 이름을 입력해 주세요.</p></div>
  <div class="field"><label for="loginPassword">개인 비밀번호 (숫자 4자리)</label><input id="loginPassword" name="password" type="password" inputmode="numeric" autocomplete="current-password" maxlength="64" placeholder="본인이 정한 숫자 4자리" required></div></div><p id="loginMessage" class="login-message" role="alert" hidden></p><button id="loginButton" class="primary" type="submit">로그인</button></form>
  <p class="account-note">최초 비밀번호 설정이나 비밀번호 재설정은 운영진이 발급한 개인 링크에서 진행해 주세요.</p><div class="signup-guide"><div><strong>처음 오셨나요?</strong><p>사진과 라이브 파일을 제출하고 VOM에 함께해요.</p></div><a class="login-signup" href="/ot-room/">회원가입하기 <span>→</span></a></div>
  <p class="account-note">이미 신청하셨나요? <a href="/ot-room/?result=1">가입 결과 확인하기 · 로그인 없이 확인</a></p><details class="admin-login-panel"><summary>관리자 로그인 <span>⌄</span></summary><form id="adminLoginForm" method="post" action="/me/" autocomplete="on" onsubmit="event.preventDefault();loginAdministrator()"><div class="field"><label for="adminEmail">관리자 이메일</label><input id="adminEmail" name="username" type="email" autocomplete="username" required></div><div class="field"><label for="adminPassword">관리자 비밀번호</label><input id="adminPassword" name="password" type="password" autocomplete="current-password" required></div><p id="adminLoginNotice" class="login-message" role="alert" hidden></p><button id="adminLoginSubmit" class="primary" type="submit">관리자 로그인</button></form></details></section>`;
- bindMemberPicker();
 }
 function loginNotice(message){const el=document.getElementById('loginMessage');if(el){el.textContent=message;el.hidden=!message;}}
-async function loadLoginMembers(){const data=await requestAccess({action:'login_members'});if(!Array.isArray(data.members))throw new Error('회원 목록을 불러오지 못했습니다. 잠시 후 다시 시도하거나 가입 아이디로 로그인해 주세요.');loginMembers=data.members;loginMembersError='';}
-function loginMemberLabel(member){return member.display_name||member.name||member.nickname||'';}
-function pickerMatches(){const query=document.getElementById('loginNameSearch').value.trim().replace(/\s+/g,'').toLowerCase();return loginMembers.filter(member=>[member.display_name,member.name,member.nickname].some(name=>String(name||'').replace(/\s+/g,'').toLowerCase().includes(query)));}
-function closeMemberPicker(){const input=document.getElementById('loginNameSearch');if(!input)return;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');document.getElementById('loginMemberOptions').hidden=true;pickerIndex=-1;}
-function drawMemberPicker(){
- const input=document.getElementById('loginNameSearch'),list=document.getElementById('loginMemberOptions');const matches=pickerMatches();pickerIndex=-1;
- list.innerHTML=matches.length?matches.map(member=>`<button type="button" role="option" tabindex="-1" id="login-option-${Number(member.id)}" data-member="${Number(member.id)}" aria-selected="false"><strong>${esc(loginMemberLabel(member))}</strong>${member.nickname&&member.nickname!==loginMemberLabel(member)?`<small>${esc(member.nickname)}</small>`:''}</button>`).join(''):`<p class="picker-empty">${esc(loginMembersError||'검색한 이름이 없습니다.')}</p>`;
- list.hidden=false;input.setAttribute('aria-expanded','true');input.removeAttribute('aria-activedescendant');list.classList.toggle('opens-up',input.getBoundingClientRect().bottom+230>innerHeight-90);
- document.getElementById('memberPickerNote').textContent=loginMembersError||'이름을 검색하거나 목록에서 선택해 주세요.';
-}
-function chooseLoginMember(id){const member=loginMembers.find(member=>Number(member.id)===Number(id));if(!member)return;const label=loginMemberLabel(member);document.getElementById('loginMemberId').value=String(member.id);document.getElementById('loginNameSearch').value=label;document.getElementById('memberPickerNote').textContent='선택한 회원 · '+label;closeMemberPicker();loginNotice('');}
-function bindMemberPicker(){
- const input=document.getElementById('loginNameSearch'),list=document.getElementById('loginMemberOptions'),picker=document.getElementById('loginMemberPicker');
- document.getElementById('memberPickerNote').textContent=loginMembersError||'이름을 검색하거나 목록에서 선택해 주세요.';
- input.addEventListener('focus',drawMemberPicker);input.addEventListener('input',()=>{document.getElementById('loginMemberId').value='';drawMemberPicker();loginNotice('');});
- document.getElementById('memberPickerToggle').addEventListener('click',()=>{if(list.hidden){input.focus();drawMemberPicker();}else closeMemberPicker();});
- list.addEventListener('pointerdown',event=>event.preventDefault());list.addEventListener('click',event=>{const option=event.target.closest('[data-member]');if(option){chooseLoginMember(option.dataset.member);document.getElementById('loginPassword').focus();}});
- input.addEventListener('keydown',event=>{const matches=pickerMatches();if(event.key==='Escape'){event.preventDefault();closeMemberPicker();return;}if(event.key==='Tab'){closeMemberPicker();return;}
-   if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();if(list.hidden)drawMemberPicker();if(!matches.length)return;pickerIndex=(pickerIndex+(event.key==='ArrowDown'?1:-1)+matches.length)%matches.length;const options=list.querySelectorAll('[role="option"]');options.forEach((option,index)=>option.setAttribute('aria-selected',String(index===pickerIndex)));input.setAttribute('aria-activedescendant',options[pickerIndex].id);options[pickerIndex].scrollIntoView({block:'nearest'});}
-   if(event.key==='Enter'&&!list.hidden&&pickerIndex>=0){event.preventDefault();chooseLoginMember(matches[pickerIndex].id);document.getElementById('loginPassword').focus();}
- });
- document.onpointerdown=event=>{if(picker.isConnected&&!picker.contains(event.target))closeMemberPicker();};
-}
 async function requestAccess(body,token){
  let response;try{response=await fetch(SUPABASE_URL+'/functions/v1/vom-access',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(15000)});}catch(_){throw new Error('로그인 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');}
  const data=await response.json();if(!response.ok)throw Object.assign(new Error(data.error||'로그인 정보를 확인하지 못했습니다.'),{status:response.status});return data;
@@ -357,25 +333,25 @@ async function loginAdministrator(){
 }
 async function loginAccount(){
  const form=document.getElementById('memberLoginForm');if(!form.reportValidity())return;
- const btn=document.getElementById('loginButton');if(btn.disabled)return;let memberId=null,name='';
- memberId=Number(document.getElementById('loginMemberId').value)||null;if(!memberId){const typed=document.getElementById('loginNameSearch').value.trim();const exact=loginMembers.filter(member=>loginMemberLabel(member)===typed||member.name===typed||member.nickname===typed);if(exact.length===1){chooseLoginMember(exact[0].id);memberId=Number(exact[0].id);}}if(!memberId){drawMemberPicker();loginNotice('회원 이름을 검색한 뒤 목록에서 선택해 주세요.');return;}name=document.getElementById('loginNameSearch').value;
- btn.disabled=true;btn.textContent='로그인 확인 중…';loginNotice('');closeMemberPicker();
+ const btn=document.getElementById('loginButton');if(btn.disabled)return;
+ const name=document.getElementById('loginNameSearch').value.trim();
+ if(!name)return loginNotice('회원 이름을 입력해 주세요.');
+ btn.disabled=true;btn.textContent='로그인 확인 중…';loginNotice('');
  try{
-  const data=await requestAccess({action:'login',login_name:name,...(memberId?{member_id:memberId}:{}),password:document.getElementById('loginPassword').value});
+  const data=await requestAccess({action:'login',login_name:name,password:document.getElementById('loginPassword').value});
   const result=await db.auth.setSession(data.session);if(result.error)throw result.error;
   if(data.state==='PENDING'){await db.auth.signOut({scope:'local'});throw new Error('가입 승인 안내를 받은 뒤 로그인해 주세요.');}
   await loadSession();if(!myMember)throw new Error('로그인 계정과 회원 정보의 연결을 확인하지 못했습니다. 운영진에게 확인해 주세요.');const warning=await loadWorkspace();render();window.vomRefreshShell?.();if(warning)say(warning,true);
   const next=new URLSearchParams(location.search).get('next');if(data.state==='APPROVED'&&next&&/^\/(members|calendar|schedule|live|busking|apply)(\/|$)/.test(next))location.replace(next);
  }catch(error){loginNotice(error.message);say(error.message,true);}finally{if(btn.isConnected){btn.disabled=false;btn.textContent='로그인';}}
 }
-
 async function saveProfile(){if(!myMember)return;const favorite=document.getElementById('profileFavorite').value.trim();const job=document.getElementById('profileJob').value.trim();const {error}=await db.from('members').update({favorite_singers:favorite||null,job:job||null}).eq('id',myMember.id);if(error)return say(error.message||'프로필을 저장하지 못했습니다.',true);myMember.favorite_singers=favorite;myMember.job=job;say('프로필을 저장했어요.')}
 async function changePassword(){const password=document.getElementById('newPassword').value;const confirm=document.getElementById('newPasswordConfirm').value;const hint=document.getElementById('newHint').value.trim();if(!/^[0-9]{4}$/.test(password))return say('새 비밀번호는 숫자 4자리로 입력해 주세요.',true);if(password!==confirm)return say('새 비밀번호 확인이 일치하지 않습니다.',true);const {error}=await db.auth.updateUser({password:authPassword(password)});if(error)return say(error.message||'비밀번호를 바꾸지 못했습니다.',true);const {error:settingError}=await db.from('member_account_settings').update({password_hint:hint||null,must_change_password:false,password_changed_at:new Date().toISOString()}).eq('member_id',myMember.id);if(settingError)return say(settingError.message||'힌트를 저장하지 못했습니다.',true);accountSetting={...(accountSetting||{}),password_hint:hint,must_change_password:false};render();say('개인 비밀번호를 저장했어요.')}
-async function logout(){await db.auth.signOut();session=null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();window.vomRefreshShell?.();say('로그아웃했어요.')}
+async function logout(){await db.auth.signOut();session=null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;render();window.vomRefreshShell?.();say('로그아웃했어요.')}
 function openMenu(){const el=document.getElementById('menuOverlay');el.classList.add('open');el.setAttribute('aria-hidden','false')}
 function closeMenu(){const el=document.getElementById('menuOverlay');el.classList.remove('open');el.setAttribute('aria-hidden','true')}
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
-(async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{try{await loadLoginMembers();}catch(error){loginMembersError=error.message;}render();}}catch(error){try{await loadLoginMembers();}catch(_){}renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
+(async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{render();}}catch(error){renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
 <script src="/assets/vom-shell.js?v=14"></script>
 </body>
