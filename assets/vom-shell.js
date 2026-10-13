@@ -110,8 +110,22 @@
       .member-session-wrap{
         position:relative;
         display:inline-flex;
+        align-items:center;
+        gap:7px;
         flex:0 0 auto;
       }
+      .member-session-logout{
+        min-height:34px;
+        padding:0 3px;
+        border:0;
+        background:transparent;
+        color:#6d5bdc;
+        font:800 11px/1 Pretendard,"Noto Sans KR",Arial,sans-serif;
+        white-space:nowrap;
+        cursor:pointer;
+      }
+      .member-session-logout:hover{color:#4f3ebd;text-decoration:underline}
+      .member-session-logout:focus-visible{outline:2px solid #9b8cec;outline-offset:3px;border-radius:5px}
       .member-session-chip.logged-in{
         border:1px solid rgba(118,96,225,.20);
         background:rgba(245,243,255,.96);
@@ -422,6 +436,15 @@
       });
       popover.querySelector('.member-logout-button').addEventListener('click', shellLogout);
       wrap.appendChild(chip);
+
+      const logoutLink = document.createElement('button');
+      logoutLink.type = 'button';
+      logoutLink.className = 'member-session-logout';
+      logoutLink.setAttribute('aria-label', label + '님 로그아웃');
+      logoutLink.textContent = '로그아웃';
+      logoutLink.addEventListener('click', shellLogout);
+      wrap.appendChild(logoutLink);
+
       wrap.appendChild(popover);
     }
 
