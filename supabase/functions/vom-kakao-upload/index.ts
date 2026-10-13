@@ -7,7 +7,7 @@ const MAX_BYTES=MAX_VIDEO_BYTES+MAX_PHOTO_BYTES+65536;
 const headers={"Content-Type":"application/json; charset=utf-8",
  "Access-Control-Allow-Origin":ORIGIN,
  "Access-Control-Allow-Methods":"POST,OPTIONS",
- "Access-Control-Allow-Headers":"Content-Type,apikey",
+ "Access-Control-Allow-Headers":"Content-Type,apikey,x-vom-upload-ticket",
  "Cache-Control":"no-store","Referrer-Policy":"no-referrer"};
 const reply=(body:any,status=200)=>new Response(JSON.stringify(body),{status,headers});
 const error=(detail:string,status=400)=>reply({ok:false,error:detail},status);
@@ -21,17 +21,31 @@ export async function handle(req:Request,service:any){
  if(req.method!=="POST")return error("지원하지 않는 요청입니다.",405);
  const contentType=req.headers.get("content-type")||"";
  if(Number(req.headers.get("content-length")||0)>MAX_BYTES)return error("첨부 파일 용량을 확인해 주세요.",413);
+ const isMultipart=contentType.startsWith("multipart/form-data;");
+ const headerTicket=req.headers.get("x-vom-upload-ticket");
+ // Unauthenticated clients may not stream files to the server without a valid ticket shape.
+ if(isMultipart&&!safeTicket(headerTicket))return error("영상 등록 링크가 유효하지 않습니다.",403);
  let fields:Record<string,any>|null=null;
  if(contentType.startsWith("application/json")){
    try{fields=await req.json();}catch{return error("요청 내용을 확인해 주세요.");}
- }else if(contentType.startsWith("multipart/form-data;")){
+ }else if(isMultipart){
    try {
-     const form=await req.formData();
+     if(!req.body)return error("파일을 읽지 못했습니다.");
+     let size=0;
+     const stream=req.body.pipeThrough(new TransformStream<Uint8Array,Uint8Array>({
+       transform(chunk,controller){
+         size+=chunk.byteLength;
+         if(size>MAX_BYTES)throw new Error("upload_over_limit");
+         controller.enqueue(chunk);
+       }
+     }));
+     const form=await new Response(stream,{headers:{"Content-Type":contentType}}).formData();
      fields=Object.fromEntries(form);
-   }catch{return error("파일을 읽지 못했습니다.");}
+   }catch{return error("사진은 5MB, 라이브 영상은 50MB 이하여야 합니다.",413);}
  }else return error("지원하지 않는 요청입니다.",415);
- const ticket=fields?.ticket;
- if(!safeTicket(ticket))return error("영상 등록 링크가 유효하지 않습니다.",403);
+ const ticket=isMultipart?headerTicket:fields?.ticket;
+ if(!safeTicket(ticket)||(isMultipart&&fields?.ticket!==ticket))
+   return error("영상 등록 링크가 유효하지 않습니다.",403);
  const hash=await tokenHash(ticket);
  const now=new Date().toISOString();
  const {data:draft,error:lookupError}=await service.from("kakao_signup_drafts")
