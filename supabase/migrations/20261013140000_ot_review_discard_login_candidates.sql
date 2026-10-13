@@ -28,9 +28,7 @@ alter table public.ot_review_discard_log enable row level security;
 revoke all on table public.ot_review_discard_log from anon, authenticated;
 grant all on table public.ot_review_discard_log to service_role;
 
-create or replace view public.members_display
-with (security_invoker = true)
-as
+create or replace view public.members_display as
 select
   m.id,
   m.name,
