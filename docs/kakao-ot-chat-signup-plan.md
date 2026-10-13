@@ -64,3 +64,25 @@
 - 카카오 스킬 요청/파라미터 수집: https://kakaobusiness.gitbook.io/main/tool/chatbot/main_notions/setting_parameter
 - 카카오 챗봇 스킬 개발: https://kakaobusiness.gitbook.io/main/tool/chatbot/skill_guide/make_skill
 - 동영상 payload 관련 미확인 이슈: https://devtalk.kakao.com/t/skillpayload/134226
+
+
+## 2026-10-13 implementation checkpoint
+
+Implemented on this draft PR branch (not merged into Vercel production):
+- `supabase/functions/vom-kakao-join/index.ts`: authenticated-by-shared-header (fail closed), conversation steps with consent, 9 answers, private drafts and one-hour upload tickets. Deployed Edge Function `vom-kakao-join` ACTIVE v1 but **cannot collect data until the server-side `VOM_KAKAO_CHAT_SECRET` (>=32 chars) is securely configured AND Kakao can attach a matching authenticated request header**.
+- `supabase/functions/vom-kakao-upload/index.ts`: one-time ticket validation, photo/video/PIN upload, existing `publicSignup` and review workflow reuse, join reason binding via private notification token. **Source prepared, function NOT deployed**; deployment action was blocked, do not advertise it as live.
+- `kakao-video/index.html`: single-use in-app upload page; NOT on production Vercel until PR merged.
+- `supabase/migrations/20261013110000_kakao_chat_signup_drafts.sql`: **applied successfully to the Supabase project**. Private RLS, no anon/authenticated SELECT. Hourly `pg_cron` cleanup active. New `ot_room_applicants.join_reason` column in DB.
+- `supabase/functions/ot-review/index.ts`, `assets/ot-admin.js`, `ot-admin/index.html`: show joining reason to authorized reviewers; code in PR only, current production Edge Function remains prior version.
+- `supabase/functions/vom-kakao-join/index.test.ts` and `vom-kakao-upload/index.test.ts`: authored only; runtime tests still need execution. No actual applicant test data was created.
+
+### Blocking items before real enrollment
+1. Verify Kakao Open Builder permits a trusted custom HTTP header `x-vom-kakao-secret` on skill requests. If not, redesign authentication without making the intake endpoint spoofable. Do not place server secrets in frontend JavaScript or chat responses.
+2. Provision `VOM_KAKAO_CHAT_SECRET` privately to Supabase Edge Function environment; chat service currently refuses unverified requests.
+3. Deploy and end-to-end test the upload Edge Function with all required shared modules. Preserve the existing publicSignup validation, password setup and OT voting.
+4. Merge the PR and verify the `/kakao-video/` page is deployed. Not yet publicly reachable as a finished form.
+5. Attach a Kakao `가입 신청` intent block to the new chat skill. Other menu intents remain with `vom-kakao-skill`.
+6. Run integration tests in nonproduction with test-only user identity and test images/videos; verify duplicate submissions, URL expiry, errors, out-of-hours queue, account login and reviewer access. Clean all test content.
+7. Verify the exact retention/consent wording and user-access/erasure process with the VOM organizer before accepting real personal data.
+
+Do not enable the flow from the Kakao operating channel while any of these remain unverified.
