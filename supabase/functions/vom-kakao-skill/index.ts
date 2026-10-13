@@ -29,7 +29,7 @@ const pages: Record<string, Page> = {
     buttons: [button("행사 확인","/calendar/"),button("운영진 문의","/qna/?mine=1")] }
 };
 function route(input: unknown) {
-  const q = typeof input === "string" ? input.slice(0,100).replace(/\\s+/g," ") : "";
+  const q = typeof input === "string" ? input.slice(0,100).replace(/\s+/g," ") : "";
   if (/할인|반값|50%/.test(q)) return "discount";
   if (/입금|납부|회비|결제|환불|참가비/.test(q)) return "payment";
   if (/가입|OT|신규회원/.test(q)) return "join";
