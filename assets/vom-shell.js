@@ -107,6 +107,92 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
+      .member-session-wrap{
+        position:relative;
+        display:inline-flex;
+        align-items:center;
+        gap:7px;
+        flex:0 0 auto;
+      }
+      .member-session-logout{
+        min-height:34px;
+        padding:0 3px;
+        border:0;
+        background:transparent;
+        color:#6d5bdc;
+        font:800 11px/1 Pretendard,"Noto Sans KR",Arial,sans-serif;
+        white-space:nowrap;
+        cursor:pointer;
+      }
+      .member-session-logout:hover{color:#4f3ebd;text-decoration:underline}
+      .member-session-logout:focus-visible{outline:2px solid #9b8cec;outline-offset:3px;border-radius:5px}
+      .member-session-chip.logged-in{
+        border:1px solid rgba(118,96,225,.20);
+        background:rgba(245,243,255,.96);
+        color:#5f4dcc !important;
+        cursor:pointer;
+      }
+      .member-session-chip .member-session-chevron{
+        flex:0 0 auto;
+        margin-left:1px;
+        color:#8a78df;
+        font-size:13px;
+        line-height:1;
+      }
+      .member-session-popover{
+        position:absolute;
+        top:calc(100% + 10px);
+        right:0;
+        z-index:1100;
+        width:min(258px,calc(100vw - 36px));
+        padding:10px;
+        border:1px solid #e6e1f4;
+        border-radius:18px;
+        background:rgba(255,255,255,.98);
+        box-shadow:0 18px 50px rgba(40,31,92,.18);
+      }
+      .member-session-popover[hidden]{display:none}
+      .member-session-summary{
+        padding:9px 10px 11px;
+        border-bottom:1px solid #eeeaf7;
+      }
+      .member-session-summary strong{
+        display:block;
+        color:#353a51;
+        font-size:13px;
+      }
+      .member-session-summary small{
+        display:block;
+        margin-top:4px;
+        color:#8a90a2;
+        font-size:10px;
+      }
+      .member-session-popover a,
+      .member-session-popover button{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        width:100%;
+        min-height:42px;
+        padding:0 10px;
+        border:0;
+        border-bottom:1px solid #f1eef7;
+        background:transparent;
+        color:#595f73;
+        font:700 12px/1 Pretendard,"Noto Sans KR",Arial,sans-serif;
+        text-align:left;
+        text-decoration:none;
+        cursor:pointer;
+      }
+      .member-session-popover a:last-of-type{border-bottom:0}
+      .member-session-popover .member-logout-button{
+        margin-top:4px;
+        border:1px solid #f1d0d7;
+        border-radius:11px;
+        background:#fff7f8;
+        color:#b85868;
+      }
+      .member-session-popover .member-logout-button::after{content:"↪";font-size:15px}
       .vom-shell-fallback-overlay{
         position:fixed;
         inset:0;
@@ -253,31 +339,133 @@
     }
   }
 
+  let shellAuthClient = null;
+
+  function shellClient() {
+    try {
+      if (typeof db !== 'undefined' && db?.auth?.signOut) return db;
+    } catch (_) {}
+    if (!shellAuthClient && window.supabase?.createClient) {
+      shellAuthClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+    return shellAuthClient;
+  }
+
+  async function shellLogout() {
+    const client = shellClient();
+    if (!client) return;
+    try {
+      const {error} = await client.auth.signOut({scope:'local'});
+      if (error) throw error;
+      window.location.reload();
+    } catch (error) {
+      console.error('VOM LOGOUT:', error);
+      window.alert('로그아웃하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  }
+
+  function closeSessionPopovers(except) {
+    document.querySelectorAll('.member-session-popover').forEach(function(popover) {
+      if (popover !== except) {
+        popover.hidden = true;
+        const button = popover.parentElement?.querySelector('.member-session-chip.logged-in');
+        button?.setAttribute('aria-expanded','false');
+      }
+    });
+  }
+
   function addMemberStatus(label, loggedIn, isAdmin=false) {
     const menuButton = document.querySelector('.vom-header .menu-btn, .vom-header .vom-shell-menu-trigger');
     const host = (menuButton && menuButton.parentElement) ||
       document.querySelector('.vom-header-actions, .header-actions, .header-right');
-    if (!host) return;host.querySelector('.member-session-chip')?.remove();
+    if (!host) return;
+    host.querySelector('.member-session-wrap')?.remove();
 
-    const chip = document.createElement('a');
-    chip.className = 'member-session-chip' + (loggedIn ? '' : ' is-guest');
-    chip.href = isAdmin ? '/admin-settings/' : '/me/';
-    chip.setAttribute(
-      'aria-label',
-      loggedIn ? '현재 로그인: ' + label + (isAdmin ? '. 운영자료로 이동' : '. MY VOM으로 이동') : '로그인하기'
-    );
+    const wrap = document.createElement('div');
+    wrap.className = 'member-session-wrap';
 
-    const nameText = document.createElement('span');
-    nameText.className = 'member-session-name';
-    nameText.textContent = loggedIn ? label + '님' : '로그인하기';
-    chip.appendChild(nameText);
+    if (!loggedIn) {
+      const chip = document.createElement('a');
+      chip.className = 'member-session-chip is-guest';
+      chip.href = '/me/';
+      chip.setAttribute('aria-label','로그인하기');
+
+      const nameText = document.createElement('span');
+      nameText.className = 'member-session-name';
+      nameText.textContent = '로그인하기';
+      chip.appendChild(nameText);
+      wrap.appendChild(chip);
+    } else {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'member-session-chip logged-in';
+      chip.setAttribute('aria-haspopup','menu');
+      chip.setAttribute('aria-expanded','false');
+      chip.setAttribute(
+        'aria-label',
+        '현재 로그인: ' + label + '. 계정 메뉴 열기'
+      );
+
+      const nameText = document.createElement('span');
+      nameText.className = 'member-session-name';
+      nameText.textContent = label + '님';
+      chip.appendChild(nameText);
+
+      const chevron = document.createElement('span');
+      chevron.className = 'member-session-chevron';
+      chevron.textContent = '⌄';
+      chip.appendChild(chevron);
+
+      const popover = document.createElement('div');
+      popover.className = 'member-session-popover';
+      popover.hidden = true;
+      popover.setAttribute('role','menu');
+      popover.innerHTML =
+        '<div class="member-session-summary"><strong>' + escapeShellHtml(label) + '님</strong><small>로그인된 VOM 계정</small></div>' +
+        '<a href="/me/">MY VOM <span>→</span></a>' +
+        '<a href="/me/#accountSettings">개인 설정 <span>→</span></a>' +
+        (isAdmin ? '<a href="/admin-settings/">운영 자료 <span>→</span></a>' : '') +
+        '<button type="button" class="member-logout-button">로그아웃</button>';
+
+      chip.addEventListener('click', function(event) {
+        event.stopPropagation();
+        const willOpen = popover.hidden;
+        closeSessionPopovers(popover);
+        popover.hidden = !willOpen;
+        chip.setAttribute('aria-expanded', String(willOpen));
+      });
+      popover.querySelector('.member-logout-button').addEventListener('click', shellLogout);
+      wrap.appendChild(chip);
+
+      const logoutLink = document.createElement('button');
+      logoutLink.type = 'button';
+      logoutLink.className = 'member-session-logout';
+      logoutLink.setAttribute('aria-label', label + '님 로그아웃');
+      logoutLink.textContent = '로그아웃';
+      logoutLink.addEventListener('click', shellLogout);
+      wrap.appendChild(logoutLink);
+
+      wrap.appendChild(popover);
+    }
 
     if (menuButton && menuButton.parentElement === host) {
-      host.insertBefore(chip, menuButton);
+      host.insertBefore(wrap, menuButton);
     } else {
-      host.appendChild(chip);
+      host.appendChild(wrap);
     }
   }
+
+  function escapeShellHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = String(value ?? '');
+    return div.innerHTML;
+  }
+
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('.member-session-wrap')) {
+      closeSessionPopovers();
+    }
+  });
 
 
   function adminBadgeHost() {
