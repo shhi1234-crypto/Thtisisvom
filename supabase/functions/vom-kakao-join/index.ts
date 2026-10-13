@@ -44,7 +44,9 @@ const labels:Record<string,Step>={
 };
 const order:Step[]=["NAME","BIRTH_YEAR","PHONE","NICKNAME","JOB","REGION","GENDER","EXPERIENCE","REASON"];
 function valueEnd(v:string){
-  return v.trim().replace(/(?:이고요?|이구요|이에요|예요|입니다|라고\s*해요|라고\s*합니다|이고|이구|이에|이야|이에요|임)$/u,"").trim().replace(/[.!?]+$/,"").trim();
+  const boundary=v.search(/(?:이고요?|이구요|이에요|예요|이며|이고|이구|이에|이야)\s+(?=(?:이름|실명|출생\s*연도|출생\s*년도|몇\s*년생|년생|전화번호|휴대폰|연락처|번호|소모임\s*닉네임|닉네임|직업|활동\s*지역|지역|성별|버스킹(?:\s*경험)?|공연(?:\s*경험)?|경험(?:\s*횟수)?|가입\s*계기|가입\s*이유|지원\s*동기)\s*(?:은|는|이|가|:|=|-))/u);
+  const before=boundary>=0?v.slice(0,boundary):v;
+  return before.trim().replace(/(?:이고요?|이구요|이에요|예요|입니다|라고\s*해요|라고\s*합니다|이고|이구|이에|이야|이에요|임)$/u,"").trim().replace(/[.!?]+$/,"").trim();
 }
 function canonicalLabel(raw:string){
   return labels[raw.replace(/\s+/g,"")]||null;
