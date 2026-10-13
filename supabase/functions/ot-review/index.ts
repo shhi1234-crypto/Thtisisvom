@@ -27,7 +27,7 @@ export async function handle(req: Request, service: any) {
 
     if (action === "list") {
       const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }, { data: accessRows, error: ae }] = await Promise.all([
-        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,approval_notified_at,completed_member_id,completed_at,video_source,media_kind").order("created_at", { ascending: false }).limit(500),
+        service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,approval_notified_at,completed_member_id,completed_at,video_source,media_kind,discarded_at,discarded_by,discard_reason").order("created_at", { ascending: false }).limit(500),
         service.from("members").select("id,name,nickname,auth_user_id").eq("role", "운영진").eq("is_active", true).order("join_order", { ascending: true }),
         service.from("ot_room_invites").select("id,somoim_nickname,created_at,expires_at,revoked_at,review_id,signup_source").eq('signup_source','INVITE').order("created_at", { ascending: false }).limit(100),
         service.from("ot_room_operator_access").select("member_id,user_id,revoked_at"),
@@ -38,6 +38,13 @@ export async function handle(req: Request, service: any) {
         ? await service.from("ot_review_votes").select("review_id,voter_member_id,decision,updated_at").in("review_id", ids)
         : { data: [], error: null };
       if (ve) throw new Error("ot_votes_failed");
+      const { data: discardLogs, error: dle } = ids.length
+        ? await service.from("ot_review_discard_log")
+          .select("id,review_id,actor_user_id,actor_member_id,actor_name,reason,created_at")
+          .in("review_id", ids)
+          .order("created_at", { ascending: false })
+        : { data: [], error: null };
+      if (dle) throw new Error("ot_discard_log_failed");
       const { data: members, error: me } = actor.isAdmin
         ? await service.from("members").select("id,name,nickname").eq("is_active", true).order("name")
         : { data: [], error: null };
@@ -57,7 +64,9 @@ export async function handle(req: Request, service: any) {
         })), invites, members,
         reviews: (reviews || []).map((r: any) => ({ ...r,
           profile:(()=>{const p=(profiles||[]).find((p:any)=>p.ot_room_invites?.review_id===r.id);if(!p)return null;const {profile_photo_path,ot_room_invites,...safe}=p;return {...safe,has_photo:!!profile_photo_path,approval_push_enabled:!!ot_room_invites.notification_push_enabled};})(),
-          votes: (votes || []).filter((v: any) => v.review_id === r.id) })),
+          votes: (votes || []).filter((v: any) => v.review_id === r.id),
+          discard_log: (discardLogs || []).filter((entry: any) => entry.review_id === r.id),
+        })),
       });
     }
 
@@ -162,6 +171,38 @@ export async function handle(req: Request, service: any) {
       const { data, error } = await service.rpc("vom_ot_record_vote", { p_review_id: reviewId, p_member_id: voterId, p_decision: body.decision, p_actor_id: actor.userId });
       if (error) throw new ApiError(409, "이미 확정됐거나 심사 대상이 변경됐습니다. 목록을 새로 확인해 주세요.");
       try {await notifyApproval(service,reviewId);} catch {console.error('Approval notification queued');}
+      return json(origin, { ok: true, ...data });
+    }
+
+    if (action === "discard") {
+      const reviewId = positiveInt(body.review_id);
+      const { data: review, error: re } = await service
+        .from("ot_reviews")
+        .select("id,status,completed_at,eligible_operator_ids")
+        .eq("id", reviewId)
+        .maybeSingle();
+      if (re) throw new Error("review_discard_lookup_failed");
+      if (!review) throw new ApiError(404, "신청서를 찾지 못했습니다.");
+      if (review.completed_at) throw new ApiError(409, "이미 가입 완료된 신청서는 폐기할 수 없습니다.");
+      if (review.status === "DISCARDED") throw new ApiError(409, "이미 폐기된 신청서입니다.");
+      const eligible = new Set((review.eligible_operator_ids || []).map((id: unknown) => Number(id)));
+      if (!actor.isAdmin && (!actor.memberId || !eligible.has(Number(actor.memberId)))) {
+        throw new ApiError(403, "이 신청서를 폐기할 권한이 없습니다.");
+      }
+      const reason = typeof body.reason === "string" ? body.reason.trim().slice(0, 500) : "";
+      const { data, error } = await service.rpc("vom_ot_discard_review", {
+        p_review_id: reviewId,
+        p_actor_id: actor.userId,
+        p_actor_member_id: actor.memberId,
+        p_actor_name: actor.name || "관리자",
+        p_reason: reason || null,
+      });
+      if (error) {
+        if (String(error.message || "").includes("review_completed")) {
+          throw new ApiError(409, "이미 가입 완료된 신청서는 폐기할 수 없습니다.");
+        }
+        throw new Error("review_discard_failed");
+      }
       return json(origin, { ok: true, ...data });
     }
 
