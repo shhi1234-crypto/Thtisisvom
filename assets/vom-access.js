@@ -13,7 +13,7 @@
       if(!response.ok){login();return false;}
       const result=await response.json();
       if(result.state==='PENDING'){location.replace('/ot-room/');return false;}
-      if(result.state!=='APPROVED'){login();return false;}
+      if(!['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(result.state)){login();return false;}
       hide.remove();return true;
     }catch(_){login();return false;}
   })();
