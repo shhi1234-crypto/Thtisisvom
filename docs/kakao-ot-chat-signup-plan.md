@@ -1,0 +1,106 @@
+# VOM 카카오톡 대화형 가입 자동 접수 · 승인 전 설계
+
+## 핵심 요구
+- 가입 신청은 카카오톡 봇과의 **대화형 질문-응답**으로 받고, 웹 신청서를 다시 작성하게 하지 않는다.
+- 개인정보 수집·이용 및 영상 심사 동의를 먼저 받는다.
+- 임시 답변은 `봇별 사용자 ID + 봇 ID`로 묶되, 이것을 본인 인증으로 사용하지 않는다.
+- 대화 중 저장되는 초안은 **정식 회원 및 OT 심사 목록에 노출하지 않는다**.
+- 최종 영상 제출과 사용자 최종 확인 후 기존 운영진 OT 심사 프로세스로 원자적으로 접수한다.
+- 영상 수신/저장은 직접 첨부가 스킬 서버에 전달되는지 지원 확인 전까지 **자동 지원된다고 가정하지 않는다**.
+- 승인 대기이므로 현재 공개 배포된 `vom-kakao-skill`은 FAQ/링크 응답만 제공한다. 민감정보 저장 활성화 금지.
+
+## 지원자 대화 흐름(권장)
+1. `가입 신청` 버튼 → 개인정보 수집·이용/영상 심사 안내, 명시 동의
+2. 실명(성+이름), 60자 이내
+3. 태어난 연도(가능하면 생년월일까지; 현 VOM 신청은 생년월일)
+4. 휴대폰 번호(형식 검사, 필요하면 본인 인증)
+5. 소모임 닉네임 (기존 OT 이력 대조)
+6. 지역, 직업 (기존 신청에서 필수이므로 사용자 정책 확인 후 유지/축소)
+7. 버스킹 경험 단위(횟수/년수), 경험치(0 가능)
+8. 가입 계기(신규 필드, 글자수 제한/비공개)
+9. 본인 얼굴 사진(현재 VOM 가입 필수: 5MB 이하; 카카오 이미지 보안전송 플러그인 가능 여부 검토)
+10. 요약 검토: 수정 / 취소 / 계속
+11. 30초 이상 라이브 영상/음성 최종 제출
+12. 서버에서 제출물, 동의, 신청 초안 유효성 검증 후 OT 심사 등록 및 접수증 발행
+
+## 영상 정책
+- 카카오 스킬 payload가 채팅 동영상 파일을 서버에 전달한다는 보장이 없음.
+- 영상 직접 전송을 지원하지 않는 경우: 마지막 질문의 '영상 제출' 버튼만 인앱 **전용 파일 업로드** 화면으로 연결. 이미 입력한 기본정보는 표시/재작성하지 않는다. 버튼에는 1회용 짧은 수명 토큰을 쓰고 링크에 PII를 넣지 않는다.
+- 파일은 기존 비공개 `ot-review-videos` 버킷에 저장. 인증된 운영진만 시청 가능.
+- 50MB 이하/형식 검증, 최소 30초 가창은 사용자 확인 + 심사 검증이 필요.
+- '1:1 채팅으로 동영상 받기'는 운영진 수동 제출 방식이며 그 영상의 자동 인계는 보장되지 않는다.
+
+## 기존 VOM 데이터 연동에서 확인한 점
+- `ot_room_applicants`: 실명, 닉네임, 전화번호, 생년월일/출생연도, 지역, 직업, 버스킹 경험 수치/단위, 프로필 사진 필드.
+- `ot_reviews`: 영상 경로/외부 링크, 운영진 투표/결정 기록.
+- `ot_room_invites`: 신청 상태와 계정 연결, 기존 공개 가입은 초기에 Auth 계정 생성.
+- 기존 가입 폼은 `가입 계기` 필드가 없으므로 별도 필드/심사 표시 추가 설계 필요.
+- 현재 공개 가입은 동의, 사진(5MB 이하), 라이브 영상(50MB 이하)/링크, 계정 비밀번호를 요구한다.
+- 현행 OT 접수 가능 시간은 한국시간 09:00~18:00이고, 그 외는 예약 접수 규칙이 있으므로 반드시 동일하게 적용.
+- 회원 정식 등록은 운영진 투표·승인 이후에만 실시.
+- 챗봇만으로 기존 웹 로그인 계정을 임의 비밀번호로 자동 생성하는 것은 부적절. 합격 이후 VOM 계정 활성화/개인 비밀번호 설정 등 안전한 단계 필요.
+
+## 권한 및 악용 방지
+- 새 개인정보 접수 엔드포인트에는 카카오 오픈빌더 스킬 설정의 **서버 비밀 헤더**와 rate limiting, 데이터 검증, 저장 기한, 삭제 요청 처리 적용.
+- 비밀 헤더 값이 구성되지 않았을 때는 모든 민감정보 수집 기능을 거부하고, 기존 공개 FAQ만 응답.
+- 사용자가 `취소` 입력 시 임시 정보 삭제; 제출 전 일정 시간 초과 시 만료.
+- 재전송 시 중복 지원 방지/멱등 처리.
+- 전화번호·DOB 같은 PII는 로그, URL, 챗봇 요약 응답에 노출 금지.
+- 봇별 사용자 ID는 자동접수 진행 상태 식별에만 사용; VOM 본인 인증 수단으로 사용하지 않음.
+- OT 심사 결과는 카카오 사용자 ID만으로 조회/발송하지 않음. 본인 검증 필요.
+- 사용자에게 '심사 접수 완료'는 영상 업로드 및 실제 DB 등록 성공 후에만 표시.
+
+## 승인 후 실행 순서
+1. 카카오 챗봇 승인/개발 채널 연결 및 스킬 헤더 검증 테스트
+2. 질문 흐름/개인정보 수집 동의 고지 확정
+3. VOM 별도 `kakao_signup_drafts` RLS 비공개 테이블 및 스킬 서버 POST 엔드포인트 개발
+4. 텍스트 필드 저장 / 유효성 검사 / 이어서 답변 / 취소/수정 구현
+5. 영상 마지막 단계의 지원 방식 결정 및 1회성 업로드 구현
+6. 기존 OT 심사 테이블의 제출 RPC로 안전하게 인계
+7. 승인 전 샌드박스 시나리오(정상, 잘못된 전화번호, 거부, 중복, 만료, 시간 외, 실패) 검증
+8. 실서비스 공개 전에 운영진 수동 승인/알림 흐름 회귀 테스트
+
+## 참고
+- 카카오 스킬 요청/파라미터 수집: https://kakaobusiness.gitbook.io/main/tool/chatbot/main_notions/setting_parameter
+- 카카오 챗봇 스킬 개발: https://kakaobusiness.gitbook.io/main/tool/chatbot/skill_guide/make_skill
+- 동영상 payload 관련 미확인 이슈: https://devtalk.kakao.com/t/skillpayload/134226
+
+
+## 2026-10-13 implementation checkpoint
+
+Implemented on this draft PR branch (not merged into Vercel production):
+- `supabase/functions/vom-kakao-join/index.ts`: authenticated-by-shared-header (fail closed), conversation steps with consent, 9 answers, private drafts and one-hour upload tickets. Deployed Edge Function `vom-kakao-join` ACTIVE v1 but **cannot collect data until the server-side `VOM_KAKAO_CHAT_SECRET` (>=32 chars) is securely configured AND Kakao can attach a matching authenticated request header**.
+- `supabase/functions/vom-kakao-upload/index.ts`: one-time ticket validation, photo/video/PIN upload, existing `publicSignup` and review workflow reuse, join reason binding via private notification token. **Source prepared, function NOT deployed**; deployment action was blocked, do not advertise it as live.
+- `kakao-video/index.html`: single-use in-app upload page; NOT on production Vercel until PR merged.
+- `supabase/migrations/20261013110000_kakao_chat_signup_drafts.sql`: **applied successfully to the Supabase project**. Private RLS, no anon/authenticated SELECT. Hourly `pg_cron` cleanup active. New `ot_room_applicants.join_reason` column in DB.
+- `supabase/functions/ot-review/index.ts`, `assets/ot-admin.js`, `ot-admin/index.html`: show joining reason to authorized reviewers; code in PR only, current production Edge Function remains prior version.
+- `supabase/functions/vom-kakao-join/index.test.ts` and `vom-kakao-upload/index.test.ts`: authored only; runtime tests still need execution. No actual applicant test data was created.
+
+### Blocking items before real enrollment
+1. Verify Kakao Open Builder permits a trusted custom HTTP header `x-vom-kakao-secret` on skill requests. If not, redesign authentication without making the intake endpoint spoofable. Do not place server secrets in frontend JavaScript or chat responses.
+2. Provision `VOM_KAKAO_CHAT_SECRET` privately to Supabase Edge Function environment; chat service currently refuses unverified requests.
+3. Deploy and end-to-end test the upload Edge Function with all required shared modules. Preserve the existing publicSignup validation, password setup and OT voting.
+4. Merge the PR and verify the `/kakao-video/` page is deployed. Not yet publicly reachable as a finished form.
+5. Attach a Kakao `가입 신청` intent block to the new chat skill. Other menu intents remain with `vom-kakao-skill`.
+6. Run integration tests in nonproduction with test-only user identity and test images/videos; verify duplicate submissions, URL expiry, errors, out-of-hours queue, account login and reviewer access. Clean all test content.
+7. Verify the exact retention/consent wording and user-access/erasure process with the VOM organizer before accepting real personal data.
+
+Do not enable the flow from the Kakao operating channel while any of these remain unverified.
+
+## 2026-10-13 UX revision · 여러 정보 한 번에 입력
+
+운영자 요청에 따라 질문을 반드시 한 항목씩 반복하지 않는 **복합 발화 자동 분류 방식**으로 변경.
+가입 신청 이후 명시 동의를 먼저 받고, 다음 메시지에서 여러 기본정보를 자유롭게 전달 가능.
+
+예: `저는 김철수이고 98년생이에요. 전화번호는 010-1234-5678이에요. 닉네임은 철수이고 버스킹은 3번 해봤습니다. 노래하는 친구들을 만나고 싶어서 가입하려고요.`
+
+- `extractAnswers`: 이름, 출생연도, 전화, 소모임 닉네임, 직업, 지역, 성별, 버스킹 경험, 가입 계기 중 명확히 감지된 정보만 추출·검증.
+- 한 번의 발화에서 여러 항목을 추출해서 기존 개인 비공개 초안의 JSON에 저장하고 **빠진 항목만 질문**.
+- `이름: 김철수 / 1998년생 / 닉네임: 철수 / 버스킹 경험: 3회` 같은 구분형 표현과 일부 일반 문장을 지원.
+- 인식 불확실한 내용은 추측하지 않고 질문. 한국어 모든 자유 발화를 완벽하게 해석하는 LLM 연동은 **현재 포함하지 않음**. 개인정보를 제3자 NLP 서비스로 전송하려면 별도 승인·동의·비용 점검 필요.
+- 모든 항목이 모이면 `REVIEW` 단계에서 전화번호 일부 가린 요약 제공. `확인` 이후에만 영상 제출 티켓 발급.
+- `수정 전화번호 010-...` 같은 후속 발화도 지원. 기존 제출 티켓이 있었다면 정정 시 무효화.
+- 영상은 여전히 마지막 카카오톡 인앱 업로드 방식. 운영진 본 심사는 현재 OT 시스템 그대로.
+- GitHub 테스트 케이스에는 복합 자연어 및 구분형 발화, 불확실한 항목 처리 포함.
+- Supabase `vom-kakao-join` ACTIVE **v2**로 새 코드 배포했지만, **카카오 챗봇 승인/스킬 인증 비밀/최종 실사용 테스트 전까지 수집 비활성**.
+

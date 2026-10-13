@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<title>VOM · 가입 영상 제출</title><link rel="icon" href="/favicon.png?v=4">
+<style>
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#eee9ff,transparent 45%),#f7f7fc;font-family:Arial,"Noto Sans KR",sans-serif;color:#25263b}
+main{max-width:580px;margin:0 auto;padding:45px 17px 95px}header{font-size:12px;font-weight:800;letter-spacing:.16em;color:#725ad1}h1{margin:15px 0 13px;font-size:29px}p{line-height:1.75;font-size:14px;color:#656879}
+section{background:white;border:1px solid #e9e4f6;border-radius:21px;padding:24px;margin:22px 0;box-shadow:0 15px 40px #3333660b}
+label{display:block;margin:19px 0 7px;font-size:14px;font-weight:700}small{display:block;margin:4px 0 13px;color:#7b7e90;font-size:12px;line-height:1.6}
+input[type=file],input[type=password]{width:100%;padding:13px;border:1px solid #dfdbeb;border-radius:12px;font-size:14px}
+.check{display:flex;align-items:flex-start;gap:10px;font-weight:400;line-height:1.5;font-size:13px}.check input{margin-top:3px;flex-shrink:0}
+button,.button{display:block;width:100%;margin:22px 0 8px;border:0;border-radius:13px;background:#775fda;padding:15px;color:#fff;font-size:14px;font-weight:800;text-align:center;text-decoration:none;cursor:pointer}
+button:disabled{opacity:.55;cursor:default}.error{color:#af3853}.success{color:#276c4e}.muted{color:#777b8b}
+#result{white-space:pre-wrap}.hide{display:none}.tip{padding:13px 15px;border-radius:12px;background:#f4f1fb}
+</style></head><body><main><header>VOM · VOICE OF MELODY</header><h1>가입 영상 제출 🎬</h1>
+<p>카카오톡 챗봇에서 기본정보 입력을 마친 분을 위한 마지막 제출 단계입니다. <b>이름·연락처를 다시 입력하지 않습니다.</b></p>
+<section><div id="status" role="status" aria-live="polite">제출 링크를 확인하고 있습니다...</div>
+<form id="uploadForm" class="hide">
+<div class="tip"><b>심사 자료 제출 안내</b><small>운영진은 가입 심사에만 사진과 라이브 자료를 사용합니다. 실제 접수 후 운영진의 합격·불합격 심사가 진행됩니다.</small></div>
+<label for="photo">얼굴이 선명한 본인 사진 *</label>
+<input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" required>
+<small>1인 사진 · JPG/PNG/WEBP · 최대 5MB</small>
+<label for="video">가창 영상 또는 라이브 음성 파일 *</label>
+<input id="video" name="video" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.3gp,.mp3,.m4a,.wav,.aac,.ogg,.flac,.aif,.aiff" required>
+<small>30초 이상, 보정 없는 라이브 자료 · MP4/MOV/WEBM/3GP 또는 오디오 파일 · 최대 50MB</small>
+<label for="password">MY VOM 로그인 비밀번호 (숫자 4자리) *</label>
+<input id="password" name="password" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" required>
+<label for="repeat">비밀번호 다시 입력 *</label>
+<input id="repeat" name="password_confirm" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" required>
+<label class="check"><input type="checkbox" name="live_confirmed" value="yes" required>가창 구간이 30초 이상이고 믹싱·튠 보정을 하지 않은 라이브 영상·음성입니다.</label>
+<label class="check"><input type="checkbox" name="consent" value="yes" required>기존 VOM 가입 목적의 개인정보 및 본인사진·라이브 영상 수집과 운영진 심사에 동의합니다.</label>
+<button id="send" type="submit">가입 영상 제출하고 접수하기</button>
+<small>업로드 중에는 페이지를 닫지 마세요. 중복 제출을 방지하기 위해 실패한 경우에는 운영진 확인이 필요할 수 있습니다.</small>
+</form>
+<div id="result" role="status" aria-live="polite"></div>
+</section><a href="/" style="color:#6751c7">VOM 홈페이지 →</a>
+</main><script>
+"use strict";
+const endpoint="https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/vom-kakao-upload";
+const anon="sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R";
+const ticket=new URLSearchParams(location.search).get("ticket")||"";
+const status=document.getElementById("status"),form=document.getElementById("uploadForm"),result=document.getElementById("result"),send=document.getElementById("send");
+history.replaceState(null,"",location.pathname); // prevent token leaking via browser navigation/history
+async function post(data){
+  const res=await fetch(endpoint,{method:"POST",headers:{apikey:anon,...(data instanceof FormData?{"x-vom-upload-ticket":ticket}:{"Content-Type":"application/json"})},
+    body:data instanceof FormData?data:JSON.stringify(data),cache:"no-store",referrerPolicy:"no-referrer"});
+  const body=await res.json().catch(()=>({}));
+  if(!res.ok||!body.ok)throw new Error(body.error||"연결을 확인하지 못했습니다.");
+  return body;
+}
+async function init(){
+  if(!/^[a-f0-9]{64}$/.test(ticket)){status.className="error";status.textContent="유효하지 않은 링크입니다. 카카오톡에서 다시 시작해 주세요.";return;}
+  try{
+    await post({action:"status",ticket});
+    status.textContent="확인되었습니다. 사진·영상과 비밀번호를 입력한 뒤 제출해 주세요.";
+    form.classList.remove("hide");
+  }catch(e){status.className="error";status.textContent=e.message;}
+}
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(send.disabled)return;
+  if(document.getElementById("password").value!==document.getElementById("repeat").value){
+    result.className="error";result.textContent="비밀번호 확인이 일치하지 않습니다.";return;
+  }
+  const photo=document.getElementById("photo").files[0],video=document.getElementById("video").files[0];
+  if(!photo||!video||photo.size>5*1024*1024||video.size>50*1024*1024){
+    result.className="error";result.textContent="사진·영상의 용량을 확인해 주세요.";return;
+  }
+  const data=new FormData(form);data.append("ticket",ticket);
+  send.disabled=true;result.className="muted";result.textContent="영상 업로드 및 가입 심사 접수 중... 잠시 기다려 주세요.";
+  try{
+    const done=await post(data);
+    form.classList.add("hide");status.textContent="가입 영상 제출이 완료되었습니다.";
+    result.className="success";
+    result.textContent=done.message+(done.reason_recorded?"":"\n가입 계기 기록 확인이 필요합니다. 운영진에게 문의해 주세요.");
+    const a=document.createElement("a");a.href="/ot-room/?result=1";a.className="button";a.textContent="가입 심사 결과 확인하기";
+    result.appendChild(a);
+  }catch(e){
+    result.className="error";result.textContent=e.message;
+    send.disabled=false;
+  }
+});
+init();
+</script></body></html>

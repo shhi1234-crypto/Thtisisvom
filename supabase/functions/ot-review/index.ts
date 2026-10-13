@@ -43,7 +43,7 @@ export async function handle(req: Request, service: any) {
         : { data: [], error: null };
       if (me) throw new Error("member_list_failed");
       const {data:profiles,error:pe}=ids.length ? await service.from("ot_room_applicants")
-        .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,profile_photo_path,region,gender,ot_room_invites!inner(review_id,notification_push_enabled)")
+        .select("candidate_name,phone,birth_date,birth_year,job,busking_experience,busking_experience_unit,join_reason,profile_photo_path,region,gender,ot_room_invites!inner(review_id,notification_push_enabled)")
         .in("ot_room_invites.review_id",ids) : {data:[],error:null};
       if (pe) throw new Error("applicant_list_failed");
       const {data:pushDevices,error:pde}=actor.isAdmin?await service.from('vom_push_subscriptions')
