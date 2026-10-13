@@ -90,7 +90,7 @@ export function extractAnswers(message:string,now=new Date()):Extracted {
   if(phone&&!candidate.PHONE)candidate.PHONE=phone[1].replace(/[.\s]/g,"-");
   const birth=text.match(/(?:^|[\s,])((?:19|20)\d{2}|\d{2})\s*년생(?:이|이고|이고요|이며|입니다)?/u);
   if(birth&&!candidate.BIRTH_YEAR)candidate.BIRTH_YEAR=birth[1];
-  const firstName=text.match(/^([가-힣]{2,5})\s+(?:(?:19|20)?\d{2}\s*년생|전화번호|연락처)/u);
+  const firstName=text.match(/^([가-힣]{2,5})\s*(?:(?:[,;/|\n]\s*)|(?=(?:19|20)?\d{2}\s*년생)|(?=전화번호|연락처))/u);
   const selfName=text.match(/(?:^|[\s,.])(?:저는|제\s*이름은|이름은|성함은)\s*([가-힣]{2,5})(?:이고|이며|입니다|이에요|예요|[,\s.!?]|$)/u);
   if(!candidate.NAME)candidate.NAME=selfName?.[1]||firstName?.[1];
   const nickname=text.match(/(?:소모임\s*)?닉네임(?:은|는|이|은요|:)?\s*([가-힣a-zA-Z0-9_]{1,40})(?:이고|이구요|입니다|이에요|예요|[,\s.!?]|$)/u);
@@ -250,8 +250,8 @@ export async function handle(req:Request,service:any,secret:string){
     if(!Object.keys(parsed).length&&implicitStep&&utterance!=="정보 확인"){
       // Preserve single-answer compatibility without mistaking a long free-form message for a name/job.
       try{
-        const plain=validate(implicitStep,utterance,now);
-        if(!["NAME","NICKNAME","JOB","REGION"].includes(implicitStep)||!/\s/.test(plain)){
+        const plain=safePair(implicitStep,utterance,now);
+        if(plain!==null&&(!["NAME","NICKNAME","JOB","REGION"].includes(implicitStep)||!/\s/.test(plain))){
           parsed[profileKeys[implicitStep]]=plain;
         }
       }catch{/* Ask only for fields which could not be parsed. */}
