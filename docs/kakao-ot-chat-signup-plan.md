@@ -86,3 +86,21 @@ Implemented on this draft PR branch (not merged into Vercel production):
 7. Verify the exact retention/consent wording and user-access/erasure process with the VOM organizer before accepting real personal data.
 
 Do not enable the flow from the Kakao operating channel while any of these remain unverified.
+
+## 2026-10-13 UX revision · 여러 정보 한 번에 입력
+
+운영자 요청에 따라 질문을 반드시 한 항목씩 반복하지 않는 **복합 발화 자동 분류 방식**으로 변경.
+가입 신청 이후 명시 동의를 먼저 받고, 다음 메시지에서 여러 기본정보를 자유롭게 전달 가능.
+
+예: `저는 김철수이고 98년생이에요. 전화번호는 010-1234-5678이에요. 닉네임은 철수이고 버스킹은 3번 해봤습니다. 노래하는 친구들을 만나고 싶어서 가입하려고요.`
+
+- `extractAnswers`: 이름, 출생연도, 전화, 소모임 닉네임, 직업, 지역, 성별, 버스킹 경험, 가입 계기 중 명확히 감지된 정보만 추출·검증.
+- 한 번의 발화에서 여러 항목을 추출해서 기존 개인 비공개 초안의 JSON에 저장하고 **빠진 항목만 질문**.
+- `이름: 김철수 / 1998년생 / 닉네임: 철수 / 버스킹 경험: 3회` 같은 구분형 표현과 일부 일반 문장을 지원.
+- 인식 불확실한 내용은 추측하지 않고 질문. 한국어 모든 자유 발화를 완벽하게 해석하는 LLM 연동은 **현재 포함하지 않음**. 개인정보를 제3자 NLP 서비스로 전송하려면 별도 승인·동의·비용 점검 필요.
+- 모든 항목이 모이면 `REVIEW` 단계에서 전화번호 일부 가린 요약 제공. `확인` 이후에만 영상 제출 티켓 발급.
+- `수정 전화번호 010-...` 같은 후속 발화도 지원. 기존 제출 티켓이 있었다면 정정 시 무효화.
+- 영상은 여전히 마지막 카카오톡 인앱 업로드 방식. 운영진 본 심사는 현재 OT 시스템 그대로.
+- GitHub 테스트 케이스에는 복합 자연어 및 구분형 발화, 불확실한 항목 처리 포함.
+- Supabase `vom-kakao-join` ACTIVE **v2**로 새 코드 배포했지만, **카카오 챗봇 승인/스킬 인증 비밀/최종 실사용 테스트 전까지 수집 비활성**.
+
