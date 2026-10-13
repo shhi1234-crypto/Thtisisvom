@@ -29,3 +29,12 @@ alter table public.ot_room_applicants
   check (join_reason is null or char_length(join_reason) between 1 and 500);
 comment on column public.ot_room_applicants.join_reason is
 'Applicant-stated reason for joining VOM, accessible only through authorized OT review flows.';
+
+-- Supabase project currently has pg_cron 1.6.4 installed.
+-- Automatically remove abandoned personal information after 72h, including
+-- incomplete retries that need a separate operator reconciliation workflow.
+select cron.schedule(
+ 'vom-kakao-signup-expired-drafts',
+ '10 * * * *',
+ $$delete from public.kakao_signup_drafts where expires_at < now()$$
+);
