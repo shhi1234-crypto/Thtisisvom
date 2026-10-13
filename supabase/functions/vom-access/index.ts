@@ -74,7 +74,7 @@ export async function handle(req: Request, service: any, authClient: any) {
         if (!Number.isSafeInteger(id)||id<=0) throw new ApiError(400,"회원 이름을 목록에서 선택해 주세요.");
         const {data,error}=await service.from("members").select("id,auth_user_id").eq("id",id).eq("is_active",true).maybeSingle();
         if (error) throw new Error("selected_login_lookup_failed");
-        if (!data?.auth_user_id) throw new ApiError(401,"개인 비밀번호를 확인해 주세요. 최초 설정이 필요하다면 운영진에게 개인 설정 링크를 요청해 주세요.");
+        if (!data) throw new ApiError(401,"회원 이름을 확인해 주세요.");
         selected=data;
       } else if (!lookup) {
         const {data:activeMembers,error}=await service.from("members").select("id,name,nickname,auth_user_id").eq("is_active",true).order("join_order",{ascending:true});
