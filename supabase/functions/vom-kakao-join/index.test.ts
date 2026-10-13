@@ -52,3 +52,11 @@ Deno.test("invalid phone and year are ignored instead of silently saved",()=>{
   if(a.phone||a.birth_year)throw Error("invalid entries should not be saved");
   if(a.candidate_name!=="홍길동"||a.somoim_nickname!=="길동")throw Error("valid entries lost");
 });
+
+
+Deno.test("labeled fields stop before the next labeled clause",()=>{
+  const a=extractAnswers("닉네임: 철수이고 버스킹 경험: 3회");
+  if(a.somoim_nickname!=="철수"||a.busking_experience!=="3")throw Error(JSON.stringify(a));
+  const b=extractAnswers("직업: 대학생이고 지역: 인천");
+  if(b.job!=="대학생"||b.region!=="인천")throw Error(JSON.stringify(b));
+});
