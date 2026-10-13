@@ -120,8 +120,7 @@ export async function handle(req:Request,service:any){
      scheduled_at:receipt.scheduled_at||null,
      check_at:receipt.check_at||null,
      message:receipt.message||"가입 신청이 접수되었습니다.",
-     reason_recorded:reasonRecorded,
-     notification_token:receipt.notification_token||null});
+     reason_recorded:reasonRecorded});
  }catch(e){
    console.error("kakao_ot_upload_failed",e instanceof Error?e.name:"unknown");
    // Leave unverified downstream commit in NEEDS_REVIEW instead of double-submitting.
