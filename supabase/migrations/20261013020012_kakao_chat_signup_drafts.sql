@@ -1,4 +1,4 @@
--- Prepared for Kakao conversational signup. NOT applied to production by this PR.
+-- Applied to Supabase under migration version 20261013020012. Keep this file aligned with the remote history; do not manually re-run it against production.
 create table if not exists public.kakao_signup_drafts (
   id uuid primary key default gen_random_uuid(),
   bot_user_hash text not null unique check (length(bot_user_hash)=64),
