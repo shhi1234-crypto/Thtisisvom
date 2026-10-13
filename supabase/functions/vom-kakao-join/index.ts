@@ -5,7 +5,7 @@ const steps=["CONSENT","NAME","BIRTH_YEAR","PHONE","NICKNAME","JOB","REGION","GE
 type Step=typeof steps[number];
 const questions: Record<Step,string>={
   CONSENT:"VOM 가입을 위한 개인정보 수집·이용에 동의하시나요?\n수집: 실명, 출생연도, 연락처, 소모임 닉네임, 직업, 지역, 성별, 공연 경험, 가입 계기, 본인사진 및 심사 영상.\n목적: 가입 심사·회원 관리·탈퇴자 이력 관리. 운영진만 심사 자료를 확인합니다.\n채팅 중 미완료 자료는 최대 72시간 보관 후 삭제 대상입니다. 정식 접수된 정보·영상은 VOM 회원 관리 정책에 따릅니다. 동의하지 않으면 신청이 진행되지 않습니다.\n'동의합니다' 또는 '동의하지 않습니다'를 선택해 주세요.",
-  NAME:"1/9 본인 실명을 성까지 포함해 입력해 주세요. (예: 김철수)",
+  NAME:"이름을 알려주세요. 다른 기본정보도 한 메시지에 함께 입력할 수 있어요.\n예: 김철수 / 1998년생 / 010-1234-5678 / 닉네임: 철수 / 버스킹 경험: 3회",
   BIRTH_YEAR:"2/9 태어난 연도 4자리를 입력해 주세요. (예: 1998)",
   PHONE:"3/9 연락 가능한 휴대폰 번호를 입력해 주세요. (예: 010-1234-5678)",
   NICKNAME:"4/9 소모임에서 쓰는 닉네임을 입력해 주세요. (가입·탈퇴 이력 확인용)",
@@ -29,6 +29,119 @@ const profileKeys:Record<string,string>={
 };
 const next:Record<string,Step>={NAME:"BIRTH_YEAR",BIRTH_YEAR:"PHONE",PHONE:"NICKNAME",
  NICKNAME:"JOB",JOB:"REGION",REGION:"GENDER",GENDER:"EXPERIENCE",EXPERIENCE:"REASON",REASON:"READY"};
+
+// Rules-based extraction: never invent or infer missing personal data.
+// One message may contain several explicit fields; missing fields are requested separately.
+// Flexible natural language can be supported later after privacy/cost review of an NLP provider.
+type Extracted = Record<string,string>;
+const labels:Record<string,Step>={
+  "이름":"NAME","실명":"NAME","출생연도":"BIRTH_YEAR","출생년도":"BIRTH_YEAR","몇년생":"BIRTH_YEAR","년생":"BIRTH_YEAR",
+  "전화번호":"PHONE","휴대폰":"PHONE","연락처":"PHONE","번호":"PHONE",
+  "소모임닉네임":"NICKNAME","닉네임":"NICKNAME",
+  "직업":"JOB","활동지역":"REGION","지역":"REGION","성별":"GENDER",
+  "버스킹경험":"EXPERIENCE","공연경험":"EXPERIENCE","경험횟수":"EXPERIENCE","경험":"EXPERIENCE",
+  "가입계기":"REASON","가입이유":"REASON","지원동기":"REASON"
+};
+const order:Step[]=["NAME","BIRTH_YEAR","PHONE","NICKNAME","JOB","REGION","GENDER","EXPERIENCE","REASON"];
+function valueEnd(v:string){
+  return v.trim().replace(/(?:이고요?|이구요|이에요|예요|입니다|라고\s*해요|라고\s*합니다|이고|이구|이에|이야|이에요|임)$/u,"").trim().replace(/[.!?]+$/,"").trim();
+}
+function canonicalLabel(raw:string){
+  return labels[raw.replace(/\s+/g,"")]||null;
+}
+function labeledValues(text:string):Array<{step:Step,value:string}>{
+  // Clearly labeled segments, including multi-line, comma, slash, pipe or semicolon input.
+  const segments=text.split(/[,，;\n|/]+/g).map(v=>v.trim()).filter(Boolean);
+  const found:Array<{step:Step,value:string}>=[];
+  for(const segment of segments){
+    const m=segment.match(/^(?:수정\s+)?(이름|실명|출생\s*연도|출생\s*년도|몇\s*년생|년생|전화번호|휴대폰|연락처|번호|소모임\s*닉네임|닉네임|직업|활동\s*지역|지역|성별|버스킹\s*경험|공연\s*경험|경험\s*횟수|경험|가입\s*계기|가입\s*이유|지원\s*동기)\s*(?:은|는|이|가|:|=|-)?\s*(.+)$/u);
+    if(m){
+      const step=canonicalLabel(m[1]);
+      if(step)found.push({step,value:valueEnd(m[2])});
+    }
+  }
+  return found;
+}
+function safePair(step:Step,raw:string,now:Date){
+  let value=raw.trim();
+  if(step==="BIRTH_YEAR"){
+    const match=value.match(/^(\d{2}|\d{4})\s*(?:년생|년\s*출생)?$/u);
+    if(!match)return null;
+    if(match[1].length===2){
+      const two=Number(match[1]),currentYear=Number(new Intl.DateTimeFormat("en",{timeZone:"Asia/Seoul",year:"numeric"}).format(now));
+      value=String(two<=currentYear%100?2000+two:1900+two);
+    }else value=match[1];
+  }
+  if(step==="EXPERIENCE"){
+    const m=value.match(/^(\d{1,5})\s*(?:회|번)?(?:\s*(?:해봤어요|해봤습니다|있어요|있습니다))?$/u);
+    if(!m)return null;value=m[1];
+  }
+  if(step==="GENDER"&&["남자","여자"].includes(value))value=value==="남자"?"남성":"여성";
+  if(step==="NAME"||step==="NICKNAME"||step==="JOB"||step==="REGION")value=valueEnd(value);
+  try{return validate(step,value,now);}catch{return null;}
+}
+export function extractAnswers(message:string,now=new Date()):Extracted {
+  const text=message.trim().slice(0,1500);
+  const entries=labeledValues(text);
+  const candidate:Partial<Record<Step,string>>={};
+  for(const {step,value} of entries) candidate[step]=value;
+  // Natural-language markers: only high-confidence extraction.
+  const phone=text.match(/(?:^|[^\d])((?:01[016789])[-.\s]?\d{3,4}[-.\s]?\d{4})(?!\d)/u);
+  if(phone&&!candidate.PHONE)candidate.PHONE=phone[1].replace(/[.\s]/g,"-");
+  const birth=text.match(/(?:^|[\s,])((?:19|20)\d{2}|\d{2})\s*년생(?:이|이고|이고요|이며|입니다)?/u);
+  if(birth&&!candidate.BIRTH_YEAR)candidate.BIRTH_YEAR=birth[1];
+  const firstName=text.match(/^([가-힣]{2,5})\s+(?:(?:19|20)?\d{2}\s*년생|전화번호|연락처)/u);
+  const selfName=text.match(/(?:^|[\s,.])(?:저는|제\s*이름은|이름은|성함은)\s*([가-힣]{2,5})(?:이고|이며|입니다|이에요|예요|[,\s.!?]|$)/u);
+  if(!candidate.NAME)candidate.NAME=selfName?.[1]||firstName?.[1];
+  const nickname=text.match(/(?:소모임\s*)?닉네임(?:은|는|이|은요|:)?\s*([가-힣a-zA-Z0-9_]{1,40})(?:이고|이구요|입니다|이에요|예요|[,\s.!?]|$)/u);
+  if(!candidate.NICKNAME&&nickname)candidate.NICKNAME=valueEnd(nickname[1]);
+  const job=text.match(/직업(?:은|는|:)?\s*([가-힣a-zA-Z]{2,20})(?:이고|이며|입니다|이에요|예요|[,\s.!?]|$)/u);
+  if(!candidate.JOB&&job)candidate.JOB=valueEnd(job[1]);
+  const region=text.match(/(?:활동\s*)?지역(?:은|는|:)?\s*([가-힣]{2,15})(?:이고|이며|입니다|이에요|예요|[,\s.!?]|$)/u);
+  if(!candidate.REGION&&region)candidate.REGION=valueEnd(region[1]);
+  const gender=text.match(/성별(?:은|는|:)?\s*(남자|여자|남성|여성|기타)/u);
+  if(!candidate.GENDER&&gender)candidate.GENDER=gender[1];
+  const count=text.match(/(?:버스킹|공연)(?:\s*경험)?(?:은|는|을|은요|:)?[^\d\n,.]{0,22}?(\d{1,5})\s*(?:번|회)/u);
+  if(!candidate.EXPERIENCE&&count)candidate.EXPERIENCE=count[1];
+  // An explicit joining-reason clause is safe; otherwise ask instead of guessing.
+  const reason=text.match(/(?:가입\s*(?:계기|이유)|지원\s*동기)(?:는|은|가|:)?\s*([^\n]{10,500})$/u);
+  if(!candidate.REASON&&reason)candidate.REASON=valueEnd(reason[1]);
+  if(!candidate.REASON){
+    const sentences=text.split(/[.!?\n]+/u).map(x=>x.trim());
+    const last=sentences[sentences.length-1]||sentences[sentences.length-2]||"";
+    if(last.length>=12&&last.length<=500&&
+       /(?:가입하려고|가입하고\s*싶|지원하게\s*됐|가입하게\s*됐)/u.test(last)&&
+       !/(?:전화번호|연락처|닉네임|버스킹|공연\s*경험|출생연도)/u.test(last)){
+      candidate.REASON=last;
+    }
+  }
+  const answers:Extracted={};
+  for(const step of order){
+    const proposed=candidate[step];if(!proposed)continue;
+    const normalized=safePair(step,proposed,now);
+    if(normalized!==null)answers[profileKeys[step]]=normalized;
+  }
+  return answers;
+}
+const firstMissing=(answers:Extracted):Step|null=>order.find(step=>!answers[profileKeys[step]])||null;
+function profileSummary(answers:Extracted){
+  const phone=String(answers.phone||"");
+  const masked=phone.length>=7?phone.slice(0,3)+"-****-"+phone.slice(-4):"확인 필요";
+  const summary=[
+    "이름: "+answers.candidate_name,"출생연도: "+answers.birth_year+"년",
+    "전화번호: "+masked,"닉네임: "+answers.somoim_nickname,
+    "직업: "+answers.job,"활동 지역: "+answers.region,"성별: "+answers.gender,
+    "공연 경험: "+answers.busking_experience+"회",
+    "가입 계기: "+String(answers.join_reason).slice(0,150)
+  ].join("\n");
+  return "입력한 정보를 확인해 주세요. 맞으면 '확인', 수정할 정보가 있으면 '수정 전화번호 010-...'처럼 보내 주세요.\n\n"+summary+
+    "\n\n※ 영상 제출 전까지는 가입 신청이 접수되지 않습니다.";
+}
+function missingPrompt(step:Step,filled:Extracted){
+  const count=order.filter(s=>filled[profileKeys[s]]).length;
+  return "현재 "+count+"/9개 항목을 인식했습니다. 다른 항목도 한 메시지에 함께 적을 수 있어요.\n\n"+questions[step];
+}
+
 export function validate(step:Step,raw:string,now=new Date()):string{
   const v=raw.trim().replace(/[\x00-\x1f\x7f]/g," ");
   if(step==="NAME"){if(v.length<2||v.length>60||!/^[\p{L}\s.'-]+$/u.test(v))throw Error("성함을 정확히 입력해 주세요.");}
@@ -98,9 +211,18 @@ export async function handle(req:Request,service:any,secret:string){
       return result(msg(saved?questions.NAME:"잠시 후 다시 시도해 주세요.",["취소"]));
     }
     if(stage==="READY"){
-      if(utterance!=="영상 제출"&&utterance!=="가입 신청"){
-        return result(msg("기본정보 입력이 완료됐습니다. '영상 제출'을 눌러주세요.",["영상 제출","취소"]));
+      if(utterance.startsWith("수정 ")){
+        const parsed=extractAnswers(utterance,now);
+        if(!Object.keys(parsed).length)return result(msg("수정할 항목과 값을 함께 보내 주세요. 예: 수정 전화번호 010-1234-5678",["취소"]));
+        const updated={...old.answers,...parsed};
+        const missing=firstMissing(updated);
+        const {data:saved,error}=await db.update({answers:updated,step:missing||"REVIEW",upload_token_hash:null,
+          upload_expires_at:null,revision:old.revision+1,updated_at:now.toISOString()})
+          .eq("id",old.id).eq("revision",old.revision).select("id").maybeSingle();
+        if(error)throw error;
+        return result(msg(saved?(missing?missingPrompt(missing,updated):profileSummary(updated)):"잠시 후 다시 시도해 주세요.",missing?["취소"]:["확인","취소"]));
       }
+      if(utterance!=="영상 제출"&&utterance!=="가입 신청")return result(msg("영상 제출 준비가 완료됐습니다. '영상 제출' 버튼을 눌러 주세요.",["영상 제출","취소"]));
       const token=newToken();
       const {data:saved,error}=await db.update({upload_token_hash:await sha256(token),
         upload_expires_at:new Date(now.getTime()+60*60000).toISOString(),
@@ -109,22 +231,45 @@ export async function handle(req:Request,service:any,secret:string){
       if(!saved)return result(msg("다시 '영상 제출'을 눌러주세요.",["영상 제출"]));
       return result(uploadReply(SITE+"/kakao-video/?ticket="+token));
     }
-    if(!steps.includes(stage))return result(msg("처음부터 다시 신청해 주세요.",["취소"]));
-    let answer:string;
-    try{answer=validate(stage,utterance,now);}catch(e:any){return result(msg(e.message+"\n"+questions[stage],["취소"]));}
-    const updates:any={answers:{...old.answers,[profileKeys[stage]]:answer},
-      step:next[stage],revision:old.revision+1,updated_at:now.toISOString()};
-    if(stage==="REASON"){
+    if(stage==="REVIEW"&&utterance==="확인"){
+      const missing=firstMissing(old.answers||{});
+      if(missing)return result(msg(missingPrompt(missing,old.answers||{}),["취소"]));
       const token=newToken();
-      updates.upload_token_hash=await sha256(token);
-      updates.upload_expires_at=new Date(now.getTime()+60*60000).toISOString();
-      const {data:saved,error}=await db.update(updates).eq("id",old.id).eq("revision",old.revision).select("id").maybeSingle();
+      const {data:saved,error}=await db.update({step:"READY",upload_token_hash:await sha256(token),
+        upload_expires_at:new Date(now.getTime()+60*60000).toISOString(),
+        revision:old.revision+1,updated_at:now.toISOString()}).eq("id",old.id).eq("revision",old.revision).select("id").maybeSingle();
       if(error)throw error;
-      return result(saved?uploadReply(SITE+"/kakao-video/?ticket="+token):msg("다시 시도해 주세요."));
+      return result(saved?uploadReply(SITE+"/kakao-video/?ticket="+token):msg("잠시 후 다시 시도해 주세요."));
     }
-    const {data:saved,error}=await db.update(updates).eq("id",old.id).eq("revision",old.revision).select("id").maybeSingle();
+    if(!steps.includes(stage)&&stage!=="REVIEW")return result(msg("처음부터 다시 신청해 주세요.",["취소"]));
+    if(stage==="REVIEW"&&utterance==="정보 확인"){
+      return result(msg(profileSummary(old.answers),["확인","취소"]));
+    }
+    const parsed=extractAnswers(utterance,now);
+    const implicitStep=stage==="REVIEW"?null:stage;
+    if(!Object.keys(parsed).length&&implicitStep&&utterance!=="정보 확인"){
+      // Preserve single-answer compatibility without mistaking a long free-form message for a name/job.
+      try{
+        const plain=validate(implicitStep,utterance,now);
+        if(!["NAME","NICKNAME","JOB","REGION"].includes(implicitStep)||!/\s/.test(plain)){
+          parsed[profileKeys[implicitStep]]=plain;
+        }
+      }catch{/* Ask only for fields which could not be parsed. */}
+    }
+    if(!Object.keys(parsed).length){
+      const missing=firstMissing(old.answers||{});
+      return result(msg(missing?missingPrompt(missing,old.answers||{}):profileSummary(old.answers||{}),
+        missing?["정보 확인","취소"]:["확인","취소"]));
+    }
+    const updates:Extracted={...(old.answers||{}),...parsed};
+    const missing=firstMissing(updates);
+    const {data:saved,error}=await db.update({answers:updates,step:missing||"REVIEW",
+      upload_token_hash:null,upload_expires_at:null,
+      revision:old.revision+1,updated_at:now.toISOString()})
+      .eq("id",old.id).eq("revision",old.revision).select("id").maybeSingle();
     if(error)throw error;
-    return result(msg(saved?questions[next[stage]]:"잠시 후 다시 시도해 주세요.",["취소"]));
+    return result(msg(saved?(missing?missingPrompt(missing,updates):profileSummary(updates)):"잠시 후 다시 시도해 주세요.",
+      missing?["정보 확인","취소"]:["확인","취소"]));
   }catch(e){
     // No raw request bodies, user IDs, phone numbers, or secrets in logs.
     console.error("kakao_signup_chat_failed",e instanceof Error?e.name:"error");
