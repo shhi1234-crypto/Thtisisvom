@@ -9,7 +9,7 @@
   <link rel="icon" href="/favicon.png?v=4">
   <link rel="stylesheet" href="/assets/ot-room.css?v=9">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
-  <script defer src="/assets/ot-admin.js?v=8"></script>
+  <script defer src="/assets/ot-admin.js?v=9"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body class="ot-operator">
@@ -24,7 +24,7 @@
     </section>
     <div id="adminDashboard" hidden>
       <div class="ot-review-header"><h2>접수된 가입 신청 <span id="pendingCount" class="ot-tag">0건 대기</span></h2><span id="lastRefreshed" class="ot-note" style="margin:0"></span></div>
-      <div class="ot-filters" id="reviewFilters"><button class="ot-filter active" type="button" data-filter="IN_REVIEW">검토 대기</button><button class="ot-filter" type="button" data-filter="APPROVED">승인</button><button class="ot-filter" type="button" data-filter="REJECTED">반려</button><button class="ot-filter" type="button" data-filter="ALL">전체</button></div>
+      <div class="ot-filters" id="reviewFilters"><button class="ot-filter active" type="button" data-filter="IN_REVIEW">검토 대기</button><button class="ot-filter" type="button" data-filter="APPROVED">합격</button><button class="ot-filter" type="button" data-filter="REJECTED">불합격</button><button class="ot-filter" type="button" data-filter="DISCARDED">폐기</button><button class="ot-filter" type="button" data-filter="ALL">전체</button></div>
       <div id="reviewList" class="ot-review-list"></div>
 
       <div class="ot-admin-shortcuts"><a class="ot-button" href="/ot-room/">회원가입 페이지 보기</a></div>
