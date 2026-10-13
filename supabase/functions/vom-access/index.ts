@@ -14,6 +14,21 @@ export async function handle(req: Request, service: any, authClient: any) {
       const user=await signedIn(req,service);
       return json(origin,{ok:true,...await memberContext(service,user.id)});
     }
+    if (body.action === "login_members") {
+      const {data,error}=await service.from("members_display")
+        .select("id,name,nickname")
+        .order("join_order",{ascending:true});
+      if (error) throw new Error("login_members_lookup_failed");
+      const members=(data||[]).map((member:any)=>({
+        id:member.id,
+        name:member.name,
+        nickname:member.nickname,
+        display_name:member.nickname && String(member.name||"").includes(" · ")
+          ? member.nickname
+          : (member.name||member.nickname||"")
+      }));
+      return json(origin,{ok:true,members});
+    }
     if (body.action === "login" || body.action === "application_status") {
       const lookup=body.action==='application_status';
       const byName=lookup&&body.candidate_name!==undefined;
