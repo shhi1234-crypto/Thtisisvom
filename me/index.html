@@ -115,16 +115,17 @@ function renderWelcome(){
  bindMemberPicker();
 }
 function loginNotice(message){const el=document.getElementById('loginMessage');if(el){el.textContent=message;el.hidden=!message;}}
-async function loadLoginMembers(){const {data,error}=await db.from('members_display').select('id,name,nickname').eq('is_active',true).order('join_order',{ascending:true});if(error)throw new Error('회원 목록을 불러오지 못했습니다. 잠시 후 다시 시도하거나 가입 아이디로 로그인해 주세요.');loginMembers=data||[];loginMembersError='';}
-function pickerMatches(){const query=document.getElementById('loginNameSearch').value.trim().replace(/\s+/g,'').toLowerCase();return loginMembers.filter(member=>[member.name,member.nickname].some(name=>String(name||'').replace(/\s+/g,'').toLowerCase().includes(query)));}
+async function loadLoginMembers(){const data=await requestAccess({action:'login_members'});if(!Array.isArray(data.members))throw new Error('회원 목록을 불러오지 못했습니다. 잠시 후 다시 시도하거나 가입 아이디로 로그인해 주세요.');loginMembers=data.members;loginMembersError='';}
+function loginMemberLabel(member){return member.display_name||member.name||member.nickname||'';}
+function pickerMatches(){const query=document.getElementById('loginNameSearch').value.trim().replace(/\s+/g,'').toLowerCase();return loginMembers.filter(member=>[member.display_name,member.name,member.nickname].some(name=>String(name||'').replace(/\s+/g,'').toLowerCase().includes(query)));}
 function closeMemberPicker(){const input=document.getElementById('loginNameSearch');if(!input)return;input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');document.getElementById('loginMemberOptions').hidden=true;pickerIndex=-1;}
 function drawMemberPicker(){
  const input=document.getElementById('loginNameSearch'),list=document.getElementById('loginMemberOptions');const matches=pickerMatches();pickerIndex=-1;
- list.innerHTML=matches.length?matches.map(member=>`<button type="button" role="option" tabindex="-1" id="login-option-${Number(member.id)}" data-member="${Number(member.id)}" aria-selected="false"><strong>${esc(member.name||member.nickname)}</strong>${member.nickname&&member.nickname!==member.name?`<small>${esc(member.nickname)}</small>`:''}</button>`).join(''):`<p class="picker-empty">${esc(loginMembersError||'검색한 이름이 없습니다.')}</p>`;
+ list.innerHTML=matches.length?matches.map(member=>`<button type="button" role="option" tabindex="-1" id="login-option-${Number(member.id)}" data-member="${Number(member.id)}" aria-selected="false"><strong>${esc(loginMemberLabel(member))}</strong>${member.nickname&&member.nickname!==loginMemberLabel(member)?`<small>${esc(member.nickname)}</small>`:''}</button>`).join(''):`<p class="picker-empty">${esc(loginMembersError||'검색한 이름이 없습니다.')}</p>`;
  list.hidden=false;input.setAttribute('aria-expanded','true');input.removeAttribute('aria-activedescendant');list.classList.toggle('opens-up',input.getBoundingClientRect().bottom+230>innerHeight-90);
  document.getElementById('memberPickerNote').textContent=loginMembersError||'이름을 검색하거나 목록에서 선택해 주세요.';
 }
-function chooseLoginMember(id){const member=loginMembers.find(member=>Number(member.id)===Number(id));if(!member)return;document.getElementById('loginMemberId').value=String(member.id);document.getElementById('loginNameSearch').value=member.name||member.nickname;document.getElementById('memberPickerNote').textContent='선택한 회원 · '+(member.name||member.nickname);closeMemberPicker();loginNotice('');}
+function chooseLoginMember(id){const member=loginMembers.find(member=>Number(member.id)===Number(id));if(!member)return;const label=loginMemberLabel(member);document.getElementById('loginMemberId').value=String(member.id);document.getElementById('loginNameSearch').value=label;document.getElementById('memberPickerNote').textContent='선택한 회원 · '+label;closeMemberPicker();loginNotice('');}
 function bindMemberPicker(){
  const input=document.getElementById('loginNameSearch'),list=document.getElementById('loginMemberOptions'),picker=document.getElementById('loginMemberPicker');
  document.getElementById('memberPickerNote').textContent=loginMembersError||'이름을 검색하거나 목록에서 선택해 주세요.';
@@ -357,7 +358,7 @@ async function loginAdministrator(){
 async function loginAccount(){
  const form=document.getElementById('memberLoginForm');if(!form.reportValidity())return;
  const btn=document.getElementById('loginButton');if(btn.disabled)return;let memberId=null,name='';
- memberId=Number(document.getElementById('loginMemberId').value)||null;if(!memberId){const typed=document.getElementById('loginNameSearch').value.trim();const exact=loginMembers.filter(member=>member.name===typed);if(exact.length===1){chooseLoginMember(exact[0].id);memberId=Number(exact[0].id);}}if(!memberId){drawMemberPicker();loginNotice('회원 이름을 검색한 뒤 목록에서 선택해 주세요.');return;}name=document.getElementById('loginNameSearch').value;
+ memberId=Number(document.getElementById('loginMemberId').value)||null;if(!memberId){const typed=document.getElementById('loginNameSearch').value.trim();const exact=loginMembers.filter(member=>loginMemberLabel(member)===typed||member.name===typed||member.nickname===typed);if(exact.length===1){chooseLoginMember(exact[0].id);memberId=Number(exact[0].id);}}if(!memberId){drawMemberPicker();loginNotice('회원 이름을 검색한 뒤 목록에서 선택해 주세요.');return;}name=document.getElementById('loginNameSearch').value;
  btn.disabled=true;btn.textContent='로그인 확인 중…';loginNotice('');closeMemberPicker();
  try{
   const data=await requestAccess({action:'login',login_name:name,...(memberId?{member_id:memberId}:{}),password:document.getElementById('loginPassword').value});
