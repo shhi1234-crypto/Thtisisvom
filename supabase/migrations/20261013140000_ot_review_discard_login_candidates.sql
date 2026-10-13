@@ -28,11 +28,37 @@ alter table public.ot_review_discard_log enable row level security;
 revoke all on table public.ot_review_discard_log from anon, authenticated;
 grant all on table public.ot_review_discard_log to service_role;
 
-create or replace view public.members_display as
-select id, name, nickname, profile_image_url, role, is_active, join_order
-from public.members
-where is_active is true
-  and auth_user_id is not null;
+create or replace view public.members_display
+with (security_invoker = true)
+as
+select
+  m.id,
+  m.name,
+  m.nickname,
+  m.profile_image_url,
+  m.role,
+  m.is_active,
+  m.join_order
+from public.members m
+where m.is_active is true
+  and m.auth_user_id is not null
+  and (
+    not exists (
+      select 1
+      from public.ot_room_applicants a
+      where a.member_id = m.id
+    )
+    or exists (
+      select 1
+      from public.ot_room_applicants a
+      join public.ot_room_invites i on i.id = a.invite_id
+      join public.ot_reviews r on r.id = i.review_id
+      where a.member_id = m.id
+        and r.status = 'APPROVED'
+        and r.completed_at is not null
+        and r.completed_member_id = m.id
+    )
+  );
 
 create or replace function public.vom_ot_discard_review(
   p_review_id bigint,
