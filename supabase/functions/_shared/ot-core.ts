@@ -3,6 +3,11 @@ export const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 export const REVIEW_MINUTES = 180;
 export const APP_ORIGINS = new Set(["https://thisisvom.vercel.app", "https://www.thisisvom.vercel.app"]);
+const VERCEL_PREVIEW_ORIGIN = /^https:\/\/thisisvom-git-[a-z0-9-]+-projects\.vercel\.app$/;
+
+export function isAllowedOrigin(origin: string) {
+  return APP_ORIGINS.has(origin) || VERCEL_PREVIEW_ORIGIN.test(origin);
+}
 export const DEFAULT_ORIGIN = "https://thisisvom.vercel.app";
 
 export class ApiError extends Error {
@@ -105,7 +110,7 @@ export async function validateVideo(file: File): Promise<{ mime: string; extensi
 
 export function headers(origin: string) {
   return {
-    "Access-Control-Allow-Origin": APP_ORIGINS.has(origin) ? origin : DEFAULT_ORIGIN,
+    "Access-Control-Allow-Origin": isAllowedOrigin(origin) ? origin : DEFAULT_ORIGIN,
     "Access-Control-Allow-Headers": "authorization, content-type, apikey, x-client-info, x-ot-invite",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json; charset=utf-8",
@@ -122,7 +127,7 @@ export function json(origin: string, data: unknown, status = 200) {
 
 export function checkRequest(req: Request) {
   const origin = req.headers.get("origin") || DEFAULT_ORIGIN;
-  if (req.headers.get("origin") && !APP_ORIGINS.has(origin)) throw new ApiError(403, "허용되지 않은 요청입니다.");
+  if (req.headers.get("origin") && !isAllowedOrigin(origin)) throw new ApiError(403, "허용되지 않은 요청입니다.");
   if (req.method !== "POST" && req.method !== "OPTIONS") throw new ApiError(405, "POST 요청만 가능합니다.");
   return origin;
 }
