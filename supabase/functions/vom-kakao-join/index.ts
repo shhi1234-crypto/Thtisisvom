@@ -29,7 +29,7 @@ const profileKeys:Record<string,string>={
 };
 const next:Record<string,Step>={NAME:"BIRTH_YEAR",BIRTH_YEAR:"PHONE",PHONE:"NICKNAME",
  NICKNAME:"JOB",JOB:"REGION",REGION:"GENDER",GENDER:"EXPERIENCE",EXPERIENCE:"REASON",REASON:"READY"};
-function validate(step:Step,raw:string,now=new Date()):string{
+export function validate(step:Step,raw:string,now=new Date()):string{
   const v=raw.trim().replace(/[\x00-\x1f\x7f]/g," ");
   if(step==="NAME"){if(v.length<2||v.length>60||!/^[\p{L}\s.'-]+$/u.test(v))throw Error("성함을 정확히 입력해 주세요.");}
   if(step==="BIRTH_YEAR"){const year=Number(v),currentYear=Number(new Intl.DateTimeFormat("en",{timeZone:"Asia/Seoul",year:"numeric"}).format(now));if(!/^\d{4}$/.test(v)||year<1900||year>currentYear)throw Error("출생연도 4자리를 입력해 주세요.");}
