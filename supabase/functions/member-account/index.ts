@@ -6,6 +6,11 @@ const allowedOrigins = new Set([
   "https://thisisvom.vercel.app",
   "https://www.thisisvom.vercel.app"
 ]);
+const vercelPreviewOrigin = /^https:\/\/thisisvom-git-[a-z0-9-]+-projects\.vercel\.app$/;
+
+function isAllowedOrigin(origin: string) {
+  return allowedOrigins.has(origin) || vercelPreviewOrigin.test(origin);
+}
 
 function response(body: Record<string, unknown>, status = 200, origin = "https://thisisvom.vercel.app") {
   return new Response(JSON.stringify(body), {
@@ -138,7 +143,7 @@ async function markInquiryNotified(admin: any, inquiryId: number) {
 
 Deno.serve(async (req) => {
   const requestOrigin = req.headers.get("origin") || "https://thisisvom.vercel.app";
-  if (req.headers.get("origin") && !allowedOrigins.has(requestOrigin)) {
+  if (req.headers.get("origin") && !isAllowedOrigin(requestOrigin)) {
     return response({ error: "허용되지 않은 요청입니다." }, 403, requestOrigin);
   }
   if (req.method === "OPTIONS") return response({ ok: true }, 200, requestOrigin);
