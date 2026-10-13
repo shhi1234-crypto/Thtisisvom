@@ -42,7 +42,7 @@ const ticket=new URLSearchParams(location.search).get("ticket")||"";
 const status=document.getElementById("status"),form=document.getElementById("uploadForm"),result=document.getElementById("result"),send=document.getElementById("send");
 history.replaceState(null,"",location.pathname); // prevent token leaking via browser navigation/history
 async function post(data){
-  const res=await fetch(endpoint,{method:"POST",headers:{apikey:anon,...(data instanceof FormData?{}:{"Content-Type":"application/json"})},
+  const res=await fetch(endpoint,{method:"POST",headers:{apikey:anon,...(data instanceof FormData?{"x-vom-upload-ticket":ticket}:{"Content-Type":"application/json"})},
     body:data instanceof FormData?data:JSON.stringify(data),cache:"no-store",referrerPolicy:"no-referrer"});
   const body=await res.json().catch(()=>({}));
   if(!res.ok||!body.ok)throw new Error(body.error||"연결을 확인하지 못했습니다.");
