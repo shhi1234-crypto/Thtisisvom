@@ -3,6 +3,37 @@ import { ApiError, DEFAULT_ORIGIN, checkRequest, failure, headers, json, tokenHa
 import { applicantEmail, loginName, memberContext, newPassword, signedIn } from "../_shared/member-access.ts";
 import { applicationStatus } from "../_shared/application-status.ts";
 
+
+async function ensureMemberAuth(service:any,memberId:number){
+  const email=`member-${Number(memberId)}@member.thisisvom.app`;
+  const {data:created}=await service.auth.admin.createUser({email,password:"VOM:0000",email_confirm:true});
+  let identity=created?.user?.id||null;
+  const createdNew=Boolean(identity);
+  if(!identity){
+    const {data:list,error:listError}=await service.auth.admin.listUsers({page:1,perPage:1000});
+    const existing=!listError?(list?.users||[]).find((user:any)=>user.email===email):null;
+    if(!existing)throw new Error("member_account_create_failed");
+    identity=existing.id;
+  }
+  const {data:linked,error:linkError}=await service.from("members").update({auth_user_id:identity}).eq("id",memberId).eq("is_active",true).is("auth_user_id",null).select("id,auth_user_id").maybeSingle();
+  if(linkError){
+    if(createdNew)await service.auth.admin.deleteUser(identity);
+    throw new Error("member_account_link_failed");
+  }
+  if(!linked){
+    const {data:current,error:currentError}=await service.from("members").select("auth_user_id").eq("id",memberId).eq("is_active",true).maybeSingle();
+    if(currentError||!current?.auth_user_id){
+      if(createdNew)await service.auth.admin.deleteUser(identity);
+      throw new Error("member_account_link_failed");
+    }
+    if(createdNew&&current.auth_user_id!==identity)await service.auth.admin.deleteUser(identity);
+    identity=current.auth_user_id;
+  }
+  const {error:settingsError}=await service.from("member_account_settings").upsert({member_id:memberId,must_change_password:true},{onConflict:"member_id",ignoreDuplicates:true});
+  if(settingsError)throw new Error("member_account_settings_failed");
+  return identity;
+}
+
 export async function handle(req: Request, service: any, authClient: any) {
   let origin = DEFAULT_ORIGIN;
   let claim: any = null, createdUser: string | null = null;
@@ -46,11 +77,19 @@ export async function handle(req: Request, service: any, authClient: any) {
         if (!data?.auth_user_id) throw new ApiError(401,"개인 비밀번호를 확인해 주세요. 최초 설정이 필요하다면 운영진에게 개인 설정 링크를 요청해 주세요.");
         selected=data;
       } else if (!lookup) {
-        const {data,error}=await service.from("members").select("id,auth_user_id").eq("name",name).eq("is_active",true).maybeSingle();
+        const {data:activeMembers,error}=await service.from("members").select("id,name,nickname,auth_user_id").eq("is_active",true).order("join_order",{ascending:true});
         if (error) throw new Error("legacy_login_lookup_failed");
-        if (data?.auth_user_id) selected=data;
+        const normalizedName=String(name||"").trim().toLocaleLowerCase();
+        const matches=(activeMembers||[]).filter((member:any)=>[member.name,member.nickname].some((value:any)=>String(value||"").trim().toLocaleLowerCase()===normalizedName));
+        if (matches.length>1) throw new ApiError(409,"동명이인 회원입니다. 운영진에게 로그인 이름을 확인해 주세요.");
+        if (matches.length===1) selected=matches[0];
       }
       let identity=selected?.auth_user_id;
+      if (!lookup && selected && !identity) {
+        if (password !== "0000") throw new ApiError(401,"이 회원은 최초 비밀번호 0000으로 로그인할 수 있습니다.");
+        identity=await ensureMemberAuth(service,Number(selected.id));
+        selected.auth_user_id=identity;
+      }
       if(!identity){
         const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq(byName?'candidate_name':'login_name',byName?name:name.toLowerCase()).maybeSingle();
         if(error){if(byName&&error.code==='PGRST116')throw new ApiError(400,'이름만으로 신청을 확인하기 어렵습니다. 소모임 운영진에게 확인해 주세요.');throw new Error("login_identity_lookup_failed");}
@@ -61,7 +100,7 @@ export async function handle(req: Request, service: any, authClient: any) {
       if(attemptError)throw new Error("login_attempt_check_failed");
       if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
       let result;
-      const resolvedId=selected?.auth_user_id||(byName?identity:null);
+      const resolvedId=selected?.auth_user_id||(selected?identity:(byName?identity:null));
       if (resolvedId) {
         const {data,error}=await service.auth.admin.getUserById(resolvedId);
         if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
