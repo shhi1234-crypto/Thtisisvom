@@ -29,7 +29,7 @@
     if(info.login_required){loginCard.hidden=false;say('신청할 때 설정한 개인 계정으로 로그인해 주세요.');return;}
     if(!info.account_exists){accountCard.hidden=false;document.getElementById('accountNickname').value=info.somoim_nickname||'';say('아이디·개인 비밀번호와 가입 정보를 먼저 설정해 주세요.');return;}
     if(info.submitted){
-      const statuses={IN_REVIEW:'회원가입 신청이 접수됐습니다. 운영진 확인 후 익일 안내될 수 있습니다.',APPROVED:'가입 검토가 완료됐습니다. 가입 상태를 다시 확인해 주세요.',REJECTED:'가입 검토가 완료됐습니다. 자세한 안내는 운영진에게 확인해 주세요.',JOINED:'가입이 완료되어 회원 프로필이 생성됐습니다. 같은 계정으로 멤버스와 스케줄을 이용해 주세요.'};
+      const statuses={IN_REVIEW:'회원가입 신청이 접수됐습니다. 운영진 확인 후 익일 안내될 수 있습니다.',APPROVED:'합격 처리됐습니다. 가입 상태를 다시 확인해 주세요.',REJECTED:'불합격 처리됐습니다. 자세한 안내는 운영진에게 확인해 주세요.',DISCARDED:'신청서가 폐기됐습니다. 자세한 안내는 운영진에게 확인해 주세요.',JOINED:'가입이 완료되어 회원 프로필이 생성됐습니다. 같은 계정으로 멤버스와 스케줄을 이용해 주세요.'};
       say(statuses[info.status]||'운영진 확인을 기다려 주세요.','success');return;
     }
     if(info.profile?.form_version>=2&&!info.profile.has_photo){photoCard.hidden=false;say('계정은 설정됐습니다. 본인사진을 먼저 등록해 주세요.');return;}
