@@ -2213,6 +2213,23 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 @keyframes homeGlowPulse{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(.8)}50%{opacity:.86;transform:translate(-50%,-50%) scale(1.35)}}
 @media(max-width:700px){.aurora-ribbon{width:210%;height:27%}.aurora-ribbon-two{height:23%}.aurora-glow{width:100px;height:100px}}
 @media(prefers-reduced-motion:reduce){.home-info-guide .home-guide-progress::before,.home-info-guide .home-guide-progress i,.home-info-guide .home-guide-step,.aurora,.aurora::before,.aurora::after,.aurora-ribbon,.aurora-glow{animation:none!important;filter:none}.home-info-guide .home-guide-progress i{background-position:50% 50%}}
+/* MEMBER PROMPT + COLLAPSIBLE MY VOM */
+.home-member-prompt{display:flex;align-items:center;gap:8px;margin:8px 0 0 7px;color:#83899a;font-size:10px;line-height:1.5}
+.home-member-prompt a{color:#6d58d4;font-weight:900;text-decoration:none}
+.home-member-prompt a:hover{text-decoration:underline}
+.quick-my-vom-panel{width:min(760px,100%);margin:0 auto}
+.quick-my-vom-panel>summary{list-style:none;cursor:pointer}
+.quick-my-vom-panel>summary::-webkit-details-marker{display:none}
+.quick-my-vom-panel .quick-my-vom{width:100%;margin:0}
+.quick-my-vom-panel[open] .quick-my-vom{border-radius:24px 24px 12px 12px}
+.quick-my-vom-panel[open] .quick-my-vom-arrow{transform:rotate(90deg)}
+.quick-my-vom-arrow{transition:transform .22s ease}
+.quick-my-vom-panel .home-member-shortcuts{width:100%;margin:10px auto 0}
+.home-member-shortcuts-head{align-items:center}
+.home-member-open{color:#6d58d4;font-size:9px;font-weight:900;text-decoration:none;white-space:nowrap}
+.home-member-open:hover{text-decoration:underline}
+@media(max-width:700px){.home-member-prompt{margin-left:0;font-size:9px}.quick-my-vom-panel{width:100%}}
+@media(prefers-reduced-motion:reduce){.quick-my-vom-arrow{transition:none}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2276,6 +2293,7 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
       </div>
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
+      <p id="homeMemberPrompt" class="home-member-prompt">이미 회원이신가요? <a href="/me/">로그인하기 →</a></p>
       <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
             <details class="home-info-guide">
         <summary class="home-info-summary">
@@ -2449,23 +2467,24 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 
   <div class="quick-stack">
 
-    <a href="/me/" class="quick-my-vom">
-      <div class="quick-my-vom-icon">◉</div>
-      <div class="quick-my-vom-copy">
-        <strong>MY VOM</strong>
-        <small>개인 셋리스트와 나의 공간</small>
+    <details class="quick-my-vom-panel">
+      <summary class="quick-my-vom">
+        <div class="quick-my-vom-icon">◉</div>
+        <div class="quick-my-vom-copy">
+          <strong>MY VOM</strong>
+          <small>개인 셋리스트와 나의 공간</small>
+        </div>
+        <span class="quick-my-vom-arrow">⌄</span>
+      </summary>
+      <div class="home-member-shortcuts">
+        <div class="home-member-shortcuts-head"><strong>MY VOM</strong><small>로그인 후 이용할 수 있어요</small><a class="home-member-open" href="/me/">MY VOM 열기 →</a></div>
+        <div class="home-member-shortcuts-grid">
+          <a class="home-member-shortcut" href="/calendar/"><small>VOM SCHEDULE</small><strong>내 일정 보기</strong><span>모임과 행사 확인</span></a>
+          <a class="home-member-shortcut" href="/calendar/?view=available"><small>OPEN TO JOIN</small><strong>참가 가능한 일정</strong><span>신청할 수 있는 일정</span></a>
+          <a class="home-member-shortcut" href="/qna/"><small>VOM HELP</small><strong>궁금한 이야기</strong><span>문의와 답변 확인</span></a>
+        </div>
       </div>
-      <span class="quick-my-vom-arrow">→</span>
-    </a>
-
-    <div class="home-member-shortcuts">
-      <div class="home-member-shortcuts-head"><strong>MY VOM</strong><small>로그인 후 이용할 수 있어요</small></div>
-      <div class="home-member-shortcuts-grid">
-        <a class="home-member-shortcut" href="/calendar/"><small>VOM SCHEDULE</small><strong>내 일정 보기</strong><span>모임과 행사 확인</span></a>
-        <a class="home-member-shortcut" href="/calendar/?view=available"><small>OPEN TO JOIN</small><strong>참가 가능한 일정</strong><span>신청할 수 있는 일정</span></a>
-        <a class="home-member-shortcut" href="/qna/"><small>VOM HELP</small><strong>궁금한 이야기</strong><span>문의와 답변 확인</span></a>
-      </div>
-    </div>
+    </details>
 
     <section class="quick">
 
@@ -2777,6 +2796,8 @@ async function start(){
   document.getElementById('homeLoginButton').innerHTML=access.approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
   document.getElementById('homeSignupButton').hidden=access.approved;
   document.getElementById('homeResultLink').hidden=access.approved;
+  const homeMemberPrompt=document.getElementById('homeMemberPrompt');
+  if(homeMemberPrompt)homeMemberPrompt.hidden=access.approved;
   const homeGuideAction=document.getElementById('homeGuideAction');
   if(homeGuideAction&&access.approved){homeGuideAction.href='/me/';homeGuideAction.textContent='MY VOM에서 관리하기 →';}
 
