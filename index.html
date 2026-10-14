@@ -4191,3 +4191,18 @@ start();
 @media(prefers-reduced-motion:reduce){
   .aurora-orb-four,.aurora-orb-five,.aurora-orb-six{animation:none!important}
 }
+
+
+/* FINAL HERO ENTRY ALIGNMENT */
+.home-auth-actions{display:none!important}
+.home-entry-grid{align-items:stretch}
+.home-entry-grid .home-info-summary{min-height:96px}
+.home-entry-grid .home-info-summary .visitor-mini{display:none}
+.home-entry-grid .home-info-card{padding:18px 16px!important;gap:8px!important}
+.home-entry-grid .home-info-kicker{flex:0 0 auto}
+.home-entry-grid .home-info-question{white-space:nowrap;font-size:clamp(10px,1vw,12px)}
+.home-entry-grid .home-member-prompt-card{min-height:96px}
+.home-entry-grid .home-member-prompt-card strong{font-size:clamp(13px,1.1vw,16px)}
+@media(max-width:760px){
+  .home-entry-grid .home-info-question{white-space:normal}
+}
