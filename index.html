@@ -2230,6 +2230,20 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 .home-member-open:hover{text-decoration:underline}
 @media(max-width:700px){.home-member-prompt{margin-left:0;font-size:9px}.quick-my-vom-panel{width:100%}}
 @media(prefers-reduced-motion:reduce){.quick-my-vom-arrow{transition:none}}
+/* HOME DARK MODE + BOLDER AURORA */
+body[data-home-scene="hero"] .aurora{background:linear-gradient(135deg,#e7ddff 0%,#ccecff 42%,#c9fff1 100%)!important}
+body[data-home-scene="ranking"] .aurora{background:linear-gradient(135deg,#d2c7ff 0%,#b7f1eb 44%,#f4c9ef 100%)!important}
+body[data-home-scene="quick-stack"] .aurora{background:linear-gradient(135deg,#bff6ed 0%,#b9d5ff 48%,#eed1ff 100%)!important}
+body[data-home-scene="quick"] .aurora{background:linear-gradient(135deg,#e6c8ff 0%,#c5e9ff 46%,#c4ffe9 100%)!important}
+body[data-home-scene="upcoming"] .aurora{background:linear-gradient(135deg,#cad4ff 0%,#c4fff3 48%,#ffe0c3 100%)!important}
+body[data-home-scene="news"] .aurora{background:linear-gradient(135deg,#f1caff 0%,#d4e8ff 48%,#c6ffe0 100%)!important}
+body .aurora::before{filter:blur(25px) saturate(1.55)!important;opacity:1!important}
+body .aurora::after{filter:blur(28px) saturate(1.4)!important;opacity:.94!important}
+body .aurora-orb{opacity:.94!important;filter:blur(2px) saturate(1.35)!important}
+body .aurora-ribbon{opacity:.68!important;border-color:rgba(255,255,255,.64)!important}
+body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
+@media(prefers-reduced-motion:reduce){body .aurora::before,body .aurora::after{filter:blur(22px) saturate(1.1)!important}}
+
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
