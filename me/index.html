@@ -99,7 +99,7 @@ async function loadMySongs(){
 function render(){
  document.querySelector('.eyebrow').textContent=isAdministrator?'ADMIN SPACE':'PERSONAL SPACE';
  document.querySelector('.title').textContent=isAdministrator?'관리자 공간':'MY VOM';
- document.querySelector('.lead').textContent=isAdministrator?'운영 자료와 가입 신청을 한곳에서 관리해요.':'내 프로필과 MY SETLIST, 문의를 한곳에서 관리해요.';
+ document.querySelector('.lead').textContent=isAdministrator?'운영 자료와 가입 신청을 한곳에서 관리해요.':'내 프로필, 일정, 셋리스트와 문의를 한곳에서 관리해요.';
  if(isAdministrator)renderAdminDashboard();else if(myMember)renderDashboard();else renderWelcome();
 }
 function renderAdminDashboard(){
