@@ -24,6 +24,32 @@
 .signup-guide{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}.signup-guide strong{font-size:17px}.signup-guide p{font-size:12px;color:var(--muted);line-height:1.7;margin:6px 0 0}.signup-guide .login-signup{display:inline-flex;align-items:center;gap:14px;flex-shrink:0;min-height:48px;margin:0;padding:0 20px;border-radius:14px;background:#efeaff;color:#6550cb;font-size:15px;font-weight:800;text-decoration:none}@media(max-width:480px){.signup-guide{align-items:stretch;flex-direction:column}.signup-guide .login-signup{justify-content:space-between}}
 
 .admin-login-panel{margin-top:24px;padding-top:18px;border-top:1px solid #e9e4f1}.admin-login-panel summary{display:flex;justify-content:space-between;color:#7059cc;font-size:14px;font-weight:750;cursor:pointer}.admin-login-panel form{display:grid;gap:16px;margin-top:18px}.admin-login-panel summary::marker{content:""}
+
+/* MY SETLIST GUIDE VIDEO */
+.setlist-editor-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;align-items:start;gap:14px;margin-top:16px}
+.setlist-editor-column{min-width:0}
+.setlist-editor-column .my-song-form{margin-top:0}
+.setlist-guide-video{position:sticky;top:18px;overflow:hidden;border:1px solid #e1dcf6;border-radius:18px;background:linear-gradient(145deg,#1f2340,#4c45a1);color:#fff;box-shadow:0 16px 32px rgba(57,45,132,.15)}
+.guide-video-head{display:flex;align-items:center;gap:9px;padding:14px 14px 11px}
+.guide-video-badge{display:grid;flex:0 0 28px;width:28px;height:28px;place-items:center;border-radius:10px;background:#8e7cf2;color:#fff;font-size:12px}
+.guide-video-head b{display:block;font-size:12px}
+.guide-video-head small{display:block;margin-top:3px;color:#c9c6ee;font-size:9px}
+.guide-video-screen{position:relative;min-height:188px;margin:0 10px;overflow:hidden;border:1px solid rgba(255,255,255,.16);border-radius:13px;background:linear-gradient(145deg,#31365d,#272b4a)}
+.guide-frame{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:18px 17px;opacity:0;animation:setlistGuideFrame 12s infinite}
+.guide-frame:nth-child(1){animation-delay:0s}
+.guide-frame:nth-child(2){animation-delay:4s}
+.guide-frame:nth-child(3){animation-delay:8s}
+.guide-frame em{display:inline-flex;align-items:center;width:max-content;min-height:21px;padding:0 7px;border-radius:999px;background:#9b8bff;color:#fff;font:800 9px "DM Sans",sans-serif;font-style:normal;letter-spacing:.08em}
+.guide-frame strong{margin-top:12px;font-size:18px;line-height:1.25;letter-spacing:-.04em}
+.guide-frame small{margin-top:8px;color:#d8d7ef;font-size:10px;line-height:1.55}
+.guide-frame::after{content:"";position:absolute;right:-28px;bottom:-40px;width:120px;height:120px;border-radius:50%;background:rgba(137,225,221,.16)}
+.guide-video-progress{height:3px;margin:10px 14px 0;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.18)}
+.guide-video-progress i{display:block;width:33%;height:100%;border-radius:inherit;background:#a9eee4;animation:setlistGuideProgress 12s linear infinite}
+.guide-video-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px 14px;color:#d6d4ee;font-size:9px;line-height:1.45}
+.guide-replay{border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:6px 9px;background:rgba(255,255,255,.1);color:#fff;font:700 9px Pretendard,sans-serif;cursor:pointer}
+@keyframes setlistGuideFrame{0%,5%{opacity:0;transform:translateY(7px)}10%,27%{opacity:1;transform:translateY(0)}32%,100%{opacity:0;transform:translateY(-7px)}}
+@keyframes setlistGuideProgress{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+@media(max-width:720px){.setlist-editor-layout{grid-template-columns:1fr}.setlist-guide-video{position:relative;top:auto}.guide-video-screen{min-height:165px}}
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
@@ -181,10 +207,12 @@ function mySetlistMarkup(){
   const titleClass=editing&&!String(editing.song_title||'').trim()?' needs-attention':'';
   const artistClass=editing&&!String(editing.artist_name||'').trim()?' needs-attention':'';
   const referenceClass=editing&&editingIssues.some(issue=>issue==='재생 링크 또는 파일'||issue==='재생 자료 하나만 선택')?' needs-attention':'';
+
+  const setlistGuide=`<aside class="setlist-guide-video" id="setlistGuideVideo" aria-label="셋리스트 추가 가이드"><div class="guide-video-head"><span class="guide-video-badge">▶</span><div><b>셋리스트 추가 가이드</b><small>입력 순서를 짧게 참고해 보세요</small></div></div><div class="guide-video-screen"><div class="guide-frame"><em>STEP 1</em><strong>곡명과 원곡 가수</strong><small>필수 항목 두 가지를<br>먼저 정확히 입력해요.</small></div><div class="guide-frame"><em>STEP 2</em><strong>링크 또는 파일 하나</strong><small>재생 링크나 음성·MR 파일 중<br>하나만 선택해요.</small></div><div class="guide-frame"><em>STEP 3</em><strong>저장 후 직접 확인</strong><small>저장한 뒤 재생 버튼으로<br>내 자료가 열리는지 확인해요.</small></div></div><div class="guide-video-progress"><i></i></div><div class="guide-video-foot"><span>듀엣 상대는 선택 항목이에요.</span><button type="button" class="guide-replay" onclick="replaySetlistGuide()">↻ 다시 보기</button></div></aside>`;
   const editor=setlistEditorOpen?
-    '<div class="my-song-form" id="mySongEditor"><div class="my-song-form-top"><h3>'+(editing?'개인곡 수정':'새 개인곡 추가')+'</h3><span>필수 항목을 모두 채워야 저장돼요.</span></div>'+
+    '<div class="setlist-editor-layout"><div class="setlist-editor-column"><div class="my-song-form" id="mySongEditor"><div class="my-song-form-top"><h3>'+(editing?'개인곡 수정':'새 개인곡 추가')+'</h3><span>필수 항목을 모두 채워야 저장돼요.</span></div>'+
     (editingIssues.length?'<p class="editor-warning">이 곡은 '+esc(editingIssues.join(' · '))+' 항목을 확인해야 저장할 수 있어요.</p>':'')+
-    '<div class="my-song-grid"><div class="field'+titleClass+'"><label>곡명 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongTitle" maxlength="120" required value="'+esc(editing?.song_title||'')+'" placeholder="예: 기억을 걷는 시간"></div><div class="field'+artistClass+'"><label>원곡 가수 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongArtist" maxlength="120" required value="'+esc(editing?.artist_name||'')+'" placeholder="예: 넬"></div><div class="field wide"><label>듀엣 상대 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(선택)</em></label><input id="mySongDuet" maxlength="100" list="mySongMemberOptions" value="'+esc(editing?.duet_name||'')+'" placeholder="이름을 입력하거나 목록에서 선택"><datalist id="mySongMemberOptions">'+duetOptions+'</datalist></div><div class="field wide'+referenceClass+'"><label>재생 자료 <span style="color:#dc7430;font-size:9px">필수</span></label><div class="reference-choice"><label><input name="mySongReferenceType" type="radio" value="link"'+(type==='link'?' checked':'')+' onchange="updateMySongReferenceType()"> 링크 입력</label><label><input name="mySongReferenceType" type="radio" value="file"'+(type==='file'?' checked':'')+' onchange="updateMySongReferenceType()"> 파일 첨부</label></div><small class="reference-guide">재생 링크 또는 파일 첨부 중 하나만 선택해 주세요. 저장 후에는 꼭 직접 열어 확인해 주세요.</small></div><div id="mySongYoutubeField" class="field wide"'+(type==='link'?'':' hidden')+'><label>재생 링크 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongYoutube" inputmode="url" value="'+esc(editing?.youtube_url||'')+'" placeholder="https://youtube.com/..."></div><div id="mySongFileField" class="field wide"'+(type==='file'?'':' hidden')+'><label>MR · 음성 · 참고 파일 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongFile" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small id="mySongFileHelp" class="my-file-help">'+fileHelp+'</small></div></div><div class="my-song-form-actions"><button type="button" class="primary" onclick="saveMySong()">'+(editing?'개인곡 수정 저장':'개인곡 저장')+'</button><button type="button" class="cancel-song" onclick="cancelMySongEdit()">취소</button>'+(editing?'<button type="button" class="delete-editor" onclick="deleteMySong('+Number(editing.id)+')">삭제</button>':'')+'</div></div>':'';
+    '<div class="my-song-grid"><div class="field'+titleClass+'"><label>곡명 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongTitle" maxlength="120" required value="'+esc(editing?.song_title||'')+'" placeholder="예: 기억을 걷는 시간"></div><div class="field'+artistClass+'"><label>원곡 가수 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongArtist" maxlength="120" required value="'+esc(editing?.artist_name||'')+'" placeholder="예: 넬"></div><div class="field wide"><label>듀엣 상대 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(선택)</em></label><input id="mySongDuet" maxlength="100" list="mySongMemberOptions" value="'+esc(editing?.duet_name||'')+'" placeholder="이름을 입력하거나 목록에서 선택"><datalist id="mySongMemberOptions">'+duetOptions+'</datalist></div><div class="field wide'+referenceClass+'"><label>재생 자료 <span style="color:#dc7430;font-size:9px">필수</span></label><div class="reference-choice"><label><input name="mySongReferenceType" type="radio" value="link"'+(type==='link'?' checked':'')+' onchange="updateMySongReferenceType()"> 링크 입력</label><label><input name="mySongReferenceType" type="radio" value="file"'+(type==='file'?' checked':'')+' onchange="updateMySongReferenceType()"> 파일 첨부</label></div><small class="reference-guide">재생 링크 또는 파일 첨부 중 하나만 선택해 주세요. 저장 후에는 꼭 직접 열어 확인해 주세요.</small></div><div id="mySongYoutubeField" class="field wide"'+(type==='link'?'':' hidden')+'><label>재생 링크 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongYoutube" inputmode="url" value="'+esc(editing?.youtube_url||'')+'" placeholder="https://youtube.com/..."></div><div id="mySongFileField" class="field wide"'+(type==='file'?'':' hidden')+'><label>MR · 음성 · 참고 파일 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="mySongFile" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small id="mySongFileHelp" class="my-file-help">'+fileHelp+'</small></div></div><div class="my-song-form-actions"><button type="button" class="primary" onclick="saveMySong()">'+(editing?'개인곡 수정 저장':'개인곡 저장')+'</button><button type="button" class="cancel-song" onclick="cancelMySongEdit()">취소</button>'+(editing?'<button type="button" class="delete-editor" onclick="deleteMySong('+Number(editing.id)+')">삭제</button>':'')+'</div></div></div>'+setlistGuide+'</div>':'';
   return '<details class="dashboard-detail my-setlist-details" id="mySetlistDetails"><summary class="my-setlist-toggle"><div><b>MY SETLIST</b><small>내 개인곡과 재생 자료를 관리해요.</small></div><i>⌄</i></summary><section class="card my-setlist-workspace" id="mySetlistWorkspace"><div class="setlist-heading"><div><h2>MY SETLIST <span class="en">PERSONAL SONGS</span></h2><p class="card-intro">버스킹에 쓸 내 개인곡과 재생 자료를 관리해요.</p><p class="setlist-required"><b>등록 전 필수</b> · 곡명 · 원곡 가수 · 재생 링크 또는 파일</p></div><div class="setlist-tools">'+(issueCount?'<span class="setlist-alert">⚠ 수정 필요 '+issueCount+'곡</span>':'')+'<span class="setlist-count">'+mySongs.length+'곡</span><button type="button" class="open-setlist-editor" onclick="openMySetlistEditor()">＋ 셋리스트 만들기</button></div></div><div id="mySongList" class="my-song-list">'+list+'</div>'+editor+'<p class="setlist-footnote"><b>내 곡만</b> 추가·수정·삭제할 수 있어요. 다른 회원의 곡과 전체 관리 기능은 운영진이 Members에서 관리합니다.</p></section></details>';
 }
 function openMyCoupons(){
@@ -207,6 +235,14 @@ function openMySetlistEditor(){
   renderDashboard();
   focusMySetlist(true);
 }
+function replaySetlistGuide(){
+  const guide=document.getElementById('setlistGuideVideo');
+  if(!guide)return;
+  guide.style.display='none';
+  void guide.offsetHeight;
+  guide.style.display='';
+}
+
 function selectedMySongReferenceType(){
   return document.querySelector('input[name="mySongReferenceType"]:checked')?.value||'';
 }
