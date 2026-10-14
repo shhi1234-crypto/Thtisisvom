@@ -14,7 +14,30 @@ main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-d
 .admin-sub textarea{display:block;width:100%;min-height:66px;padding:11px;border:1px solid #ddd8ee;border-radius:10px;font:14px/1.5 Arial,sans-serif;resize:vertical}
 .admin-sub input{margin:3px 0}.admin-actions{flex-wrap:wrap}.admin-actions button{font-size:12px;padding:9px 11px}
 @media(max-width:600px){.row{align-items:flex-start;flex-direction:column}.card{padding:19px}}
-</style></head><body><main><div class="top"><a href="/">VOM</a><a href="/calendar/">← CALENDAR</a></div><div class="eyebrow">VOICE OF MELODY</div><h1>참가 신청</h1><div id="content" class="card"><p class="muted">참가 신청 정보를 불러오는 중...</p></div><div id="notice" role="status" aria-live="polite"></div><section id="admin" class="card hide"><h2>운영진 신청 관리</h2><p class="muted">입금·환불을 실제로 확인한 뒤 상태를 변경해 주세요. 여기서는 송금·환불이 자동 실행되지 않습니다.</p>
+/* MEMBER APPLICATION GUIDE */
+.apply-flow-guide{margin:0 0 14px;border:1px solid #e4def7;border-radius:18px;background:linear-gradient(135deg,#faf8ff,#f0fbf8);overflow:hidden}
+.apply-flow-guide summary{display:flex;align-items:center;gap:10px;min-height:53px;padding:0 15px;cursor:pointer;list-style:none}
+.apply-flow-guide summary::-webkit-details-marker{display:none}
+.apply-flow-guide summary:focus-visible{outline:3px solid #9a87e8;outline-offset:-3px}
+.apply-guide-icon{display:grid;flex:0 0 27px;width:27px;height:27px;place-items:center;border-radius:9px;background:#7763de;color:#fff;font-size:12px}
+.apply-guide-summary{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.apply-guide-summary small{color:#8378ae;font:800 8px/1 "DM Sans",sans-serif;letter-spacing:.08em}
+.apply-guide-summary b{color:#39334e;font-size:12px}
+.apply-guide-arrow{color:#7563ba;font-size:17px;transition:transform .2s}
+.apply-flow-guide[open] .apply-guide-arrow{transform:rotate(180deg)}
+.apply-guide-body{padding:0 15px 15px;border-top:1px solid #e9e4f5}
+.apply-guide-progress{height:3px;margin:12px 0;overflow:hidden;border-radius:99px;background:#e8e3f7}
+.apply-guide-progress i{display:block;width:34%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8068e3,#86d7ca);animation:applyGuideFlow 3.3s ease-in-out infinite}
+.apply-guide-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.apply-guide-step{padding:9px;border:1px solid #e6e1f5;border-radius:11px;background:#fff9}
+.apply-guide-step span{display:block;color:#745fd4;font:800 8px "DM Sans",sans-serif;letter-spacing:.07em}
+.apply-guide-step b{display:block;margin-top:6px;color:#47405a;font-size:10px}
+.apply-guide-step small{display:block;margin-top:4px;color:#7d8394;font-size:9px;line-height:1.45}
+.apply-guide-note{margin:10px 0 0;color:#747b8e;font-size:10px;line-height:1.55}
+@keyframes applyGuideFlow{0%{transform:translateX(-100%)}55%,100%{transform:translateX(300%)}}
+@media(max-width:600px){.apply-guide-steps{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){.apply-guide-progress i{animation:none}}
+</style></head><body><main><div class="top"><a href="/">VOM</a><a href="/calendar/">← CALENDAR</a></div><div class="eyebrow">VOICE OF MELODY</div><h1>참가 신청</h1><details class="apply-flow-guide"><summary><span class="apply-guide-icon">✓</span><span class="apply-guide-summary"><small>VOM APPLICATION GUIDE</small><b>참가 신청은 이렇게 진행돼요</b></span><span class="apply-guide-arrow">⌄</span></summary><div class="apply-guide-body"><div class="apply-guide-progress"><i></i></div><div class="apply-guide-steps"><div class="apply-guide-step"><span>01</span><b>일정 확인</b><small>날짜·장소·참가비를 확인해요.</small></div><div class="apply-guide-step"><span>02</span><b>신청하기</b><small>오픈된 일정에서 신청해요.</small></div><div class="apply-guide-step"><span>03</span><b>입금 확인</b><small>유료 일정은 운영진 확인이 필요해요.</small></div><div class="apply-guide-step"><span>04</span><b>참가 확정</b><small>확정 상태를 화면에서 확인해요.</small></div></div><p class="apply-guide-note">버튼이 비활성화되어 있으면 아직 오픈 전·마감·정원 설정 대기일 수 있어요.</p></div></details><div id="content" class="card"><p class="muted">참가 신청 정보를 불러오는 중...</p></div><div id="notice" role="status" aria-live="polite"></div><section id="admin" class="card hide"><h2>운영진 신청 관리</h2><p class="muted">입금·환불을 실제로 확인한 뒤 상태를 변경해 주세요. 여기서는 송금·환불이 자동 실행되지 않습니다.</p>
 <div class="admin-sub"><h2>참가비 설정</h2><p class="muted">무료 일정은 반드시 0원으로 입력해 주세요.</p>
 <label for="feeWon">참가비 (원)</label><input id="feeWon" type="number" min="0" max="1000000" step="1" placeholder="무료 0 / 유료 10000">
 <label for="payDue">입금 기한 (선택)</label><input id="payDue" type="datetime-local">
