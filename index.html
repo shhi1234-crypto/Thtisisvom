@@ -2244,6 +2244,23 @@ body .aurora-ribbon{opacity:.68!important;border-color:rgba(255,255,255,.64)!imp
 body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
 @media(prefers-reduced-motion:reduce){body .aurora::before,body .aurora::after{filter:blur(22px) saturate(1.1)!important}}
 
+
+/* ENTRY CHOICE: NEW OR EXISTING MEMBER */
+.home-entry-grid{width:min(760px,100%);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0 0 7px}
+.home-entry-grid .home-info-guide{width:100%;margin:0;min-width:0}
+.home-entry-grid .home-info-guide[open]{grid-column:1 / -1}
+.home-entry-grid .home-member-prompt-card{width:auto;min-height:100%;margin:0;padding:18px 16px;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto 1fr;align-items:center;column-gap:10px;row-gap:7px;border-radius:24px}
+.home-entry-grid .home-member-prompt-card span{grid-column:1 / -1;align-self:end;color:#7662d7;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.home-entry-grid .home-member-prompt-card strong{grid-column:1;grid-row:2;margin:0;color:#302b58;font-size:13px}
+.home-entry-grid .home-member-prompt-card::after{content:"로그인하고 내 공간을 확인해요";grid-column:1 / -1;grid-row:3;align-self:start;color:#85899b;font-size:9px;line-height:1.5}
+.home-entry-grid .home-member-prompt-card b{grid-column:2;grid-row:2 / span 2;align-self:center}
+@media(max-width:700px){
+  .home-entry-grid{width:100%;grid-template-columns:1fr;margin-left:0}
+  .home-entry-grid .home-info-guide[open]{grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-entry-grid .home-member-prompt-card{transition:none}
+}
 /* HOMEPAGE PUBLIC INTRO + MEMBER LOGIN CARD */
 .home-member-prompt-card{width:min(360px,100%);min-height:52px;margin:10px 0 0 7px;padding:0 14px 0 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(126,105,228,.16);border-radius:17px;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(241,239,255,.72));box-shadow:0 9px 24px rgba(58,48,120,.05);color:#5e51b1;text-decoration:none;transition:transform .22s ease,box-shadow .22s ease}
 .home-member-prompt-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(58,48,120,.12)}
@@ -2332,9 +2349,8 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
       </div>
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
-      <a id="homeMemberPrompt" class="home-member-prompt-card" href="/me/"><span>이미 회원이신가요?</span><strong>로그인하기</strong><b>→</b></a>
-      <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
-            <details class="home-info-guide">
+      <div class="home-entry-grid">
+<details class="home-info-guide">
         <summary class="home-info-summary">
           <span class="home-info-card">
             <span class="home-info-kicker">INFO</span>
@@ -2357,6 +2373,10 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
           <a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 방법 자세히 보기 →</a>
         </div>
       </details>
+<a id="homeMemberPrompt" class="home-member-prompt-card" href="/me/"><span>이미 회원이신가요?</span><strong>로그인하기</strong><b>→</b></a>
+      </div>
+<a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
+
 
       <div id="homeToday" class="home-today">
         <span class="today-date">오늘을 불러오는 중...</span>
@@ -2506,25 +2526,6 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
   <!-- QUICK -->
 
   <div class="quick-stack">
-
-    <details class="quick-my-vom-panel">
-      <summary class="quick-my-vom">
-        <div class="quick-my-vom-icon">◉</div>
-        <div class="quick-my-vom-copy">
-          <strong>MY VOM</strong>
-          <small>개인 셋리스트와 나의 공간</small>
-        </div>
-        <span class="quick-my-vom-arrow">⌄</span>
-      </summary>
-      <div class="home-member-shortcuts">
-        <div class="home-member-shortcuts-head"><strong>MY VOM</strong><small>로그인 후 이용할 수 있어요</small><a class="home-member-open" href="/me/">MY VOM 열기 →</a></div>
-        <div class="home-member-shortcuts-grid">
-          <a class="home-member-shortcut" href="/calendar/"><small>VOM SCHEDULE</small><strong>내 일정 보기</strong><span>모임과 행사 확인</span></a>
-          <a class="home-member-shortcut" href="/calendar/?view=available"><small>OPEN TO JOIN</small><strong>참가 가능한 일정</strong><span>신청할 수 있는 일정</span></a>
-          <a class="home-member-shortcut" href="/qna/"><small>VOM HELP</small><strong>궁금한 이야기</strong><span>문의와 답변 확인</span></a>
-        </div>
-      </div>
-    </details>
 
     <section class="quick">
 
