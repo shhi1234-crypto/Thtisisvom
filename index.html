@@ -4170,3 +4170,92 @@ start();
 </script>
 </body>
 </html>
+
+
+/* AURORA COLLISION MOTION */
+.aurora{isolation:isolate}
+.aurora-orb{overflow:visible;transform-origin:center;outline:1px solid rgba(255,255,255,.18);box-shadow:inset 0 0 42px rgba(255,255,255,.12),0 0 34px rgba(126,105,228,.14)}
+.aurora-orb::before{content:"";position:absolute;inset:-7%;border:1px solid rgba(255,255,255,.46);border-radius:50%;box-shadow:0 0 18px rgba(255,255,255,.18),inset 0 0 14px rgba(255,255,255,.12);pointer-events:none;animation:homeOrbEdgeBounce 4.8s ease-in-out infinite}
+.aurora-orb::after{content:"";position:absolute;inset:16%;border-radius:50%;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.62),rgba(255,255,255,.12) 34%,rgba(122,100,242,.28) 62%,transparent 78%);mix-blend-mode:screen;filter:blur(10px);opacity:.56;pointer-events:none;animation:homeOrbColorShift 11s ease-in-out infinite}
+.aurora-orb-one{animation:homeOrbDriftOne 14s cubic-bezier(.42,0,.22,1) infinite}
+.aurora-orb-two{animation:homeOrbDriftTwo 17s cubic-bezier(.42,0,.22,1) infinite}
+.aurora-orb-three{animation:homeOrbDriftThree 12s cubic-bezier(.42,0,.22,1) infinite}
+.aurora-orb-one::before{animation-delay:-.7s}
+.aurora-orb-two::before{animation-delay:-2.4s}
+.aurora-orb-three::before{animation-delay:-1.5s}
+.aurora-orb-one::after{animation-name:homeOrbColorShiftOne;animation-delay:-1.8s}
+.aurora-orb-two::after{animation-name:homeOrbColorShiftTwo;animation-delay:-5.2s}
+.aurora-orb-three::after{animation-name:homeOrbColorShiftThree;animation-delay:-7.4s}
+@keyframes homeOrbDriftOne{
+  0%,100%{transform:translate3d(-3vw,-2vh,0) scale(.96)}
+  18%{transform:translate3d(8vw,4vh,0) scale(1.08)}
+  21%{transform:translate3d(9vw,3vh,0) scale(1.01)}
+  46%{transform:translate3d(17vw,11vh,0) scale(1.14)}
+  50%{transform:translate3d(16vw,9vh,0) scale(1.05)}
+  74%{transform:translate3d(4vw,-3vh,0) scale(.98)}
+}
+@keyframes homeOrbDriftTwo{
+  0%,100%{transform:translate3d(2vw,1vh,0) scale(.98)}
+  24%{transform:translate3d(-8vw,7vh,0) scale(1.08)}
+  28%{transform:translate3d(-9vw,5vh,0) scale(1)}
+  52%{transform:translate3d(-18vw,-7vh,0) scale(1.16)}
+  56%{transform:translate3d(-16vw,-5vh,0) scale(1.04)}
+  80%{transform:translate3d(-2vw,3vh,0) scale(.96)}
+}
+@keyframes homeOrbDriftThree{
+  0%,100%{transform:translate3d(0,2vh,0) scale(.96)}
+  20%{transform:translate3d(9vw,-5vh,0) scale(1.1)}
+  24%{transform:translate3d(8vw,-7vh,0) scale(1.01)}
+  50%{transform:translate3d(-7vw,-13vh,0) scale(1.14)}
+  54%{transform:translate3d(-6vw,-11vh,0) scale(1.04)}
+  78%{transform:translate3d(4vw,1vh,0) scale(.98)}
+}
+@keyframes homeOrbEdgeBounce{
+  0%,100%{transform:scale(.95);opacity:.26;border-color:rgba(255,255,255,.28)}
+  15%{transform:scale(1.03);opacity:.84;border-color:rgba(255,255,255,.7)}
+  20%{transform:scale(.98);opacity:.42;border-color:rgba(142,245,229,.56)}
+  48%{transform:scale(1.07);opacity:.9;border-color:rgba(208,174,255,.76)}
+  54%{transform:scale(.98);opacity:.38;border-color:rgba(255,191,235,.5)}
+  79%{transform:scale(1.04);opacity:.72;border-color:rgba(151,220,255,.65)}
+}
+@keyframes homeOrbColorShift{
+  0%,22%{transform:scale(.72);opacity:.16}
+  44%{transform:scale(1.08);opacity:.68;filter:blur(8px) hue-rotate(18deg) saturate(1.35)}
+  52%{transform:scale(1.22);opacity:.88;filter:blur(6px) hue-rotate(42deg) saturate(1.75)}
+  66%{transform:scale(.92);opacity:.38;filter:blur(11px) hue-rotate(8deg) saturate(1.1)}
+  100%{transform:scale(.72);opacity:.16;filter:blur(10px) hue-rotate(0deg) saturate(1)}
+}
+@keyframes homeOrbColorShiftOne{
+  0%,24%{transform:scale(.7);opacity:.16;filter:blur(10px) hue-rotate(0deg)}
+  43%{transform:scale(1.12);opacity:.78;filter:blur(7px) hue-rotate(28deg) saturate(1.5)}
+  51%{transform:scale(1.25);opacity:.92;filter:blur(6px) hue-rotate(56deg) saturate(1.9)}
+  67%{transform:scale(.86);opacity:.34;filter:blur(12px) hue-rotate(12deg)}
+  100%{transform:scale(.7);opacity:.16;filter:blur(10px) hue-rotate(0deg)}
+}
+@keyframes homeOrbColorShiftTwo{
+  0%,24%{transform:scale(.7);opacity:.14;filter:blur(10px) hue-rotate(0deg)}
+  46%{transform:scale(1.08);opacity:.72;filter:blur(7px) hue-rotate(-22deg) saturate(1.55)}
+  54%{transform:scale(1.28);opacity:.9;filter:blur(6px) hue-rotate(-48deg) saturate(1.85)}
+  70%{transform:scale(.88);opacity:.34;filter:blur(12px) hue-rotate(-10deg)}
+  100%{transform:scale(.7);opacity:.14;filter:blur(10px) hue-rotate(0deg)}
+}
+@keyframes homeOrbColorShiftThree{
+  0%,25%{transform:scale(.72);opacity:.15;filter:blur(10px) hue-rotate(0deg)}
+  41%{transform:scale(1.1);opacity:.74;filter:blur(7px) hue-rotate(42deg) saturate(1.5)}
+  49%{transform:scale(1.22);opacity:.9;filter:blur(6px) hue-rotate(72deg) saturate(1.9)}
+  64%{transform:scale(.9);opacity:.36;filter:blur(12px) hue-rotate(18deg)}
+  100%{transform:scale(.72);opacity:.15;filter:blur(10px) hue-rotate(0deg)}
+}
+.home-scroll-button{bottom:clamp(58px,9vh,104px);min-height:48px;padding-left:18px;padding-right:16px;background:rgba(255,255,255,.82);box-shadow:0 16px 34px rgba(61,52,123,.16),0 0 0 5px rgba(255,255,255,.16);animation:homeScrollButtonFloat 2.7s ease-in-out infinite}
+.home-scroll-button::after{content:"";position:absolute;left:20px;right:20px;bottom:-11px;height:17px;border-bottom:1px solid rgba(126,105,228,.28);border-radius:50%;opacity:.7}
+.home-scroll-button:hover{animation-play-state:paused}
+@keyframes homeScrollButtonFloat{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(-5px)}
+}
+@media(max-width:700px){
+  .home-scroll-button{bottom:clamp(66px,10vh,96px);max-width:calc(100% - 34px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .aurora-orb,.aurora-orb::before,.aurora-orb::after,.home-scroll-button{animation:none!important}
+}
