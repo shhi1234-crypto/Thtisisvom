@@ -2469,6 +2469,30 @@ button{
 .host-note-title{margin-top:5px;font-size:13px;font-weight:850;color:#282d40}
 .host-note-body{margin-top:9px;color:#5f6577;font-size:11px;line-height:1.9}
 
+
+/* MEMBER SCHEDULE GUIDE */
+.calendar-member-guide{margin:0 0 21px;border:1px solid rgba(118,99,221,.16);border-radius:20px;background:linear-gradient(135deg,rgba(247,244,255,.9),rgba(239,251,249,.85));box-shadow:0 12px 30px rgba(54,45,123,.05);overflow:hidden}
+.calendar-member-guide summary{display:flex;align-items:center;gap:11px;padding:14px 16px;cursor:pointer;list-style:none}
+.calendar-member-guide summary::-webkit-details-marker{display:none}
+.calendar-member-guide summary:focus-visible{outline:3px solid #9a87e8;outline-offset:-3px}
+.calendar-guide-icon{display:grid;flex:0 0 30px;width:30px;height:30px;place-items:center;border-radius:11px;background:#7663de;color:#fff;font-size:15px}
+.calendar-guide-summary{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.calendar-guide-summary small{color:#8175b1;font:800 8px/1 "DM Sans",sans-serif;letter-spacing:.1em}
+.calendar-guide-summary strong{color:#39334f;font-size:12px}
+.calendar-guide-arrow{color:#7563ba;font-size:18px;transition:transform .2s}
+.calendar-member-guide[open] .calendar-guide-arrow{transform:rotate(180deg)}
+.calendar-guide-body{padding:0 16px 16px;border-top:1px solid rgba(118,99,221,.12)}
+.calendar-guide-progress{height:3px;margin:13px 0 12px;overflow:hidden;border-radius:99px;background:#e8e3f8}
+.calendar-guide-progress i{display:block;width:36%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8068e3,#86d7ca);animation:calendarGuideFlow 3.4s ease-in-out infinite}
+.calendar-guide-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.calendar-guide-step{padding:11px;border:1px solid rgba(221,216,244,.9);border-radius:13px;background:rgba(255,255,255,.72)}
+.calendar-guide-step b{display:block;color:#48415d;font-size:11px}
+.calendar-guide-step small{display:block;margin-top:5px;color:#7c8293;font-size:10px;line-height:1.5}
+.calendar-guide-step span{display:block;margin-bottom:6px;color:#735ed5;font:800 8px "DM Sans",sans-serif;letter-spacing:.08em}
+.calendar-guide-note{margin:11px 0 0;color:#747b8e;font-size:10px;line-height:1.55}
+@keyframes calendarGuideFlow{0%{transform:translateX(-100%)}55%,100%{transform:translateX(290%)}}
+@media(max-width:650px){.calendar-guide-steps{grid-template-columns:1fr}.calendar-guide-step{padding:10px}}
+@media(prefers-reduced-motion:reduce){.calendar-guide-progress i{animation:none}}
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
@@ -2539,6 +2563,7 @@ button{
     </p>
 
   </section>
+  <details class="calendar-member-guide"><summary><span class="calendar-guide-icon">◫</span><span class="calendar-guide-summary"><small>VOM SCHEDULE GUIDE</small><strong>일정은 이렇게 확인해요</strong></span><span class="calendar-guide-arrow">⌄</span></summary><div class="calendar-guide-body"><div class="calendar-guide-progress"><i></i></div><div class="calendar-guide-steps"><div class="calendar-guide-step"><span>STEP 01</span><b>일정 카드 누르기</b><small>날짜·장소·상세 공지를 먼저 확인해요.</small></div><div class="calendar-guide-step"><span>STEP 02</span><b>참가 가능 여부 확인</b><small>신청 버튼이 보이는 일정만 홈페이지에서 접수할 수 있어요.</small></div><div class="calendar-guide-step"><span>STEP 03</span><b>상태 확인하기</b><small>신청·입금·확정 상태는 참가 신청 화면에서 확인해요.</small></div></div><p class="calendar-guide-note">신청 버튼이 없으면 아직 오픈 전이거나 운영진 안내 일정일 수 있어요.</p></div></details>
 
 
   <section class="toolbar">
