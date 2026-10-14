@@ -3472,7 +3472,7 @@ async function loadEvents(){
     const response =
       await fetch(
         SUPABASE_URL +
-        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at%2Csomoim_open_enabled&order=event_date.asc%2Cstart_time.asc',
+        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at%2Csomoim_open_enabled%2Capplication_enabled%2Capplication_capacity%2Capplication_opens_at%2Capplication_closes_at&order=event_date.asc%2Cstart_time.asc',
         {
           method:'GET',
           credentials:'omit',
@@ -3768,16 +3768,31 @@ function renderCalendarView(){
 
 function isAvailableSchedule(item){
 
+  const now = new Date();
+
   const today =
     calendarDateString(
-      new Date()
+      now
     );
+
+  const opensAt =
+    item.application_opens_at
+      ? new Date(item.application_opens_at)
+      : null;
+
+  const closesAt =
+    item.application_closes_at
+      ? new Date(item.application_closes_at)
+      : null;
 
   return Boolean(
     item &&
     item.event_date &&
-    item.event_date >= today &&
-    item.somoim_open_enabled === true
+    item.event_date > today &&
+    item.application_enabled === true &&
+    Number(item.application_capacity) >= 1 &&
+    (!opensAt || now >= opensAt) &&
+    (!closesAt || now < closesAt)
   );
 }
 
