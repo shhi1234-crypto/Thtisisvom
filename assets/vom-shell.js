@@ -6,6 +6,28 @@
   const SUPABASE_KEY = 'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
   const path = (window.location.pathname.replace(/\/+$/, '') || '/');
 
+  const VOM_THEME_KEY = 'vom-theme';
+
+  function applyVomTheme(theme, persist=true) {
+    const next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-vom-theme', next);
+    document.documentElement.style.colorScheme = next;
+    if (persist) {
+      try { window.localStorage.setItem(VOM_THEME_KEY, next); } catch (_) {}
+    }
+    document.querySelectorAll('[data-vom-theme-toggle]').forEach(function(button) {
+      const dark = next === 'dark';
+      button.textContent = dark ? '☀️ 라이트모드로 보기' : '🌙 다크모드로 보기';
+      button.setAttribute('aria-pressed', String(dark));
+    });
+  }
+
+  function initVomTheme() {
+    let saved = 'light';
+    try { saved = window.localStorage.getItem(VOM_THEME_KEY) || 'light'; } catch (_) {}
+    applyVomTheme(saved, false);
+  }
+
   function addStyle() {
     if (document.getElementById('vom-shared-shell-style')) return;
     const style = document.createElement('style');
@@ -559,6 +581,15 @@
         if(item[1]==='/me/'||item[1]==='/ot-room/')link.classList.add('vom-menu-account');
         link.innerHTML='<span>'+item[0]+'</span><span>→</span>';card.appendChild(link);
       });
+      const themeButton=document.createElement('button');
+      themeButton.type='button';
+      themeButton.className='vom-theme-toggle';
+      themeButton.setAttribute('data-vom-theme-toggle','');
+      themeButton.addEventListener('click',function(){
+        const current=document.documentElement.getAttribute('data-vom-theme')==='dark'?'dark':'light';
+        applyVomTheme(current==='dark'?'light':'dark');
+      });
+      card.appendChild(themeButton);
     });
   }
 
@@ -591,6 +622,7 @@
   }
 
   function bootstrap() {
+    initVomTheme();
     addStyle();
     normalizeBottomNavigation();
     normalizeBackLinks();
