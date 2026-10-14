@@ -2172,6 +2172,20 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 @keyframes homeButtonNudge{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 @media(max-width:760px){.home-glance{width:100%;margin-left:0;gap:6px}.home-glance-card{min-height:70px;padding:10px 9px}.home-glance-card strong{font-size:9px}.home-glance-card span{font-size:7px}.home-scroll-button{bottom:66px;min-height:41px}.home-scroll-button span{display:none}.home-scroll-button strong{font-size:10px}.aurora-ring-two{width:145vw;height:145vw}.aurora-ring-three{width:78vw;height:78vw}.aurora-spark{font-size:15px}}
 @media(prefers-reduced-motion:reduce){.aurora::before,.aurora::after,.aurora-orb,.aurora-ring,.aurora-spark,.home-scroll-button b{animation:none}.home-glance-card,.home-scroll-button{transition:none}}
+/* MEMBER-ONLY HOME SHORTCUTS */
+.home-member-shortcuts{width:min(760px,100%);margin:13px auto 0;padding:17px 18px 18px;border:1px solid rgba(126,105,228,.14);border-radius:22px;background:rgba(255,255,255,.58);box-shadow:0 14px 34px rgba(58,48,120,.06)}
+.home-member-shortcuts-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:11px}
+.home-member-shortcuts-head strong{color:#3c3656;font-size:13px}
+.home-member-shortcuts-head small{color:#8a83a1;font-size:9px}
+.home-member-shortcuts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.home-member-shortcut{position:relative;min-height:66px;padding:12px;border:1px solid rgba(126,105,228,.14);border-radius:15px;background:rgba(255,255,255,.72);text-decoration:none;transition:transform .22s ease,background .22s ease,box-shadow .22s ease}
+.home-member-shortcut:hover{transform:translateY(-3px);background:#fff;box-shadow:0 12px 25px rgba(58,48,120,.11)}
+.home-member-shortcut small{display:block;color:#8579ad;font:800 8px/1 "DM Sans",sans-serif;letter-spacing:.08em}
+.home-member-shortcut strong{display:block;margin-top:8px;color:#3b3652;font-size:10px}
+.home-member-shortcut span{display:block;margin-top:3px;color:#888da0;font-size:8px}
+.home-member-shortcut::after{content:"→";position:absolute;right:11px;bottom:10px;color:#7662d4;font-size:12px}
+@media(max-width:700px){.home-member-shortcuts{width:100%;margin-top:11px;padding:14px 13px}.home-member-shortcuts-head{align-items:flex-start;flex-direction:column;gap:4px}.home-member-shortcuts-grid{grid-template-columns:1fr}.home-member-shortcut{min-height:57px;padding:11px}.home-member-shortcut strong{margin-top:6px}}
+@media(prefers-reduced-motion:reduce){.home-member-shortcut{transition:none}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2264,11 +2278,7 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
         <span class="today-date">오늘을 불러오는 중...</span>
       </div>
 
-      <div class="home-glance" aria-label="VOM 바로가기">
-        <a class="home-glance-card" href="/calendar/"><small>VOM SCHEDULE</small><strong>내 일정 보기</strong><span>모임과 행사 확인</span></a>
-        <a class="home-glance-card" href="/calendar/?view=available"><small>OPEN TO JOIN</small><strong>참가 가능 일정</strong><span>신청할 수 있는 일정</span></a>
-        <a class="home-glance-card" href="/qna/"><small>VOM HELP</small><strong>궁금한 이야기</strong><span>문의와 답변 확인</span></a>
-      </div>
+
 
     </div>
 
@@ -2420,6 +2430,15 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
       </div>
       <span class="quick-my-vom-arrow">→</span>
     </a>
+
+    <div class="home-member-shortcuts">
+      <div class="home-member-shortcuts-head"><strong>MY VOM</strong><small>로그인 후 이용할 수 있어요</small></div>
+      <div class="home-member-shortcuts-grid">
+        <a class="home-member-shortcut" href="/calendar/"><small>VOM SCHEDULE</small><strong>내 일정 보기</strong><span>모임과 행사 확인</span></a>
+        <a class="home-member-shortcut" href="/calendar/?view=available"><small>OPEN TO JOIN</small><strong>참가 가능한 일정</strong><span>신청할 수 있는 일정</span></a>
+        <a class="home-member-shortcut" href="/qna/"><small>VOM HELP</small><strong>궁금한 이야기</strong><span>문의와 답변 확인</span></a>
+      </div>
+    </div>
 
     <section class="quick">
 
