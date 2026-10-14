@@ -3284,6 +3284,8 @@ let currentFilter = 'ALL';
 
 let calendarView = 'LIST';
 
+const calendarScope = new URLSearchParams(location.search).get('view') === 'available' ? 'AVAILABLE' : 'ALL';
+
 const calendarNow = new Date();
 
 let calendarYear = calendarNow.getFullYear();
@@ -3764,9 +3766,26 @@ function renderCalendarView(){
 }
 
 
+function isAvailableSchedule(item){
+
+  const today =
+    calendarDateString(
+      new Date()
+    );
+
+  return Boolean(
+    item &&
+    item.event_date &&
+    item.event_date >= today &&
+    item.somoim_open_enabled === true
+  );
+}
+
+
 function getFilteredCalendarEvents(){
 
-  return currentFilter === 'ALL'
+  const filtered =
+    currentFilter === 'ALL'
 
     ? events
 
@@ -3775,6 +3794,10 @@ function getFilteredCalendarEvents(){
           item.event_type ===
           currentFilter
       );
+
+  return calendarScope === 'AVAILABLE'
+    ? filtered.filter(isAvailableSchedule)
+    : filtered;
 }
 
 
@@ -4118,15 +4141,7 @@ function renderCalendar(){
 
 
   const filtered =
-    currentFilter === 'ALL'
-
-    ? events
-
-    : events.filter(
-        item =>
-          item.event_type ===
-          currentFilter
-      );
+    getFilteredCalendarEvents();
 
 
   if(!filtered.length){
