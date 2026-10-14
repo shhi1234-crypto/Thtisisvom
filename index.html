@@ -2054,6 +2054,30 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 @keyframes homeGuideFlow{0%{transform:translateX(-100%)}55%,100%{transform:translateX(240%)}}
 @media(max-width:600px){.home-member-guide{width:100%;margin-left:0}.home-guide-steps{grid-template-columns:1fr}.home-guide-step{min-height:0}.home-guide-step b{margin-top:5px}}
 @media(prefers-reduced-motion:reduce){.home-guide-progress i,.home-guide-step{animation:none;transition:none}}
+/* HOME INFO MERGE + SCROLL MOTION */
+.home-info-guide{width:min(505px,100%);margin:18px 0 0 7px;border:1px solid rgba(127,105,225,.18);border-radius:24px;background:rgba(255,255,255,.54);box-shadow:0 14px 32px rgba(58,48,120,.06);overflow:hidden}
+.home-info-summary{display:flex;align-items:center;gap:13px;padding:0;cursor:pointer;list-style:none}
+.home-info-summary::-webkit-details-marker{display:none}
+.home-info-summary:focus-visible{outline:3px solid #9b8be9;outline-offset:-3px;border-radius:24px}
+.home-info-card{width:auto!important;min-width:0;flex:1;margin:0!important;padding:18px 20px!important;border:0!important;border-radius:23px!important;background:linear-gradient(135deg,rgba(246,239,255,.88),rgba(232,250,247,.88))!important;box-shadow:none!important;display:flex!important;align-items:center!important;gap:11px!important;color:#1b2134!important}
+.home-info-card::before{content:none!important}
+.home-info-card::after{content:"⌄"!important;order:4;margin-left:auto!important;margin-right:0!important;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(126,105,228,.14);border-radius:50%;background:rgba(255,255,255,.72);color:#6f5ddd!important;font-size:14px!important;font-weight:900!important;letter-spacing:0!important;transition:transform .2s ease}
+.home-info-guide[open] .home-info-card::after{transform:rotate(180deg)}
+.home-info-kicker{font-size:13px;font-weight:900;letter-spacing:.05em}
+.home-info-question{color:#7160cc;font-size:11px;font-weight:800}
+.home-info-summary .visitor-mini{flex:0 0 auto;margin:0 13px 0 0;padding-left:14px}
+.home-info-guide .home-guide-body{padding:0 18px 17px;border-top:1px solid rgba(127,105,225,.12)}
+.home-info-guide .home-guide-steps{margin-top:12px}
+.home-info-guide .home-guide-note{margin-top:12px}
+.home-info-guide .home-guide-action{margin-top:10px}
+.home-info-guide .home-guide-action::after{content:"";display:inline-block;width:5px;height:5px;margin-left:2px;border-top:1px solid currentColor;border-right:1px solid currentColor;transform:rotate(45deg)}
+.aurora::after{content:"";position:absolute;inset:-12%;pointer-events:none;background:radial-gradient(circle at 16% 76%,rgba(165,140,245,.24),transparent 22%),radial-gradient(circle at 84% 67%,rgba(116,221,210,.22),transparent 25%);opacity:var(--home-scroll-progress,0);transform:translate3d(var(--home-aurora-x,0px),var(--home-aurora-y,0px),0) scale(var(--home-aurora-scale,1));transition:opacity .45s ease}
+body.home-scroll-immersive .aurora{background:linear-gradient(180deg,#f7f4fa 0%,#f3f1fc 40%,#eefaf8 76%,#faf9fb 100%)}
+body.home-scroll-immersive .aurora::before{transform:rotate(calc(-13deg + var(--home-scroll-rotate,0deg))) scale(var(--home-aurora-scale,1.02))}
+body.home-scroll-immersive .hero-title{transform:rotate(calc(-1deg + var(--home-scroll-rotate,0deg))) scaleX(1.05) translateY(var(--home-hero-y,0px))}
+body.home-scroll-immersive .hero-script{transform:translateY(var(--home-hero-y,0px));transition:transform .45s ease}
+@media(max-width:760px){.home-info-guide{width:100%;margin-left:0}.home-info-summary{gap:7px}.home-info-card{padding:16px!important;border-radius:21px!important}.home-info-kicker{font-size:12px}.home-info-question{font-size:10px}.home-info-summary .visitor-mini{margin-right:9px;padding-left:9px}.home-info-guide .home-guide-body{padding-left:15px;padding-right:15px}}
+@media(prefers-reduced-motion:reduce){.aurora::after,.hero-title,.hero-script{transition:none!important}.home-info-card::after{transition:none}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2118,22 +2142,32 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
       <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
-      <details class="home-member-guide"><summary><span class="home-guide-icon">✦</span><span class="home-guide-summary"><small>VOM START GUIDE</small><b>처음 오셨다면, 여기부터</b></span><span class="home-guide-arrow">⌄</span></summary><div class="home-guide-body"><div class="home-guide-progress"><i></i></div><div class="home-guide-steps"><div class="home-guide-step"><span>01</span><b>회원가입</b><small>사진과 라이브 자료를 제출해요.</small></div><div class="home-guide-step"><span>02</span><b>일정 확인</b><small>내 일정과 신청 가능 일정을 봐요.</small></div><div class="home-guide-step"><span>03</span><b>MY VOM</b><small>문의·셋리스트를 관리해요.</small></div></div><p class="home-guide-note">가입 후에는 로그인해서 나에게 필요한 메뉴만 편하게 이용할 수 있어요.</p><a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 가이드 보기 →</a></div></details>
+            <details class="home-info-guide">
+        <summary class="home-info-summary">
+          <span class="home-info-card">
+            <span class="home-info-kicker">INFO</span>
+            <span class="home-info-question">VOM이 처음이신가요?</span>
+          </span>
+          <span class="visitor-mini" title="홈페이지 누적 방문자">
+            <small>VISITORS</small>
+            <strong id="homeTotalVisitors">-</strong>
+            <span>누적</span>
+          </span>
+        </summary>
+        <div class="home-guide-body">
+          <div class="home-guide-progress"><i></i></div>
+          <div class="home-guide-steps">
+            <div class="home-guide-step"><span>01</span><b>VOM 알아보기</b><small>우리가 어떤 모임인지 먼저 살펴봐요.</small></div>
+            <div class="home-guide-step"><span>02</span><b>일정 확인</b><small>모임과 참가 가능한 일정을 봐요.</small></div>
+            <div class="home-guide-step"><span>03</span><b>MY VOM 시작하기</b><small>문의와 셋리스트를 관리해요.</small></div>
+          </div>
+          <p class="home-guide-note">처음이라면 INFO부터 천천히 둘러보고, 필요한 메뉴로 이동해 보세요.</p>
+          <a id="homeGuideAction" class="home-guide-action" href="/info/">VOM 이야기 자세히 보기 →</a>
+        </div>
+      </details>
 
       <div id="homeToday" class="home-today">
         <span class="today-date">오늘을 불러오는 중...</span>
-      </div>
-
-      <div class="info-visitor-row">
-        <a href="/info/" class="info-link">
-          INFO
-          <span>→</span>
-        </a>
-        <div class="visitor-mini" title="홈페이지 누적 방문자">
-          <small>VISITORS</small>
-          <strong id="homeTotalVisitors">-</strong>
-          <span>누적</span>
-        </div>
       </div>
 
     </div>
@@ -3875,5 +3909,30 @@ start();
 </script>
 
 <script src="/assets/vom-shell.js?v=15"></script>
+<script>
+(function(){
+  let ticking=false;
+  function syncHomeMotion(){
+    const maxScroll=Math.max(1,Math.min(620,document.documentElement.scrollHeight-window.innerHeight));
+    const progress=Math.min(1,Math.max(0,window.scrollY/maxScroll));
+    document.body.style.setProperty('--home-scroll-progress',progress.toFixed(3));
+    document.body.style.setProperty('--home-scroll-rotate',(progress*.72).toFixed(2)+'deg');
+    document.body.style.setProperty('--home-hero-y',Math.round(progress*-9)+'px');
+    document.body.style.setProperty('--home-aurora-x',Math.round(progress*34)+'px');
+    document.body.style.setProperty('--home-aurora-y',Math.round(progress*48)+'px');
+    document.body.style.setProperty('--home-aurora-scale',(1+progress*.08).toFixed(3));
+    document.body.classList.toggle('home-scroll-immersive',window.scrollY>18);
+    ticking=false;
+  }
+  function requestHomeMotion(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(syncHomeMotion);
+  }
+  window.addEventListener('scroll',requestHomeMotion,{passive:true});
+  window.addEventListener('resize',requestHomeMotion);
+  syncHomeMotion();
+})();
+</script>
 </body>
 </html>
