@@ -2186,6 +2186,33 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 .home-member-shortcut::after{content:"→";position:absolute;right:11px;bottom:10px;color:#7662d4;font-size:12px}
 @media(max-width:700px){.home-member-shortcuts{width:100%;margin-top:11px;padding:14px 13px}.home-member-shortcuts-head{align-items:flex-start;flex-direction:column;gap:4px}.home-member-shortcuts-grid{grid-template-columns:1fr}.home-member-shortcut{min-height:57px;padding:11px}.home-member-shortcut strong{margin-top:6px}}
 @media(prefers-reduced-motion:reduce){.home-member-shortcut{transition:none}}
+/* CINEMATIC LOOPING BACKGROUND + GUIDE MOTION */
+.home-info-guide .home-guide-progress{position:relative;height:6px;border:1px solid rgba(126,105,228,.12);border-radius:99px;background:rgba(232,227,250,.72);box-shadow:inset 0 1px 3px rgba(77,61,155,.08);overflow:hidden}
+.home-info-guide .home-guide-progress::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);background-size:35% 100%;background-repeat:no-repeat;animation:homeGuideGloss 2.4s linear infinite}
+.home-info-guide .home-guide-progress i{position:relative;z-index:1;display:block;width:100%;height:100%;border-radius:inherit;transform:none!important;background:linear-gradient(90deg,#7863df 0%,#a68cf1 23%,#94e0d0 48%,#8fa8f4 72%,#7863df 100%);background-size:240% 100%;box-shadow:0 0 12px rgba(126,105,228,.5),0 0 20px rgba(127,220,210,.18);animation:homeGuideFilm 2.8s linear infinite}
+.home-info-guide .home-guide-step{animation:homeGuideCardFilm 4.8s ease-in-out infinite}
+.home-info-guide .home-guide-step:nth-child(2){animation-delay:-1.6s}
+.home-info-guide .home-guide-step:nth-child(3){animation-delay:-3.2s}
+.aurora{background-size:180% 180%;animation:homeBackdropBreath 18s ease-in-out infinite alternate}
+.aurora::before{width:1650px;height:1080px;top:-460px;right:-460px;filter:blur(30px);opacity:.94;animation:homeAuroraCinematic 16s ease-in-out infinite alternate}
+.aurora::after{inset:-45%;filter:blur(34px);opacity:.78;animation:homeAuroraFilm 23s linear infinite}
+.aurora-ribbon{position:absolute;z-index:1;display:block;left:50%;top:50%;width:135%;height:32%;border:1px solid rgba(255,255,255,.46);border-radius:50%;filter:blur(3px);opacity:.5;pointer-events:none;will-change:transform}
+.aurora-ribbon-one{background:linear-gradient(90deg,transparent,rgba(153,126,245,.16),rgba(111,224,213,.24),transparent);transform:translate(-50%,-50%) rotate(-19deg);animation:homeRibbonOne 14s ease-in-out infinite alternate}
+.aurora-ribbon-two{background:linear-gradient(90deg,transparent,rgba(255,188,232,.16),rgba(133,163,255,.2),transparent);transform:translate(-50%,-50%) rotate(28deg) scale(.82);animation:homeRibbonTwo 18s ease-in-out infinite alternate}
+.aurora-ribbon-three{height:21%;border-color:rgba(255,255,255,.34);background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),rgba(144,227,217,.16),transparent);transform:translate(-50%,-50%) rotate(63deg) scale(1.16);animation:homeRibbonThree 12s ease-in-out infinite alternate}
+.aurora-glow{position:absolute;z-index:1;display:block;left:50%;top:45%;width:clamp(90px,12vw,190px);height:clamp(90px,12vw,190px);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.7),rgba(171,147,255,.18) 42%,transparent 72%);filter:blur(9px);transform:translate(-50%,-50%);opacity:.54;pointer-events:none;animation:homeGlowPulse 5.5s ease-in-out infinite}
+@keyframes homeGuideFilm{0%{background-position:0% 50%;filter:hue-rotate(0deg)}50%{background-position:100% 50%;filter:hue-rotate(10deg)}100%{background-position:200% 50%;filter:hue-rotate(0deg)}}
+@keyframes homeGuideGloss{0%{transform:translateX(-140%)}100%{transform:translateX(390%)}}
+@keyframes homeGuideCardFilm{0%,100%{transform:translateY(0);box-shadow:0 0 0 rgba(85,67,170,0)}38%{transform:translateY(-3px);box-shadow:0 10px 22px rgba(85,67,170,.1)}55%{transform:translateY(0);box-shadow:0 0 0 rgba(85,67,170,0)}}
+@keyframes homeBackdropBreath{0%{background-position:0% 18%}50%{background-position:100% 72%}100%{background-position:18% 100%}}
+@keyframes homeAuroraCinematic{0%{transform:rotate(-18deg) scale(1) translate3d(-3vw,-2vh,0)}50%{transform:rotate(21deg) scale(1.18) translate3d(7vw,9vh,0)}100%{transform:rotate(-28deg) scale(.94) translate3d(-8vw,4vh,0)}}
+@keyframes homeAuroraFilm{0%{transform:rotate(0deg) scale(.96)}35%{transform:rotate(118deg) scale(1.12)}70%{transform:rotate(244deg) scale(.9)}100%{transform:rotate(360deg) scale(1.08)}}
+@keyframes homeRibbonOne{0%{transform:translate(-50%,-50%) rotate(-19deg) translate3d(-4vw,3vh,0) scale(.86)}100%{transform:translate(-50%,-50%) rotate(14deg) translate3d(8vw,-8vh,0) scale(1.14)}}
+@keyframes homeRibbonTwo{0%{transform:translate(-50%,-50%) rotate(28deg) translate3d(8vw,-4vh,0) scale(.82)}100%{transform:translate(-50%,-50%) rotate(-18deg) translate3d(-10vw,9vh,0) scale(1.12)}}
+@keyframes homeRibbonThree{0%{transform:translate(-50%,-50%) rotate(63deg) translate3d(-8vw,-5vh,0) scale(1.16)}100%{transform:translate(-50%,-50%) rotate(83deg) translate3d(10vw,7vh,0) scale(.82)}}
+@keyframes homeGlowPulse{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(.8)}50%{opacity:.86;transform:translate(-50%,-50%) scale(1.35)}}
+@media(max-width:700px){.aurora-ribbon{width:210%;height:27%}.aurora-ribbon-two{height:23%}.aurora-glow{width:100px;height:100px}}
+@media(prefers-reduced-motion:reduce){.home-info-guide .home-guide-progress::before,.home-info-guide .home-guide-progress i,.home-info-guide .home-guide-step,.aurora,.aurora::before,.aurora::after,.aurora-ribbon,.aurora-glow{animation:none!important;filter:none}.home-info-guide .home-guide-progress i{background-position:50% 50%}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2194,7 +2221,7 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 
 <body>
 
-<div class="aurora" aria-hidden="true"><span class="aurora-orb aurora-orb-one"></span><span class="aurora-orb aurora-orb-two"></span><span class="aurora-orb aurora-orb-three"></span><span class="aurora-ring aurora-ring-one"></span><span class="aurora-ring aurora-ring-two"></span><span class="aurora-ring aurora-ring-three"></span><span class="aurora-spark spark-one">✦</span><span class="aurora-spark spark-two">✧</span><span class="aurora-spark spark-three">·</span><span class="aurora-spark spark-four">✦</span></div>
+<div class="aurora" aria-hidden="true"><span class="aurora-orb aurora-orb-one"></span><span class="aurora-orb aurora-orb-two"></span><span class="aurora-orb aurora-orb-three"></span><span class="aurora-ring aurora-ring-one"></span><span class="aurora-ring aurora-ring-two"></span><span class="aurora-ring aurora-ring-three"></span><span class="aurora-ribbon aurora-ribbon-one"></span><span class="aurora-ribbon aurora-ribbon-two"></span><span class="aurora-ribbon aurora-ribbon-three"></span><span class="aurora-glow"></span><span class="aurora-spark spark-one">✦</span><span class="aurora-spark spark-two">✧</span><span class="aurora-spark spark-three">·</span><span class="aurora-spark spark-four">✦</span></div>
 
 <header class="header vom-header">
 
