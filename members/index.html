@@ -29,7 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/assets/vom-access.js?v=1"></script>
+<script src="/assets/vom-access.js?v=2"></script>
 <style>
 :root{--ink:#11182c;--muted:#73798b;--purple:#765fe3;--line:rgba(28,34,65,.08)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;overflow-x:hidden;font-family:"Noto Sans KR",sans-serif;color:var(--ink);background:#f8f7fa}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{color:inherit}
@@ -454,7 +454,7 @@
 }
 </style>
 
-  <script src="/assets/vom-member-context.js?v=1"></script>
+  <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=1">
 </head>
 <body>
@@ -1001,6 +1001,6 @@ async function adminLogin(){
 async function adminLogout(){await db.auth.signOut();setAdmin(false);closeMenu()}
 function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuOverlay.classList.remove('open')}menuOverlay.addEventListener('click',e=>{if(e.target===menuOverlay)closeMenu()});staffRoleOverlay.addEventListener('click',e=>{if(e.target===staffRoleOverlay)closeStaffRoles()});memberOverlay.addEventListener('click',e=>{if(e.target===memberOverlay)closeEditor()});memberSongsOverlay.addEventListener('click',e=>{if(e.target===memberSongsOverlay)closeMemberSongs()});profileOverlay.addEventListener('click',e=>{if(e.target===profileOverlay)closeProfileEditor()});loginOverlay.addEventListener('click',e=>{if(e.target===loginOverlay)closeAdminLogin()});function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}start();
 </script>
-<script src="/assets/vom-shell.js?v=12"></script>
+<script src="/assets/vom-shell.js?v=15"></script>
 </body>
 </html>
