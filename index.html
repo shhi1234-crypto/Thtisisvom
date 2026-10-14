@@ -2244,6 +2244,31 @@ body .aurora-ribbon{opacity:.68!important;border-color:rgba(255,255,255,.64)!imp
 body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
 @media(prefers-reduced-motion:reduce){body .aurora::before,body .aurora::after{filter:blur(22px) saturate(1.1)!important}}
 
+/* HOMEPAGE PUBLIC INTRO + MEMBER LOGIN CARD */
+.home-member-prompt-card{width:min(360px,100%);min-height:52px;margin:10px 0 0 7px;padding:0 14px 0 16px;display:flex;align-items:center;gap:10px;border:1px solid rgba(126,105,228,.16);border-radius:17px;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(241,239,255,.72));box-shadow:0 9px 24px rgba(58,48,120,.05);color:#5e51b1;text-decoration:none;transition:transform .22s ease,box-shadow .22s ease}
+.home-member-prompt-card:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(58,48,120,.12)}
+.home-member-prompt-card span{color:#797f91;font-size:10px;font-weight:700}
+.home-member-prompt-card strong{margin-left:auto;color:#6754cf;font-size:11px}
+.home-member-prompt-card b{display:grid;width:25px;height:25px;place-items:center;border-radius:50%;background:#7863de;color:#fff;font-size:13px}
+.home-about-hero{position:relative;min-height:430px;overflow:hidden;padding:42px 38px;border:1px solid rgba(126,105,228,.16);border-radius:34px;background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(239,235,255,.52) 52%,rgba(224,250,246,.68));box-shadow:0 25px 60px rgba(60,47,130,.1);display:flex;flex-direction:column;justify-content:center}
+.home-about-hero::before{content:"";position:absolute;right:-20%;top:-23%;width:76%;aspect-ratio:1;border:1px solid rgba(126,105,228,.18);border-radius:50%;box-shadow:0 0 0 28px rgba(126,105,228,.05),0 0 0 74px rgba(104,218,206,.05);animation:homeAboutOrbit 18s linear infinite}
+.home-about-hero::after{content:"VOM";position:absolute;right:5%;bottom:-17%;color:rgba(117,96,225,.08);font:900 clamp(90px,13vw,190px)/1 "DM Sans",sans-serif;letter-spacing:-.1em;transform:rotate(-12deg);pointer-events:none}
+.home-about-kicker{position:relative;z-index:1;color:#7662d7;font:900 9px/1 "DM Sans",sans-serif;letter-spacing:.18em}
+.home-about-hero h2{position:relative;z-index:1;max-width:310px;margin:16px 0 0;color:#1c2340;font:400 clamp(34px,4vw,58px)/.98 "Nanum Pen Script",cursive;letter-spacing:-.02em}
+.home-about-hero p{position:relative;z-index:1;max-width:330px;margin:20px 0 0;color:#667087;font-size:12px;line-height:1.8}
+.home-about-points{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:7px;margin-top:19px}
+.home-about-points span{padding:8px 10px;border:1px solid rgba(126,105,228,.14);border-radius:999px;background:rgba(255,255,255,.62);color:#6e61ad;font-size:9px;font-weight:800}
+.home-about-link{position:relative;z-index:1;display:inline-flex;align-items:center;gap:7px;width:max-content;margin-top:22px;color:#6754cf;font-size:10px;font-weight:900;text-decoration:none}
+.home-about-link:hover{text-decoration:underline}
+@keyframes homeAboutOrbit{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+html[data-vom-theme="dark"] .home-member-prompt-card{border-color:#3a4668!important;background:linear-gradient(135deg,rgba(28,34,68,.94),rgba(18,57,63,.94))!important;color:#edf1ff!important}
+html[data-vom-theme="dark"] .home-member-prompt-card span{color:#aeb8d1!important}
+html[data-vom-theme="dark"] .home-member-prompt-card strong{color:#ddd7ff!important}
+html[data-vom-theme="dark"] .home-about-hero{border-color:#39466b!important;background:linear-gradient(145deg,rgba(25,27,68,.94),rgba(16,53,62,.9))!important}
+html[data-vom-theme="dark"] .home-about-hero h2{color:#f1f3ff!important}
+html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
+@media(max-width:700px){.home-member-prompt-card{width:100%;margin-left:0}.home-about-hero{min-height:390px;padding:30px 24px;border-radius:27px}.home-about-hero::before{right:-36%;top:-18%;width:90%}.home-about-hero h2{max-width:220px;font-size:45px}.home-about-hero p{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.home-member-prompt-card{transition:none}.home-about-hero::before{animation:none}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2307,7 +2332,7 @@ body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
       </div>
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
-      <p id="homeMemberPrompt" class="home-member-prompt">이미 회원이신가요? <a href="/me/">로그인하기 →</a></p>
+      <a id="homeMemberPrompt" class="home-member-prompt-card" href="/me/"><span>이미 회원이신가요?</span><strong>로그인하기</strong><b>→</b></a>
       <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
             <details class="home-info-guide">
         <summary class="home-info-summary">
@@ -2324,12 +2349,12 @@ body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
         <div class="home-guide-body">
           <div class="home-guide-progress"><i></i></div>
           <div class="home-guide-steps">
-            <div class="home-guide-step"><span>01</span><b>VOM 알아보기</b><small>우리가 어떤 모임인지 먼저 살펴봐요.</small></div>
-            <div class="home-guide-step"><span>02</span><b>일정 확인</b><small>모임과 참가 가능한 일정을 봐요.</small></div>
-            <div class="home-guide-step"><span>03</span><b>MY VOM 시작하기</b><small>문의와 셋리스트를 관리해요.</small></div>
+            <div class="home-guide-step"><span>01</span><b>가입 신청하기</b><small>기본정보·사진·라이브 자료를 제출해요.</small></div>
+            <div class="home-guide-step"><span>02</span><b>심사 결과 확인</b><small>운영진 심사 후 결과를 확인해요.</small></div>
+            <div class="home-guide-step"><span>03</span><b>MY VOM 시작하기</b><small>합격하면 MY VOM을 시작해요.</small></div>
           </div>
-          <p class="home-guide-note">처음이라면 INFO부터 천천히 둘러보고, 필요한 메뉴로 이동해 보세요.</p>
-          <a id="homeGuideAction" class="home-guide-action" href="/info/">VOM 이야기 자세히 보기 →</a>
+          <p class="home-guide-note">처음이라면 가입 방법부터 천천히 따라와 보세요.</p>
+          <a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 방법 자세히 보기 →</a>
         </div>
       </details>
 
@@ -2342,13 +2367,14 @@ body .aurora-ring{border-color:rgba(255,255,255,.5)!important}
     </div>
 
 
-    <article id="nextLive" class="next-live">
-
-      <div class="next-empty">
-        NEXT SCHEDULE을 불러오는 중...
-      </div>
-
+    <article id="homeAboutHero" class="home-about-hero">
+      <div class="home-about-kicker">ABOUT VOM</div>
+      <h2>노래로 연결되는<br>우리들의 이야기</h2>
+      <p>함께 부르고, 듣고, 기록하는 순간들.<br>VOM은 음악을 좋아하는 사람들이 모여<br>서로의 무대를 응원하고 성장하는 공간이에요.</p>
+      <div class="home-about-points"><span>함께 부르고</span><span>서로 응원하고</span><span>무대를 기록해요</span></div>
+      <a class="home-about-link" href="/info/">VOM 소개 자세히 보기 <span>→</span></a>
     </article>
+    <div id="nextLive" hidden aria-hidden="true"></div>
 
   <a class="home-scroll-button" href="#homeNextScene"><span>SCROLL TO EXPLORE</span><strong>아래로 확인하기</strong><b>↓</b></a>
 
