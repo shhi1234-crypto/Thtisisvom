@@ -44,10 +44,11 @@
     }).then(async response=>{
       if(!response.ok)return guest;
       const data=await response.json();
+      const approved=['APPROVED','PASSWORD_CHANGE_REQUIRED'].includes(data.state);
       return {
-        approved:data.state==='APPROVED',
-        isAdmin:data.state==='APPROVED'&&data.is_admin===true,
-        member:data.state==='APPROVED'?data.member:null
+        approved,
+        isAdmin:approved&&data.is_admin===true,
+        member:approved?data.member:null
       };
     }).catch(()=>guest);
     inFlight=request;
