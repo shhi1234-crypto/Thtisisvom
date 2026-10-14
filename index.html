@@ -2027,6 +2027,33 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
   .visitor-mini strong{font-size:12px}
   .visitor-mini span{font-size:8px}
 }
+
+/* MEMBER START GUIDE */
+.home-member-guide{width:min(505px,100%);margin:18px 0 0 7px;border:1px solid rgba(127,105,225,.18);border-radius:20px;background:rgba(255,255,255,.58);box-shadow:0 14px 32px rgba(58,48,120,.06);overflow:hidden}
+.home-member-guide summary{display:flex;align-items:center;gap:10px;padding:13px 15px;cursor:pointer;list-style:none}
+.home-member-guide summary::-webkit-details-marker{display:none}
+.home-member-guide summary:focus-visible{outline:3px solid #9b8be9;outline-offset:-3px}
+.home-guide-icon{display:grid;flex:0 0 29px;width:29px;height:29px;place-items:center;border-radius:10px;background:#ebe6ff;color:#6d58d5;font-size:14px}
+.home-guide-summary{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.home-guide-summary small{color:#8779b7;font:800 8px/1 "DM Sans",sans-serif;letter-spacing:.1em}
+.home-guide-summary b{color:#38304f;font-size:12px}
+.home-guide-arrow{color:#7664d2;font-size:17px;transition:transform .2s}
+.home-member-guide[open] .home-guide-arrow{transform:rotate(180deg)}
+.home-guide-body{padding:0 15px 15px;border-top:1px solid rgba(127,105,225,.12)}
+.home-guide-progress{height:3px;margin:13px 0 12px;overflow:hidden;border-radius:99px;background:#eeeafd}
+.home-guide-progress i{display:block;width:42%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d76e9,#84cfe0);animation:homeGuideFlow 3.2s ease-in-out infinite}
+.home-guide-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.home-guide-step{position:relative;min-height:84px;padding:10px 9px;border:1px solid #e8e2fa;border-radius:13px;background:rgba(255,255,255,.8);transition:transform .2s,border-color .2s}
+.home-guide-step:hover{transform:translateY(-2px);border-color:#c8bef5}
+.home-guide-step span{display:inline-flex;align-items:center;min-height:18px;padding:0 5px;border-radius:6px;background:#f0edff;color:#725fd4;font:800 8px "DM Sans",sans-serif}
+.home-guide-step b{display:block;margin-top:8px;color:#3b3f55;font-size:10px}
+.home-guide-step small{display:block;margin-top:4px;color:#888da0;font-size:9px;line-height:1.45}
+.home-guide-note{margin:11px 0 0;color:#73798d;font-size:10px;line-height:1.55}
+.home-guide-action{display:inline-flex;align-items:center;gap:6px;margin-top:10px;color:#6c55cf;font-size:10px;font-weight:800;text-decoration:none}
+.home-guide-action:hover{text-decoration:underline}
+@keyframes homeGuideFlow{0%{transform:translateX(-100%)}55%,100%{transform:translateX(240%)}}
+@media(max-width:600px){.home-member-guide{width:100%;margin-left:0}.home-guide-steps{grid-template-columns:1fr}.home-guide-step{min-height:0}.home-guide-step b{margin-top:5px}}
+@media(prefers-reduced-motion:reduce){.home-guide-progress i,.home-guide-step{animation:none;transition:none}}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
@@ -2091,6 +2118,8 @@ html.vom-public-mode .menu-card a:not([href="/info/"]):not([href="/"]){
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
       <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
+      <details class="home-member-guide"><summary><span class="home-guide-icon">✦</span><span class="home-guide-summary"><small>VOM START GUIDE</small><b>처음 오셨다면, 여기부터</b></span><span class="home-guide-arrow">⌄</span></summary><div class="home-guide-body"><div class="home-guide-progress"><i></i></div><div class="home-guide-steps"><div class="home-guide-step"><span>01</span><b>회원가입</b><small>사진과 라이브 자료를 제출해요.</small></div><div class="home-guide-step"><span>02</span><b>일정 확인</b><small>내 일정과 신청 가능 일정을 봐요.</small></div><div class="home-guide-step"><span>03</span><b>MY VOM</b><small>문의·셋리스트를 관리해요.</small></div></div><p class="home-guide-note">가입 후에는 로그인해서 나에게 필요한 메뉴만 편하게 이용할 수 있어요.</p><a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 가이드 보기 →</a></div></details>
+
       <div id="homeToday" class="home-today">
         <span class="today-date">오늘을 불러오는 중...</span>
       </div>
@@ -2565,6 +2594,8 @@ async function start(){
   document.getElementById('homeLoginButton').innerHTML=access.approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
   document.getElementById('homeSignupButton').hidden=access.approved;
   document.getElementById('homeResultLink').hidden=access.approved;
+  const homeGuideAction=document.getElementById('homeGuideAction');
+  if(homeGuideAction&&access.approved){homeGuideAction.href='/me/';homeGuideAction.textContent='MY VOM에서 관리하기 →';}
 
   loadHomeBirthday(access);
 
