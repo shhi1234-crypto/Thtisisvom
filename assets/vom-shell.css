@@ -1223,3 +1223,123 @@ html[data-vom-theme="dark"] .table-shell .order-badge.staff{
 
 /* Preserve readable action links inside the official white cards. */
 html[data-vom-theme="dark"] .value-card p a{color:#5140ac!important}
+
+
+/* HOME ENTRY PAIR
+   New and returning visitors choose from one shared card system.
+   The first-time card keeps its expandable guide; both collapsed cards remain equal. */
+html[data-vom-theme="dark"] .home-entry-grid{
+  align-items:stretch;
+}
+html[data-vom-theme="dark"] .home-entry-grid :is(.home-info-guide,.home-member-prompt-card){
+  min-height:112px;
+  border:1px solid #d8def0!important;
+  border-radius:24px!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-guide{
+  overflow:hidden;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-summary{
+  display:block;
+}
+html[data-vom-theme="dark"] .home-entry-grid .visitor-mini{
+  display:none!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid :is(.home-info-card,.home-member-prompt-card){
+  position:relative;
+  width:100%!important;
+  min-height:110px;
+  margin:0!important;
+  padding:18px 58px 18px 20px!important;
+  border:0!important;
+  border-radius:23px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:grid!important;
+  grid-template-columns:1fr auto;
+  grid-template-rows:auto auto auto;
+  align-content:center;
+  gap:5px 12px;
+  color:#19233e!important;
+  text-decoration:none;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-entry-eyebrow{
+  grid-column:1;
+  grid-row:1;
+  color:#6a57ce!important;
+  font:800 9px/1 "Noto Sans KR",sans-serif;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-entry-title{
+  grid-column:1;
+  grid-row:2;
+  margin:0!important;
+  color:#19233e!important;
+  font-size:16px!important;
+  line-height:1.2;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-entry-copy{
+  display:block;
+  grid-column:1;
+  grid-row:3;
+  color:#62708c!important;
+  font-size:10px!important;
+  line-height:1.45;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-entry-arrow{
+  display:grid!important;
+  grid-column:2;
+  grid-row:1 / span 3;
+  align-self:center;
+  width:28px;
+  height:28px;
+  place-items:center;
+  border-radius:50%;
+  background:#7560dc!important;
+  color:#fff!important;
+  font-size:15px!important;
+  transition:transform .2s ease,background .2s ease;
+}
+html[data-vom-theme="dark"] .home-entry-grid :is(.home-info-guide,.home-member-prompt-card):hover .home-entry-arrow{
+  transform:translateX(2px);
+  background:#624dcc!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-guide[open]{
+  grid-column:1 / -1;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-guide[open] .home-info-card{
+  border-radius:23px 23px 0 0!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-guide[open] .home-entry-arrow{
+  transform:rotate(90deg);
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-member-prompt-card::after{
+  content:none!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-body{
+  padding:0 20px 18px!important;
+  border-top:1px solid #dfe4f1!important;
+  background:linear-gradient(180deg,rgba(241,245,255,.65),rgba(255,255,255,.94))!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-step{
+  border-color:#dfe4f1!important;
+  background:#fff!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-step b{
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-step small,
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-note{
+  color:#62708c!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-guide-action{
+  color:#5140ac!important;
+}
+@media(max-width:700px){
+  html[data-vom-theme="dark"] .home-entry-grid :is(.home-info-guide,.home-member-prompt-card){
+    min-height:104px;
+  }
+}

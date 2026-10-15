@@ -2289,7 +2289,7 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
-<link rel="stylesheet" href="/assets/vom-shell.css?v=12">
+<link rel="stylesheet" href="/assets/vom-shell.css?v=13">
 <style id="vom-home-final-style">
 /* AURORA COLLISION MOTION */
 .aurora{isolation:isolate}
@@ -2761,30 +2761,37 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
       <div class="home-entry-grid">
-<details class="home-info-guide">
-        <summary class="home-info-summary">
-          <span class="home-info-card">
-            <span class="home-info-kicker">INFO</span>
-            <span class="home-info-question">VOM이 처음이신가요?</span>
-          </span>
-          <span class="visitor-mini" title="홈페이지 누적 방문자">
-            <small>VISITORS</small>
-            <strong id="homeTotalVisitors">-</strong>
-            <span>누적</span>
-          </span>
-        </summary>
-        <div class="home-guide-body">
-          <div class="home-guide-progress"><i></i></div>
-          <div class="home-guide-steps">
-            <div class="home-guide-step"><span>01</span><b>가입 신청하기</b><small>기본정보·사진·라이브 자료를 제출해요.</small></div>
-            <div class="home-guide-step"><span>02</span><b>심사 결과 확인</b><small>운영진 심사 후 결과를 확인해요.</small></div>
-            <div class="home-guide-step"><span>03</span><b>MY VOM 시작하기</b><small>합격하면 MY VOM을 시작해요.</small></div>
+        <details class="home-info-guide home-entry-choice home-entry-choice-new">
+          <summary class="home-info-summary">
+            <span class="home-info-card">
+              <span class="home-entry-eyebrow">처음이신가요?</span>
+              <strong class="home-entry-title">VOM 알아보기</strong>
+              <small class="home-entry-copy">가입 방법과 활동을 안내해요</small>
+              <b class="home-entry-arrow" aria-hidden="true">→</b>
+            </span>
+            <span class="visitor-mini" title="홈페이지 누적 방문자">
+              <small>VISITORS</small>
+              <strong id="homeTotalVisitors">-</strong>
+              <span>누적</span>
+            </span>
+          </summary>
+          <div class="home-guide-body">
+            <div class="home-guide-progress"><i></i></div>
+            <div class="home-guide-steps">
+              <div class="home-guide-step"><span>01</span><b>가입 신청하기</b><small>기본정보·사진·라이브 자료를 제출해요.</small></div>
+              <div class="home-guide-step"><span>02</span><b>심사 결과 확인</b><small>운영진 심사 후 결과를 확인해요.</small></div>
+              <div class="home-guide-step"><span>03</span><b>MY VOM 시작하기</b><small>합격하면 MY VOM을 시작해요.</small></div>
+            </div>
+            <p class="home-guide-note">처음이라면 가입 방법부터 천천히 따라와 보세요.</p>
+            <a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 방법 자세히 보기 →</a>
           </div>
-          <p class="home-guide-note">처음이라면 가입 방법부터 천천히 따라와 보세요.</p>
-          <a id="homeGuideAction" class="home-guide-action" href="/ot-room/">가입 방법 자세히 보기 →</a>
-        </div>
-      </details>
-<a id="homeMemberPrompt" class="home-member-prompt-card" href="/me/"><span>이미 회원이신가요?</span><strong>로그인하기</strong><b>→</b></a>
+        </details>
+        <a id="homeMemberPrompt" class="home-member-prompt-card home-entry-choice home-entry-choice-member" href="/me/">
+          <span class="home-entry-eyebrow">이미 회원이신가요?</span>
+          <strong class="home-entry-title">로그인하기</strong>
+          <small class="home-entry-copy">로그인하고 내 공간을 확인해요</small>
+          <b class="home-entry-arrow" aria-hidden="true">→</b>
+        </a>
       </div>
 <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
 
