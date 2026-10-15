@@ -1366,3 +1366,10 @@ html[data-vom-theme="dark"] .home-entry-grid .home-info-summary::marker{
 html[data-vom-theme="dark"] .home-entry-grid .home-info-summary::-webkit-details-marker{
   display:none!important;
 }
+
+
+/* HOME ENTRY PAIR HEIGHT ALIGNMENT
+   Clear the old INFO card's fourth grid track so both entry cards occupy the same row height. */
+html[data-vom-theme="dark"] .home-entry-grid .home-info-card{
+  grid-template-rows:auto auto auto!important;
+}
