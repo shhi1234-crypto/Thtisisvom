@@ -893,3 +893,148 @@ html[data-vom-theme="dark"] .activity-arrow{
   background:#292452!important;
   color:#e9e5ff!important;
 }
+
+
+/* VOM MIDNIGHT PAPER CONTRACT
+   Dark canvas stays dark. Intentional white/pastel cards keep their paper surface,
+   and only their typography changes to dark ink. */
+html[data-vom-theme="dark"] :is(
+  .value-card,.fee-banner,.activity,
+  .staff-role-row,.staff-role-foot,
+  .u-process-card,.u-guide-chip,.u-scale-card,.u-scale-box,.u-equipment,.u-tip-card,.u-tip-note,.u-card,.u-empty,
+  .intro-editorial,.intro-process article,.intro-point,.content-intro,.content-intro-grid>div,
+  .ready-card,.notice-card,.contact-card,.details,
+  .question,.faq,.answer,.awaiting,.open-qna,.consult-cta,.qna-member-guide,.qna-guide-step,
+  .event,.month,.real-calendar,.calendar-day,.selected-date-box,.selected-date-event,
+  .operation-checklist,.operation-task,.monthly-ops-guide,.monthly-ops-item,.event-readiness-alert,.event-readiness-row,.schedule-setlist-cta,.calendar-member-guide,.calendar-guide-step,
+  .table-shell,.group-card,.age-card,.region-stat-card,.region-detail,
+  .guest-schedule-link
+){
+  --vom-paper-ink:#19233e;
+  --vom-paper-muted:#62708c;
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  color:var(--vom-paper-ink)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.16)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .value-card,.fee-banner,.activity,
+  .staff-role-row,.staff-role-foot,
+  .u-process-card,.u-guide-chip,.u-scale-card,.u-scale-box,.u-equipment,.u-tip-card,.u-tip-note,.u-card,.u-empty,
+  .intro-editorial,.intro-process article,.intro-point,.content-intro,.content-intro-grid>div,
+  .ready-card,.notice-card,.contact-card,.details,
+  .question,.faq,.answer,.awaiting,.open-qna,.consult-cta,.qna-member-guide,.qna-guide-step,
+  .event,.month,.real-calendar,.calendar-day,.selected-date-box,.selected-date-event,
+  .operation-checklist,.operation-task,.monthly-ops-guide,.monthly-ops-item,.event-readiness-alert,.event-readiness-row,.schedule-setlist-cta,.calendar-member-guide,.calendar-guide-step,
+  .table-shell,.group-card,.age-card,.region-stat-card,.region-detail,
+  .guest-schedule-link
+) :is(h1,h2,h3,h4,strong,b,label,th,td,.title,.name,.value,.u-subtitle,.u-section-title,.u-list-head){
+  color:var(--vom-paper-ink)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .value-card,.fee-banner,.activity,
+  .staff-role-row,.staff-role-foot,
+  .u-process-card,.u-guide-chip,.u-scale-card,.u-scale-box,.u-equipment,.u-tip-card,.u-tip-note,.u-card,.u-empty,
+  .intro-editorial,.intro-process article,.intro-point,.content-intro,.content-intro-grid>div,
+  .ready-card,.notice-card,.contact-card,.details,
+  .question,.faq,.answer,.awaiting,.open-qna,.consult-cta,.qna-member-guide,.qna-guide-step,
+  .event,.month,.real-calendar,.calendar-day,.selected-date-box,.selected-date-event,
+  .operation-checklist,.operation-task,.monthly-ops-guide,.monthly-ops-item,.event-readiness-alert,.event-readiness-row,.schedule-setlist-cta,.calendar-member-guide,.calendar-guide-step,
+  .table-shell,.group-card,.age-card,.region-stat-card,.region-detail,
+  .guest-schedule-link
+) :is(p,small,li,span,.copy,.desc,.meta,.hint,.u-copy,.u-meta,.u-guide-lead,.u-scale-desc,.u-half-note,.u-tip-intro,.u-tip-note){
+  color:var(--vom-paper-muted)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .value-card,.fee-banner,.activity,.question,.faq,.answer,.consult-cta,.guest-schedule-link
+) a{
+  color:#5949bd!important;
+}
+
+/* Restore the intended paper palette for the components previously forced dark. */
+html[data-vom-theme="dark"] .value-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(239,244,255,.96))!important;
+  border-color:#d8def0!important;
+}
+html[data-vom-theme="dark"] .value-card .value-no{color:#725fd5!important}
+html[data-vom-theme="dark"] .fee-banner{
+  background:linear-gradient(135deg,#f1edff,#eaf8f5)!important;
+  border-color:#d8d4f5!important;
+}
+html[data-vom-theme="dark"] .activity{
+  background:linear-gradient(145deg,#ffffff,#eff5ff)!important;
+  border-color:#d7def2!important;
+}
+html[data-vom-theme="dark"] .activity-arrow{
+  background:#ebe7ff!important;
+  color:#5f4dc1!important;
+}
+html[data-vom-theme="dark"] .staff-role-row{
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff,#f4f5ff)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.14)!important;
+}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-name{color:#272c40!important}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-desc{color:#656c7f!important}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-badge{
+  border-color:transparent!important;
+  background:#eeeaff!important;
+  color:#6956ce!important;
+}
+html[data-vom-theme="dark"] .staff-role-row.field .staff-role-badge{background:#e9f5ff!important;color:#447cb5!important}
+html[data-vom-theme="dark"] .staff-role-row.finance .staff-role-badge{background:#e8f7ef!important;color:#438363!important}
+html[data-vom-theme="dark"] .staff-role-row.promo .staff-role-badge{background:#f1ebff!important;color:#7655c4!important}
+html[data-vom-theme="dark"] .staff-role-foot{
+  border-color:#d9def0!important;
+  background:linear-gradient(135deg,#f2efff,#edf8f7)!important;
+  color:#5f6375!important;
+}
+html[data-vom-theme="dark"] .staff-role-foot strong{color:#6552c8!important}
+
+/* BUSKING / LIVE / OPEN MIC shared intro cards: keep paper backgrounds, use ink. */
+html[data-vom-theme="dark"] .u-process-num,
+html[data-vom-theme="dark"] .u-guide-chip small,
+html[data-vom-theme="dark"] .u-scale-eyebrow,
+html[data-vom-theme="dark"] .u-tip-step,
+html[data-vom-theme="dark"] .u-type,
+html[data-vom-theme="dark"] .u-more{
+  color:#6b58d1!important;
+}
+html[data-vom-theme="dark"] .u-tip-card.video .u-tip-step{color:#268779!important}
+html[data-vom-theme="dark"] .u-scale-card.full,
+html[data-vom-theme="dark"] .u-tip-card.mr{
+  background:linear-gradient(145deg,#f1eeff,#ffffff)!important;
+}
+html[data-vom-theme="dark"] .u-scale-card.half,
+html[data-vom-theme="dark"] .u-tip-card.video{
+  background:linear-gradient(145deg,#e8f8f5,#ffffff)!important;
+}
+html[data-vom-theme="dark"] .u-card .u-date,
+html[data-vom-theme="dark"] .u-card .u-date :is(strong,small){
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .u-equipment .eq-badge{
+  background:#ece9ff!important;
+  color:#5d4ac0!important;
+}
+html[data-vom-theme="dark"] .u-equipment .eq-badge.half{
+  background:#e7f7f3!important;
+  color:#287f71!important;
+}
+
+/* MEMBERS directory table is also a paper surface. */
+html[data-vom-theme="dark"] .table-shell,
+html[data-vom-theme="dark"] .table-shell table,
+html[data-vom-theme="dark"] .table-shell :is(thead,tbody,tr,th,td){
+  color:#1b2743!important;
+}
+html[data-vom-theme="dark"] .table-shell thead{
+  background:#edf1fb!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody tr{
+  background:rgba(255,255,255,.90)!important;
+  border-color:#e0e5f3!important;
+}
+html[data-vom-theme="dark"] .table-shell :is(small,span){
+  color:#5e6d89!important;
+}
