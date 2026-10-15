@@ -761,3 +761,135 @@ html[data-vom-theme="dark"] .danger{
   background:#482637!important;
   color:#ffd9e3!important;
 }
+
+
+/* DARK CONTRAST REMEDIATION · readable cards, roles and active navigation */
+html[data-vom-theme="dark"] .menu-card > a.active,
+html[data-vom-theme="dark"] .menu-card > a[aria-current="page"],
+html[data-vom-theme="dark"] .vom-shell-fallback-card > a.active,
+html[data-vom-theme="dark"] .vom-shell-fallback-card > a[aria-current="page"]{
+  border:1px solid #9b90ff!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,#5c4bc3 0%,#7a6bea 100%)!important;
+  color:#fff!important;
+  box-shadow:0 9px 22px rgba(64,51,155,.38)!important;
+}
+html[data-vom-theme="dark"] .menu-card > a.active span,
+html[data-vom-theme="dark"] .menu-card > a[aria-current="page"] span,
+html[data-vom-theme="dark"] .vom-shell-fallback-card > a.active span,
+html[data-vom-theme="dark"] .vom-shell-fallback-card > a[aria-current="page"] span{
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .menu-card > a.active:hover,
+html[data-vom-theme="dark"] .menu-card > a[aria-current="page"]:hover{
+  background:linear-gradient(135deg,#7162dc 0%,#9285f5 100%)!important;
+}
+
+/* MEMBERS · operator roles modal */
+html[data-vom-theme="dark"] .staff-role-modal{
+  border-color:#41557e!important;
+  background:linear-gradient(145deg,#111d39 0%,#0d1730 100%)!important;
+  box-shadow:0 26px 70px rgba(0,0,0,.5)!important;
+}
+html[data-vom-theme="dark"] .staff-role-intro{
+  color:#c6d1e8!important;
+}
+html[data-vom-theme="dark"] .staff-role-row{
+  border-color:#40567f!important;
+  background:linear-gradient(135deg,#172542 0%,#101b34 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 9px 24px rgba(0,0,0,.2)!important;
+}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-name{
+  color:#f6f8ff!important;
+}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-desc{
+  color:#c1cce1!important;
+}
+html[data-vom-theme="dark"] .staff-role-row .staff-role-badge{
+  border:1px solid #8075e8!important;
+  background:#302a68!important;
+  color:#f0eeff!important;
+}
+html[data-vom-theme="dark"] .staff-role-row.field .staff-role-badge{
+  border-color:#4f9ac5!important;
+  background:#173e60!important;
+  color:#dcf4ff!important;
+}
+html[data-vom-theme="dark"] .staff-role-row.finance .staff-role-badge{
+  border-color:#5bb88d!important;
+  background:#173f33!important;
+  color:#d9fae7!important;
+}
+html[data-vom-theme="dark"] .staff-role-row.promo .staff-role-badge{
+  border-color:#a385dc!important;
+  background:#3d285f!important;
+  color:#f0e8ff!important;
+}
+html[data-vom-theme="dark"] .staff-role-foot{
+  border:1px solid #3f5a78!important;
+  background:linear-gradient(135deg,#172941,#12313a)!important;
+  color:#cbd7e9!important;
+}
+html[data-vom-theme="dark"] .staff-role-foot strong{
+  color:#d7d0ff!important;
+}
+html[data-vom-theme="dark"] .staff-role-modal .close{
+  border:1px solid #788ab7!important;
+  background:#273858!important;
+  color:#fff!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.24)!important;
+}
+
+/* INFO · all intentional cards are dark surfaces with readable content */
+html[data-vom-theme="dark"] .value-card{
+  border-color:#3e547e!important;
+  background:linear-gradient(145deg,#172440 0%,#101b33 100%)!important;
+  color:#f6f8ff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 14px 34px rgba(0,0,0,.2)!important;
+}
+html[data-vom-theme="dark"] .value-card .value-no{
+  color:#c2b9ff!important;
+}
+html[data-vom-theme="dark"] .value-card h3{
+  color:#f6f8ff!important;
+}
+html[data-vom-theme="dark"] .value-card p{
+  color:#cad4e8!important;
+}
+html[data-vom-theme="dark"] .value-card p a{
+  color:#c9c2ff!important;
+}
+html[data-vom-theme="dark"] .fee-banner{
+  border-color:#465b86!important;
+  background:linear-gradient(135deg,#1d2146 0%,#123540 100%)!important;
+}
+html[data-vom-theme="dark"] .fee-banner .fee-title{
+  color:#f6f8ff!important;
+}
+html[data-vom-theme="dark"] .fee-banner .fee-copy{
+  color:#c9d4e8!important;
+}
+html[data-vom-theme="dark"] .fee-banner .fee-badge{
+  border-color:#6d63c6!important;
+  background:#292452!important;
+  color:#eeeaff!important;
+}
+html[data-vom-theme="dark"] .activity{
+  border-color:#3d527b!important;
+  background:linear-gradient(145deg,#172440 0%,#101b33 100%)!important;
+  color:#f5f8ff!important;
+}
+html[data-vom-theme="dark"] .activity h3{
+  color:#f6f8ff!important;
+}
+html[data-vom-theme="dark"] .activity p,
+html[data-vom-theme="dark"] .activity-sub{
+  color:#c5d0e5!important;
+}
+html[data-vom-theme="dark"] .activity-intro-link{
+  color:#c9c2ff!important;
+}
+html[data-vom-theme="dark"] .activity-arrow{
+  background:#292452!important;
+  color:#e9e5ff!important;
+}
