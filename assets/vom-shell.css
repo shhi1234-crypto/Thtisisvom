@@ -1518,3 +1518,54 @@ html[data-vom-theme="dark"] .quick small{
     font-size:15px;
   }
 }
+
+
+/* GLOBAL DARK SHELL CONTRACT · content must never sit beneath the shared header.
+   Pale CTA surfaces keep a dark, readable foreground instead of inheriting the
+   canvas-link color. */
+html[data-vom-theme="dark"] header.header.vom-header{
+  position:relative!important;
+  top:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  left:auto!important;
+  z-index:60!important;
+}
+html[data-vom-theme="dark"] header.header.vom-header .vom-header-brand,
+html[data-vom-theme="dark"] header.header.vom-header .vom-header-brand strong,
+html[data-vom-theme="dark"] header.header.vom-header .vom-header-brand small{
+  color:#f6f8ff!important;
+}
+html[data-vom-theme="dark"] .closing-links a{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:44px!important;
+  padding:0 19px!important;
+  border:1px solid #d7def0!important;
+  border-radius:999px!important;
+  background:linear-gradient(145deg,#ffffff 0%,#eff4ff 100%)!important;
+  color:#44358d!important;
+  font-weight:850!important;
+  letter-spacing:-.01em!important;
+  box-shadow:0 8px 20px rgba(1,7,23,.22)!important;
+}
+html[data-vom-theme="dark"] .closing-links a:hover{
+  border-color:#8e82ee!important;
+  background:linear-gradient(145deg,#7867df 0%,#5547bd 100%)!important;
+  color:#ffffff!important;
+}
+html[data-vom-theme="dark"] .closing-links a:focus-visible,
+html[data-vom-theme="dark"] header.header.vom-header .menu-btn:focus-visible{
+  outline:3px solid #c3bcff!important;
+  outline-offset:3px!important;
+}
+@media(max-width:640px){
+  html[data-vom-theme="dark"] header.header.vom-header{
+    width:calc(100% - 24px)!important;
+  }
+  html[data-vom-theme="dark"] .closing-links a{
+    min-height:42px!important;
+    padding:0 16px!important;
+  }
+}
