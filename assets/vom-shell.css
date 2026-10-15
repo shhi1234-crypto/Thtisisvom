@@ -1220,3 +1220,6 @@ html[data-vom-theme="dark"] .table-shell .order-badge.staff{
   background:#fff0c8!important;
   color:#8d6217!important;
 }
+
+/* Preserve readable action links inside the official white cards. */
+html[data-vom-theme="dark"] .value-card p a{color:#5140ac!important}
