@@ -1680,3 +1680,38 @@ html[data-vom-theme="dark"] .ranking-grid .rank-list{
   html[data-vom-theme="dark"] .ranking-grid .rank-shell{transition:none!important}
   html[data-vom-theme="dark"] .ranking-grid .rank-shell:hover{transform:none!important}
 }
+
+
+/* HOME RANKING TITLE SCALE · make the category names read like scene titles.
+   The icon floats as a small emblem so it never steals width from the title. */
+html[data-vom-theme="dark"] .ranking-grid .rank-head{
+  position:relative!important;
+  display:block!important;
+  min-height:142px!important;
+  margin-bottom:18px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-kicker{
+  padding-right:82px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-title{
+  max-width:100%!important;
+  margin:13px 0 0!important;
+  font-size:clamp(62px,5.15vw,78px)!important;
+  line-height:.84!important;
+  white-space:nowrap;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-icon{
+  position:absolute!important;
+  top:0;
+  right:0;
+}
+@media(max-width:900px){
+  html[data-vom-theme="dark"] .ranking-grid .rank-head{
+    min-height:122px!important;
+  }
+  html[data-vom-theme="dark"] .ranking-grid .rank-title{
+    margin-top:11px!important;
+    font-size:clamp(52px,12vw,68px)!important;
+    white-space:normal;
+  }
+}
