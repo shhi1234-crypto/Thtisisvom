@@ -223,3 +223,151 @@ html[data-vom-theme="dark"] .member-song-row .mini.danger{
   background:#fff0f3!important;
   color:#af5267!important;
 }
+
+
+/* MEMBERS DARK CONTRAST · surfaces, active states, and controls */
+html[data-vom-theme="dark"] .overlay .close{
+  display:inline-grid!important;
+  place-items:center!important;
+  width:40px!important;
+  height:40px!important;
+  border:1px solid #7180ae!important;
+  border-radius:50%!important;
+  background:linear-gradient(145deg,#35446d,#222c4b)!important;
+  color:#fff!important;
+  font:900 20px/1 "DM Sans",Pretendard,sans-serif!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.28),0 0 0 3px rgba(135,121,245,.12)!important;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease!important;
+}
+html[data-vom-theme="dark"] .overlay .close:hover{
+  transform:rotate(90deg)!important;
+  border-color:#bbb3ff!important;
+  background:linear-gradient(145deg,#6657d8,#364b82)!important;
+}
+html[data-vom-theme="dark"] .overlay .close:focus-visible{
+  outline:3px solid rgba(178,167,255,.72)!important;
+  outline-offset:3px!important;
+}
+html[data-vom-theme="dark"] .reference-choice label:has(input:checked){
+  border-color:#b4abff!important;
+  background:linear-gradient(135deg,#6353d5,#8879ef)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(103,84,221,.32)!important;
+}
+html[data-vom-theme="dark"] .reference-choice label:has(input:checked) input[type="radio"]{
+  accent-color:#fff!important;
+  border-color:#fff!important;
+}
+
+html[data-vom-theme="dark"] .summary span{
+  border-color:#3a4b76!important;
+  background:#17213d!important;
+  color:#cbd5ed!important;
+}
+html[data-vom-theme="dark"] .summary b{
+  color:#b6aaff!important;
+}
+html[data-vom-theme="dark"] .birthday-now{
+  border-color:#3a4b76!important;
+  background:linear-gradient(105deg,#18233f,#202b4b)!important;
+  color:#cbd5ed!important;
+}
+html[data-vom-theme="dark"] .birthday-now strong{
+  color:#e1dcff!important;
+}
+html[data-vom-theme="dark"] .birthday-now .birthday-person{
+  border:1px solid #4d4690!important;
+  background:#27205a!important;
+  color:#ded8ff!important;
+}
+html[data-vom-theme="dark"] .tab,
+html[data-vom-theme="dark"] .member-account-link{
+  border-color:#3b4c78!important;
+  background:#17213d!important;
+  color:#dfe6f9!important;
+}
+html[data-vom-theme="dark"] .tab.active{
+  border-color:#aaa0ff!important;
+  background:linear-gradient(135deg,#6252d7,#8375ee)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(104,84,222,.28)!important;
+}
+html[data-vom-theme="dark"] .member-account-link{
+  background:linear-gradient(135deg,#242457,#263a63)!important;
+  color:#e2e5ff!important;
+}
+html[data-vom-theme="dark"] .add-btn{
+  border-color:#a69dff!important;
+  background:#2d245e!important;
+  color:#f0edff!important;
+  box-shadow:0 8px 18px rgba(101,81,219,.22)!important;
+}
+
+html[data-vom-theme="dark"] .table-shell{
+  border-color:#35476f!important;
+  background:#111a31!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.28)!important;
+}
+html[data-vom-theme="dark"] .table-shell table{
+  background:transparent!important;
+  color:#e7edf9!important;
+}
+html[data-vom-theme="dark"] .table-shell thead{
+  background:#202d4d!important;
+}
+html[data-vom-theme="dark"] .table-shell th{
+  border-bottom-color:#3a4b75!important;
+  color:#aebbd8!important;
+}
+html[data-vom-theme="dark"] .table-shell td{
+  border-bottom-color:#283956!important;
+  background:#121c34!important;
+  color:#e7edf9!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody tr:nth-child(even) td{
+  background:#17223e!important;
+}
+html[data-vom-theme="dark"] .admin-mode .table-shell tbody tr:hover td{
+  background:#222f52!important;
+}
+html[data-vom-theme="dark"] .table-shell .name,
+html[data-vom-theme="dark"] .table-shell .member-name-wrap,
+html[data-vom-theme="dark"] .table-shell .profile-edit,
+html[data-vom-theme="dark"] .table-shell .profile-static{
+  color:#f3f6ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .order-badge{
+  background:#2a3761!important;
+  color:#e9ecff!important;
+}
+html[data-vom-theme="dark"] .table-shell .order-badge.staff{
+  background:#4d3c1a!important;
+  color:#ffe19b!important;
+}
+html[data-vom-theme="dark"] .table-shell .role-pill.staff{
+  background:#392d70!important;
+  color:#e0d9ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .role-pill.normal{
+  background:#293650!important;
+  color:#d6dfef!important;
+}
+html[data-vom-theme="dark"] .table-shell .song-btn{
+  border:1px solid #5f66af!important;
+  background:#252c59!important;
+  color:#e5e6ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .profile-edit .pencil{
+  background:#2a3761!important;
+  color:#dcd8ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .gender-mark.male{
+  border-color:#3b6080!important;
+  background:#1d354b!important;
+  color:#bde1ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .gender-mark.female{
+  border-color:#734c76!important;
+  background:#3d2944!important;
+  color:#ffc8ef!important;
+}
