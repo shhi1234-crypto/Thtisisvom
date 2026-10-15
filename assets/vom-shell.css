@@ -88,3 +88,103 @@ html[data-vom-theme="dark"] .vom-theme-toggle{border-color:#3a4668!important;bac
 html[data-vom-theme="dark"] .vom-theme-toggle:hover{background:#28345a!important}
 html[data-vom-theme="dark"] .member-session-chip{background:#1b2745!important;border-color:#3c4b73!important;color:#ddd7ff!important}
 html[data-vom-theme="dark"] .home-member-prompt{color:#aeb8d1!important}
+
+
+/* VOM DARK-ONLY · keep intentional light controls readable */
+:root{color-scheme:dark}
+.vom-theme-toggle,[data-vom-theme-toggle]{display:none!important}
+html[data-vom-theme="dark"] .my-setlist-toggle,
+html[data-vom-theme="dark"] .dashboard-detail,
+html[data-vom-theme="dark"] .account-settings,
+html[data-vom-theme="dark"] .account-setting-panel{
+  background:#111a31!important;
+  border-color:#35405f!important;
+  color:#edf1ff!important;
+}
+html[data-vom-theme="dark"] .my-setlist-toggle b,
+html[data-vom-theme="dark"] .dashboard-detail>summary b,
+html[data-vom-theme="dark"] .account-settings summary b,
+html[data-vom-theme="dark"] .account-setting-panel h3{
+  color:#f3f5ff!important;
+}
+html[data-vom-theme="dark"] .my-setlist-toggle small,
+html[data-vom-theme="dark"] .dashboard-detail>summary small,
+html[data-vom-theme="dark"] .account-settings summary small,
+html[data-vom-theme="dark"] .account-setting-panel .card-intro,
+html[data-vom-theme="dark"] .account-reset-guide{
+  color:#b7c1dd!important;
+}
+html[data-vom-theme="dark"] .my-song-row,
+html[data-vom-theme="dark"] .my-song-row.is-incomplete{
+  background:linear-gradient(135deg,#fbfcff,#f1f4ff)!important;
+  border-color:#d9def2!important;
+  color:#17213d!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.14);
+}
+html[data-vom-theme="dark"] .my-song-row .my-song-copy,
+html[data-vom-theme="dark"] .my-song-row .my-song-title-line,
+html[data-vom-theme="dark"] .my-song-row .my-song-copy strong{
+  color:#17213d!important;
+}
+html[data-vom-theme="dark"] .my-song-row .my-song-copy small{
+  color:#62708d!important;
+}
+html[data-vom-theme="dark"] .my-song-row .song-warning{
+  background:#fff0d8!important;
+  color:#985619!important;
+}
+html[data-vom-theme="dark"] .my-song-row .song-issues{
+  color:#a45f1c!important;
+}
+html[data-vom-theme="dark"] .my-song-row .song-ref{
+  border-color:#252b43!important;
+  background:#252b43!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .my-song-row .song-action{
+  border-color:#c9c3f3!important;
+  background:#fff!important;
+  color:#5948bd!important;
+}
+html[data-vom-theme="dark"] .my-song-row .song-delete{
+  border-color:#f1d3db!important;
+  background:#fff0f3!important;
+  color:#af5267!important;
+}
+html[data-vom-theme="dark"] .my-song-form{
+  border-color:#35405f!important;
+  background:linear-gradient(135deg,#121c35,#162344)!important;
+}
+html[data-vom-theme="dark"] .my-song-form h3,
+html[data-vom-theme="dark"] .my-song-form-top span,
+html[data-vom-theme="dark"] .reference-guide,
+html[data-vom-theme="dark"] .my-file-help,
+html[data-vom-theme="dark"] .setlist-footnote{
+  color:#d8e0f2!important;
+}
+html[data-vom-theme="dark"] .reference-choice label{
+  border-color:#cfd6ee!important;
+  background:#f7f8ff!important;
+  color:#27314e!important;
+}
+html[data-vom-theme="dark"] .reference-choice label input[type="radio"]{
+  accent-color:#705bdd!important;
+  background:#fff!important;
+  border-color:#7a87aa!important;
+  color-scheme:light!important;
+}
+html[data-vom-theme="dark"] .open-setlist-editor,
+html[data-vom-theme="dark"] .setlist-count{
+  border-color:#5f69aa!important;
+  background:#242d51!important;
+  color:#e6e8ff!important;
+}
+html[data-vom-theme="dark"] .setlist-alert{
+  background:#3a2d20!important;
+  color:#ffd48d!important;
+}
+html[data-vom-theme="dark"] .settings-mark,
+html[data-vom-theme="dark"] .settings-arrow{
+  background:#242d51!important;
+  color:#cfc9ff!important;
+}

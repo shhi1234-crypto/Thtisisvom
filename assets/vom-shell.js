@@ -8,24 +8,19 @@
 
   const VOM_THEME_KEY = 'vom-theme';
 
-  function applyVomTheme(theme, persist=true) {
-    const next = theme === 'dark' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-vom-theme', next);
-    document.documentElement.style.colorScheme = next;
-    if (persist) {
-      try { window.localStorage.setItem(VOM_THEME_KEY, next); } catch (_) {}
-    }
-    document.querySelectorAll('[data-vom-theme-toggle]').forEach(function(button) {
-      const dark = next === 'dark';
-      button.textContent = dark ? '☀️ 라이트모드로 보기' : '🌙 다크모드로 보기';
-      button.setAttribute('aria-pressed', String(dark));
+  function applyVomTheme() {
+    const root = document.documentElement;
+    root.setAttribute('data-vom-theme', 'dark');
+    root.style.colorScheme = 'dark';
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0a0f1f');
+    try { window.localStorage.removeItem(VOM_THEME_KEY); } catch (_) {}
+    document.querySelectorAll('[data-vom-theme-toggle], .vom-theme-toggle').forEach(function(button) {
+      button.remove();
     });
   }
 
   function initVomTheme() {
-    let saved = 'light';
-    try { saved = window.localStorage.getItem(VOM_THEME_KEY) || 'light'; } catch (_) {}
-    applyVomTheme(saved, false);
+    applyVomTheme();
   }
 
   function addStyle() {
@@ -581,15 +576,6 @@
         if(item[1]==='/me/'||item[1]==='/ot-room/')link.classList.add('vom-menu-account');
         link.innerHTML='<span>'+item[0]+'</span><span>→</span>';card.appendChild(link);
       });
-      const themeButton=document.createElement('button');
-      themeButton.type='button';
-      themeButton.className='vom-theme-toggle';
-      themeButton.setAttribute('data-vom-theme-toggle','');
-      themeButton.addEventListener('click',function(){
-        const current=document.documentElement.getAttribute('data-vom-theme')==='dark'?'dark':'light';
-        applyVomTheme(current==='dark'?'light':'dark');
-      });
-      card.appendChild(themeButton);
     });
   }
 

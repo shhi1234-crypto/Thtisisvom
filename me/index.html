@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f8f7ff">
+<meta name="theme-color" content="#0a0f1f">
 <title>MY VOM · Voice of Melody</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
 <style>
@@ -68,7 +68,7 @@
 
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
-<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
+<link rel="stylesheet" href="/assets/vom-shell.css?v=2">
 </head>
 <body>
 <div class="aurora"></div>
@@ -415,6 +415,6 @@ function closeMenu(){const el=document.getElementById('menuOverlay');el.classLis
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{render();}}catch(error){renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
-<script src="/assets/vom-shell.js?v=15"></script>
+<script src="/assets/vom-shell.js?v=16"></script>
 </body>
 </html>
