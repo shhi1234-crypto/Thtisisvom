@@ -188,3 +188,38 @@ html[data-vom-theme="dark"] .settings-arrow{
   background:#242d51!important;
   color:#cfc9ff!important;
 }
+
+
+/* MEMBERS · Songs modal: intentional light rows need dark ink in dark mode */
+html[data-vom-theme="dark"] .member-song-row{
+  border:1px solid #d9def2!important;
+  background:linear-gradient(135deg,#fbfcff,#f1f4ff)!important;
+  color:#17213d!important;
+  box-shadow:0 8px 20px rgba(0,0,0,.14);
+}
+html[data-vom-theme="dark"] .member-song-row strong{
+  color:#17213d!important;
+}
+html[data-vom-theme="dark"] .member-song-row small{
+  color:#62708d!important;
+}
+html[data-vom-theme="dark"] .member-song-row .yt-btn{
+  border-color:#252b43!important;
+  background:#252b43!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .member-song-row .file-btn{
+  border-color:#b8e2d8!important;
+  background:#edf9f6!important;
+  color:#176d60!important;
+}
+html[data-vom-theme="dark"] .member-song-row .mini{
+  border:1px solid #c9c3f3!important;
+  background:#fff!important;
+  color:#5948bd!important;
+}
+html[data-vom-theme="dark"] .member-song-row .mini.danger{
+  border-color:#f1d3db!important;
+  background:#fff0f3!important;
+  color:#af5267!important;
+}
