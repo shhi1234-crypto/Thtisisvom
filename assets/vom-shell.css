@@ -1569,3 +1569,114 @@ html[data-vom-theme="dark"] header.header.vom-header .menu-btn:focus-visible{
     padding:0 16px!important;
   }
 }
+
+
+/* HOME RANKING HEROES · each ranking leads with a display-sized title,
+   not a compact dashboard label. The three cards retain their own character
+   while remaining one coherent VOM scene. */
+html[data-vom-theme="dark"] .ranking-section{
+  margin-top:38px!important;
+  margin-bottom:42px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid{
+  gap:20px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-shell{
+  min-height:332px;
+  padding:27px 28px 25px!important;
+  border:1px solid rgba(183,197,240,.22)!important;
+  border-radius:30px!important;
+  box-shadow:0 20px 46px rgba(0,0,0,.22)!important;
+  isolation:isolate;
+  transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-shell:hover{
+  transform:translateY(-5px);
+  border-color:rgba(203,196,255,.58)!important;
+  box-shadow:0 28px 58px rgba(0,0,0,.3)!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .openmic-shell{
+  background:
+    radial-gradient(circle at 88% 6%,rgba(255,208,112,.27),transparent 29%),
+    radial-gradient(circle at 7% 100%,rgba(229,114,187,.25),transparent 39%),
+    linear-gradient(140deg,#261d3c 0%,#332344 53%,#5c395c 100%)!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .ear-shell{
+  background:
+    radial-gradient(circle at 88% 5%,rgba(110,228,216,.24),transparent 29%),
+    radial-gradient(circle at 8% 102%,rgba(152,119,255,.32),transparent 40%),
+    linear-gradient(140deg,#172742 0%,#1d315b 54%,#3f3979 100%)!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .point-shell{
+  background:
+    radial-gradient(circle at 89% 6%,rgba(164,224,255,.22),transparent 29%),
+    radial-gradient(circle at 8% 102%,rgba(109,99,225,.28),transparent 42%),
+    linear-gradient(140deg,#141c35 0%,#172d49 56%,#21405a 100%)!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-head{
+  align-items:flex-start!important;
+  gap:18px!important;
+  min-height:118px;
+  margin-bottom:20px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-kicker{
+  margin:0 0 8px!important;
+  color:rgba(232,238,255,.64)!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.15em!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-title{
+  margin:0!important;
+  color:#fbfcff!important;
+  font-family:"Nanum Pen Script",cursive!important;
+  font-size:clamp(48px,4.25vw,66px)!important;
+  font-weight:400!important;
+  line-height:.9!important;
+  letter-spacing:-.055em!important;
+  text-shadow:0 8px 24px rgba(0,0,0,.22);
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-icon{
+  display:grid!important;
+  place-items:center!important;
+  width:62px!important;
+  height:62px!important;
+  flex:0 0 62px!important;
+  margin-top:1px!important;
+  border:1px solid rgba(240,244,255,.24)!important;
+  border-radius:21px!important;
+  background:rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 10px 26px rgba(0,0,0,.16)!important;
+  font-size:34px!important;
+  line-height:1!important;
+  backdrop-filter:blur(12px);
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-list{
+  position:relative;
+  z-index:1;
+}
+@media(max-width:900px){
+  html[data-vom-theme="dark"] .ranking-grid{gap:16px!important}
+  html[data-vom-theme="dark"] .ranking-grid .rank-shell{
+    min-height:0;
+    padding:24px 22px 22px!important;
+  }
+  html[data-vom-theme="dark"] .ranking-grid .rank-head{
+    min-height:94px;
+    margin-bottom:16px!important;
+  }
+  html[data-vom-theme="dark"] .ranking-grid .rank-title{
+    font-size:clamp(44px,10vw,60px)!important;
+  }
+  html[data-vom-theme="dark"] .ranking-grid .rank-icon{
+    width:54px!important;
+    height:54px!important;
+    flex-basis:54px!important;
+    border-radius:18px!important;
+    font-size:29px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-vom-theme="dark"] .ranking-grid .rank-shell{transition:none!important}
+  html[data-vom-theme="dark"] .ranking-grid .rank-shell:hover{transform:none!important}
+}
