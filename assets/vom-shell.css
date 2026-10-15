@@ -1129,3 +1129,94 @@ html[data-vom-theme="dark"] body:has(.ear-guide-main) .summary-card :is(h1,h2,h3
 html[data-vom-theme="dark"] body:has(.ear-guide-main) .summary-card :is(p,small,span){
   color:#62708c!important;
 }
+
+
+/* FINAL CONTRAST HARDENING
+   The midnight canvas remains dark. Any deliberate paper surface uses navy ink,
+   so dark mode never leaves pale type on white or pastel cards. */
+html[data-vom-theme="dark"] :is(
+  .ot-page .ot-card,.ot-page .ot-message,.ot-page .ot-signup-guide,.ot-page .ot-guide-content,
+  .ot-page .ot-file-label,.ot-page .ot-media-choice,
+  .benefit-card,.exchange-card,.people-card
+){
+  --vom-paper-ink:#19233e;
+  --vom-paper-muted:#5f6e8a;
+  color:var(--vom-paper-ink)!important;
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+
+/* Signup paper forms: retain their light cards, make every reading label legible. */
+html[data-vom-theme="dark"] .ot-page :is(.ot-card,.ot-signup-guide,.ot-guide-content,.ot-file-label,.ot-media-choice) :is(
+  h1,h2,h3,h4,label,legend,strong,b,.ot-card-heading,.ot-file-label,.ot-inline-field
+){color:#19233e!important}
+html[data-vom-theme="dark"] .ot-page :is(.ot-card,.ot-signup-guide,.ot-guide-content,.ot-file-label,.ot-media-choice) :is(
+  p,small,.ot-note,.ot-processing-note,.ot-photo-tip,.ot-live-confirm,.ot-consent
+){color:#5f6e8a!important}
+html[data-vom-theme="dark"] .ot-page .ot-message{color:#463a86!important}
+html[data-vom-theme="dark"] .ot-page .ot-tag,
+html[data-vom-theme="dark"] .ot-page .ot-button:not(.ot-primary){
+  border-color:#d9d3f4!important;
+  background:#eeeaff!important;
+  color:#5443af!important;
+}
+html[data-vom-theme="dark"] .ot-page .ot-button.ot-primary,
+html[data-vom-theme="dark"] .ot-page .ot-button.ot-primary :is(span,strong,b){
+  color:#fff!important;
+}
+
+/* White practice and event cards get the same ink hierarchy. */
+html[data-vom-theme="dark"] .benefit-card :is(h1,h2,h3,h4,strong,b),
+html[data-vom-theme="dark"] .exchange-card :is(h1,h2,h3,h4,span){
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] .benefit-card p,
+html[data-vom-theme="dark"] .exchange-card p{
+  color:#5f6e8a!important;
+}
+html[data-vom-theme="dark"] .exchange-card strong{color:#5d4bc1!important}
+
+/* INFO's pale cards keep their intended look but no longer use pale copy. */
+html[data-vom-theme="dark"] .fee-banner .kicker,
+html[data-vom-theme="dark"] .activity-intro-link,
+html[data-vom-theme="dark"] .value-card a{
+  color:#5140ac!important;
+}
+html[data-vom-theme="dark"] .fee-banner .fee-badge{
+  border-color:#d9d2fb!important;
+  background:#e8e3ff!important;
+  color:#5140ac!important;
+}
+html[data-vom-theme="dark"] .activity-sub{color:#5f6e8a!important}
+html[data-vom-theme="dark"] .people-card :is(.people-number,strong){color:#19233e!important}
+html[data-vom-theme="dark"] .people-card :is(.people-desc,.people-unit,.people-mini){color:#5f6e8a!important}
+html[data-vom-theme="dark"] .people-card .people-label{color:#604ec4!important}
+
+/* Home actions and the support panel have deliberate, high-contrast states. */
+html[data-vom-theme="dark"] .home-scroll-button{
+  border-color:rgba(173,160,255,.68)!important;
+  background:linear-gradient(135deg,#6952d5,#778ced)!important;
+  box-shadow:0 10px 25px rgba(76,57,178,.34)!important;
+}
+html[data-vom-theme="dark"] .home-scroll-button :is(strong,span,b){color:#fff!important}
+html[data-vom-theme="dark"] :is(.birthday-check,.home-about-link){color:#5040ae!important}
+html[data-vom-theme="dark"] .vc-panel{
+  border-color:#d8def0!important;
+  background:#fff!important;
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] .vc-panel :is(h1,h2,h3,h4,strong,b,label){color:#19233e!important}
+html[data-vom-theme="dark"] .vc-panel :is(p,small,span,.copy,.desc){color:#5f6e8a!important}
+
+/* Member rows and role sheets are paper surfaces too, including nested name spans. */
+html[data-vom-theme="dark"] .table-shell :is(.name,.name-text,.member-name-wrap,.member-account-link){
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] .table-shell :is(.role-pill,.status-pill,.order-badge){
+  color:#5040ae!important;
+}
+html[data-vom-theme="dark"] .table-shell .order-badge.staff{
+  background:#fff0c8!important;
+  color:#8d6217!important;
+}
