@@ -1092,3 +1092,40 @@ html[data-vom-theme="dark"] :is(
 html[data-vom-theme="dark"] :is(.quick>a,.notice,.event-card,.resource,.inquiry-card,.detail,.winner-box,.rank-row) a{
   color:#5949bd!important;
 }
+
+
+/* VOM LIVE uses its own card names; map them into the same midnight-paper system. */
+html[data-vom-theme="dark"] :is(
+  .ear-guide-main,.ear-guide-card,.ear-formula,.process-card,.info-card,.live-card,.result-button,
+  .empty,.back-link,.detail-image,.detail-info-card,.winner-card,.ranking-box,.other-participants,.participant-chip,.preview-box
+){
+  --vom-paper-ink:#19233e;
+  --vom-paper-muted:#62708c;
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  color:var(--vom-paper-ink)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .ear-guide-main,.ear-guide-card,.ear-formula,.process-card,.info-card,.live-card,.result-button,
+  .empty,.back-link,.detail-image,.detail-info-card,.winner-card,.ranking-box,.other-participants,.participant-chip,.preview-box
+) :is(h1,h2,h3,h4,strong,b,label,th,td,.title,.name,.value){
+  color:var(--vom-paper-ink)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .ear-guide-main,.ear-guide-card,.ear-formula,.process-card,.info-card,.live-card,.result-button,
+  .empty,.back-link,.detail-image,.detail-info-card,.winner-card,.ranking-box,.other-participants,.participant-chip,.preview-box
+) :is(p,small,li,span,.copy,.desc,.meta,.hint){
+  color:var(--vom-paper-muted)!important;
+}
+html[data-vom-theme="dark"] body:has(.ear-guide-main) .summary-card{
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff,#f1f5ff)!important;
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] body:has(.ear-guide-main) .summary-card :is(h1,h2,h3,h4,strong,b){
+  color:#19233e!important;
+}
+html[data-vom-theme="dark"] body:has(.ear-guide-main) .summary-card :is(p,small,span){
+  color:#62708c!important;
+}
