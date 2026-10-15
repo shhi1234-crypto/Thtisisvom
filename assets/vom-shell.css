@@ -1373,3 +1373,11 @@ html[data-vom-theme="dark"] .home-entry-grid .home-info-summary::-webkit-details
 html[data-vom-theme="dark"] .home-entry-grid .home-info-card{
   grid-template-rows:auto auto auto!important;
 }
+
+
+/* HOME ENTRY PAIR REMOVE LEGACY CHEVRON
+   The original INFO card emitted its own disclosure circle as a pseudo element.
+   The shared purple arrow now provides the single, consistent action affordance. */
+html[data-vom-theme="dark"] .home-entry-grid .home-info-card::after{
+  content:none!important;
+}
