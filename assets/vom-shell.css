@@ -1038,3 +1038,57 @@ html[data-vom-theme="dark"] .table-shell tbody tr{
 html[data-vom-theme="dark"] .table-shell :is(small,span){
   color:#5e6d89!important;
 }
+
+
+/* Shared schedule bridge is a paper banner too — keep the white surface, use dark ink. */
+html[data-vom-theme="dark"] .vom-somoim-bridge>a{
+  border-color:#d8def0!important;
+  background:linear-gradient(105deg,#ffffff,#edf8f8)!important;
+  color:#1a2540!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.16)!important;
+}
+html[data-vom-theme="dark"] .vom-somoim-bridge .vsm-copy{color:#1a2540!important}
+html[data-vom-theme="dark"] .vom-somoim-bridge .vsm-copy>span{color:#745fd4!important}
+html[data-vom-theme="dark"] .vom-somoim-bridge .vsm-copy strong{color:#1a2540!important}
+html[data-vom-theme="dark"] .vom-somoim-bridge .vsm-copy small{color:#61708c!important}
+html[data-vom-theme="dark"] .vom-somoim-bridge .vsm-arrow{color:#6452c9!important}
+
+/* Remaining shared light surfaces: same paper/ink pair on every section. */
+html[data-vom-theme="dark"] :is(
+  .quick>a,.notice,.event-card,.events-empty,.home-glance-card,.home-member-prompt-card,.home-about-hero,.home-guide-step,.home-member-shortcut,
+  .stat,.point-ledger-wrap,.point-person,.idea-card,
+  .guard,.folder-card,.resource-section,.resource,.image-group-card,.image-card,.inquiry-card,.operation-event,.operation-progress,.reference-file-row,
+  .detail,.info,.desc,.winner-box,.rank-row,.intro-grid>div,.datebox,.thumb,
+  .operation-reminder,.operation-reminder-empty,.operation-focus-note,
+  .site-log .card,.site-log .stat,.site-log .guard,.site-log .log
+){
+  --vom-paper-ink:#19233e;
+  --vom-paper-muted:#62708c;
+  border-color:#d8def0!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  color:var(--vom-paper-ink)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .quick>a,.notice,.event-card,.events-empty,.home-glance-card,.home-member-prompt-card,.home-about-hero,.home-guide-step,.home-member-shortcut,
+  .stat,.point-ledger-wrap,.point-person,.idea-card,
+  .guard,.folder-card,.resource-section,.resource,.image-group-card,.image-card,.inquiry-card,.operation-event,.operation-progress,.reference-file-row,
+  .detail,.info,.desc,.winner-box,.rank-row,.intro-grid>div,.datebox,.thumb,
+  .operation-reminder,.operation-reminder-empty,.operation-focus-note,
+  .site-log .card,.site-log .stat,.site-log .guard,.site-log .log
+) :is(h1,h2,h3,h4,strong,b,label,th,td,.title,.name,.value){
+  color:var(--vom-paper-ink)!important;
+}
+html[data-vom-theme="dark"] :is(
+  .quick>a,.notice,.event-card,.events-empty,.home-glance-card,.home-member-prompt-card,.home-about-hero,.home-guide-step,.home-member-shortcut,
+  .stat,.point-ledger-wrap,.point-person,.idea-card,
+  .guard,.folder-card,.resource-section,.resource,.image-group-card,.image-card,.inquiry-card,.operation-event,.operation-progress,.reference-file-row,
+  .detail,.info,.desc,.winner-box,.rank-row,.intro-grid>div,.datebox,.thumb,
+  .operation-reminder,.operation-reminder-empty,.operation-focus-note,
+  .site-log .card,.site-log .stat,.site-log .guard,.site-log .log
+) :is(p,small,li,span,.copy,.desc,.meta,.hint){
+  color:var(--vom-paper-muted)!important;
+}
+html[data-vom-theme="dark"] :is(.quick>a,.notice,.event-card,.resource,.inquiry-card,.detail,.winner-box,.rank-row) a{
+  color:#5949bd!important;
+}
