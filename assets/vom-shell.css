@@ -1343,3 +1343,26 @@ html[data-vom-theme="dark"] .home-entry-grid .home-guide-action{
     min-height:104px;
   }
 }
+
+
+/* HOME ENTRY PAIR FINAL VISUAL FIX
+   The member card is the card itself (not an inner child), so keep its paper surface.
+   Remove the browser disclosure marker; the shared purple arrow is the only affordance. */
+html[data-vom-theme="dark"] .home-entry-grid .home-member-prompt-card{
+  border:1px solid #d8def0!important;
+  background:linear-gradient(145deg,#ffffff 0%,#f1f5ff 100%)!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.15)!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-member-prompt-card .home-entry-arrow{
+  background:#7560dc!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-summary{
+  list-style:none!important;
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-summary::marker{
+  content:"";
+}
+html[data-vom-theme="dark"] .home-entry-grid .home-info-summary::-webkit-details-marker{
+  display:none!important;
+}
