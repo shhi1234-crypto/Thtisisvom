@@ -607,8 +607,31 @@
     document.body.appendChild(script);
   }
 
+
+  function ensurePageAtmosphere() {
+    if (path === '/') return;
+    const body = document.body;
+    if (!body) return;
+    let layer = body.querySelector(':scope > .aurora');
+    if (!layer) {
+      layer = document.createElement('div');
+      layer.className = 'aurora';
+      body.prepend(layer);
+    }
+    layer.classList.add('vom-shell-aurora');
+    layer.setAttribute('aria-hidden', 'true');
+    if (!layer.querySelector('.vom-atmosphere-mist')) {
+      ['one', 'two', 'three', 'four'].forEach(function (name) {
+        const mist = document.createElement('span');
+        mist.className = 'vom-atmosphere-mist ' + name;
+        layer.appendChild(mist);
+      });
+    }
+  }
+
   function bootstrap() {
     initVomTheme();
+    ensurePageAtmosphere();
     addStyle();
     normalizeBottomNavigation();
     normalizeBackLinks();

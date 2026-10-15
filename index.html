@@ -2289,7 +2289,7 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
-<link rel="stylesheet" href="/assets/vom-shell.css?v=1">
+<link rel="stylesheet" href="/assets/vom-shell.css?v=5">
 <style id="vom-home-final-style">
 /* AURORA COLLISION MOTION */
 .aurora{isolation:isolate}
@@ -2529,10 +2529,181 @@ body .aurora-spark{
   .aurora,.aurora::before,.aurora::after{animation:none!important}
 }
 
+
+
+/* HOME · dreamy scattered light, no precise concentric rings */
+html[data-vom-theme="dark"] body.vom-home-dream .aurora{
+  background:
+    radial-gradient(80% 72% at -8% 12%,rgba(117,94,229,.46),transparent 64%),
+    radial-gradient(68% 64% at 103% 16%,rgba(56,210,204,.37),transparent 69%),
+    radial-gradient(55% 44% at 52% 110%,rgba(239,138,213,.24),transparent 70%),
+    linear-gradient(133deg,#0a0d20 0%,#131a3c 46%,#09222b 100%)!important;
+  background-size:145% 145%,132% 132%,120% 120%,100% 100%!important;
+  animation:vomHomeDreamBreath 24s ease-in-out infinite alternate!important;
+  transition:background .9s ease!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora::before{
+  content:""!important;
+  inset:-18%!important;
+  width:auto!important;
+  height:auto!important;
+  top:auto!important;
+  right:auto!important;
+  border-radius:58% 42% 66% 34% / 44% 60% 40% 56%!important;
+  background:
+    radial-gradient(ellipse 29% 34% at 22% 62%,rgba(166,132,255,.42),transparent 72%),
+    radial-gradient(ellipse 24% 30% at 77% 26%,rgba(96,230,213,.36),transparent 75%),
+    radial-gradient(ellipse 22% 17% at 50% 83%,rgba(254,168,223,.25),transparent 70%)!important;
+  filter:blur(31px) saturate(1.12)!important;
+  opacity:.88!important;
+  animation:vomHomeDreamWeave 27s cubic-bezier(.42,0,.18,1) infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora::after{
+  content:""!important;
+  inset:-26%!important;
+  border-radius:45% 55% 38% 62% / 60% 37% 63% 40%!important;
+  background:
+    linear-gradient(115deg,transparent 31%,rgba(192,174,255,.16) 45%,transparent 61%),
+    linear-gradient(28deg,transparent 39%,rgba(112,234,219,.14) 53%,transparent 68%)!important;
+  filter:blur(16px) saturate(1.05)!important;
+  mix-blend-mode:screen!important;
+  opacity:.76!important;
+  animation:vomHomeDreamTide 29s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-ring,
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-glow{
+  display:none!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb{
+  outline:0!important;
+  box-shadow:none!important;
+  border-radius:61% 39% 53% 47% / 44% 58% 42% 56%!important;
+  filter:blur(13px) saturate(1.06)!important;
+  mix-blend-mode:screen!important;
+  opacity:.68!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb::before{
+  display:none!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb::after{
+  content:""!important;
+  display:block!important;
+  inset:-13%!important;
+  border-radius:43% 57% 66% 34% / 54% 39% 61% 46%!important;
+  background:radial-gradient(ellipse at 35% 30%,rgba(255,255,255,.48),rgba(255,255,255,.08) 34%,transparent 75%)!important;
+  filter:blur(12px)!important;
+  opacity:.4!important;
+  animation:none!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-one{
+  width:clamp(270px,38vw,610px)!important;
+  height:clamp(150px,23vw,360px)!important;
+  left:-8%!important;
+  top:12%!important;
+  background:radial-gradient(ellipse at 34% 43%,rgba(151,122,255,.68),rgba(101,86,228,.22) 48%,transparent 76%)!important;
+  animation:vomHomeOrbOne 22s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-two{
+  width:clamp(240px,33vw,530px)!important;
+  height:clamp(190px,28vw,430px)!important;
+  right:-9%!important;
+  top:25%!important;
+  background:radial-gradient(ellipse at 56% 35%,rgba(92,231,216,.59),rgba(67,162,227,.20) 50%,transparent 76%)!important;
+  animation:vomHomeOrbTwo 25s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-three{
+  width:clamp(190px,26vw,420px)!important;
+  height:clamp(105px,16vw,255px)!important;
+  left:38%!important;
+  bottom:-1%!important;
+  background:radial-gradient(ellipse at 38% 45%,rgba(255,165,223,.49),rgba(166,111,231,.17) 52%,transparent 76%)!important;
+  animation:vomHomeOrbThree 19s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-four{
+  width:clamp(105px,14vw,235px)!important;
+  height:clamp(75px,10vw,165px)!important;
+  left:19%!important;
+  top:18%!important;
+  background:radial-gradient(ellipse at 36% 34%,rgba(255,216,151,.66),rgba(248,142,211,.20) 48%,transparent 76%)!important;
+  animation:vomHomeOrbFour 16s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-five{
+  width:clamp(82px,11vw,175px)!important;
+  height:clamp(116px,16vw,254px)!important;
+  right:23%!important;
+  bottom:15%!important;
+  background:radial-gradient(ellipse at 38% 32%,rgba(142,211,255,.62),rgba(134,106,236,.18) 50%,transparent 76%)!important;
+  animation:vomHomeOrbFive 13s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-six{
+  width:clamp(38px,5vw,94px)!important;
+  height:clamp(50px,7vw,126px)!important;
+  right:28%!important;
+  top:12%!important;
+  background:radial-gradient(ellipse at 34% 30%,rgba(255,244,173,.82),rgba(255,148,206,.21) 49%,transparent 77%)!important;
+  animation:vomHomeOrbSix 10s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon{
+  border:0!important;
+  border-radius:56% 44% 63% 37% / 42% 59% 41% 58%!important;
+  filter:blur(18px)!important;
+  opacity:.24!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon-one{
+  background:linear-gradient(90deg,transparent,rgba(161,140,255,.42),rgba(104,230,216,.36),transparent)!important;
+  animation:vomHomeRibbonOne 19s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon-two{
+  background:linear-gradient(90deg,transparent,rgba(255,182,229,.30),rgba(135,164,255,.36),transparent)!important;
+  animation:vomHomeRibbonTwo 23s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon-three{
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),rgba(139,229,218,.23),transparent)!important;
+  animation:vomHomeRibbonThree 17s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
+  color:rgba(247,245,255,.82)!important;
+  text-shadow:0 0 18px rgba(185,168,255,.66)!important;
+  opacity:.74!important;
+}
+@keyframes vomHomeDreamBreath{
+  0%{background-position:0% 8%,100% 0%,48% 100%,0 0}
+  100%{background-position:14% 0%,88% 14%,57% 89%,0 0}
+}
+@keyframes vomHomeDreamWeave{
+  0%{transform:translate3d(-3%,1%,0) rotate(-8deg) scale(1)}
+  100%{transform:translate3d(5%,-4%,0) rotate(8deg) scale(1.09)}
+}
+@keyframes vomHomeDreamTide{
+  0%{transform:translate3d(-4%,2%,0) rotate(-5deg) scale(1);opacity:.5}
+  100%{transform:translate3d(6%,-4%,0) rotate(7deg) scale(1.12);opacity:.82}
+}
+@keyframes vomHomeOrbOne{0%{transform:translate3d(-3vw,-2vh,0) rotate(-12deg) scale(1)}100%{transform:translate3d(10vw,7vh,0) rotate(8deg) scale(1.13)}}
+@keyframes vomHomeOrbTwo{0%{transform:translate3d(2vw,-2vh,0) rotate(11deg) scale(1)}100%{transform:translate3d(-9vw,7vh,0) rotate(-8deg) scale(1.16)}}
+@keyframes vomHomeOrbThree{0%{transform:translate3d(-1vw,2vh,0) rotate(6deg) scale(1)}100%{transform:translate3d(9vw,-7vh,0) rotate(-13deg) scale(1.17)}}
+@keyframes vomHomeOrbFour{0%{transform:translate3d(0,0,0) rotate(-7deg) scale(.94)}100%{transform:translate3d(8vw,5vh,0) rotate(13deg) scale(1.2)}}
+@keyframes vomHomeOrbFive{0%{transform:translate3d(1vw,0,0) rotate(8deg) scale(1)}100%{transform:translate3d(-7vw,-7vh,0) rotate(-12deg) scale(1.18)}}
+@keyframes vomHomeOrbSix{0%{transform:translate3d(0,0,0) rotate(-7deg) scale(.9)}100%{transform:translate3d(-4vw,5vh,0) rotate(11deg) scale(1.22)}}
+@keyframes vomHomeRibbonOne{0%{transform:translate(-50%,-50%) rotate(-24deg) scale(.86)}100%{transform:translate(-46%,-56%) rotate(-7deg) scale(1.18)}}
+@keyframes vomHomeRibbonTwo{0%{transform:translate(-50%,-50%) rotate(31deg) scale(.72)}100%{transform:translate(-55%,-42%) rotate(45deg) scale(1.13)}}
+@keyframes vomHomeRibbonThree{0%{transform:translate(-50%,-50%) rotate(66deg) scale(.94)}100%{transform:translate(-43%,-58%) rotate(52deg) scale(1.22)}}
+@media(max-width:700px){
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-one{width:92vw!important;height:42vw!important;left:-29%!important;top:13%!important}
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-two{width:75vw!important;height:58vw!important;right:-30%!important;top:31%!important}
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-three{width:65vw!important;height:28vw!important;left:22%!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora,
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora::before,
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora::after,
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb,
+  html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon{animation:none!important}
+}
+
 </style>
 </head>
 
-<body>
+<body class="vom-home-dream">
 
 <div class="aurora" aria-hidden="true"><span class="aurora-orb aurora-orb-one"></span><span class="aurora-orb aurora-orb-two"></span><span class="aurora-orb aurora-orb-three"></span><span class="aurora-orb aurora-orb-four"></span><span class="aurora-orb aurora-orb-five"></span><span class="aurora-orb aurora-orb-six"></span><span class="aurora-ring aurora-ring-one"></span><span class="aurora-ring aurora-ring-two"></span><span class="aurora-ring aurora-ring-three"></span><span class="aurora-ribbon aurora-ribbon-one"></span><span class="aurora-ribbon aurora-ribbon-two"></span><span class="aurora-ribbon aurora-ribbon-three"></span><span class="aurora-glow"></span><span class="aurora-spark spark-one">✦</span><span class="aurora-spark spark-two">✧</span><span class="aurora-spark spark-three">·</span><span class="aurora-spark spark-four">✦</span></div>
 
@@ -4235,7 +4406,7 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=15"></script>
+<script src="/assets/vom-shell.js?v=17"></script>
 <script>
 (function(){
   let ticking=false;

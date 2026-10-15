@@ -371,3 +371,304 @@ html[data-vom-theme="dark"] .table-shell .gender-mark.female{
   background:#3d2944!important;
   color:#ffc8ef!important;
 }
+
+
+/* VOM ATMOSPHERE · shared dark motion, kept behind content */
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora{
+  position:fixed!important;
+  inset:0!important;
+  z-index:-1!important;
+  overflow:hidden!important;
+  pointer-events:none!important;
+  isolation:isolate!important;
+  background:
+    radial-gradient(78% 64% at -10% 8%,rgba(119,96,238,.30),transparent 66%),
+    radial-gradient(64% 58% at 105% 12%,rgba(69,206,205,.24),transparent 70%),
+    radial-gradient(54% 48% at 48% 112%,rgba(204,123,229,.16),transparent 72%),
+    linear-gradient(132deg,#080d1c 0%,#101832 47%,#081c27 100%)!important;
+  background-size:132% 132%,126% 126%,118% 118%,100% 100%!important;
+  animation:vomAtmosphereFlow 22s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::before,
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::after{
+  content:""!important;
+  position:absolute!important;
+  pointer-events:none!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::before{
+  inset:-18%!important;
+  width:auto!important;
+  height:auto!important;
+  top:auto!important;
+  right:auto!important;
+  border-radius:57% 43% 63% 37% / 42% 54% 46% 58%!important;
+  background:
+    radial-gradient(ellipse 34% 30% at 17% 63%,rgba(142,116,255,.30),transparent 72%),
+    radial-gradient(ellipse 27% 38% at 71% 29%,rgba(88,224,211,.24),transparent 74%),
+    radial-gradient(ellipse 23% 19% at 58% 79%,rgba(255,165,219,.18),transparent 72%)!important;
+  filter:blur(30px)!important;
+  opacity:.84!important;
+  transform-origin:54% 48%!important;
+  animation:vomMistWeave 25s cubic-bezier(.42,0,.18,1) infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::after{
+  inset:-28%!important;
+  border-radius:46% 54% 37% 63% / 57% 38% 62% 43%!important;
+  background:
+    linear-gradient(118deg,transparent 27%,rgba(170,151,255,.13) 44%,transparent 61%),
+    linear-gradient(27deg,transparent 42%,rgba(119,232,217,.11) 54%,transparent 67%)!important;
+  filter:blur(14px)!important;
+  mix-blend-mode:screen!important;
+  opacity:.7!important;
+  animation:vomLightTide 28s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist{
+  position:absolute!important;
+  display:block!important;
+  pointer-events:none!important;
+  mix-blend-mode:screen!important;
+  filter:blur(17px) saturate(1.05)!important;
+  opacity:.62!important;
+  transform-origin:center!important;
+  will-change:transform,filter!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist.one{
+  width:clamp(270px,43vw,670px)!important;
+  height:clamp(160px,25vw,390px)!important;
+  left:-8%!important;
+  top:9%!important;
+  border-radius:61% 39% 58% 42% / 45% 63% 37% 55%!important;
+  background:radial-gradient(ellipse at 34% 42%,rgba(146,119,255,.46),rgba(92,91,211,.16) 48%,transparent 74%)!important;
+  animation:vomDriftOne 20s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist.two{
+  width:clamp(220px,34vw,530px)!important;
+  height:clamp(210px,29vw,460px)!important;
+  right:-10%!important;
+  top:22%!important;
+  border-radius:39% 61% 44% 56% / 58% 37% 63% 42%!important;
+  background:radial-gradient(ellipse at 55% 35%,rgba(91,232,216,.40),rgba(58,168,218,.14) 50%,transparent 76%)!important;
+  animation:vomDriftTwo 24s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist.three{
+  width:clamp(180px,27vw,410px)!important;
+  height:clamp(110px,17vw,270px)!important;
+  left:34%!important;
+  bottom:-4%!important;
+  border-radius:52% 48% 65% 35% / 38% 59% 41% 62%!important;
+  background:radial-gradient(ellipse at 38% 46%,rgba(250,151,221,.34),rgba(173,116,237,.12) 52%,transparent 76%)!important;
+  animation:vomDriftThree 18s ease-in-out infinite alternate!important;
+}
+html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist.four{
+  width:clamp(78px,10vw,165px)!important;
+  height:clamp(105px,15vw,238px)!important;
+  left:56%!important;
+  top:8%!important;
+  border-radius:44% 56% 35% 65% / 63% 41% 59% 37%!important;
+  background:radial-gradient(ellipse at 44% 30%,rgba(255,238,172,.42),rgba(252,150,212,.13) 47%,transparent 76%)!important;
+  animation:vomDriftFour 14s ease-in-out infinite alternate!important;
+}
+@keyframes vomAtmosphereFlow{
+  0%{background-position:0% 12%,100% 0%,50% 100%,0 0}
+  100%{background-position:12% 0%,90% 12%,58% 90%,0 0}
+}
+@keyframes vomMistWeave{
+  0%{transform:translate3d(-2%,1%,0) rotate(-9deg) scale(1)}
+  100%{transform:translate3d(4%,-3%,0) rotate(8deg) scale(1.08)}
+}
+@keyframes vomLightTide{
+  0%{transform:translate3d(-4%,2%,0) rotate(-5deg) scale(1);opacity:.52}
+  100%{transform:translate3d(5%,-3%,0) rotate(6deg) scale(1.1);opacity:.8}
+}
+@keyframes vomDriftOne{
+  0%{transform:translate3d(-2vw,-1vh,0) rotate(-12deg) scale(1)}
+  100%{transform:translate3d(9vw,7vh,0) rotate(9deg) scale(1.12)}
+}
+@keyframes vomDriftTwo{
+  0%{transform:translate3d(2vw,-1vh,0) rotate(10deg) scale(1)}
+  100%{transform:translate3d(-8vw,6vh,0) rotate(-8deg) scale(1.14)}
+}
+@keyframes vomDriftThree{
+  0%{transform:translate3d(-1vw,2vh,0) rotate(5deg) scale(1)}
+  100%{transform:translate3d(8vw,-6vh,0) rotate(-13deg) scale(1.15)}
+}
+@keyframes vomDriftFour{
+  0%{transform:translate3d(0,0,0) rotate(-8deg) scale(.94)}
+  100%{transform:translate3d(-5vw,7vh,0) rotate(14deg) scale(1.18)}
+}
+@media (prefers-reduced-motion:reduce){
+  html[data-vom-theme="dark"] body .aurora.vom-shell-aurora,
+  html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::before,
+  html[data-vom-theme="dark"] body .aurora.vom-shell-aurora::after,
+  html[data-vom-theme="dark"] body .aurora.vom-shell-aurora .vom-atmosphere-mist{animation:none!important}
+}
+
+/* Contrast sweep · Busking setlist and shared data surfaces */
+html[data-vom-theme="dark"] .board,
+html[data-vom-theme="dark"] .run-order,
+html[data-vom-theme="dark"] .detail,
+html[data-vom-theme="dark"] .song-draw,
+html[data-vom-theme="dark"] .extra-block,
+html[data-vom-theme="dark"] .personal-order-panel,
+html[data-vom-theme="dark"] .u-guide-chip,
+html[data-vom-theme="dark"] .u-scale-card,
+html[data-vom-theme="dark"] .u-tip-card,
+html[data-vom-theme="dark"] .u-equipment{
+  border-color:#34476e!important;
+  background:linear-gradient(145deg,rgba(18,28,52,.96),rgba(21,34,62,.92))!important;
+  color:#edf2ff!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.20)!important;
+}
+html[data-vom-theme="dark"] .board h2,
+html[data-vom-theme="dark"] .run-order h2,
+html[data-vom-theme="dark"] .detail h1,
+html[data-vom-theme="dark"] .song-draw-title,
+html[data-vom-theme="dark"] .u-guide-chip strong,
+html[data-vom-theme="dark"] .u-scale-card strong,
+html[data-vom-theme="dark"] .u-tip-card strong{
+  color:#f4f6ff!important;
+}
+html[data-vom-theme="dark"] .board p,
+html[data-vom-theme="dark"] .detail p,
+html[data-vom-theme="dark"] .song-draw-sub,
+html[data-vom-theme="dark"] .u-guide-lead,
+html[data-vom-theme="dark"] .u-guide-chip small,
+html[data-vom-theme="dark"] .u-scale-card p,
+html[data-vom-theme="dark"] .u-tip-card p{
+  color:#b8c4df!important;
+}
+html[data-vom-theme="dark"] .song-order-chip,
+html[data-vom-theme="dark"] .song-index,
+html[data-vom-theme="dark"] .slot-no,
+html[data-vom-theme="dark"] .order-num,
+html[data-vom-theme="dark"] .part-title,
+html[data-vom-theme="dark"] .extra-row .extra-tag{
+  border-color:#5456a4!important;
+  background:#27235b!important;
+  color:#e8e6ff!important;
+}
+html[data-vom-theme="dark"] .slot-table{
+  border-color:#33466b!important;
+  background:#101a30!important;
+}
+html[data-vom-theme="dark"] .slot-head{
+  background:#222d4d!important;
+  color:#b9c6e0!important;
+}
+html[data-vom-theme="dark"] .slot-row,
+html[data-vom-theme="dark"] .slot-row.empty-slot,
+html[data-vom-theme="dark"] .slot-row[class*="person-"],
+html[data-vom-theme="dark"] .order-item,
+html[data-vom-theme="dark"] .order-item[class*="person-"],
+html[data-vom-theme="dark"] .extra-row,
+html[data-vom-theme="dark"] .song-choice{
+  border-color:#2f4166!important;
+  background:linear-gradient(90deg,#152039,#101a30 68%)!important;
+  color:#eff3ff!important;
+}
+html[data-vom-theme="dark"] .slot-row:hover,
+html[data-vom-theme="dark"] .order-item:hover,
+html[data-vom-theme="dark"] .song-choice:hover{
+  background:linear-gradient(90deg,#1d2b4c,#15213b 72%)!important;
+}
+html[data-vom-theme="dark"] .slot-member strong,
+html[data-vom-theme="dark"] .song-name,
+html[data-vom-theme="dark"] .order-member,
+html[data-vom-theme="dark"] .order-song strong,
+html[data-vom-theme="dark"] .song-choice strong{
+  color:#f3f6ff!important;
+}
+html[data-vom-theme="dark"] .slot-member small,
+html[data-vom-theme="dark"] .slot-empty-text,
+html[data-vom-theme="dark"] .song-artist,
+html[data-vom-theme="dark"] .song-artist-inline,
+html[data-vom-theme="dark"] .order-song small,
+html[data-vom-theme="dark"] .song-choice small,
+html[data-vom-theme="dark"] .drag-handle{
+  color:#b9c5dc!important;
+}
+html[data-vom-theme="dark"] .yt{
+  border:1px solid #56658c!important;
+  background:#202943!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .file-link{
+  border:1px solid #3f8078!important;
+  background:#163c3d!important;
+  color:#cafbf0!important;
+}
+html[data-vom-theme="dark"] .tiny,
+html[data-vom-theme="dark"] .block-time-controls button,
+html[data-vom-theme="dark"] .setup-time-controls button,
+html[data-vom-theme="dark"] .break-controls button{
+  border:1px solid #5f68ae!important;
+  background:#252957!important;
+  color:#e9e8ff!important;
+}
+html[data-vom-theme="dark"] .tiny.danger,
+html[data-vom-theme="dark"] .break-remove{
+  border-color:#8f5266!important;
+  background:#482637!important;
+  color:#ffd9e3!important;
+}
+html[data-vom-theme="dark"] .schedule-step,
+html[data-vom-theme="dark"] .timeline-buffer{
+  border-color:#34466e!important;
+  background:#172440!important;
+  color:#cbd6ec!important;
+}
+html[data-vom-theme="dark"] .schedule-step small,
+html[data-vom-theme="dark"] .timeline-buffer,
+html[data-vom-theme="dark"] .time-note{
+  color:#b7c4dd!important;
+}
+html[data-vom-theme="dark"] .schedule-step strong,
+html[data-vom-theme="dark"] .schedule-step.live strong,
+html[data-vom-theme="dark"] .block-time-controls b,
+html[data-vom-theme="dark"] .setup-time-controls b,
+html[data-vom-theme="dark"] .break-controls b{
+  color:#f0edff!important;
+}
+html[data-vom-theme="dark"] .schedule-step.live,
+html[data-vom-theme="dark"] .timeline-buffer.good{
+  background:linear-gradient(135deg,#1d3151,#173f42)!important;
+}
+html[data-vom-theme="dark"] .timeline-buffer.warn,
+html[data-vom-theme="dark"] .break-row{
+  border-color:#6d5336!important;
+  background:linear-gradient(135deg,#3f2d23,#2c2737)!important;
+  color:#ffdc9a!important;
+}
+html[data-vom-theme="dark"] .setlist-tabs{
+  border-color:#36476d!important;
+  background:#111c35!important;
+}
+html[data-vom-theme="dark"] .setlist-tab{
+  color:#b8c4db!important;
+}
+html[data-vom-theme="dark"] .setlist-tab.active{
+  background:linear-gradient(135deg,#6555d7,#8474eb)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(101,82,220,.34)!important;
+}
+html[data-vom-theme="dark"] .overlay .modal,
+html[data-vom-theme="dark"] .overlay .menu-card{
+  border:1px solid #3c4f78!important;
+  background:linear-gradient(145deg,#111a31,#172442)!important;
+  color:#edf3ff!important;
+}
+html[data-vom-theme="dark"] .overlay .modal-top h3,
+html[data-vom-theme="dark"] .overlay .menu-card h3,
+html[data-vom-theme="dark"] .overlay .field-wrap label{
+  color:#f2f5ff!important;
+}
+html[data-vom-theme="dark"] .overlay .modal-note,
+html[data-vom-theme="dark"] .overlay .song-choice small{
+  color:#b9c5dc!important;
+}
+html[data-vom-theme="dark"] .overlay .field,
+html[data-vom-theme="dark"] .overlay input[type="file"]{
+  border-color:#42557e!important;
+  background:#0d162b!important;
+  color:#f1f4ff!important;
+}
