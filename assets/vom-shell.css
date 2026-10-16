@@ -1715,3 +1715,99 @@ html[data-vom-theme="dark"] .ranking-grid .rank-icon{
     white-space:normal;
   }
 }
+
+
+/* HOME · LIVE MEMBER COUNT
+   The home card uses the same active-member definition as INFO, so its public
+   headline always matches the member directory. */
+html[data-vom-theme="dark"] .home-about-hero .home-active-members{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  gap:2px 14px!important;
+  margin:19px 0 18px!important;
+  padding:14px 16px!important;
+  min-width:0!important;
+  border:1px solid rgba(104,88,213,.24)!important;
+  border-radius:18px!important;
+  background:linear-gradient(118deg,rgba(109,89,218,.12),rgba(93,205,195,.12))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85)!important;
+}
+html[data-vom-theme="dark"] .home-about-hero .home-active-members-label{
+  color:#7562d9!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.14em!important;
+  line-height:1.1!important;
+}
+html[data-vom-theme="dark"] .home-about-hero .home-active-members strong{
+  grid-column:2!important;
+  grid-row:1 / span 2!important;
+  display:flex!important;
+  align-items:baseline!important;
+  gap:4px!important;
+  color:#18213f!important;
+  font-size:clamp(30px,2.8vw,42px)!important;
+  font-weight:900!important;
+  line-height:.92!important;
+  letter-spacing:-.07em!important;
+}
+html[data-vom-theme="dark"] .home-about-hero .home-active-members strong b{
+  color:#18213f!important;
+  font:inherit!important;
+}
+html[data-vom-theme="dark"] .home-about-hero .home-active-members strong span{
+  color:#6f5cd4!important;
+  font-size:.46em!important;
+  font-weight:900!important;
+  letter-spacing:-.02em!important;
+}
+html[data-vom-theme="dark"] .home-about-hero .home-active-members small{
+  min-width:0!important;
+  color:#596985!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1.25!important;
+}
+@media(max-width:640px){
+  html[data-vom-theme="dark"] .home-about-hero .home-active-members{
+    margin:16px 0!important;
+    padding:13px 14px!important;
+  }
+}
+
+/* HOME RANKING · readable metric labels without shrinking the display titles. */
+html[data-vom-theme="dark"] .ranking-grid .rank-head{
+  min-height:174px!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-metric{
+  display:inline-flex!important;
+  align-items:center!important;
+  margin:15px 0 0!important;
+  padding:7px 10px!important;
+  border:1px solid rgba(235,240,255,.23)!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.11)!important;
+  color:#edf0ff!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13)!important;
+  font-family:"Noto Sans KR",sans-serif!important;
+  font-size:11px!important;
+  font-weight:800!important;
+  line-height:1!important;
+  letter-spacing:-.025em!important;
+  white-space:nowrap!important;
+}
+html[data-vom-theme="dark"] .ranking-grid .rank-shell:hover .rank-metric{
+  border-color:rgba(255,255,255,.40)!important;
+  background:rgba(255,255,255,.16)!important;
+}
+@media(max-width:900px){
+  html[data-vom-theme="dark"] .ranking-grid .rank-head{
+    min-height:154px!important;
+  }
+  html[data-vom-theme="dark"] .ranking-grid .rank-metric{
+    margin-top:12px!important;
+    font-size:10px!important;
+  }
+}

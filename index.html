@@ -2289,7 +2289,7 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
-<link rel="stylesheet" href="/assets/vom-shell.css?v=20">
+<link rel="stylesheet" href="/assets/vom-shell.css?v=21">
 <style id="vom-home-final-style">
 /* AURORA COLLISION MOTION */
 .aurora{isolation:isolate}
@@ -2809,6 +2809,11 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
       <div class="home-about-kicker">ABOUT VOM</div>
       <h2>노래로 연결되는<br>우리들의 이야기</h2>
       <p>함께 부르고, 듣고, 기록하는 순간들.<br>VOM은 음악을 좋아하는 사람들이 모여<br>서로의 무대를 응원하고 성장하는 공간이에요.</p>
+      <div id="homeActiveMembers" class="home-active-members" role="status" aria-live="polite" aria-label="현재 활동 중인 VOM 멤버 수를 불러오는 중">
+        <span class="home-active-members-label">VOM PEOPLE</span>
+        <strong><b id="homeActiveMemberCount">—</b><span>명</span></strong>
+        <small>현재 함께 활동 중</small>
+      </div>
       <div class="home-about-points"><span>함께 부르고</span><span>서로 응원하고</span><span>무대를 기록해요</span></div>
       <a class="home-about-link" href="/info/">VOM 소개 자세히 보기 <span>→</span></a>
     </article>
@@ -2838,12 +2843,13 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
 
           <div>
             <div class="rank-kicker">
-              OPEN MIC · WINNERS
+              OPEN MIC · 월별 우승자 랭킹
             </div>
 
             <h2 class="rank-title">
               대관공연
             </h2>
+            <p class="rank-metric">월별 대관공연 우승 기록</p>
           </div>
 
           <div class="rank-icon">
@@ -2875,12 +2881,13 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
 
           <div>
             <div class="rank-kicker">
-              EAR SHARE · HALL OF FAME
+              EAR SHARE · 누적 귀점유율 랭킹
             </div>
 
             <h2 class="rank-title">
               귀점유율
             </h2>
+            <p class="rank-metric">누적 귀점유율 기준</p>
           </div>
 
           <div class="rank-icon">
@@ -2912,12 +2919,13 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
 
           <div>
             <div class="rank-kicker">
-              VOM POINT · RANKING
+              VOM POINT · 활동 포인트 랭킹
             </div>
 
             <h2 class="rank-title">
               VOM Point
             </h2>
+            <p class="rank-metric">누적 활동 · 참여 포인트 기준</p>
           </div>
 
           <div class="rank-icon">
@@ -3263,6 +3271,7 @@ async function start(){
   loadHomeBirthday(access);
 
   await Promise.all([
+    loadHomeActiveMembers(),
     loadOpenMicRanking(),
     loadEarShare(),
     loadPointRanking(),
@@ -3330,6 +3339,57 @@ async function loadHomeBirthday(access){
     box.innerHTML=dateMarkup+`<span class="birthday-mini${today?' today':''}">${label}</span>`+names+(approved?'':guestLink);
   }catch{
     box.innerHTML=dateMarkup+'<span class="birthday-mini">생일 정보를 불러오지 못했어요.</span>'+(approved?'':guestLink);
+  }
+}
+
+function homeMemberStatus(row){
+  return String(
+    row.status ??
+    row.activity_status ??
+    row.active_status ??
+    ''
+  ).trim();
+}
+
+function isHomeActiveMember(row){
+  const status=homeMemberStatus(row);
+  if(!status)return true;
+
+  return ![
+    '탈퇴',
+    '비활동',
+    'inactive',
+    'withdrawn'
+  ].includes(
+    status.replace(/\s+/g,'').toLowerCase()
+  );
+}
+
+async function loadHomeActiveMembers(){
+  const countEl=document.getElementById('homeActiveMemberCount');
+  const panel=document.getElementById('homeActiveMembers');
+  if(!countEl)return;
+
+  try{
+    const {data,error}=await db
+      .from('members_display')
+      .select('*');
+
+    if(error)throw error;
+
+    const active=(data||[]).filter(isHomeActiveMember);
+    countEl.textContent=active.length;
+    panel?.setAttribute(
+      'aria-label',
+      `현재 활동 중인 VOM 멤버 ${active.length}명`
+    );
+  }catch(error){
+    console.error('HOME ACTIVE MEMBERS:',error);
+    countEl.textContent='—';
+    panel?.setAttribute(
+      'aria-label',
+      '현재 활동 중인 VOM 멤버 수를 불러오지 못했습니다'
+    );
   }
 }
 
