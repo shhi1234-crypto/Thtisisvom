@@ -167,6 +167,14 @@ Deno.serve(async (req) => {
   const action = String(payload.action || "");
 
   try {
+    if (action === "public_member_count") {
+      const { count, error } = await admin
+        .from("members")
+        .select("id", { count: "exact", head: true });
+      if (error) throw error;
+      return response({ count: count ?? 0 }, 200, requestOrigin);
+    }
+
     if (action === "hint") {
       const memberId = asMemberId(payload.member_id);
       if (!memberId) return response({ error: "회원을 선택해 주세요." }, 400, requestOrigin);

@@ -2809,10 +2809,10 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
       <div class="home-about-kicker">ABOUT VOM</div>
       <h2>노래로 연결되는<br>우리들의 이야기</h2>
       <p>함께 부르고, 듣고, 기록하는 순간들.<br>VOM은 음악을 좋아하는 사람들이 모여<br>서로의 무대를 응원하고 성장하는 공간이에요.</p>
-      <div id="homeActiveMembers" class="home-active-members" role="status" aria-live="polite" aria-label="현재 활동 중인 VOM 멤버 수를 불러오는 중">
+      <div id="homeActiveMembers" class="home-active-members" role="status" aria-live="polite" aria-label="VOM 멤버 전체 수를 불러오는 중">
         <span class="home-active-members-label">VOM PEOPLE</span>
         <strong><b id="homeActiveMemberCount">—</b><span>명</span></strong>
-        <small>현재 함께 활동 중</small>
+        <small>VOM 멤버 전체</small>
       </div>
       <div class="home-about-points"><span>함께 부르고</span><span>서로 응원하고</span><span>무대를 기록해요</span></div>
       <a class="home-about-link" href="/info/">VOM 소개 자세히 보기 <span>→</span></a>
@@ -3342,53 +3342,34 @@ async function loadHomeBirthday(access){
   }
 }
 
-function homeMemberStatus(row){
-  return String(
-    row.status ??
-    row.activity_status ??
-    row.active_status ??
-    ''
-  ).trim();
-}
-
-function isHomeActiveMember(row){
-  const status=homeMemberStatus(row);
-  if(!status)return true;
-
-  return ![
-    '탈퇴',
-    '비활동',
-    'inactive',
-    'withdrawn'
-  ].includes(
-    status.replace(/\s+/g,'').toLowerCase()
-  );
-}
-
 async function loadHomeActiveMembers(){
   const countEl=document.getElementById('homeActiveMemberCount');
   const panel=document.getElementById('homeActiveMembers');
   if(!countEl)return;
 
   try{
-    const {data,error}=await db
-      .from('members_display')
-      .select('*');
-
+    const {data,error}=await db.functions.invoke(
+      'member-account',
+      {body:{action:'public_member_count'}}
+    );
     if(error)throw error;
 
-    const active=(data||[]).filter(isHomeActiveMember);
-    countEl.textContent=active.length;
+    const count=Number(data?.count);
+    if(!Number.isSafeInteger(count)||count<0){
+      throw new Error('invalid_member_count');
+    }
+
+    countEl.textContent=count;
     panel?.setAttribute(
       'aria-label',
-      `현재 활동 중인 VOM 멤버 ${active.length}명`
+      `현재 VOM 멤버 전체 ${count}명`
     );
   }catch(error){
-    console.error('HOME ACTIVE MEMBERS:',error);
+    console.error('HOME MEMBER COUNT:',error);
     countEl.textContent='—';
     panel?.setAttribute(
       'aria-label',
-      '현재 활동 중인 VOM 멤버 수를 불러오지 못했습니다'
+      'VOM 멤버 전체 수를 불러오지 못했습니다'
     );
   }
 }
