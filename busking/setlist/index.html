@@ -1169,7 +1169,7 @@ function createDirectOrderItem(song,no){
     <div class="order-num">＋</div>
     <div class="order-member"><span class="member-pos">${song.song_type==='group'?'단체':'직접'}</span>${performerChipsForDirect(song)}</div>
     <div class="order-song"><strong>${esc(song.song_title||'곡명 미입력')}${song.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
-    <div class="order-fallback">${songReferenceLinks(song)}${adminMode?`<button class="tiny danger" onclick="removeDirectSong(${song.id})">삭제</button>`:''}</div>
+    <div class="order-fallback">${finalSongReferenceLink(song)}${adminMode?`<button class="tiny danger" onclick="removeDirectSong(${song.id})">삭제</button>`:''}</div>
   </div>`;
 }
 
@@ -1182,7 +1182,7 @@ function createPlannedOrderItem(item){
     <div class="order-num">#${sequence}</div>
     <div class="order-member">${song?performerChipsForRepertoire(song,slot):`<div class="performer-chips"><span class="performer-chip person-${Math.min(pos,10)} main">${esc(member?.name||'미정')}</span></div>`}</div>
     <div class="order-song"><strong>${esc(song?.song_title||`${songIndex+1}번째 곡 미정`)}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
-    <div class="order-fallback">${songReferenceLinks(song)}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div>
+    <div class="order-fallback">${finalSongReferenceLink(song)}${saved&&adminMode?`<button class="tiny" onclick="moveOrder(${saved.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${saved.id},1)">↓</button>`:''}</div>
   </div>`;
 }
 
@@ -1193,7 +1193,7 @@ function extraSongsForFinalBlock(){
 }
 function renderExtraSongs(){
   const extra=extraSongsForFinalBlock();
-  return `<div class="extra-block"><div class="extra-head"><div><strong>＋ 추가곡 · 현장 결정</strong><small>마지막 구간 뒤에 진행 · 순서는 현장에서 자유롭게 결정</small></div>${adminMode?`<button class="secondary" onclick="openExtraSongChooser()">추가곡 선택</button>`:''}</div><div class="extra-list">${extra.length?extra.map(({slot,ss,song})=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<div class="extra-row person-${Math.min(pos,10)}"><div class="extra-tag">추가</div><div class="order-member">${esc(m?.name||slot.member_name||'')}</div><div class="order-song"><strong>${esc(song?.song_title||'곡 미정')}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div><div class="order-fallback">${songReferenceLinks(song)}${adminMode?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</div></div>`}).join(''):'<div class="slot-empty-text" style="padding:4px 0">추가곡은 현장에서 필요할 때 넣으면 됩니다.</div>'}</div></div>`;
+  return `<div class="extra-block"><div class="extra-head"><div><strong>＋ 추가곡 · 현장 결정</strong><small>마지막 구간 뒤에 진행 · 순서는 현장에서 자유롭게 결정</small></div>${adminMode?`<button class="secondary" onclick="openExtraSongChooser()">추가곡 선택</button>`:''}</div><div class="extra-list">${extra.length?extra.map(({slot,ss,song})=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id);return `<div class="extra-row person-${Math.min(pos,10)}"><div class="extra-tag">추가</div><div class="order-member">${esc(m?.name||slot.member_name||'')}</div><div class="order-song"><strong>${esc(song?.song_title||'곡 미정')}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div><div class="order-fallback">${finalSongReferenceLink(song)}${adminMode?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</div></div>`}).join(''):'<div class="slot-empty-text" style="padding:4px 0">추가곡은 현장에서 필요할 때 넣으면 됩니다.</div>'}</div></div>`;
 }
 function openExtraSongChooser(){
   if(!adminMode)return;
@@ -1230,7 +1230,7 @@ function createOrderItem(row,no){
     <div class="order-num">${no}</div>
     <div class="order-member">${esc(member?.name||slot?.member_name||'-')}</div>
     <div class="order-song"><strong>${esc(song?.song_title||'곡 정보 없음')}${song?.artist_name?` <span class="song-artist-inline">· ${esc(song.artist_name)}</span>`:''}</strong></div>
-    <div class="order-fallback">${songReferenceLinks(song)}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
+    <div class="order-fallback">${finalSongReferenceLink(song)}${adminMode?`<button class="tiny" onclick="moveOrder(${row.id},-1)">↑</button><button class="tiny" onclick="moveOrder(${row.id},1)">↓</button>`:''}</div>
   </div>`;
 }
 
@@ -1783,6 +1783,12 @@ async function uploadDirectSongAttachment(file){const {mime}=attachmentDetails(f
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
 function songReferenceLinks(song){const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');return `${youtube?`<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${file?`<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`:''}`}
+function finalSongReferenceLink(song){
+  const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');
+  if(file)return `<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`;
+  if(youtube)return `<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`;
+  return '';
+}
 
 async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:account,error}=await db.functions.invoke('member-account',{body:{action:'whoami'}});if(error||account?.error){console.warn('MEMBER SESSION',account?.error||error?.message);currentMemberId=null;return}currentMemberId=account?.member_id||null}
 async function checkAdmin(){
