@@ -1811,3 +1811,207 @@ html[data-vom-theme="dark"] .ranking-grid .rank-shell:hover .rank-metric{
     font-size:10px!important;
   }
 }
+
+
+/* VOM MIDNIGHT SURFACE SYSTEM · unified contrast for every page
+   A midnight canvas may use light paper only deliberately. Data-dense views use
+   one high-contrast navy surface, and shared headers never create a black block. */
+html[data-vom-theme="dark"] header.header.vom-header{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(178,193,255,.14)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+html[data-vom-theme="dark"] header.header.vom-header::before,
+html[data-vom-theme="dark"] header.header.vom-header::after{
+  background:none!important;
+  box-shadow:none!important;
+}
+
+/* MEMBERS · dark rows, bright data, and one readable control language. */
+html[data-vom-theme="dark"] body:has(.table-shell) .summary>span,
+html[data-vom-theme="dark"] body:has(.table-shell) .summary .staff-summary-btn{
+  background:linear-gradient(135deg,#172544,#1d2d50)!important;
+  border-color:#3d4f7d!important;
+  color:#e8efff!important;
+  box-shadow:none!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .summary b,
+html[data-vom-theme="dark"] body:has(.table-shell) .summary .staff-summary-btn b{
+  color:#cfc5ff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .summary .staff-summary-arrow{
+  color:#c9beff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .birthday-now{
+  background:linear-gradient(100deg,#14213f,#202453)!important;
+  border-color:#3c4d7b!important;
+  color:#dce7fb!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .birthday-now strong{
+  color:#f3d891!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .birthday-now .birthday-person{
+  background:#353166!important;
+  color:#eeeaff!important;
+  border:1px solid rgba(185,174,255,.22)!important;
+}
+html[data-vom-theme="dark"] .table-shell{
+  background:#101a33!important;
+  border-color:#374a76!important;
+  box-shadow:0 18px 38px rgba(1,7,23,.28)!important;
+}
+html[data-vom-theme="dark"] .table-shell table{
+  background:transparent!important;
+}
+html[data-vom-theme="dark"] .table-shell thead{
+  background:#eef2fb!important;
+}
+html[data-vom-theme="dark"] .table-shell thead th{
+  color:#1e2a47!important;
+  border-bottom-color:#d5ddec!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody tr{
+  background:#101a33!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody tr:nth-child(even){
+  background:#172442!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody tr:hover{
+  background:#203155!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody td{
+  color:#e5edff!important;
+  border-bottom-color:rgba(151,171,216,.18)!important;
+}
+html[data-vom-theme="dark"] .table-shell tbody td :is(
+  .profile-static,.profile-edit,.profile-edit .value,.profile-empty,
+  .name,.name-text,.member-name-wrap
+){
+  color:#e5edff!important;
+}
+html[data-vom-theme="dark"] .table-shell .profile-placeholder,
+html[data-vom-theme="dark"] .table-shell .profile-edit.profile-placeholder .value{
+  color:#8fa2cb!important;
+}
+html[data-vom-theme="dark"] .table-shell .role-pill.staff{
+  background:#513783!important;
+  color:#f6f0ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .role-pill.normal{
+  background:#2b395b!important;
+  color:#dce7ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .order-badge{
+  background:#354573!important;
+  color:#edf3ff!important;
+}
+html[data-vom-theme="dark"] .table-shell .order-badge.staff{
+  background:#ffe6a1!important;
+  color:#765016!important;
+}
+html[data-vom-theme="dark"] .table-shell .gender-mark.male{
+  background:#18354c!important;
+  border-color:#2d6387!important;
+  color:#a8dbff!important;
+}
+html[data-vom-theme="dark"] .table-shell .gender-mark.female{
+  background:#40254c!important;
+  border-color:#75427b!important;
+  color:#ffc7ef!important;
+}
+html[data-vom-theme="dark"] .table-shell .song-btn{
+  border-color:#656fc8!important;
+  background:linear-gradient(135deg,#35356c,#272d5c)!important;
+  color:#f0edff!important;
+}
+html[data-vom-theme="dark"] .table-shell .song-btn .setlist-arrow{
+  color:#cfc8ff!important;
+}
+
+/* CALENDAR · use the same midnight hierarchy as MEMBERS rather than white panels. */
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .vom-somoim-bridge>a,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-alert,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .real-calendar,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .selected-date-box{
+  background:linear-gradient(145deg,#14213f,#1d2d50)!important;
+  border-color:#3a4d7a!important;
+  color:#edf3ff!important;
+  box-shadow:0 16px 34px rgba(1,7,23,.24)!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .vom-somoim-bridge .vsm-copy,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .vom-somoim-bridge .vsm-copy strong,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide :is(strong,b),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-alert :is(strong,b),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .real-calendar :is(h1,h2,h3,h4,strong,b),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .selected-date-box :is(h1,h2,h3,h4,strong,b){
+  color:#eef3ff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .vom-somoim-bridge .vsm-copy>span,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide :is(p,small,.calendar-guide-note),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-alert p,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .real-calendar :is(p,small,span),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .selected-date-box :is(p,small,span){
+  color:#b9c7e5!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .vom-somoim-bridge .vsm-arrow,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide .calendar-guide-icon,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide .calendar-guide-step span{
+  color:#d0c7ff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide .calendar-guide-step{
+  background:#101a33!important;
+  border-color:#354973!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide .calendar-guide-progress{
+  background:#2d3c65!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-member-guide .calendar-guide-progress i{
+  background:linear-gradient(90deg,#9c88ff,#77d7d1)!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .filter,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .view-switch button,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .month-nav button{
+  background:#1b294a!important;
+  border-color:#435986!important;
+  color:#c6d2eb!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .filter.active,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .view-switch button.active{
+  background:linear-gradient(135deg,#765fe0,#728eea)!important;
+  border-color:transparent!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-row,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-day,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .selected-date-event{
+  background:#101a33!important;
+  border-color:#344971!important;
+  color:#e9f0ff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-row small,
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .calendar-day :is(span,small),
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .selected-date-event :is(span,small){
+  color:#b9c7e5!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event-readiness-actions button{
+  background:#6d57d5!important;
+  border-color:#927fff!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event{
+  background:linear-gradient(145deg,#14213f,#1b2a4b)!important;
+  border-color:#3a4e7a!important;
+  color:#edf3ff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event :is(h1,h2,h3,h4,strong,b,.date-box){
+  color:#eef3ff!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event :is(p,small,.event-meta,.event-description,.detail-hint){
+  color:#b9c7e5!important;
+}
+html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event .type{
+  color:#cfc6ff!important;
+}
