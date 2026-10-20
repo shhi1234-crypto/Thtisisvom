@@ -2015,3 +2015,63 @@ html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event :is(p,small,
 html[data-vom-theme="dark"] body:has(.calendar-member-guide) .event .type{
   color:#cfc6ff!important;
 }
+
+
+/* MEMBERS CASCADE GUARD
+   This selector intentionally outranks the generic paper-card typography above.
+   Member directory rows are midnight data rows, never paper cards. */
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell{
+  background:#101a33!important;
+  border-color:#374a76!important;
+  color:#e5edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell table,
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody{
+  background:transparent!important;
+  color:#e5edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody tr{
+  background:#101a33!important;
+  color:#e5edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody tr:nth-child(even){
+  background:#172442!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody td{
+  color:#e5edff!important;
+  border-bottom-color:rgba(151,171,216,.18)!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody td :is(
+  span,small,a,button,.profile-static,.profile-edit,.profile-edit .value,
+  .profile-empty,.name,.name-text,.member-name-wrap
+){
+  color:#e5edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .role-pill.staff{
+  background:#513783!important;
+  color:#f6f0ff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .role-pill.normal{
+  background:#2b395b!important;
+  color:#dce7ff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .order-badge{
+  background:#354573!important;
+  color:#edf3ff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .order-badge.staff{
+  background:#ffe6a1!important;
+  color:#765016!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .song-btn{
+  border-color:#656fc8!important;
+  background:linear-gradient(135deg,#35356c,#272d5c)!important;
+  color:#f0edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .song-btn .setlist-arrow{
+  color:#cfc8ff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .profile-placeholder,
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .profile-edit.profile-placeholder .value{
+  color:#8fa2cb!important;
+}
