@@ -2109,3 +2109,102 @@ html[data-vom-theme="dark"] .home-scroll-button{
 html[data-vom-theme="dark"] .vc-fab small{
   color:#eff3ff!important;
 }
+
+
+/* MEMBERS · ORDER + RENEWAL VISIBILITY */
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:1px!important;
+  width:39px!important;
+  height:36px!important;
+  margin:auto!important;
+  border:1px solid #677caf!important;
+  border-radius:11px!important;
+  background:linear-gradient(145deg,#3c4f83,#26385f)!important;
+  color:#f6f8ff!important;
+  line-height:1!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 5px 12px rgba(0,0,0,.16)!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge small{
+  color:#c6d3ef!important;
+  font-size:7px!important;
+  font-weight:900!important;
+  letter-spacing:.7px!important;
+  line-height:1!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge b{
+  color:#fff!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  line-height:1!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge.staff{
+  border-color:#ffd66f!important;
+  background:linear-gradient(145deg,#fff3c3,#ffdc7f)!important;
+  color:#3f2b09!important;
+  box-shadow:0 5px 14px rgba(255,196,65,.18),inset 0 1px 0 rgba(255,255,255,.92)!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge.staff small{
+  color:#765016!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge.staff b{
+  color:#34240a!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .member-name-wrap{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  min-width:0!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .member-name-stack{
+  display:grid!important;
+  min-width:0!important;
+  gap:3px!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .member-name-main{
+  display:flex!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .member-join-date{
+  color:#b7c7e7!important;
+  font-size:9px!important;
+  font-weight:800!important;
+  line-height:1.1!important;
+  white-space:nowrap!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .renewal-badge{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:20px!important;
+  padding:0 6px!important;
+  border:1px solid #9384ff!important;
+  border-radius:999px!important;
+  background:linear-gradient(135deg,#604dcc,#7665df)!important;
+  color:#fff!important;
+  font-size:8px!important;
+  font-weight:900!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  box-shadow:0 4px 10px rgba(93,76,205,.26)!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .summary .renewal-summary{
+  border-color:#6151bd!important;
+  background:linear-gradient(135deg,#312a67,#263b69)!important;
+  color:#f0edff!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .summary .renewal-summary b{
+  color:#fff0aa!important;
+}
+@media(max-width:760px){
+  html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge{
+    width:37px!important;
+    height:34px!important;
+  }
+  html[data-vom-theme="dark"] body:has(.table-shell) .table-shell .order-badge b{
+    font-size:13px!important;
+  }
+}
