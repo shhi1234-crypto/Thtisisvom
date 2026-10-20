@@ -2208,3 +2208,18 @@ html[data-vom-theme="dark"] body:has(.table-shell) .summary .renewal-summary b{
     font-size:13px!important;
   }
 }
+
+/* MEMBERS · ORDER BADGE CONTRAST FINAL GUARD */
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody td .order-badge{
+  color:#f8fbff!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  font-variant-numeric:tabular-nums!important;
+  text-shadow:0 1px 1px rgba(4,10,26,.42)!important;
+}
+html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody td .order-badge.staff{
+  border-color:#f1c451!important;
+  background:linear-gradient(145deg,#fff0bc,#ffd97c)!important;
+  color:#2a1b05!important;
+  text-shadow:none!important;
+}
