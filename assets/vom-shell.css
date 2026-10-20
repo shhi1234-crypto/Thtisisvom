@@ -2075,3 +2075,37 @@ html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .profile-p
 html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody .profile-edit.profile-placeholder .value{
   color:#8fa2cb!important;
 }
+
+
+/* SHARED HEADER + HERO COPY GUARD
+   Some early pages use .vom-header without the legacy .header class. They are
+   the same shared header and must receive the same transparent treatment. */
+html[data-vom-theme="dark"] header.vom-header{
+  background:transparent!important;
+  border:0!important;
+  border-bottom:1px solid rgba(178,193,255,.14)!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+html[data-vom-theme="dark"] header.vom-header::before,
+html[data-vom-theme="dark"] header.vom-header::after{
+  background:none!important;
+  box-shadow:none!important;
+}
+html[data-vom-theme="dark"] .u-copy{
+  color:#c9d5ee!important;
+}
+html[data-vom-theme="dark"] .u-visual p,
+html[data-vom-theme="dark"] .hero-card p,
+html[data-vom-theme="dark"] .hero-card small{
+  color:#d9e4fb!important;
+}
+html[data-vom-theme="dark"] body:has(#homeNextScene) .hero-eyebrow{
+  color:#cbd7f2!important;
+}
+html[data-vom-theme="dark"] .home-scroll-button{
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .vc-fab small{
+  color:#eff3ff!important;
+}
