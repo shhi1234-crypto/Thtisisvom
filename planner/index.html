@@ -25,6 +25,35 @@
 .filterbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 13px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{min-height:35px;padding:0 12px;border:1px solid #405680;border-radius:99px;background:#152440;color:#c4d0e8;font-size:10px;font-weight:900}.filter.active{border-color:#967eff;background:linear-gradient(135deg,#8066e9,#6e8eea);color:#fff}.filterbar small{color:#aab8d5;font-size:10px}.editor-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,22,.62);backdrop-filter:blur(12px)}.editor-overlay.open{display:flex}.editor{width:min(610px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:23px;border:1px solid #40577f;border-radius:24px;background:#101c36;box-shadow:0 28px 80px rgba(0,0,0,.42)}.editor-head{display:flex;align-items:center;justify-content:space-between;gap:14px}.editor-head h2{margin:0;font-family:"Nanum Pen Script",cursive;font-size:39px;font-weight:400}.close{width:37px;height:37px;border:1px solid #435a87;border-radius:50%;background:#172745;color:#eef4ff;font-size:17px}.editor-note{margin:7px 0 18px;color:#adbbd7;font-size:10px;line-height:1.65}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field-wrap{display:grid;gap:6px}.field-wrap.full{grid-column:1/-1}.field-wrap label{color:#dce5fa;font-size:10px;font-weight:900}.field{width:100%;min-height:43px;padding:0 11px;border:1px solid #40557f;border-radius:11px;background:#0d1730;color:#f0f4ff;outline:none;font-size:12px}.field:focus{border-color:#9c89ff;box-shadow:0 0 0 3px rgba(144,121,255,.16)}textarea.field{min-height:86px;padding:11px;resize:vertical}.form-date-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.form-date-fields.one{grid-template-columns:1fr}.modal-actions{display:flex;justify-content:space-between;gap:9px;margin-top:16px}.save{flex:1;min-height:46px;border:1px solid #9179ff;border-radius:13px;background:linear-gradient(135deg,#7f65eb,#6b8dea);color:#fff;font-size:11px;font-weight:900}.delete{display:none;min-height:46px;padding:0 13px;border:1px solid rgba(255,140,166,.55);border-radius:13px;background:#351a2d;color:#ffb4c7;font-size:10px;font-weight:900}.delete.show{display:block}
 .menu-overlay{position:fixed;inset:0;z-index:120;display:none;align-items:flex-start;justify-content:flex-end;padding:92px max(18px,calc((100vw - 1180px)/2));background:rgba(0,0,0,.28);backdrop-filter:blur(9px)}.menu-overlay.open{display:flex}.menu-card{width:min(350px,calc(100vw - 36px));padding:18px;border:1px solid #42587f;border-radius:20px;background:#101c36;box-shadow:0 22px 56px rgba(0,0,0,.36)}.menu-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.menu-top strong{font-size:14px}.menu-card a{display:flex;align-items:center;justify-content:space-between;min-height:47px;border-top:1px solid rgba(165,185,228,.13);color:#e4ecff;font-size:11px;font-weight:800}.menu-card a.active{color:#bbaeff}.bottom{position:fixed;z-index:80;left:50%;bottom:11px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:66px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border:1px solid #3c527d;border-radius:21px;background:rgba(12,23,45,.92);box-shadow:0 14px 38px rgba(0,0,0,.30);backdrop-filter:blur(20px)}.bottom a,.bottom button{border:0;background:none;color:#b7c4df;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:700}.bottom .active{color:#b8abff;font-weight:900}.nav-icon{font-size:17px}
 @media(max-width:850px){.hero{grid-template-columns:1fr}.overview{grid-template-columns:repeat(2,1fr)}.planner-layout{grid-template-columns:1fr}.notice-panel{position:static}.week-strip{gap:5px}.week-day{min-height:57px}}@media(max-width:620px){.header{width:calc(100% - 24px);height:70px}.brand strong{font-size:23px}.brand small{font-size:7px;letter-spacing:2px}.admin-badge{display:none}.back{display:none}.page{width:calc(100% - 24px);padding:31px 0 108px}.hero h1{font-size:62px}.hero p{margin-top:15px;font-size:11px}.new-task{width:100%}.overview{gap:7px}.metric{min-height:80px;padding:12px}.metric strong{font-size:23px}.planner-layout{gap:11px}.deadline-panel,.notice-panel{padding:15px;border-radius:19px}.panel-head h2,.notice-panel h2{font-size:18px}.week-strip{grid-template-columns:repeat(7,minmax(35px,1fr));overflow-x:auto;padding-bottom:2px}.week-day{min-width:35px;padding:7px 2px}.task-card{grid-template-columns:43px minmax(0,1fr);gap:9px;padding:11px}.task-date{width:43px;min-height:48px}.task-date strong{font-size:16px}.task-actions{grid-column:2;justify-content:flex-start}.task-title{font-size:13px}.filterbar{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.form-date-fields{grid-template-columns:1fr}.notice-text{min-height:250px}.menu-overlay{padding:76px 12px}.bottom{height:64px}.bottom a,.bottom button{font-size:7px}.nav-icon{font-size:16px}}
+
+/* Calendar-first planner */
+.hero{align-items:flex-start}
+.hero-copy{min-width:0}
+.quick-create{display:grid;grid-template-columns:repeat(2,minmax(184px,1fr));gap:10px;max-width:550px}
+.quick-create-card{min-height:112px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;padding:17px 18px;border:1px solid #465d8e;border-radius:18px;background:#12203c;color:#eef4ff;text-align:left;box-shadow:0 12px 28px rgba(1,8,27,.18);cursor:pointer;text-decoration:none}
+.quick-create-card small{color:#b5c4e4;font-size:9px;font-weight:900;letter-spacing:.07em}
+.quick-create-card strong{font-size:16px;font-weight:900;letter-spacing:-.04em}
+.quick-create-card span{color:#b6c3dc;font-size:10px;line-height:1.45}
+.quick-create-card.event{border-color:#8a78fa;background:linear-gradient(145deg,#2b275c,#1a2f57)}
+.quick-create-card.recurring{border-color:#3e8c93;background:linear-gradient(145deg,#14384a,#15304a)}
+.quick-create-card:hover{transform:translateY(-2px);border-color:#b7aaff}
+.calendar-panel{min-width:0}
+.calendar-head{align-items:center}
+.month-controls{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:205px}
+.month-controls strong{min-width:112px;color:#f2f5ff;font-size:13px;text-align:center}
+.month-controls button{width:33px;height:33px;border:1px solid #425a88;border-radius:10px;background:#162746;color:#ebf1ff;font-size:16px;font-weight:900}
+.calendar-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:20px}
+.calendar-weekdays span{padding:0 2px;color:#aab9d6;font-size:9px;font-weight:900;text-align:right}
+.calendar-weekdays span:first-child{color:#ff9aaf}.calendar-weekdays span:last-child{color:#95baff}
+.planner-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:7px}
+.planner-day{position:relative;display:flex;flex-direction:column;min-height:112px;padding:8px;border:1px solid #293f69;border-radius:14px;background:#111d37;cursor:pointer;text-align:left;overflow:hidden}
+.planner-day:hover{border-color:#806ce2}.planner-day.today{border-color:#9280ff;background:linear-gradient(145deg,#29255a,#162b4d)}.planner-day.selected{box-shadow:0 0 0 2px rgba(125,104,232,.44),0 12px 24px rgba(29,17,74,.24)}.planner-day.outside{visibility:hidden}
+.planner-day-number{display:flex;align-items:center;justify-content:space-between;gap:5px;color:#eaf1ff;font-size:13px;font-weight:900}.planner-day-number i{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;border-radius:99px;background:#31466e;color:#e5edff;font-size:8px;font-style:normal}
+.planner-day.today .planner-day-number i{background:#8872ec;color:#fff}
+.planner-day-tasks{display:grid;gap:4px;margin-top:8px}.calendar-task-chip{display:block;overflow:hidden;padding:4px 5px;border-radius:6px;background:color-mix(in srgb,var(--chip-color,#9c85ff) 18%,#15213c);border-left:2px solid var(--chip-color,#9c85ff);color:#e9f0ff;font-size:8px;font-weight:800;line-height:1.3;text-overflow:ellipsis;white-space:nowrap}.calendar-task-chip.done{opacity:.46;text-decoration:line-through}.calendar-more{margin-top:auto;padding-top:5px;color:#aebce0;font-size:8px;font-weight:900;text-align:right}
+.day-agenda{margin-top:19px;padding-top:18px;border-top:1px solid rgba(105,130,180,.23)}.agenda-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.agenda-head h3{margin:4px 0 0;color:#f1f4ff;font-size:18px;letter-spacing:-.05em}.agenda-filters{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.agenda-filters .filter{min-height:31px;padding:0 10px;font-size:9px}.agenda-meta{display:flex;justify-content:flex-end;min-height:17px;margin:6px 0 9px}.agenda-meta small{color:#aab8d5;font-size:9px}.agenda-list{max-height:500px;overflow:auto;padding-right:3px}
+@media(max-width:980px){.hero{display:block}.quick-create{max-width:none;margin-top:18px}.planner-layout{grid-template-columns:1fr}.notice-panel{position:static}.planner-day{min-height:96px}}
+@media(max-width:620px){.quick-create{grid-template-columns:1fr}.quick-create-card{min-height:94px}.calendar-head{align-items:flex-start;flex-direction:column}.month-controls{justify-content:flex-start}.planner-day{min-height:78px;padding:6px;border-radius:11px}.planner-day-number{font-size:11px}.planner-day-number i{min-width:15px;height:15px;font-size:7px}.planner-day-tasks{gap:3px;margin-top:5px}.calendar-task-chip{padding:3px 4px;font-size:7px}.calendar-weekdays{gap:4px}.planner-calendar{gap:4px}.agenda-head{align-items:flex-start;flex-direction:column}.agenda-filters{justify-content:flex-start}.task-card{grid-template-columns:auto minmax(0,1fr)}.task-actions{grid-column:2;justify-content:flex-start}.task-date{width:44px;min-height:48px}.task-title{font-size:13px}}
 </style>
 </head>
 <body>
@@ -40,12 +69,23 @@
 
 <main class="page">
   <section class="hero">
-    <div>
-      <div class="eyebrow">VOM OPERATIONS · DEADLINES</div>
+    <div class="hero-copy">
+      <div class="eyebrow">VOM OPERATIONS · CALENDAR</div>
       <h1>Planner</h1>
-      <p>일정 운영과 외부 신청 마감을 한 흐름으로 관리합니다. 일정 생성 후에는 바로 카카오톡 공지 문구도 복사할 수 있어요.</p>
+      <p>이벤트와 반복 업무를 한 달 캘린더에서 함께 관리합니다. 이벤트를 만들면 공지 문구까지 바로 이어집니다.</p>
     </div>
-    <button class="new-task" type="button" onclick="openPlannerEditor()">＋ 마감 추가</button>
+    <div class="quick-create" aria-label="빠른 생성">
+      <a class="quick-create-card event" href="/calendar/?create=1">
+        <small>일회성 일정 · 참여 공지</small>
+        <strong>＋ 이벤트 만들기</strong>
+        <span>일시·장소·참가 안내를 등록해요</span>
+      </a>
+      <button class="quick-create-card recurring" type="button" onclick="openPlannerEditor('', 'MONTHLY_DAY')">
+        <small>매월 반복 · 운영 마감</small>
+        <strong>↻ 주기적 일정 추가</strong>
+        <span>신청 기간과 정기 업무를 등록해요</span>
+      </button>
+    </div>
   </section>
 
   <section class="overview" aria-label="플래너 요약">
@@ -56,12 +96,38 @@
   </section>
 
   <section class="planner-layout">
-    <section class="panel deadline-panel" aria-labelledby="deadlineTitle">
-      <div class="panel-head">
-        <div><div class="panel-kicker">NEXT 7 DAYS</div><h2 id="deadlineTitle">마감 타임라인</h2><p class="range-note">색으로 성격을 구분하고, 지났거나 가까운 마감은 바로 드러납니다.</p></div>
+    <section class="panel deadline-panel calendar-panel" aria-labelledby="deadlineTitle">
+      <div class="panel-head calendar-head">
+        <div>
+          <div class="panel-kicker">OPERATIONS CALENDAR</div>
+          <h2 id="deadlineTitle">일정 캘린더</h2>
+          <p class="range-note">이벤트와 반복 마감을 한 달 흐름으로 보세요. 날짜를 누르면 그날의 작업을 바로 확인할 수 있습니다.</p>
+        </div>
+        <div class="month-controls" aria-label="월 이동">
+          <button type="button" onclick="changePlannerMonth(-1)" aria-label="이전 달">←</button>
+          <strong id="plannerMonthLabel">이번 달</strong>
+          <button type="button" onclick="changePlannerMonth(1)" aria-label="다음 달">→</button>
+        </div>
       </div>
-      <div class="week-strip" id="weekStrip"></div>
-      <div class="task-list" id="taskList"><div class="empty">플래너를 불러오는 중입니다.</div></div>
+      <div class="calendar-weekdays" aria-hidden="true"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+      <div class="planner-calendar" id="plannerCalendar" aria-label="운영 일정 캘린더"></div>
+
+      <section class="day-agenda" aria-labelledby="agendaTitle">
+        <div class="agenda-head">
+          <div>
+            <div class="panel-kicker">SELECTED DAY</div>
+            <h3 id="agendaTitle">날짜를 선택해 주세요</h3>
+          </div>
+          <div class="agenda-filters" aria-label="일정 필터">
+            <button class="filter active" type="button" data-filter="ALL" onclick="setFilter('ALL',this)">전체</button>
+            <button class="filter" type="button" data-filter="URGENT" onclick="setFilter('URGENT',this)">마감 임박</button>
+            <button class="filter" type="button" data-filter="RECURRING" onclick="setFilter('RECURRING',this)">반복</button>
+            <button class="filter" type="button" data-filter="DONE" onclick="setFilter('DONE',this)">완료</button>
+          </div>
+        </div>
+        <div class="agenda-meta"><small id="filterSummary"></small></div>
+        <div class="task-list agenda-list" id="taskList"><div class="empty">캘린더를 불러오는 중입니다.</div></div>
+      </section>
     </section>
 
     <aside class="panel notice-panel" id="noticePanel">
@@ -78,15 +144,6 @@
     </aside>
   </section>
 
-  <section class="filterbar">
-    <div class="filters" aria-label="플래너 필터">
-      <button class="filter active" type="button" data-filter="ALL" onclick="setFilter('ALL',this)">전체</button>
-      <button class="filter" type="button" data-filter="URGENT" onclick="setFilter('URGENT',this)">마감 임박</button>
-      <button class="filter" type="button" data-filter="RECURRING" onclick="setFilter('RECURRING',this)">반복 일정</button>
-      <button class="filter" type="button" data-filter="DONE" onclick="setFilter('DONE',this)">완료</button>
-    </div>
-    <small id="filterSummary"></small>
-  </section>
 </main>
 
 <div class="editor-overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
@@ -125,6 +182,8 @@ const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
 const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let events=[],plannerItems=[],eventTasks=[],selectedEventId='',currentFilter='ALL';
+let plannerMonth=localDate(new Date().getFullYear(),new Date().getMonth(),1);
+let selectedPlannerDate=dayStart();
 
 const colorMeta={VIOLET:{label:'운영',color:'#9c85ff'},MINT:{label:'신청',color:'#6cdbca'},AMBER:{label:'외부 접수',color:'#f1c663'},ROSE:{label:'긴급',color:'#ff8ba7'}};
 
@@ -159,13 +218,12 @@ async function loadEventTasks(){
   const {data,error}=await db.from('event_operation_tasks').select('id,event_id,title,description,due_date,sort_order,is_done,is_skipped,completed_at').eq('is_skipped',false).order('due_date',{ascending:true}).order('sort_order',{ascending:true});
   if(error)throw error;eventTasks=data||[];
 }
-function plannerOccurrence(item){
-  const today=dayStart();
+function plannerOccurrence(item,referenceDate=plannerMonth){
   if(item.deadline_type==='ONE_TIME'){
     const date=dateFromKey(item.deadline_date);
     return {start:date,end:date,done:!!item.is_done,recurring:false,period:null,label:formatDate(date)};
   }
-  const year=today.getFullYear(),month=today.getMonth(),period=monthKey(today);
+  const year=referenceDate.getFullYear(),month=referenceDate.getMonth(),period=monthKey(referenceDate);
   const start=localDate(year,month,Number(item.start_day));
   const end=item.deadline_type==='MONTHLY_RANGE'?localDate(year,month,Number(item.end_day)):start;
   return {start,end,done:String(item.completed_period||'')===period,recurring:true,period,label:item.deadline_type==='MONTHLY_RANGE'?formatDate(start)+' ~ '+formatDate(end):'매월 '+start.getDate()+'일'};
@@ -176,8 +234,8 @@ function eventTaskColor(task){
   if(event?.event_type==='VOM LIVE')return 'VIOLET';
   return 'MINT';
 }
-function normalizeItems(){
-  const manual=plannerItems.map(item=>{const occurrence=plannerOccurrence(item);return {kind:'planner',id:item.id,title:item.title,description:item.description||'',color:item.color_key||'VIOLET',start:occurrence.start,end:occurrence.end,done:occurrence.done,recurring:occurrence.recurring,period:occurrence.period,label:occurrence.label,raw:item,source:'운영 마감'}});
+function normalizeItems(referenceDate=plannerMonth){
+  const manual=plannerItems.map(item=>{const occurrence=plannerOccurrence(item,referenceDate);return {kind:'planner',id:item.id,title:item.title,description:item.description||'',color:item.color_key||'VIOLET',start:occurrence.start,end:occurrence.end,done:occurrence.done,recurring:occurrence.recurring,period:occurrence.period,label:occurrence.label,raw:item,source:'운영 마감'}});
   const automatic=eventTasks.map(task=>{const event=events.find(item=>Number(item.id)===Number(task.event_id));const due=dateFromKey(task.due_date);return {kind:'event',id:task.id,title:task.title,description:task.description||'',color:eventTaskColor(task),start:due,end:due,done:!!task.is_done,recurring:false,period:null,label:event?(event.title||'일정'):'일정 체크리스트',raw:task,source:'일정 자동'}});
   return [...manual,...automatic].filter(item=>item.start).sort((a,b)=>a.start-b.start||Number(a.raw.sort_order||0)-Number(b.raw.sort_order||0));
 }
@@ -190,9 +248,29 @@ function statusFor(item){
   return {text:'D-'+diff,kind:'normal'};
 }
 function filterItems(items){return items.filter(item=>{const status=statusFor(item);if(currentFilter==='URGENT')return !item.done&&status.kind!=='normal';if(currentFilter==='RECURRING')return item.recurring;if(currentFilter==='DONE')return item.done;return true})}
-function renderWeekStrip(items){
-  const today=dayStart();const days=Array.from({length:7},(_,index)=>{const date=new Date(today);date.setDate(today.getDate()+index);return date});
-  document.getElementById('weekStrip').innerHTML=days.map((date,index)=>{const count=items.filter(item=>date>=item.start&&date<=item.end&&!item.done).length;return '<div class="week-day '+(index===0?'today ':'')+(count?'has-task':'no-task')+'"><small>'+['일','월','화','수','목','금','토'][date.getDay()]+'</small><b>'+date.getDate()+'</b><i></i></div>'}).join('');
+function isSameDay(first,second){return first&&second&&first.getFullYear()===second.getFullYear()&&first.getMonth()===second.getMonth()&&first.getDate()===second.getDate()}
+function includesDate(item,date){const point=dayStart(date).getTime();return point>=dayStart(item.start).getTime()&&point<=dayStart(item.end).getTime()}
+function monthLabel(date){return date.getFullYear()+'년 '+(date.getMonth()+1)+'월'}
+function itemsInMonth(items,date=plannerMonth){return items.filter(item=>item.start.getFullYear()===date.getFullYear()&&item.start.getMonth()===date.getMonth())}
+function changePlannerMonth(delta){
+  plannerMonth=localDate(plannerMonth.getFullYear(),plannerMonth.getMonth()+delta,1);
+  selectedPlannerDate=localDate(plannerMonth.getFullYear(),plannerMonth.getMonth(),Math.min(selectedPlannerDate.getDate(),daysInMonth(plannerMonth.getFullYear(),plannerMonth.getMonth())));
+  renderTasks();
+}
+function selectPlannerDate(value){selectedPlannerDate=dateFromKey(value);renderTasks()}
+function renderPlannerCalendar(items){
+  const grid=document.getElementById('plannerCalendar');const label=document.getElementById('plannerMonthLabel');if(!grid||!label)return;
+  const year=plannerMonth.getFullYear(),month=plannerMonth.getMonth(),firstDay=new Date(year,month,1,12).getDay(),count=daysInMonth(year,month);
+  const visible=filterItems(itemsInMonth(items));const cells=[];
+  for(let blank=0;blank<firstDay;blank++)cells.push('<div class="planner-day outside" aria-hidden="true"></div>');
+  for(let day=1;day<=count;day++){
+    const date=localDate(year,month,day);const dayItems=visible.filter(item=>includesDate(item,date));const selected=isSameDay(date,selectedPlannerDate);const today=isSameDay(date,dayStart());
+    const chips=dayItems.slice(0,2).map(item=>{const color=colorMeta[item.color]||colorMeta.VIOLET;return '<span class="calendar-task-chip '+(item.done?'done':'')+'" style="--chip-color:'+color.color+'">'+esc(item.title)+'</span>'}).join('');
+    const more=dayItems.length>2?'<span class="calendar-more">+'+(dayItems.length-2)+'개</span>':'';
+    cells.push('<button class="planner-day '+(selected?'selected ':'')+(today?'today ':'')+'" type="button" onclick="selectPlannerDate(\''+keyForDate(date)+'\')" aria-label="'+attr(formatDate(date))+' 일정 '+dayItems.length+'개"><span class="planner-day-number">'+day+(dayItems.length?'<i>'+dayItems.length+'</i>':'')+'</span><span class="planner-day-tasks">'+chips+'</span>'+more+'</button>');
+  }
+  const remainder=(7-(cells.length%7))%7;for(let blank=0;blank<remainder;blank++)cells.push('<div class="planner-day outside" aria-hidden="true"></div>');
+  label.textContent=monthLabel(plannerMonth);grid.innerHTML=cells.join('');
 }
 function renderMetrics(items){
   const open=items.filter(item=>!item.done);const urgent=open.filter(item=>statusFor(item).kind==='urgent'||statusFor(item).kind==='overdue');const today=open.filter(item=>dayStart()>=item.start&&dayStart()<=item.end);const done=items.filter(item=>item.done);
@@ -204,7 +282,13 @@ function renderTask(item){
   return '<article class="task-card '+(item.done?'done':'')+'" style="--task-color:'+color.color+'"><div class="task-date"><strong>'+range+'</strong><small>'+dateLabel+'</small></div><div class="task-main"><div class="task-topline"><span class="source-pill">'+esc(item.source)+'</span><span class="status-pill '+status.kind+'">'+status.text+'</span></div><h3 class="task-title">'+esc(item.title)+'</h3><p class="task-copy">'+esc(item.description||item.label||'세부 메모 없음')+'</p></div><div class="task-actions"><button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit+'</div></article>';
 }
 function renderTasks(){
-  const all=normalizeItems();renderMetrics(all);renderWeekStrip(all);const visible=filterItems(all);const taskList=document.getElementById('taskList');taskList.innerHTML=visible.length?visible.map(renderTask).join(''):'<div class="empty">이 조건에 맞는 마감이 없습니다.</div>';document.getElementById('filterSummary').textContent='전체 '+all.length+'건 · 표시 '+visible.length+'건';
+  const all=normalizeItems();renderMetrics(all);renderPlannerCalendar(all);
+  const selected=filterItems(all.filter(item=>includesDate(item,selectedPlannerDate)));
+  const taskList=document.getElementById('taskList');
+  taskList.innerHTML=selected.length?selected.map(renderTask).join(''):'<div class="empty">이 날짜에는 일정 또는 마감이 없습니다.</div>';
+  document.getElementById('agendaTitle').textContent=formatDate(selectedPlannerDate)+' 일정 · 마감';
+  const monthItems=filterItems(itemsInMonth(all));
+  document.getElementById('filterSummary').textContent=monthLabel(plannerMonth)+' · '+monthItems.length+'건 표시';
 }
 function renderNoticeOptions(){
   const select=document.getElementById('noticeEventSelect');if(!events.length){select.innerHTML='<option>등록된 일정이 없습니다.</option>';document.getElementById('noticeText').value='등록된 일정이 생기면 여기서 카카오톡 공지 문구를 바로 만들 수 있습니다.';return}
@@ -233,8 +317,8 @@ async function toggleTask(kind,id){
   else{const item=plannerItems.find(row=>Number(row.id)===Number(id));if(!item)return;const recurring=item.deadline_type!=='ONE_TIME';const done=recurring?String(item.completed_period||'')===monthKey():!!item.is_done;const payload=recurring?{completed_period:done?null:monthKey(),updated_at:now}:{is_done:!done,completed_at:done?null:now,updated_at:now};({error}=await db.from('operation_planner_items').update(payload).eq('id',Number(id)));if(!error)Object.assign(item,payload)}
   if(error){alert('완료 상태를 저장하지 못했습니다.\n'+error.message);return}renderTasks();
 }
-function openPlannerEditor(id=''){
-  const item=plannerItems.find(row=>String(row.id)===String(id));document.getElementById('plannerItemId').value=item?.id||'';document.getElementById('editorTitle').textContent=item?'마감 수정':'마감 추가';document.getElementById('plannerTitle').value=item?.title||'';document.getElementById('plannerDeadlineType').value=item?.deadline_type||'ONE_TIME';document.getElementById('plannerColor').value=item?.color_key||'VIOLET';document.getElementById('plannerDescription').value=item?.description||'';document.getElementById('plannerDelete').classList.toggle('show',!!item);syncDeadlineFields(item);document.getElementById('editorOverlay').classList.add('open');setTimeout(()=>document.getElementById('plannerTitle').focus(),30);
+function openPlannerEditor(id='',preferredType=''){
+  const item=plannerItems.find(row=>String(row.id)===String(id));const type=item?.deadline_type||preferredType||'MONTHLY_DAY';document.getElementById('plannerItemId').value=item?.id||'';document.getElementById('editorTitle').textContent=item?'주기적 일정 수정':type==='ONE_TIME'?'일정 추가':'주기적 일정 추가';document.getElementById('plannerTitle').value=item?.title||'';document.getElementById('plannerDeadlineType').value=type;document.getElementById('plannerColor').value=item?.color_key||'VIOLET';document.getElementById('plannerDescription').value=item?.description||'';document.getElementById('plannerDelete').classList.toggle('show',!!item);syncDeadlineFields(item);document.getElementById('editorOverlay').classList.add('open');setTimeout(()=>document.getElementById('plannerTitle').focus(),30);
 }
 function syncDeadlineFields(item=null){
   const type=document.getElementById('plannerDeadlineType').value;const wrap=document.getElementById('plannerDateFields');const current=item||plannerItems.find(row=>String(row.id)===String(document.getElementById('plannerItemId').value));if(type==='ONE_TIME'){wrap.innerHTML='<label for="plannerDeadlineDate">마감 날짜</label><div class="form-date-fields one"><input class="field" id="plannerDeadlineDate" type="date" value="'+attr(current?.deadline_date||keyForDate(dayStart()))+'"></div>';return}
