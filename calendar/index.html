@@ -414,6 +414,33 @@ button{
   display:block;
 }
 
+.admin-calendar-actions{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-left:auto;
+}
+
+.admin-planner{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:43px;
+  padding:0 16px;
+  border:1px solid rgba(117,96,220,.28);
+  border-radius:999px;
+  color:#5d4bc6;
+  background:rgba(247,245,255,.9);
+  box-shadow:0 8px 18px rgba(94,77,184,.09);
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.02em;
+  text-decoration:none;
+}
+
+.admin-planner span{margin-left:6px;font-size:15px}
+.admin-planner.show{display:inline-flex}
+
 
 /* ======================================================
    MONTH
@@ -1979,8 +2006,15 @@ button{
     flex-direction:column;
   }
 
-  .admin-add{
+  .admin-calendar-actions{
     width:100%;
+    margin-left:0;
+  }
+
+  .admin-add,
+  .admin-planner{
+    flex:1;
+    width:auto;
   }
 
   .month{
@@ -2602,13 +2636,23 @@ button{
     </div>
 
 
-    <button
-      id="addButton"
-      class="admin-add"
-      onclick="openEventModal()"
-    >
-      ＋ 일정 추가
-    </button>
+    <div class="admin-calendar-actions">
+      <a
+        id="plannerLink"
+        class="admin-planner"
+        href="/planner/"
+      >
+        운영 플래너 <span>→</span>
+      </a>
+
+      <button
+        id="addButton"
+        class="admin-add"
+        onclick="openEventModal()"
+      >
+        ＋ 일정 추가
+      </button>
+    </div>
 
   </section>
 
@@ -3230,6 +3274,15 @@ button{
     </a>
 
     <a
+      id="adminPlannerMenuLink"
+      class="admin-settings-link"
+      href="/planner/"
+    >
+      OPERATIONS PLANNER
+      <span>→</span>
+    </a>
+
+    <a
       id="adminSettingsMenuLink"
       class="admin-settings-link"
       href="/admin-settings/"
@@ -3381,6 +3434,16 @@ function setAdmin(active){
   const settingsLink=document.getElementById('adminSettingsMenuLink');
   if(settingsLink){
     settingsLink.style.display=active ? 'flex' : 'none';
+  }
+
+  const plannerLink=document.getElementById('plannerLink');
+  if(plannerLink){
+    plannerLink.classList.toggle('show',active);
+  }
+
+  const plannerMenuLink=document.getElementById('adminPlannerMenuLink');
+  if(plannerMenuLink){
+    plannerMenuLink.style.display=active ? 'flex' : 'none';
   }
 
   /* 인증 결과가 일정 로딩 화면을 덮어쓰지 않도록, 데이터가 준비된 뒤에만 다시 그립니다. */
@@ -6718,7 +6781,7 @@ async function saveEvent(){
     if(!id && result.data){
       await createAutoOperationTasks(result.data);
       await notifyNewEvent(result.data);
-      window.location.href='/admin-settings/?section=operations&event='+encodeURIComponent(result.data.id);
+      window.location.href='/planner/?event='+encodeURIComponent(result.data.id)+'&notice=1';
       return;
     }
 
