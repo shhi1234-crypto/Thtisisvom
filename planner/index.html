@@ -228,20 +228,28 @@ function plannerOccurrence(item,referenceDate=plannerMonth){
   const end=item.deadline_type==='MONTHLY_RANGE'?localDate(year,month,Number(item.end_day)):start;
   return {start,end,done:String(item.completed_period||'')===period,recurring:true,period,label:item.deadline_type==='MONTHLY_RANGE'?formatDate(start)+' ~ '+formatDate(end):'매월 '+start.getDate()+'일'};
 }
-function eventTaskColor(task){
-  const event=events.find(item=>Number(item.id)===Number(task.event_id));
+function eventColor(event){
   if(event?.event_type==='BUSKING')return 'ROSE';
   if(event?.event_type==='VOM LIVE')return 'VIOLET';
   return 'MINT';
 }
+function eventTaskColor(task){
+  return eventColor(events.find(item=>Number(item.id)===Number(task.event_id)));
+}
 function normalizeItems(referenceDate=plannerMonth){
   const manual=plannerItems.map(item=>{const occurrence=plannerOccurrence(item,referenceDate);return {kind:'planner',id:item.id,title:item.title,description:item.description||'',color:item.color_key||'VIOLET',start:occurrence.start,end:occurrence.end,done:occurrence.done,recurring:occurrence.recurring,period:occurrence.period,label:occurrence.label,raw:item,source:'운영 마감'}});
+  const scheduled=events.map(event=>{const date=dateFromKey(event.event_date);return {kind:'calendar-event',id:event.id,title:event.title||'제목 없는 이벤트',description:event.description||event.location||'일정 상세는 캘린더에서 확인하세요.',color:eventColor(event),start:date,end:date,done:false,recurring:false,period:null,label:event.event_type||'이벤트',raw:event,source:'이벤트',isEvent:true}});
   const automatic=eventTasks.map(task=>{const event=events.find(item=>Number(item.id)===Number(task.event_id));const due=dateFromKey(task.due_date);return {kind:'event',id:task.id,title:task.title,description:task.description||'',color:eventTaskColor(task),start:due,end:due,done:!!task.is_done,recurring:false,period:null,label:event?(event.title||'일정'):'일정 체크리스트',raw:task,source:'일정 자동'}});
-  return [...manual,...automatic].filter(item=>item.start).sort((a,b)=>a.start-b.start||Number(a.raw.sort_order||0)-Number(b.raw.sort_order||0));
+  return [...scheduled,...manual,...automatic].filter(item=>item.start).sort((a,b)=>a.start-b.start||Number(a.raw.sort_order||0)-Number(b.raw.sort_order||0));
 }
 function statusFor(item){
   if(item.done)return {text:'완료',kind:'done'};
   const diff=daysBetween(dayStart(),item.end);
+  if(item.isEvent){
+    if(diff<0)return {text:'지난 일정',kind:'normal'};
+    if(diff===0)return {text:'오늘 이벤트',kind:'urgent'};
+    return {text:'D-'+diff,kind:diff<=3?'urgent':'normal'};
+  }
   if(diff<0)return {text:'마감 지남',kind:'overdue'};
   if(diff===0)return {text:'오늘 마감',kind:'urgent'};
   if(diff<=3)return {text:'D-'+diff,kind:'urgent'};
@@ -273,13 +281,14 @@ function renderPlannerCalendar(items){
   label.textContent=monthLabel(plannerMonth);grid.innerHTML=cells.join('');
 }
 function renderMetrics(items){
-  const open=items.filter(item=>!item.done);const urgent=open.filter(item=>statusFor(item).kind==='urgent'||statusFor(item).kind==='overdue');const today=open.filter(item=>dayStart()>=item.start&&dayStart()<=item.end);const done=items.filter(item=>item.done);
+  const operations=items.filter(item=>!item.isEvent);const open=operations.filter(item=>!item.done);const urgent=open.filter(item=>statusFor(item).kind==='urgent'||statusFor(item).kind==='overdue');const today=items.filter(item=>!item.done&&dayStart()>=item.start&&dayStart()<=item.end);const done=operations.filter(item=>item.done);
   document.getElementById('metricOpen').innerHTML=open.length+'<em>건</em>';document.getElementById('metricUrgent').innerHTML=urgent.length+'<em>건</em>';document.getElementById('metricToday').innerHTML=today.length+'<em>건</em>';document.getElementById('metricDone').innerHTML=done.length+'<em>건</em>';
 }
 function renderTask(item){
-  const color=colorMeta[item.color]||colorMeta.VIOLET;const status=statusFor(item);const startDay=item.start.getDate();const range=item.start.getTime()===item.end.getTime()?String(startDay):startDay+'–'+item.end.getDate();const recurrence=item.recurring?' · 반복':'';const dateLabel=(item.start.getMonth()+1)+'월';
+  const color=colorMeta[item.color]||colorMeta.VIOLET;const status=statusFor(item);const startDay=item.start.getDate();const range=item.start.getTime()===item.end.getTime()?String(startDay):startDay+'–'+item.end.getDate();const dateLabel=(item.start.getMonth()+1)+'월';
   const edit=item.kind==='planner'?'<button class="task-edit" type="button" onclick="openPlannerEditor('+Number(item.id)+')">수정</button>':'<a class="task-edit" href="/calendar/">일정</a>';
-  return '<article class="task-card '+(item.done?'done':'')+'" style="--task-color:'+color.color+'"><div class="task-date"><strong>'+range+'</strong><small>'+dateLabel+'</small></div><div class="task-main"><div class="task-topline"><span class="source-pill">'+esc(item.source)+'</span><span class="status-pill '+status.kind+'">'+status.text+'</span></div><h3 class="task-title">'+esc(item.title)+'</h3><p class="task-copy">'+esc(item.description||item.label||'세부 메모 없음')+'</p></div><div class="task-actions"><button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit+'</div></article>';
+  const actions=item.isEvent?edit:'<button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit;
+  return '<article class="task-card '+(item.done?'done':'')+'" style="--task-color:'+color.color+'"><div class="task-date"><strong>'+range+'</strong><small>'+dateLabel+'</small></div><div class="task-main"><div class="task-topline"><span class="source-pill">'+esc(item.source)+'</span><span class="status-pill '+status.kind+'">'+status.text+'</span></div><h3 class="task-title">'+esc(item.title)+'</h3><p class="task-copy">'+esc(item.description||item.label||'세부 메모 없음')+'</p></div><div class="task-actions">'+actions+'</div></article>';
 }
 function renderTasks(){
   const all=normalizeItems();renderMetrics(all);renderPlannerCalendar(all);
