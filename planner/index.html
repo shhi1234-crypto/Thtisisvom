@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko" data-vom-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1730">
+<title>OPERATIONS PLANNER · VOM</title>
+<meta name="description" content="VOM 운영진 일정, 신청 마감과 카카오톡 공지문을 한곳에서 관리합니다.">
+<link rel="canonical" href="https://thisisvom.vercel.app/planner/">
+<link rel="icon" type="image/png" href="/favicon.png?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/vom-access.js?v=3"></script>
+<style>
+:root{--bg:#0d1730;--surface:#111d38;--surface-2:#172746;--line:#31466f;--copy:#e9efff;--muted:#aab8d5;--purple:#8f78ff;--mint:#6cdbca;--amber:#f3c96d;--rose:#ff8ba7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;overflow-x:hidden;background:var(--bg);color:var(--copy);font-family:"Noto Sans KR",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.aurora{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 12% 10%,rgba(123,93,232,.30),transparent 32%),radial-gradient(circle at 87% 18%,rgba(75,209,193,.22),transparent 30%),radial-gradient(circle at 46% 86%,rgba(222,129,190,.12),transparent 36%),linear-gradient(135deg,#111a36 0%,#0e1932 50%,#0b1d2a 100%)}.aurora:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.25) 1px,transparent 1px);background-size:34px 34px;opacity:.09;mask-image:linear-gradient(to bottom,black,transparent 78%)}
+.header{width:min(1180px,calc(100% - 36px));height:80px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(178,193,255,.16)}.brand{display:flex;flex-direction:column}.brand strong{font-size:26px;line-height:1;font-weight:900;letter-spacing:-.06em}.brand small{margin-top:5px;font-size:8px;letter-spacing:3px;font-weight:800;color:#dbe4ff}.header-right{display:flex;align-items:center;gap:8px}.admin-badge,.back{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 11px;border:1px solid #435987;border-radius:999px;background:rgba(20,34,65,.82);color:#dce7ff;font-size:10px;font-weight:900}.admin-badge i{width:6px;height:6px;border-radius:99px;background:var(--mint);box-shadow:0 0 10px var(--mint)}.back:hover{border-color:#8f78ff;background:#1d2e55}.menu-btn{width:42px;height:42px;border:1px solid #4a6091;border-radius:50%;background:#162748;color:#f3f6ff;font-size:18px}
+.page{width:min(1120px,calc(100% - 36px));margin:auto;padding:44px 0 118px}.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:26px;margin-bottom:28px}.eyebrow{color:#c4b8ff;font-size:10px;font-weight:900;letter-spacing:.18em}.hero h1{margin:6px 0 0;font-family:"Nanum Pen Script",cursive;font-size:clamp(58px,8vw,95px);font-weight:400;line-height:.76}.hero p{max-width:590px;margin:17px 0 0;color:var(--muted);font-size:13px;line-height:1.75}.new-task{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:0 16px;border:1px solid #a797ff;border-radius:14px;background:linear-gradient(135deg,#826aed,#668ceb);color:#fff;font-size:11px;font-weight:900;box-shadow:0 14px 28px rgba(102,112,235,.25)}.new-task:hover{transform:translateY(-1px)}
+.overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:18px}.metric{min-height:91px;padding:15px 16px;border:1px solid #354b78;border-radius:18px;background:linear-gradient(145deg,rgba(22,36,67,.96),rgba(16,29,56,.94));box-shadow:0 16px 28px rgba(1,8,23,.18)}.metric small{display:block;color:#aebcdb;font-size:9px;font-weight:900;letter-spacing:.08em}.metric strong{display:block;margin-top:8px;font-size:27px;line-height:1;font-weight:900}.metric strong em{margin-left:3px;color:#aebcdb;font-size:11px;font-style:normal}.metric.urgent strong{color:#ffd172}.metric.complete strong{color:#79dac9}
+.planner-layout{display:grid;grid-template-columns:minmax(0,1.24fr) minmax(330px,.76fr);gap:16px;align-items:start}.panel{border:1px solid #344970;border-radius:25px;background:linear-gradient(145deg,rgba(19,31,58,.97),rgba(13,25,49,.96));box-shadow:0 18px 42px rgba(1,7,21,.25)}.deadline-panel{padding:20px}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px}.panel-kicker{color:#b8acff;font-size:9px;font-weight:900;letter-spacing:.13em}.panel-head h2{margin:5px 0 0;font-size:21px;letter-spacing:-.05em}.range-note{margin:5px 0 0;color:#aab8d5;font-size:10px;line-height:1.5}.week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin:19px 0 16px}.week-day{min-height:64px;padding:9px 4px;border:1px solid #2b3f68;border-radius:13px;background:#101b34;text-align:center}.week-day.today{border-color:#9a88ff;background:linear-gradient(145deg,#2f2b65,#22385d)}.week-day.has-task{box-shadow:inset 0 -3px 0 #8b79ef}.week-day small{display:block;color:#aebad4;font-size:8px;font-weight:800}.week-day b{display:block;margin-top:3px;font-size:16px;line-height:1}.week-day i{display:block;height:5px;margin:7px auto 0;border-radius:99px;background:#85dfd0;width:5px}.week-day.no-task i{opacity:0}.task-list{display:grid;gap:9px}.task-card{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;min-height:88px;padding:13px;border:1px solid #2d426c;border-radius:17px;background:#111d38;overflow:hidden}.task-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--task-color,#8f78ff)}.task-card.done{opacity:.62}.task-card.done .task-title{text-decoration:line-through}.task-date{width:50px;min-height:52px;display:grid;place-items:center;align-content:center;border-radius:13px;background:color-mix(in srgb,var(--task-color,#8f78ff) 20%,#14213e);color:#f4f7ff;text-align:center}.task-date strong{font-size:18px;line-height:1;font-weight:900}.task-date small{margin-top:4px;font-size:8px;font-weight:900}.task-main{min-width:0}.task-topline{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.source-pill,.status-pill{display:inline-flex;align-items:center;min-height:19px;padding:0 7px;border-radius:99px;font-size:8px;font-weight:900}.source-pill{border:1px solid rgba(199,210,245,.18);background:#233555;color:#dfe7fb}.status-pill{background:rgba(255,255,255,.10);color:#e7efff}.status-pill.overdue{background:rgba(255,105,142,.16);color:#ffb1c4}.status-pill.urgent{background:rgba(248,194,92,.16);color:#ffdc8b}.status-pill.done{background:rgba(104,218,199,.16);color:#97eee0}.task-title{margin:5px 0 0;overflow:hidden;font-size:14px;font-weight:900;letter-spacing:-.03em;text-overflow:ellipsis;white-space:nowrap}.task-copy{display:-webkit-box;overflow:hidden;margin:4px 0 0;color:#a8b6d3;font-size:10px;line-height:1.45;-webkit-line-clamp:2;-webkit-box-orient:vertical}.task-actions{display:flex;align-items:center;gap:5px}.task-done,.task-edit{min-height:31px;padding:0 9px;border:1px solid #4a6090;border-radius:9px;background:#182a4b;color:#edf3ff;font-size:9px;font-weight:900}.task-done:hover,.task-edit:hover{border-color:#9e8cff}.task-done.is-done{border-color:#479c8e;background:#143b3e;color:#98eee0}.task-edit{padding:0 8px;color:#cdbfff}.empty{padding:34px 17px;border:1px dashed #40547d;border-radius:17px;color:#a9b7d3;font-size:11px;text-align:center}
+.notice-panel{position:sticky;top:18px;padding:20px}.notice-panel h2{margin:4px 0 0;font-size:21px;letter-spacing:-.05em}.notice-help{margin:8px 0 13px;color:#a9b7d3;font-size:10px;line-height:1.6}.event-select{width:100%;min-height:43px;padding:0 12px;border:1px solid #415887;border-radius:12px;background:#101c36;color:#eef3ff;outline:none;font-size:11px;font-weight:800}.notice-text{width:100%;min-height:274px;margin-top:10px;padding:14px;border:1px solid #354a74;border-radius:14px;background:#0d1730;color:#eef4ff;outline:none;resize:vertical;font:600 11px/1.75 "Noto Sans KR",sans-serif}.notice-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:9px}.copy-btn,.calendar-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 12px;border:1px solid #896fff;border-radius:12px;background:linear-gradient(135deg,#775de1,#647ee3);color:#fff;font-size:10px;font-weight:900}.calendar-link{border-color:#435a87;background:#192a4c;color:#dce6ff}.copy-status{min-height:17px;margin:7px 0 0;color:#9eebb1;font-size:9px;font-weight:800}
+.filterbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 13px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{min-height:35px;padding:0 12px;border:1px solid #405680;border-radius:99px;background:#152440;color:#c4d0e8;font-size:10px;font-weight:900}.filter.active{border-color:#967eff;background:linear-gradient(135deg,#8066e9,#6e8eea);color:#fff}.filterbar small{color:#aab8d5;font-size:10px}.editor-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,22,.62);backdrop-filter:blur(12px)}.editor-overlay.open{display:flex}.editor{width:min(610px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:23px;border:1px solid #40577f;border-radius:24px;background:#101c36;box-shadow:0 28px 80px rgba(0,0,0,.42)}.editor-head{display:flex;align-items:center;justify-content:space-between;gap:14px}.editor-head h2{margin:0;font-family:"Nanum Pen Script",cursive;font-size:39px;font-weight:400}.close{width:37px;height:37px;border:1px solid #435a87;border-radius:50%;background:#172745;color:#eef4ff;font-size:17px}.editor-note{margin:7px 0 18px;color:#adbbd7;font-size:10px;line-height:1.65}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field-wrap{display:grid;gap:6px}.field-wrap.full{grid-column:1/-1}.field-wrap label{color:#dce5fa;font-size:10px;font-weight:900}.field{width:100%;min-height:43px;padding:0 11px;border:1px solid #40557f;border-radius:11px;background:#0d1730;color:#f0f4ff;outline:none;font-size:12px}.field:focus{border-color:#9c89ff;box-shadow:0 0 0 3px rgba(144,121,255,.16)}textarea.field{min-height:86px;padding:11px;resize:vertical}.form-date-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.form-date-fields.one{grid-template-columns:1fr}.modal-actions{display:flex;justify-content:space-between;gap:9px;margin-top:16px}.save{flex:1;min-height:46px;border:1px solid #9179ff;border-radius:13px;background:linear-gradient(135deg,#7f65eb,#6b8dea);color:#fff;font-size:11px;font-weight:900}.delete{display:none;min-height:46px;padding:0 13px;border:1px solid rgba(255,140,166,.55);border-radius:13px;background:#351a2d;color:#ffb4c7;font-size:10px;font-weight:900}.delete.show{display:block}
+.menu-overlay{position:fixed;inset:0;z-index:120;display:none;align-items:flex-start;justify-content:flex-end;padding:92px max(18px,calc((100vw - 1180px)/2));background:rgba(0,0,0,.28);backdrop-filter:blur(9px)}.menu-overlay.open{display:flex}.menu-card{width:min(350px,calc(100vw - 36px));padding:18px;border:1px solid #42587f;border-radius:20px;background:#101c36;box-shadow:0 22px 56px rgba(0,0,0,.36)}.menu-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.menu-top strong{font-size:14px}.menu-card a{display:flex;align-items:center;justify-content:space-between;min-height:47px;border-top:1px solid rgba(165,185,228,.13);color:#e4ecff;font-size:11px;font-weight:800}.menu-card a.active{color:#bbaeff}.bottom{position:fixed;z-index:80;left:50%;bottom:11px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));height:66px;display:grid;grid-template-columns:repeat(5,1fr);overflow:hidden;border:1px solid #3c527d;border-radius:21px;background:rgba(12,23,45,.92);box-shadow:0 14px 38px rgba(0,0,0,.30);backdrop-filter:blur(20px)}.bottom a,.bottom button{border:0;background:none;color:#b7c4df;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:8px;font-weight:700}.bottom .active{color:#b8abff;font-weight:900}.nav-icon{font-size:17px}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.overview{grid-template-columns:repeat(2,1fr)}.planner-layout{grid-template-columns:1fr}.notice-panel{position:static}.week-strip{gap:5px}.week-day{min-height:57px}}@media(max-width:620px){.header{width:calc(100% - 24px);height:70px}.brand strong{font-size:23px}.brand small{font-size:7px;letter-spacing:2px}.admin-badge{display:none}.back{display:none}.page{width:calc(100% - 24px);padding:31px 0 108px}.hero h1{font-size:62px}.hero p{margin-top:15px;font-size:11px}.new-task{width:100%}.overview{gap:7px}.metric{min-height:80px;padding:12px}.metric strong{font-size:23px}.planner-layout{gap:11px}.deadline-panel,.notice-panel{padding:15px;border-radius:19px}.panel-head h2,.notice-panel h2{font-size:18px}.week-strip{grid-template-columns:repeat(7,minmax(35px,1fr));overflow-x:auto;padding-bottom:2px}.week-day{min-width:35px;padding:7px 2px}.task-card{grid-template-columns:43px minmax(0,1fr);gap:9px;padding:11px}.task-date{width:43px;min-height:48px}.task-date strong{font-size:16px}.task-actions{grid-column:2;justify-content:flex-start}.task-title{font-size:13px}.filterbar{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.field-wrap.full{grid-column:auto}.form-date-fields{grid-template-columns:1fr}.notice-text{min-height:250px}.menu-overlay{padding:76px 12px}.bottom{height:64px}.bottom a,.bottom button{font-size:7px}.nav-icon{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<header class="header">
+  <a class="brand" href="/" aria-label="VOM 홈"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <div class="header-right">
+    <span class="admin-badge"><i></i>운영진 플래너</span>
+    <a class="back" href="/calendar/">← 일정 관리</a>
+    <button class="menu-btn" type="button" onclick="openMenu()" aria-label="메뉴 열기">☰</button>
+  </div>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <div>
+      <div class="eyebrow">VOM OPERATIONS · DEADLINES</div>
+      <h1>Planner</h1>
+      <p>일정 운영과 외부 신청 마감을 한 흐름으로 관리합니다. 일정 생성 후에는 바로 카카오톡 공지 문구도 복사할 수 있어요.</p>
+    </div>
+    <button class="new-task" type="button" onclick="openPlannerEditor()">＋ 마감 추가</button>
+  </section>
+
+  <section class="overview" aria-label="플래너 요약">
+    <article class="metric"><small>미완료 마감</small><strong id="metricOpen">0<em>건</em></strong></article>
+    <article class="metric urgent"><small>3일 이내 · 지남</small><strong id="metricUrgent">0<em>건</em></strong></article>
+    <article class="metric"><small>오늘 일정 작업</small><strong id="metricToday">0<em>건</em></strong></article>
+    <article class="metric complete"><small>이번 달 완료</small><strong id="metricDone">0<em>건</em></strong></article>
+  </section>
+
+  <section class="planner-layout">
+    <section class="panel deadline-panel" aria-labelledby="deadlineTitle">
+      <div class="panel-head">
+        <div><div class="panel-kicker">NEXT 7 DAYS</div><h2 id="deadlineTitle">마감 타임라인</h2><p class="range-note">색으로 성격을 구분하고, 지났거나 가까운 마감은 바로 드러납니다.</p></div>
+      </div>
+      <div class="week-strip" id="weekStrip"></div>
+      <div class="task-list" id="taskList"><div class="empty">플래너를 불러오는 중입니다.</div></div>
+    </section>
+
+    <aside class="panel notice-panel" id="noticePanel">
+      <div class="panel-kicker">KAKAO TALK NOTICE</div>
+      <h2>일정 공지 만들기</h2>
+      <p class="notice-help">일정을 고르면 카톡방에 바로 붙여넣을 수 있는 기본 공지문을 만듭니다. 일정 정보가 바뀌면 문구도 함께 바뀝니다.</p>
+      <select id="noticeEventSelect" class="event-select" onchange="selectNoticeEvent(this.value)" aria-label="공지 만들 일정 선택"></select>
+      <textarea id="noticeText" class="notice-text" readonly aria-label="카카오톡 공지 내용"></textarea>
+      <div class="notice-actions">
+        <button class="copy-btn" type="button" onclick="copyNotice()">공지문 복사</button>
+        <a class="calendar-link" href="/calendar/">일정 열기 →</a>
+      </div>
+      <div id="copyStatus" class="copy-status" role="status"></div>
+    </aside>
+  </section>
+
+  <section class="filterbar">
+    <div class="filters" aria-label="플래너 필터">
+      <button class="filter active" type="button" data-filter="ALL" onclick="setFilter('ALL',this)">전체</button>
+      <button class="filter" type="button" data-filter="URGENT" onclick="setFilter('URGENT',this)">마감 임박</button>
+      <button class="filter" type="button" data-filter="RECURRING" onclick="setFilter('RECURRING',this)">반복 일정</button>
+      <button class="filter" type="button" data-filter="DONE" onclick="setFilter('DONE',this)">완료</button>
+    </div>
+    <small id="filterSummary"></small>
+  </section>
+</main>
+
+<div class="editor-overlay" id="editorOverlay" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+  <section class="editor">
+    <div class="editor-head"><h2 id="editorTitle">마감 추가</h2><button class="close" type="button" onclick="closePlannerEditor()" aria-label="닫기">×</button></div>
+    <p class="editor-note">반복 마감은 매달 새로 생성하지 않아도 다음 달로 자동 이어집니다.</p>
+    <input id="plannerItemId" type="hidden">
+    <div class="form-grid">
+      <div class="field-wrap full"><label for="plannerTitle">할 일</label><input class="field" id="plannerTitle" maxlength="120" placeholder="예: 청계천 버스킹 신청"></div>
+      <div class="field-wrap"><label for="plannerDeadlineType">반복 방식</label><select class="field" id="plannerDeadlineType" onchange="syncDeadlineFields()"><option value="ONE_TIME">한 번만</option><option value="MONTHLY_DAY">매월 특정일</option><option value="MONTHLY_RANGE">매월 기간</option></select></div>
+      <div class="field-wrap"><label for="plannerColor">색상</label><select class="field" id="plannerColor"><option value="VIOLET">보라 · 운영</option><option value="MINT">민트 · 신청</option><option value="AMBER">노랑 · 외부 접수</option><option value="ROSE">핑크 · 긴급</option></select></div>
+      <div class="field-wrap full" id="plannerDateFields"></div>
+      <div class="field-wrap full"><label for="plannerDescription">설명</label><textarea class="field" id="plannerDescription" maxlength="500" placeholder="신청 링크, 확인할 내용, 담당자 메모 등"></textarea></div>
+    </div>
+    <div class="modal-actions"><button id="plannerDelete" class="delete" type="button" onclick="deletePlannerItem()">삭제</button><button class="save" type="button" onclick="savePlannerItem()">저장</button></div>
+  </section>
+</div>
+
+<div class="menu-overlay" id="menuOverlay" onclick="if(event.target===this)closeMenu()">
+  <nav class="menu-card" aria-label="전체 메뉴">
+    <div class="menu-top"><strong>VOM Menu</strong><button class="close" type="button" onclick="closeMenu()" aria-label="닫기">×</button></div>
+    <a href="/">HOME <span>→</span></a><a href="/calendar/">CALENDAR <span>→</span></a><a class="active" href="/planner/">OPERATIONS PLANNER <span>→</span></a><a href="/admin-settings/?section=operations">ADMIN SETTINGS <span>→</span></a>
+  </nav>
+</div>
+
+<nav class="bottom" aria-label="주요 메뉴">
+  <a href="/"><span class="nav-icon">⌂</span>HOME</a>
+  <a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a>
+  <a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a>
+  <a class="active" href="/planner/"><span class="nav-icon">✓</span>PLANNER</a>
+  <button type="button" onclick="openMenu()"><span class="nav-icon">☰</span>MENU</button>
+</nav>
+
+<script>
+const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
+const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let events=[],plannerItems=[],eventTasks=[],selectedEventId='',currentFilter='ALL';
+
+const colorMeta={VIOLET:{label:'운영',color:'#9c85ff'},MINT:{label:'신청',color:'#6cdbca'},AMBER:{label:'외부 접수',color:'#f1c663'},ROSE:{label:'긴급',color:'#ff8ba7'}};
+
+function dayStart(value=new Date()){const date=new Date(value);date.setHours(0,0,0,0);return date}
+function dateFromKey(value){if(!value)return null;const date=new Date(String(value).slice(0,10)+'T12:00:00');return Number.isNaN(date.getTime())?null:date}
+function keyForDate(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0')}
+function monthKey(date=new Date()){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-01'}
+function daysInMonth(year,month){return new Date(year,month+1,0).getDate()}
+function localDate(year,month,day){return new Date(year,month,Math.min(day,daysInMonth(year,month)),12,0,0)}
+function daysBetween(from,to){return Math.round((dayStart(to)-dayStart(from))/86400000)}
+function formatDate(date,{short=false}={}){if(!date)return '날짜 미정';const week=['일','월','화','수','목','금','토'][date.getDay()];return short?(date.getMonth()+1)+'/'+date.getDate():(date.getMonth()+1)+'월 '+date.getDate()+'일 ('+week+')'}
+function esc(value){const div=document.createElement('div');div.textContent=String(value??'');return div.innerHTML}
+function attr(value){return esc(value).replace(/"/g,'&quot;')}
+
+async function requireAdmin(){
+  if(window.vomAccessReady&&!(await window.vomAccessReady))return false;
+  const {data:{session}}=await db.auth.getSession();
+  if(!session){location.replace('/me/?next='+encodeURIComponent(location.pathname+location.search));return false}
+  const {data:admin}=await db.from('admins').select('user_id').eq('user_id',session.user.id).maybeSingle();
+  if(!admin){location.replace('/calendar/');return false}
+  return true;
+}
+async function loadEvents(){
+  const {data,error}=await db.from('events').select('id,title,event_type,event_date,start_time,end_time,location,description,host_note,application_enabled,application_capacity,application_opens_at,application_closes_at').order('event_date',{ascending:true}).order('start_time',{ascending:true});
+  if(error)throw error;events=data||[];
+}
+async function loadPlannerItems(){
+  const {data,error}=await db.from('operation_planner_items').select('*').order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(error)throw error;plannerItems=data||[];
+}
+async function loadEventTasks(){
+  const {data,error}=await db.from('event_operation_tasks').select('id,event_id,title,description,due_date,sort_order,is_done,is_skipped,completed_at').eq('is_skipped',false).order('due_date',{ascending:true}).order('sort_order',{ascending:true});
+  if(error)throw error;eventTasks=data||[];
+}
+function plannerOccurrence(item){
+  const today=dayStart();
+  if(item.deadline_type==='ONE_TIME'){
+    const date=dateFromKey(item.deadline_date);
+    return {start:date,end:date,done:!!item.is_done,recurring:false,period:null,label:formatDate(date)};
+  }
+  const year=today.getFullYear(),month=today.getMonth(),period=monthKey(today);
+  const start=localDate(year,month,Number(item.start_day));
+  const end=item.deadline_type==='MONTHLY_RANGE'?localDate(year,month,Number(item.end_day)):start;
+  return {start,end,done:String(item.completed_period||'')===period,recurring:true,period,label:item.deadline_type==='MONTHLY_RANGE'?formatDate(start)+' ~ '+formatDate(end):'매월 '+start.getDate()+'일'};
+}
+function eventTaskColor(task){
+  const event=events.find(item=>Number(item.id)===Number(task.event_id));
+  if(event?.event_type==='BUSKING')return 'ROSE';
+  if(event?.event_type==='VOM LIVE')return 'VIOLET';
+  return 'MINT';
+}
+function normalizeItems(){
+  const manual=plannerItems.map(item=>{const occurrence=plannerOccurrence(item);return {kind:'planner',id:item.id,title:item.title,description:item.description||'',color:item.color_key||'VIOLET',start:occurrence.start,end:occurrence.end,done:occurrence.done,recurring:occurrence.recurring,period:occurrence.period,label:occurrence.label,raw:item,source:'운영 마감'}});
+  const automatic=eventTasks.map(task=>{const event=events.find(item=>Number(item.id)===Number(task.event_id));const due=dateFromKey(task.due_date);return {kind:'event',id:task.id,title:task.title,description:task.description||'',color:eventTaskColor(task),start:due,end:due,done:!!task.is_done,recurring:false,period:null,label:event?(event.title||'일정'):'일정 체크리스트',raw:task,source:'일정 자동'}});
+  return [...manual,...automatic].filter(item=>item.start).sort((a,b)=>a.start-b.start||Number(a.raw.sort_order||0)-Number(b.raw.sort_order||0));
+}
+function statusFor(item){
+  if(item.done)return {text:'완료',kind:'done'};
+  const diff=daysBetween(dayStart(),item.end);
+  if(diff<0)return {text:'마감 지남',kind:'overdue'};
+  if(diff===0)return {text:'오늘 마감',kind:'urgent'};
+  if(diff<=3)return {text:'D-'+diff,kind:'urgent'};
+  return {text:'D-'+diff,kind:'normal'};
+}
+function filterItems(items){return items.filter(item=>{const status=statusFor(item);if(currentFilter==='URGENT')return !item.done&&status.kind!=='normal';if(currentFilter==='RECURRING')return item.recurring;if(currentFilter==='DONE')return item.done;return true})}
+function renderWeekStrip(items){
+  const today=dayStart();const days=Array.from({length:7},(_,index)=>{const date=new Date(today);date.setDate(today.getDate()+index);return date});
+  document.getElementById('weekStrip').innerHTML=days.map((date,index)=>{const count=items.filter(item=>date>=item.start&&date<=item.end&&!item.done).length;return '<div class="week-day '+(index===0?'today ':'')+(count?'has-task':'no-task')+'"><small>'+['일','월','화','수','목','금','토'][date.getDay()]+'</small><b>'+date.getDate()+'</b><i></i></div>'}).join('');
+}
+function renderMetrics(items){
+  const open=items.filter(item=>!item.done);const urgent=open.filter(item=>statusFor(item).kind==='urgent'||statusFor(item).kind==='overdue');const today=open.filter(item=>dayStart()>=item.start&&dayStart()<=item.end);const done=items.filter(item=>item.done);
+  document.getElementById('metricOpen').innerHTML=open.length+'<em>건</em>';document.getElementById('metricUrgent').innerHTML=urgent.length+'<em>건</em>';document.getElementById('metricToday').innerHTML=today.length+'<em>건</em>';document.getElementById('metricDone').innerHTML=done.length+'<em>건</em>';
+}
+function renderTask(item){
+  const color=colorMeta[item.color]||colorMeta.VIOLET;const status=statusFor(item);const startDay=item.start.getDate();const range=item.start.getTime()===item.end.getTime()?String(startDay):startDay+'–'+item.end.getDate();const recurrence=item.recurring?' · 반복':'';const dateLabel=(item.start.getMonth()+1)+'월';
+  const edit=item.kind==='planner'?'<button class="task-edit" type="button" onclick="openPlannerEditor('+Number(item.id)+')">수정</button>':'<a class="task-edit" href="/calendar/">일정</a>';
+  return '<article class="task-card '+(item.done?'done':'')+'" style="--task-color:'+color.color+'"><div class="task-date"><strong>'+range+'</strong><small>'+dateLabel+'</small></div><div class="task-main"><div class="task-topline"><span class="source-pill">'+esc(item.source)+'</span><span class="status-pill '+status.kind+'">'+status.text+'</span></div><h3 class="task-title">'+esc(item.title)+'</h3><p class="task-copy">'+esc(item.description||item.label||'세부 메모 없음')+'</p></div><div class="task-actions"><button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit+'</div></article>';
+}
+function renderTasks(){
+  const all=normalizeItems();renderMetrics(all);renderWeekStrip(all);const visible=filterItems(all);const taskList=document.getElementById('taskList');taskList.innerHTML=visible.length?visible.map(renderTask).join(''):'<div class="empty">이 조건에 맞는 마감이 없습니다.</div>';document.getElementById('filterSummary').textContent='전체 '+all.length+'건 · 표시 '+visible.length+'건';
+}
+function renderNoticeOptions(){
+  const select=document.getElementById('noticeEventSelect');if(!events.length){select.innerHTML='<option>등록된 일정이 없습니다.</option>';document.getElementById('noticeText').value='등록된 일정이 생기면 여기서 카카오톡 공지 문구를 바로 만들 수 있습니다.';return}
+  if(!selectedEventId||!events.some(item=>String(item.id)===String(selectedEventId)))selectedEventId=String(events.find(item=>dateFromKey(item.event_date)>=dayStart())?.id||events[0].id);
+  select.innerHTML=events.map(event=>'<option value="'+Number(event.id)+'" '+(String(event.id)===String(selectedEventId)?'selected':'')+'>'+esc(formatDate(dateFromKey(event.event_date),{short:true})+' · '+(event.title||'제목 없는 일정'))+'</option>').join('');renderNotice();
+}
+function formatTime(value){return value?String(value).slice(0,5):''}
+function formatDateTime(value){if(!value)return '';const date=new Date(value);if(Number.isNaN(date.getTime()))return '';return (date.getMonth()+1)+'월 '+date.getDate()+'일 '+String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0')}
+function buildNotice(event){
+  if(!event)return '일정을 선택해 주세요.';
+  const type=event.event_type==='BUSKING'?'버스킹':event.event_type==='VOM LIVE'?'VOM LIVE':'VOM 일정';
+  const time=[formatTime(event.start_time),formatTime(event.end_time)].filter(Boolean).join(' ~ ');
+  const lines=['[ VOM '+type+' 안내 ]','', '🎵 '+(event.title||'제목 미정'),'📅 '+formatDate(dateFromKey(event.event_date)),'🕐 '+(time||'시간은 추후 안내'),'📍 '+(event.location||'장소는 추후 안내')];
+  if(event.description)lines.push('','📝 '+event.description.trim());
+  if(event.application_enabled){lines.push('','🙋 참여 신청: 홈페이지 일정 상세에서 신청해주세요.'+(event.application_capacity?' (정원 '+event.application_capacity+'명)':''));const opens=formatDateTime(event.application_opens_at),closes=formatDateTime(event.application_closes_at);if(opens||closes)lines.push('신청 기간: '+(opens||'오픈 시간 추후 안내')+(closes?' ~ '+closes:''));}
+  lines.push('','변동 사항은 이 공지에 이어서 안내하겠습니다.');return lines.join('\n');
+}
+function renderNotice(){const event=events.find(item=>String(item.id)===String(selectedEventId));document.getElementById('noticeText').value=buildNotice(event)}
+function selectNoticeEvent(value){selectedEventId=String(value);renderNotice();history.replaceState(null,'','/planner/?event='+encodeURIComponent(selectedEventId))}
+async function copyNotice(){
+  const text=document.getElementById('noticeText').value;const status=document.getElementById('copyStatus');try{await navigator.clipboard.writeText(text);status.textContent='공지문을 복사했어요. 카카오톡방에 붙여넣으면 됩니다.'}catch(_){const area=document.getElementById('noticeText');area.focus();area.select();document.execCommand('copy');status.textContent='공지문을 복사했어요. 카카오톡방에 붙여넣으면 됩니다.'}}
+function setFilter(filter,button){currentFilter=filter;document.querySelectorAll('.filter').forEach(item=>item.classList.toggle('active',item===button));renderTasks()}
+async function toggleTask(kind,id){
+  const now=new Date().toISOString();let error;
+  if(kind==='event'){const task=eventTasks.find(item=>Number(item.id)===Number(id));if(!task)return;({error}=await db.from('event_operation_tasks').update({is_done:!task.is_done,completed_at:task.is_done?null:now}).eq('id',Number(id)));if(!error)task.is_done=!task.is_done}
+  else{const item=plannerItems.find(row=>Number(row.id)===Number(id));if(!item)return;const recurring=item.deadline_type!=='ONE_TIME';const done=recurring?String(item.completed_period||'')===monthKey():!!item.is_done;const payload=recurring?{completed_period:done?null:monthKey(),updated_at:now}:{is_done:!done,completed_at:done?null:now,updated_at:now};({error}=await db.from('operation_planner_items').update(payload).eq('id',Number(id)));if(!error)Object.assign(item,payload)}
+  if(error){alert('완료 상태를 저장하지 못했습니다.\n'+error.message);return}renderTasks();
+}
+function openPlannerEditor(id=''){
+  const item=plannerItems.find(row=>String(row.id)===String(id));document.getElementById('plannerItemId').value=item?.id||'';document.getElementById('editorTitle').textContent=item?'마감 수정':'마감 추가';document.getElementById('plannerTitle').value=item?.title||'';document.getElementById('plannerDeadlineType').value=item?.deadline_type||'ONE_TIME';document.getElementById('plannerColor').value=item?.color_key||'VIOLET';document.getElementById('plannerDescription').value=item?.description||'';document.getElementById('plannerDelete').classList.toggle('show',!!item);syncDeadlineFields(item);document.getElementById('editorOverlay').classList.add('open');setTimeout(()=>document.getElementById('plannerTitle').focus(),30);
+}
+function syncDeadlineFields(item=null){
+  const type=document.getElementById('plannerDeadlineType').value;const wrap=document.getElementById('plannerDateFields');const current=item||plannerItems.find(row=>String(row.id)===String(document.getElementById('plannerItemId').value));if(type==='ONE_TIME'){wrap.innerHTML='<label for="plannerDeadlineDate">마감 날짜</label><div class="form-date-fields one"><input class="field" id="plannerDeadlineDate" type="date" value="'+attr(current?.deadline_date||keyForDate(dayStart()))+'"></div>';return}
+  if(type==='MONTHLY_DAY'){wrap.innerHTML='<label for="plannerStartDay">매월 마감일</label><div class="form-date-fields one"><input class="field" id="plannerStartDay" type="number" min="1" max="31" value="'+Number(current?.start_day||1)+'" placeholder="일"></div>';return}
+  wrap.innerHTML='<label>매월 신청 기간</label><div class="form-date-fields"><input class="field" id="plannerStartDay" type="number" min="1" max="31" value="'+Number(current?.start_day||1)+'" placeholder="시작일"><input class="field" id="plannerEndDay" type="number" min="1" max="31" value="'+Number(current?.end_day||2)+'" placeholder="마감일"></div>';
+}
+function closePlannerEditor(){document.getElementById('editorOverlay').classList.remove('open')}
+async function savePlannerItem(){
+  const id=document.getElementById('plannerItemId').value;const title=document.getElementById('plannerTitle').value.trim();const deadlineType=document.getElementById('plannerDeadlineType').value;const color=document.getElementById('plannerColor').value;const description=document.getElementById('plannerDescription').value.trim();
+  if(!title){alert('할 일을 입력해 주세요.');return}
+  const payload={title,description:description||null,deadline_type:deadlineType,color_key:color,deadline_date:null,start_day:null,end_day:null,updated_at:new Date().toISOString()};
+  if(deadlineType==='ONE_TIME'){payload.deadline_date=document.getElementById('plannerDeadlineDate').value;if(!payload.deadline_date){alert('마감 날짜를 선택해 주세요.');return}}
+  else{payload.start_day=Number(document.getElementById('plannerStartDay').value);if(!Number.isInteger(payload.start_day)||payload.start_day<1||payload.start_day>31){alert('날짜는 1일부터 31일 사이로 입력해 주세요.');return}if(deadlineType==='MONTHLY_RANGE'){payload.end_day=Number(document.getElementById('plannerEndDay').value);if(!Number.isInteger(payload.end_day)||payload.end_day<payload.start_day||payload.end_day>31){alert('기간의 마지막 날을 시작일 이후로 입력해 주세요.');return}}}
+  const query=id?db.from('operation_planner_items').update(payload).eq('id',Number(id)):db.from('operation_planner_items').insert({...payload,sort_order:(plannerItems.reduce((max,row)=>Math.max(max,Number(row.sort_order)||0),0)+10)});
+  const {error}=await query;if(error){alert('마감을 저장하지 못했습니다.\n'+error.message);return}await loadPlannerItems();closePlannerEditor();renderTasks();
+}
+async function deletePlannerItem(){
+  const id=document.getElementById('plannerItemId').value;const item=plannerItems.find(row=>String(row.id)===String(id));if(!item||!confirm('‘'+item.title+'’ 마감을 삭제할까요?'))return;const {error}=await db.from('operation_planner_items').delete().eq('id',Number(id));if(error){alert('삭제하지 못했습니다.\n'+error.message);return}await loadPlannerItems();closePlannerEditor();renderTasks();
+}
+function openMenu(){document.getElementById('menuOverlay').classList.add('open')}function closeMenu(){document.getElementById('menuOverlay').classList.remove('open')}
+document.getElementById('editorOverlay').addEventListener('click',event=>{if(event.target===event.currentTarget)closePlannerEditor()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closePlannerEditor();closeMenu()}});
+async function start(){
+  try{if(!(await requireAdmin()))return;const requested=new URLSearchParams(location.search).get('event');selectedEventId=requested||'';await Promise.all([loadEvents(),loadPlannerItems(),loadEventTasks()]);renderTasks();renderNoticeOptions();if(new URLSearchParams(location.search).get('notice')==='1')setTimeout(()=>document.getElementById('noticePanel').scrollIntoView({behavior:'smooth',block:'center'}),180)}
+  catch(error){document.getElementById('taskList').innerHTML='<div class="empty">플래너를 불러오지 못했습니다.<br>'+esc(error.message||'잠시 후 다시 시도해 주세요.')+'</div>'}
+}
+start();
+</script>
+</body>
+</html>
