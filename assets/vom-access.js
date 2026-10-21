@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const path=location.pathname;
-  if(!/^\/(members|calendar|schedule)(\/|$)/.test(path))return;
+  if(!/^\/(members|calendar|schedule|planner)(\/|$)/.test(path))return;
   const hide=document.createElement('style');hide.id='vom-private-loading';hide.textContent='body{visibility:hidden!important}';document.head.appendChild(hide);
   const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R');
   function login(){location.replace('/me/?next='+encodeURIComponent(path+location.search));}
