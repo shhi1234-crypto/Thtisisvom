@@ -54,6 +54,66 @@
 .day-agenda{margin-top:19px;padding-top:18px;border-top:1px solid rgba(105,130,180,.23)}.agenda-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.agenda-head h3{margin:4px 0 0;color:#f1f4ff;font-size:18px;letter-spacing:-.05em}.agenda-filters{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}.agenda-filters .filter{min-height:31px;padding:0 10px;font-size:9px}.agenda-meta{display:flex;justify-content:flex-end;min-height:17px;margin:6px 0 9px}.agenda-meta small{color:#aab8d5;font-size:9px}.agenda-list{max-height:500px;overflow:auto;padding-right:3px}
 @media(max-width:980px){.hero{display:block}.quick-create{max-width:none;margin-top:18px}.planner-layout{grid-template-columns:1fr}.notice-panel{position:static}.planner-day{min-height:96px}}
 @media(max-width:620px){.quick-create{grid-template-columns:1fr}.quick-create-card{min-height:94px}.calendar-head{align-items:flex-start;flex-direction:column}.month-controls{justify-content:flex-start}.planner-day{min-height:78px;padding:6px;border-radius:11px}.planner-day-number{font-size:11px}.planner-day-number i{min-width:15px;height:15px;font-size:7px}.planner-day-tasks{gap:3px;margin-top:5px}.calendar-task-chip{padding:3px 4px;font-size:7px}.calendar-weekdays{gap:4px}.planner-calendar{gap:4px}.agenda-head{align-items:flex-start;flex-direction:column}.agenda-filters{justify-content:flex-start}.task-card{grid-template-columns:auto minmax(0,1fr)}.task-actions{grid-column:2;justify-content:flex-start}.task-date{width:44px;min-height:48px}.task-title{font-size:13px}}
+
+/* Calendar readability and notice-composer flow */
+.page{width:min(1480px,calc(100% - 48px))}
+.planner-layout{display:block}
+.calendar-panel{padding:27px 28px 31px}
+.calendar-head{align-items:flex-start}
+.range-note{max-width:720px;font-size:11px;line-height:1.65}
+.range-note b{color:#d8d0ff}
+.calendar-weekdays{gap:9px;margin-top:25px}
+.calendar-weekdays span{padding:0 4px;font-size:10px;text-align:left}
+.planner-calendar{gap:9px;margin-top:9px}
+.planner-day{min-height:158px;padding:12px;border-radius:16px;overflow:visible}
+.planner-day-number{font-size:15px}
+.planner-day-number i{min-width:20px;height:20px;font-size:9px}
+.planner-day-tasks{gap:6px;margin-top:10px}
+.calendar-task-chip{overflow:visible;padding:6px 7px;font-size:10px;line-height:1.42;text-overflow:clip;white-space:normal;overflow-wrap:anywhere}
+.calendar-more{padding-top:7px;font-size:9px}
+.day-agenda{margin-top:27px;padding-top:23px}
+.agenda-head h3{font-size:22px}
+.agenda-list{max-height:none}
+.task-notice{min-height:31px;padding:0 10px;border:1px solid #967dff;border-radius:9px;background:linear-gradient(135deg,#785fe2,#6989e9);color:#fff;font-size:9px;font-weight:900}
+.task-notice:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.notice-overlay{position:fixed;inset:0;z-index:110;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,22,.68);backdrop-filter:blur(12px)}
+.notice-overlay.open{display:flex}
+.notice-editor{width:min(680px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:23px;border:1px solid #506895;border-radius:25px;background:linear-gradient(145deg,#142240,#0e1933);box-shadow:0 30px 90px rgba(0,0,0,.48)}
+.notice-editor .editor-head{align-items:flex-start}
+.notice-editor .editor-head h2{margin-top:4px;font-family:"Noto Sans KR",sans-serif;font-size:24px;font-weight:900;letter-spacing:-.05em}
+.notice-event-summary{display:grid;gap:4px;margin-top:17px;padding:14px 15px;border:1px solid #3f5685;border-radius:15px;background:rgba(8,18,39,.7)}
+.notice-event-summary span{color:#bcaeff;font-size:9px;font-weight:900;letter-spacing:.09em}
+.notice-event-summary strong{color:#f2f5ff;font-size:16px;letter-spacing:-.04em}
+.notice-event-summary p{margin:0;color:#b8c5df;font-size:10px;line-height:1.55}
+.notice-editor .notice-text{min-height:298px;margin-top:12px;padding:15px;border-color:#405783;background:#0b1731;color:#f1f5ff;font-size:12px;line-height:1.72}
+.notice-editor-actions{grid-template-columns:auto 1fr}
+.notice-reset{min-height:42px;padding:0 13px;border:1px solid #49618d;border-radius:12px;background:#17294a;color:#dce7ff;font-size:10px;font-weight:900}
+.notice-reset:hover{border-color:#9d8aff}
+@media(max-width:980px){
+  .page{width:calc(100% - 32px)}
+  .calendar-panel{padding:21px}
+  .planner-day{min-height:126px;padding:9px}
+}
+@media(max-width:620px){
+  .page{width:calc(100% - 20px)}
+  .calendar-panel{padding:15px 10px 20px;border-radius:19px}
+  .range-note{font-size:10px}
+  .calendar-weekdays{gap:4px;margin-top:18px}
+  .calendar-weekdays span{padding:0 2px;font-size:8px;text-align:center}
+  .planner-calendar{gap:4px}
+  .planner-day{min-height:94px;padding:6px;border-radius:11px}
+  .planner-day-number{font-size:12px}
+  .planner-day-number i{min-width:16px;height:16px;font-size:7px}
+  .planner-day-tasks{gap:4px;margin-top:6px}
+  .calendar-task-chip{padding:4px;font-size:8px;line-height:1.32}
+  .calendar-more{font-size:8px}
+  .notice-editor{padding:18px;border-radius:20px}
+  .notice-editor .editor-head h2{font-size:21px}
+  .notice-editor .notice-text{min-height:248px;font-size:11px}
+  .notice-editor-actions{grid-template-columns:1fr}
+  .task-actions{gap:6px;flex-wrap:wrap}
+}
+
 </style>
 </head>
 <body>
@@ -72,13 +132,13 @@
     <div class="hero-copy">
       <div class="eyebrow">VOM OPERATIONS · CALENDAR</div>
       <h1>Planner</h1>
-      <p>이벤트와 반복 업무를 한 달 캘린더에서 함께 관리합니다. 이벤트를 만들면 공지 문구까지 바로 이어집니다.</p>
+      <p>이벤트와 반복 업무를 한 달 캘린더에서 함께 관리합니다. 이벤트를 만들거나 선택하면 공지 초안까지 바로 이어집니다.</p>
     </div>
     <div class="quick-create" aria-label="빠른 생성">
       <a class="quick-create-card event" href="/calendar/?create=1">
         <small>일회성 일정 · 참여 공지</small>
         <strong>＋ 이벤트 만들기</strong>
-        <span>일시·장소·참가 안내를 등록해요</span>
+        <span>등록 후 해당 일정의 공지 초안이 바로 열려요</span>
       </a>
       <button class="quick-create-card recurring" type="button" onclick="openPlannerEditor('', 'MONTHLY_DAY')">
         <small>매월 반복 · 운영 마감</small>
@@ -101,7 +161,7 @@
         <div>
           <div class="panel-kicker">OPERATIONS CALENDAR</div>
           <h2 id="deadlineTitle">일정 캘린더</h2>
-          <p class="range-note">이벤트와 반복 마감을 한 달 흐름으로 보세요. 날짜를 누르면 그날의 작업을 바로 확인할 수 있습니다.</p>
+          <p class="range-note">이벤트와 반복 마감을 한 달 흐름으로 보세요. 날짜를 누른 뒤 이벤트의 <b>공지 작성</b>으로 카카오톡 문구를 바로 만듭니다.</p>
         </div>
         <div class="month-controls" aria-label="월 이동">
           <button type="button" onclick="changePlannerMonth(-1)" aria-label="이전 달">←</button>
@@ -130,18 +190,7 @@
       </section>
     </section>
 
-    <aside class="panel notice-panel" id="noticePanel">
-      <div class="panel-kicker">KAKAO TALK NOTICE</div>
-      <h2>일정 공지 만들기</h2>
-      <p class="notice-help">일정을 고르면 카톡방에 바로 붙여넣을 수 있는 기본 공지문을 만듭니다. 일정 정보가 바뀌면 문구도 함께 바뀝니다.</p>
-      <select id="noticeEventSelect" class="event-select" onchange="selectNoticeEvent(this.value)" aria-label="공지 만들 일정 선택"></select>
-      <textarea id="noticeText" class="notice-text" readonly aria-label="카카오톡 공지 내용"></textarea>
-      <div class="notice-actions">
-        <button class="copy-btn" type="button" onclick="copyNotice()">공지문 복사</button>
-        <a class="calendar-link" href="/calendar/">일정 열기 →</a>
-      </div>
-      <div id="copyStatus" class="copy-status" role="status"></div>
-    </aside>
+
   </section>
 
 </main>
@@ -161,6 +210,25 @@
     <div class="modal-actions"><button id="plannerDelete" class="delete" type="button" onclick="deletePlannerItem()">삭제</button><button class="save" type="button" onclick="savePlannerItem()">저장</button></div>
   </section>
 </div>
+
+
+<div class="notice-overlay" id="noticeOverlay" role="dialog" aria-modal="true" aria-labelledby="noticeEditorTitle">
+  <section class="notice-editor">
+    <div class="editor-head">
+      <div><div class="panel-kicker">KAKAO TALK NOTICE</div><h2 id="noticeEditorTitle">일정 공지 작성</h2></div>
+      <button class="close" type="button" onclick="closeNoticeEditor()" aria-label="공지 작성 닫기">×</button>
+    </div>
+    <p class="editor-note">일정 정보를 바탕으로 만든 초안입니다. 카톡방에 맞게 자유롭게 다듬은 뒤 복사하세요.</p>
+    <div class="notice-event-summary" id="noticeEventSummary"></div>
+    <textarea id="noticeText" class="notice-text" aria-label="카카오톡 공지 내용"></textarea>
+    <div class="notice-actions notice-editor-actions">
+      <button class="notice-reset" type="button" onclick="resetNoticeDraft()">기본 문구</button>
+      <button class="copy-btn" type="button" onclick="copyNotice()">공지문 복사</button>
+    </div>
+    <div id="copyStatus" class="copy-status" role="status"></div>
+  </section>
+</div>
+
 
 <div class="menu-overlay" id="menuOverlay" onclick="if(event.target===this)closeMenu()">
   <nav class="menu-card" aria-label="전체 메뉴">
@@ -286,8 +354,10 @@ function renderMetrics(items){
 }
 function renderTask(item){
   const color=colorMeta[item.color]||colorMeta.VIOLET;const status=statusFor(item);const startDay=item.start.getDate();const range=item.start.getTime()===item.end.getTime()?String(startDay):startDay+'–'+item.end.getDate();const dateLabel=(item.start.getMonth()+1)+'월';
-  const edit=item.kind==='planner'?'<button class="task-edit" type="button" onclick="openPlannerEditor('+Number(item.id)+')">수정</button>':'<a class="task-edit" href="/calendar/">일정</a>';
-  const actions=item.isEvent?edit:'<button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit;
+  const edit=item.kind==='planner'?'<button class="task-edit" type="button" onclick="openPlannerEditor('+Number(item.id)+')">수정</button>':'<a class="task-edit" href="/calendar/">일정 수정</a>';
+  const actions=item.isEvent
+    ?'<button class="task-notice" type="button" onclick="openEventNotice('+Number(item.id)+')">공지 작성</button>'+edit
+    :'<button class="task-done '+(item.done?'is-done':'')+'" type="button" onclick="toggleTask(\''+item.kind+'\','+Number(item.id)+')">'+(item.done?'완료됨':'완료')+'</button>'+edit;
   return '<article class="task-card '+(item.done?'done':'')+'" style="--task-color:'+color.color+'"><div class="task-date"><strong>'+range+'</strong><small>'+dateLabel+'</small></div><div class="task-main"><div class="task-topline"><span class="source-pill">'+esc(item.source)+'</span><span class="status-pill '+status.kind+'">'+status.text+'</span></div><h3 class="task-title">'+esc(item.title)+'</h3><p class="task-copy">'+esc(item.description||item.label||'세부 메모 없음')+'</p></div><div class="task-actions">'+actions+'</div></article>';
 }
 function renderTasks(){
@@ -298,11 +368,6 @@ function renderTasks(){
   document.getElementById('agendaTitle').textContent=formatDate(selectedPlannerDate)+' 일정 · 마감';
   const monthItems=filterItems(itemsInMonth(all));
   document.getElementById('filterSummary').textContent=monthLabel(plannerMonth)+' · '+monthItems.length+'건 표시';
-}
-function renderNoticeOptions(){
-  const select=document.getElementById('noticeEventSelect');if(!events.length){select.innerHTML='<option>등록된 일정이 없습니다.</option>';document.getElementById('noticeText').value='등록된 일정이 생기면 여기서 카카오톡 공지 문구를 바로 만들 수 있습니다.';return}
-  if(!selectedEventId||!events.some(item=>String(item.id)===String(selectedEventId)))selectedEventId=String(events.find(item=>dateFromKey(item.event_date)>=dayStart())?.id||events[0].id);
-  select.innerHTML=events.map(event=>'<option value="'+Number(event.id)+'" '+(String(event.id)===String(selectedEventId)?'selected':'')+'>'+esc(formatDate(dateFromKey(event.event_date),{short:true})+' · '+(event.title||'제목 없는 일정'))+'</option>').join('');renderNotice();
 }
 function formatTime(value){return value?String(value).slice(0,5):''}
 function formatDateTime(value){if(!value)return '';const date=new Date(value);if(Number.isNaN(date.getTime()))return '';return (date.getMonth()+1)+'월 '+date.getDate()+'일 '+String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0')}
@@ -315,8 +380,29 @@ function buildNotice(event){
   if(event.application_enabled){lines.push('','🙋 참여 신청: 홈페이지 일정 상세에서 신청해주세요.'+(event.application_capacity?' (정원 '+event.application_capacity+'명)':''));const opens=formatDateTime(event.application_opens_at),closes=formatDateTime(event.application_closes_at);if(opens||closes)lines.push('신청 기간: '+(opens||'오픈 시간 추후 안내')+(closes?' ~ '+closes:''));}
   lines.push('','변동 사항은 이 공지에 이어서 안내하겠습니다.');return lines.join('\n');
 }
-function renderNotice(){const event=events.find(item=>String(item.id)===String(selectedEventId));document.getElementById('noticeText').value=buildNotice(event)}
-function selectNoticeEvent(value){selectedEventId=String(value);renderNotice();history.replaceState(null,'','/planner/?event='+encodeURIComponent(selectedEventId))}
+function openEventNotice(id){
+  const event=events.find(item=>String(item.id)===String(id));
+  if(!event){alert('일정 정보를 찾지 못했습니다.');return}
+  selectedEventId=String(event.id);
+  const type=event.event_type==='BUSKING'?'버스킹':event.event_type==='VOM LIVE'?'VOM LIVE':'VOM 일정';
+  const time=[formatTime(event.start_time),formatTime(event.end_time)].filter(Boolean).join(' ~ ');
+  document.getElementById('noticeEventSummary').innerHTML='<span>'+esc(type)+'</span><strong>'+esc(event.title||'제목 없는 일정')+'</strong><p>'+esc(formatDate(dateFromKey(event.event_date)))+(time?' · '+esc(time):'')+(event.location?' · '+esc(event.location):'')+'</p>';
+  document.getElementById('noticeText').value=buildNotice(event);
+  document.getElementById('copyStatus').textContent='';
+  document.getElementById('noticeOverlay').classList.add('open');
+  history.replaceState(null,'','/planner/?event='+encodeURIComponent(selectedEventId)+'&notice=1');
+  setTimeout(()=>document.getElementById('noticeText').focus(),40);
+}
+function resetNoticeDraft(){
+  const event=events.find(item=>String(item.id)===String(selectedEventId));
+  if(event)document.getElementById('noticeText').value=buildNotice(event);
+  document.getElementById('copyStatus').textContent='기본 공지 문구로 다시 만들었어요.';
+}
+function closeNoticeEditor(){
+  document.getElementById('noticeOverlay').classList.remove('open');
+  const params=new URLSearchParams(location.search);params.delete('notice');
+  history.replaceState(null,'',location.pathname+(params.toString()?'?'+params.toString():''));
+}
 async function copyNotice(){
   const text=document.getElementById('noticeText').value;const status=document.getElementById('copyStatus');try{await navigator.clipboard.writeText(text);status.textContent='공지문을 복사했어요. 카카오톡방에 붙여넣으면 됩니다.'}catch(_){const area=document.getElementById('noticeText');area.focus();area.select();document.execCommand('copy');status.textContent='공지문을 복사했어요. 카카오톡방에 붙여넣으면 됩니다.'}}
 function setFilter(filter,button){currentFilter=filter;document.querySelectorAll('.filter').forEach(item=>item.classList.toggle('active',item===button));renderTasks()}
@@ -349,9 +435,18 @@ async function deletePlannerItem(){
 }
 function openMenu(){document.getElementById('menuOverlay').classList.add('open')}function closeMenu(){document.getElementById('menuOverlay').classList.remove('open')}
 document.getElementById('editorOverlay').addEventListener('click',event=>{if(event.target===event.currentTarget)closePlannerEditor()});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){closePlannerEditor();closeMenu()}});
+document.getElementById('noticeOverlay').addEventListener('click',event=>{if(event.target===event.currentTarget)closeNoticeEditor()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'){closePlannerEditor();closeNoticeEditor();closeMenu()}});
 async function start(){
-  try{if(!(await requireAdmin()))return;const requested=new URLSearchParams(location.search).get('event');selectedEventId=requested||'';await Promise.all([loadEvents(),loadPlannerItems(),loadEventTasks()]);renderTasks();renderNoticeOptions();if(new URLSearchParams(location.search).get('notice')==='1')setTimeout(()=>document.getElementById('noticePanel').scrollIntoView({behavior:'smooth',block:'center'}),180)}
+  try{
+    if(!(await requireAdmin()))return;
+    const requested=new URLSearchParams(location.search).get('event');
+    const shouldOpenNotice=new URLSearchParams(location.search).get('notice')==='1';
+    selectedEventId=requested||'';
+    await Promise.all([loadEvents(),loadPlannerItems(),loadEventTasks()]);
+    renderTasks();
+    if(shouldOpenNotice&&selectedEventId)setTimeout(()=>openEventNotice(selectedEventId),120);
+  }
   catch(error){document.getElementById('taskList').innerHTML='<div class="empty">플래너를 불러오지 못했습니다.<br>'+esc(error.message||'잠시 후 다시 시도해 주세요.')+'</div>'}
 }
 start();
