@@ -3363,6 +3363,8 @@ let currentFilter = 'ALL';
 let calendarView = 'LIST';
 
 const calendarScope = new URLSearchParams(location.search).get('view') === 'available' ? 'AVAILABLE' : 'ALL';
+const plannerEventCreateRequested = new URLSearchParams(location.search).get('create') === '1';
+let plannerEventCreateHandled = false;
 
 const calendarNow = new Date();
 
@@ -3444,6 +3446,12 @@ function setAdmin(active){
   const plannerMenuLink=document.getElementById('adminPlannerMenuLink');
   if(plannerMenuLink){
     plannerMenuLink.style.display=active ? 'flex' : 'none';
+  }
+
+  if(active && plannerEventCreateRequested && !plannerEventCreateHandled){
+    plannerEventCreateHandled=true;
+    history.replaceState(null,'','/calendar/');
+    setTimeout(()=>openEventModal(),0);
   }
 
   /* 인증 결과가 일정 로딩 화면을 덮어쓰지 않도록, 데이터가 준비된 뒤에만 다시 그립니다. */
