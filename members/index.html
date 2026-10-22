@@ -551,7 +551,7 @@ html[data-vom-theme="dark"] .activity-d10-person b{background:rgba(123,99,221,.3
 <div id="memberOverlay" class="overlay"><div class="modal"><div class="modal-head"><h2>Member</h2><button class="close" onclick="closeEditor()">✕</button></div><input id="memberId" type="hidden"><div class="form-grid">
 <div class="field-wrap"><label>이름</label><input id="fName" class="field"></div><div class="field-wrap"><label>역할</label><select id="fRole" class="field"><option>모임장</option><option>운영진</option><option>헬퍼</option><option>모임원</option></select></div>
 <div class="field-wrap"><label>활동상태</label><select id="fStatus" class="field"><option>활동중</option><option>비활동</option></select></div><div class="field-wrap"><label>가입일</label><input id="fJoinDate" class="field" type="date"></div>
-<div class="field-wrap"><label>마지막 참석일 <span class="field-label-note">직접 기록</span></label><input id="fLastAttendance" class="field" type="date"><small id="fLastAttendanceHint" class="attendance-form-hint">활동 기록은 2026.09.01부터 직접 입력할 수 있어요.</small></div>
+<div class="field-wrap"><label>참석일 / 확정 참석일 <span class="field-label-note">직접 기록</span></label><input id="fLastAttendance" class="field" type="date"><small id="fLastAttendanceHint" class="attendance-form-hint">참석 완료일 또는 확정된 예정 참석일을 직접 입력할 수 있어요.</small></div>
 <div class="field-wrap"><label>생년월일 (8자리)</label><input id="fBirth" class="field" inputmode="numeric" maxlength="8" placeholder="19990101"></div><div class="field-wrap"><label>지역</label><input id="fRegion" class="field"></div>
 <div class="field-wrap"><label>성별</label><select id="fGender" class="field"><option value="">-</option><option>남</option><option>여</option></select></div><div class="field-wrap"><label>직업</label><input id="fJob" class="field"></div>
 <div class="field-wrap"><label>좋아하는 가수</label><input id="fSinger" class="field"></div><div class="field-wrap"><label>전화번호</label><input id="fPhone" class="field"></div>
@@ -863,8 +863,9 @@ function attendanceCell(m){
   const alertState=needsActivityAttention(m);
   const state=alertState?'attention':(days!==null&&days<=10?'soon':'fresh');
   const primary=activityDdayLabel(m);
-  const secondary=base.source==='attendance'?'참석 '+shortDate(base.date):base.source==='join'?'가입 '+shortDate(base.date):'시작 '+shortDate(base.date);
-  const source=base.source==='attendance'?'최근 참석일 '+fmt(base.date):base.source==='join'?'참석 기록 없음 · 가입일 '+fmt(base.date)+' 기준':'참석 기록 없음 · 활동 관리 시작일 '+fmt(base.date)+' 기준';
+  const confirmedFuture=base.source==='attendance'&&base.date>dateIso(startOfDay(new Date()));
+  const secondary=base.source==='attendance'?(confirmedFuture?'확정 ':'참석 ')+shortDate(base.date):base.source==='join'?'가입 '+shortDate(base.date):'시작 '+shortDate(base.date);
+  const source=base.source==='attendance'?(confirmedFuture?'확정 참석일 ':'최근 참석일 ')+fmt(base.date):base.source==='join'?'참석 기록 없음 · 가입일 '+fmt(base.date)+' 기준':'참석 기록 없음 · 활동 관리 시작일 '+fmt(base.date)+' 기준';
   const deadline=activityDeadlineDate(m);
   const title=source+(deadline?' · 활동 기준일 '+fmt(deadline):'');
   const content='<strong>'+esc(primary)+'</strong><small>'+esc(secondary)+'</small>';
@@ -1048,12 +1049,13 @@ function openEditor(m=null){
   if(attendanceInput){
     attendanceInput.value=manualAttendance>=ACTIVITY_TRACKING_START?manualAttendance:'';
     attendanceInput.min=ACTIVITY_TRACKING_START;
-    attendanceInput.max=new Date().toISOString().slice(0,10);
+    attendanceInput.max='';
   }
   const effectiveAttendance=m?lastAttendance(m):'';
+  const isFutureConfirmed=manualAttendance&&manualAttendance>dateIso(startOfDay(new Date()));
   if(attendanceHint){
     attendanceHint.textContent=effectiveAttendance
-      ? '최근 참석 '+fmt(effectiveAttendance)+' · 활동 '+activityDdayLabel(m)+(manualAttendance?' · 직접 기록 포함':' · 참가자 기록에서 자동 반영')
+      ? (isFutureConfirmed?'확정 참석 ':'최근 참석 ')+fmt(effectiveAttendance)+' · 활동 '+activityDdayLabel(m)+(manualAttendance?' · 직접 기록 포함':' · 참가자 기록에서 자동 반영')
       : '활동 관리는 2026.09.01부터 시작합니다. 그 이후 참석 기록을 직접 입력하거나 버스킹·VOM LIVE 참가자 등록으로 자동 반영하세요.';
   }
   const b=m?parseBirth(birth(m)):null;
