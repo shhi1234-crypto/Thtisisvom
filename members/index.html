@@ -551,7 +551,7 @@ html[data-vom-theme="dark"] .activity-d10-person b{background:rgba(123,99,221,.3
 <div id="memberOverlay" class="overlay"><div class="modal"><div class="modal-head"><h2>Member</h2><button class="close" onclick="closeEditor()">✕</button></div><input id="memberId" type="hidden"><div class="form-grid">
 <div class="field-wrap"><label>이름</label><input id="fName" class="field"></div><div class="field-wrap"><label>역할</label><select id="fRole" class="field"><option>모임장</option><option>운영진</option><option>헬퍼</option><option>모임원</option></select></div>
 <div class="field-wrap"><label>활동상태</label><select id="fStatus" class="field"><option>활동중</option><option>비활동</option></select></div><div class="field-wrap"><label>가입일</label><input id="fJoinDate" class="field" type="date"></div>
-<div class="field-wrap"><label>마지막 참석일 <span class="field-label-note">직접 기록</span></label><input id="fLastAttendance" class="field" type="date"><small id="fLastAttendanceHint" class="attendance-form-hint">초기 기록은 직접 입력할 수 있어요.</small></div>
+<div class="field-wrap"><label>마지막 참석일 <span class="field-label-note">직접 기록</span></label><input id="fLastAttendance" class="field" type="date"><small id="fLastAttendanceHint" class="attendance-form-hint">활동 기록은 2026.09.01부터 직접 입력할 수 있어요.</small></div>
 <div class="field-wrap"><label>생년월일 (8자리)</label><input id="fBirth" class="field" inputmode="numeric" maxlength="8" placeholder="19990101"></div><div class="field-wrap"><label>지역</label><input id="fRegion" class="field"></div>
 <div class="field-wrap"><label>성별</label><select id="fGender" class="field"><option value="">-</option><option>남</option><option>여</option></select></div><div class="field-wrap"><label>직업</label><input id="fJob" class="field"></div>
 <div class="field-wrap"><label>좋아하는 가수</label><input id="fSinger" class="field"></div><div class="field-wrap"><label>전화번호</label><input id="fPhone" class="field"></div>
@@ -669,8 +669,16 @@ function dateIso(value){
   return String(date.getFullYear())+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
 }
 function shortDate(value){return String(value||'').slice(5,10).replace('-','.')}
+const ACTIVITY_TRACKING_START='2026-09-01';
 function lastAttendance(m){return String(pick(m,'last_attended_at')||'').slice(0,10)}
-function activityBaseDate(m){return lastAttendance(m)||join(m)}
+function activityBaseInfo(m){
+  const joined=join(m);
+  const memberStart=joined&&joined>ACTIVITY_TRACKING_START?joined:ACTIVITY_TRACKING_START;
+  const attended=lastAttendance(m);
+  if(attended&&attended>=memberStart)return{date:attended,source:'attendance'};
+  return{date:memberStart,source:joined&&joined>ACTIVITY_TRACKING_START?'join':'start'};
+}
+function activityBaseDate(m){return activityBaseInfo(m).date}
 function activityDeadlineDate(m){
   const base=dateFromIso(activityBaseDate(m));
   if(!base)return '';
@@ -783,7 +791,7 @@ function summary(){
   const staffTotal=staff+leader;
   const birthdays=members.filter(m=>memberBirthday(m)?.month===mon).length;
   const activityChip=adminMode
-    ? '<span class="activity-summary" title="마지막 참석일(없으면 가입일) 뒤 90일이 활동 기준일입니다. 기준일이 지났거나 오늘인 활동중 회원입니다.">활동 요망 회원 <b>'+members.filter(needsActivityAttention).length+'명</b></span>'
+    ? '<span class="activity-summary" title="2026년 9월 1일부터 활동 관리가 시작됩니다. 이후 최근 참석일(없으면 시작일 또는 가입일) 뒤 90일이 활동 기준일입니다. 기준일이 지났거나 오늘인 활동중 회원입니다.">활동 요망 회원 <b>'+members.filter(needsActivityAttention).length+'명</b></span>'
     : '<span class="activity-summary" title="활동 D-day는 본인의 행에서만 확인할 수 있습니다.">내 활동 D-day 확인</span>';
   document.getElementById('summary').innerHTML=
     '<span>전체 <b>'+members.length+'명</b></span>'+
@@ -850,13 +858,13 @@ function table(){
 
 function attendanceCell(m){
   if(!canViewActivityDday(m))return '<span class="attendance-private" title="활동 D-day는 본인과 운영진만 볼 수 있습니다.">비공개</span>';
-  const attended=lastAttendance(m);
+  const base=activityBaseInfo(m);
   const days=activityDday(m);
   const alertState=needsActivityAttention(m);
   const state=alertState?'attention':(days!==null&&days<=10?'soon':'fresh');
   const primary=activityDdayLabel(m);
-  const secondary=attended?'참석 '+shortDate(attended):'가입 '+shortDate(join(m));
-  const source=attended?'최근 참석일 '+fmt(attended):'참석 기록 없음 · 가입일 '+fmt(join(m))+' 기준';
+  const secondary=base.source==='attendance'?'참석 '+shortDate(base.date):base.source==='join'?'가입 '+shortDate(base.date):'시작 '+shortDate(base.date);
+  const source=base.source==='attendance'?'최근 참석일 '+fmt(base.date):base.source==='join'?'참석 기록 없음 · 가입일 '+fmt(base.date)+' 기준':'참석 기록 없음 · 활동 관리 시작일 '+fmt(base.date)+' 기준';
   const deadline=activityDeadlineDate(m);
   const title=source+(deadline?' · 활동 기준일 '+fmt(deadline):'');
   const content='<strong>'+esc(primary)+'</strong><small>'+esc(secondary)+'</small>';
@@ -1038,14 +1046,15 @@ function openEditor(m=null){
   const attendanceHint=document.getElementById('fLastAttendanceHint');
   const manualAttendance=String(m?.last_attendance_manual_at||'').slice(0,10);
   if(attendanceInput){
-    attendanceInput.value=manualAttendance;
+    attendanceInput.value=manualAttendance>=ACTIVITY_TRACKING_START?manualAttendance:'';
+    attendanceInput.min=ACTIVITY_TRACKING_START;
     attendanceInput.max=new Date().toISOString().slice(0,10);
   }
   const effectiveAttendance=m?lastAttendance(m):'';
   if(attendanceHint){
     attendanceHint.textContent=effectiveAttendance
       ? '최근 참석 '+fmt(effectiveAttendance)+' · 활동 '+activityDdayLabel(m)+(manualAttendance?' · 직접 기록 포함':' · 참가자 기록에서 자동 반영')
-      : '초기 참석 기록을 직접 입력하세요. 이후 버스킹·VOM LIVE 참가자 등록 시 활동 D-day가 자동 반영됩니다.';
+      : '활동 관리는 2026.09.01부터 시작합니다. 그 이후 참석 기록을 직접 입력하거나 버스킹·VOM LIVE 참가자 등록으로 자동 반영하세요.';
   }
   const b=m?parseBirth(birth(m)):null;
   fBirth.value=b?String(b.year)+String(b.month).padStart(2,'0')+String(b.day).padStart(2,'0'):'';
@@ -1096,6 +1105,7 @@ async function saveMember(){
   if(!adminMode)return;
   const id=memberId.value,b=fBirth.value.replace(/\D/g,''),manualAttendance=document.getElementById('fLastAttendance')?.value||null;
   if(b&&b.length!==8){alert('생년월일은 8자리로 입력해주세요.');return}
+  if(manualAttendance&&manualAttendance<ACTIVITY_TRACKING_START){alert('활동 기록은 2026년 9월 1일 이후 날짜부터 입력할 수 있어요.');return}
   const name=fName.value.trim();
   if(!name){alert('이름을 입력해주세요.');return}
   const current=id?members.find(m=>String(m.id)===String(id)):null;

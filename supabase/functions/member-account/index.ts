@@ -313,6 +313,14 @@ Deno.serve(async (req) => {
         return response({ error: "이름을 입력해 주세요." }, 400, requestOrigin);
       }
 
+      const activityTrackingStart = "2026-09-01";
+      const manualAttendance = typeof fields.last_attendance_manual_at === "string"
+        ? fields.last_attendance_manual_at.slice(0, 10)
+        : "";
+      if (manualAttendance && manualAttendance < activityTrackingStart) {
+        return response({ error: "활동 기록은 2026년 9월 1일 이후 날짜부터 입력할 수 있습니다." }, 400, requestOrigin);
+      }
+
       if (memberId) {
         const { data, error } = await admin
           .from("members")
