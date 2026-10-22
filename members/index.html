@@ -541,7 +541,7 @@ html[data-vom-theme="dark"] .activity-d10-person b{background:rgba(123,99,221,.3
 <header class="header vom-header"><a href="/" class="brand vom-header-brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a><div class="header-right vom-header-actions"><div id="adminBadge" class="admin-badge">ADMIN MODE</div><button class="menu-btn" onclick="openMenu()">☰</button></div></header>
 <main id="page" class="page">
 <section class="hero"><div class="eyebrow">VOM People</div><h1>Members</h1><p>VOM 멤버 정보를 한곳에서 확인하고, 생일 · 나이 · 지역별 현황을 볼 수 있습니다.</p><div id="summary" class="summary"></div><div id="birthdayNow" class="birthday-now"></div></section>
-<section id="activityD10Panel" class="activity-d10-panel" hidden><div class="activity-d10-head"><div><span class="activity-d10-kicker">MEMBER ACTIVITY · D-10</span><h2>활동 확인 안내 대상 <span id="activityD10Count">0명</span></h2><p>활동 기준일까지 10일 남은 회원입니다. 카카오톡 안내 문구를 바로 복사할 수 있어요.</p></div><button class="activity-d10-copy" type="button" onclick="copyD10KakaoNotice()">카카오톡 명단 복사</button></div><div id="activityD10List" class="activity-d10-list"></div></section>
+<section id="activityD10Panel" class="activity-d10-panel" hidden><div class="activity-d10-head"><div><span class="activity-d10-kicker">MEMBER ACTIVITY · D-10 이내</span><h2>활동 확인 안내 대상 <span id="activityD10Count">0명</span></h2><p>활동 기준일까지 10일 이하 남은 회원입니다. 카카오톡 안내 문구를 바로 복사할 수 있어요.</p></div><button class="activity-d10-copy" type="button" onclick="copyD10KakaoNotice()">카카오톡 명단 복사</button></div><div id="activityD10List" class="activity-d10-list"></div></section>
 <div class="toolbar"><div class="tabs"><button class="tab active" data-view="all" onclick="setView('all')">전체 명단</button><button class="tab" data-view="birthday" onclick="setView('birthday')">생일</button><button class="tab" data-view="age" onclick="setView('age')">나이별</button><button class="tab" data-view="region" onclick="setView('region')">지역별</button></div><div class="toolbar-actions"><a class="member-account-link" href="/me/">회원계정 로그인 <span>→</span></a><button class="add-btn" onclick="openEditor()">＋ 멤버 추가</button></div></div>
 <section id="panel-all" class="panel active"><div class="table-shell"><table><thead><tr><th class="c-order">가입순서</th><th class="c-name">이름 · 가입일자</th><th class="c-role">구분</th><th class="c-song">MY SETLIST</th><th class="c-date">가입일자</th><th class="c-attendance">활동 D-day</th><th class="c-region">지역</th><th class="c-singer">좋아하는 가수</th><th class="c-job">직업</th></tr></thead><tbody id="rows"></tbody></table></div></section>
 <section id="panel-birthday" class="panel"><div id="birthdayGrid" class="group-grid"></div></section>
@@ -682,7 +682,7 @@ function activityBaseDate(m){return activityBaseInfo(m).date}
 function activityDeadlineDate(m){
   const base=dateFromIso(activityBaseDate(m));
   if(!base)return '';
-  base.setDate(base.getDate()+90);
+  base.setDate(base.getDate()+60);
   return dateIso(base);
 }
 function activityDday(m,now=new Date()){
@@ -701,7 +701,7 @@ function needsActivityAttention(m){
   const days=activityDday(m);
   return stat(m)==='활동중'&&days!==null&&days<=0;
 }
-function isActivityD10(m){return stat(m)==='활동중'&&activityDday(m)===10}
+function isActivityD10(m){const days=activityDday(m);return stat(m)==='활동중'&&days!==null&&days>=0&&days<=10}
 function canViewActivityDday(m){return adminMode||!!currentMemberId&&String(m.id)===String(currentMemberId)}
 const birth=m=>String(pick(m,'birth_date','birthday','birth'));
 const reg=m=>String(pick(m,'region','area','location')||'기타');
@@ -791,7 +791,7 @@ function summary(){
   const staffTotal=staff+leader;
   const birthdays=members.filter(m=>memberBirthday(m)?.month===mon).length;
   const activityChip=adminMode
-    ? '<span class="activity-summary" title="2026년 9월 1일부터 활동 관리가 시작됩니다. 이후 최근 참석일(없으면 시작일 또는 가입일) 뒤 90일이 활동 기준일입니다. 기준일이 지났거나 오늘인 활동중 회원입니다.">활동 요망 회원 <b>'+members.filter(needsActivityAttention).length+'명</b></span>'
+    ? '<span class="activity-summary" title="2026년 9월 1일부터 활동 관리가 시작됩니다. 이후 최근 참석일(없으면 시작일 또는 가입일) 뒤 60일이 활동 기준일입니다. 기준일이 지났거나 오늘인 활동중 회원입니다.">활동 요망 회원 <b>'+members.filter(needsActivityAttention).length+'명</b></span>'
     : '<span class="activity-summary" title="활동 D-day는 본인의 행에서만 확인할 수 있습니다.">내 활동 D-day 확인</span>';
   document.getElementById('summary').innerHTML=
     '<span>전체 <b>'+members.length+'명</b></span>'+
@@ -882,7 +882,7 @@ function maskMemberName(value){
 }
 function d10KakaoText(){
   const target=d10Members();
-  return ['[VOM 활동 확인 안내 · D-10]','',...target.map(m=>maskMemberName(m.name)+' 회원님'),'','활동 기준일까지 10일 남았습니다.','다가오는 VOM 일정에서 함께해요 :)'].join('\n');
+  return ['[VOM 활동 확인 안내 · D-10 이내]','',...target.map(m=>maskMemberName(m.name)+' 회원님'),'','활동 기준일까지 10일 이하 남았습니다.','다가오는 VOM 일정에서 함께해요 :)'].join('\n');
 }
 function renderActivityD10(){
   const panel=document.getElementById('activityD10Panel');
@@ -894,13 +894,13 @@ function renderActivityD10(){
   panel.hidden=false;
   count.textContent=target.length+'명';
   list.innerHTML=target.length
-    ? target.map(m=>'<span class="activity-d10-person"><span>'+esc(m.name||'회원')+' 회원</span><b>D-10</b></span>').join('')
-    : '<p class="activity-d10-empty">오늘은 D-10 안내 대상이 없어요.</p>';
+    ? target.map(m=>'<span class="activity-d10-person"><span>'+esc(m.name||'회원')+' 회원</span><b>'+esc(activityDdayLabel(m))+'</b></span>').join('')
+    : '<p class="activity-d10-empty">현재 D-10 이내 안내 대상이 없어요.</p>';
 }
 async function copyD10KakaoNotice(){
   if(!adminMode)return;
   const target=d10Members();
-  if(!target.length){alert('오늘은 D-10 안내 대상이 없어요.');return;}
+  if(!target.length){alert('현재 D-10 이내 안내 대상이 없어요.');return;}
   const text=d10KakaoText();
   try{
     await navigator.clipboard.writeText(text);
