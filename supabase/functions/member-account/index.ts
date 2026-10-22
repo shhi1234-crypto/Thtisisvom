@@ -303,7 +303,7 @@ Deno.serve(async (req) => {
       const allowed = new Set([
         "name","nickname","profile_image_url","joined_at","is_active","note",
         "role","birth_date","region","gender","favorite_singers","join_order",
-        "phone","instagram","memo","job"
+        "phone","instagram","memo","job","last_attendance_manual_at"
       ]);
       const fields: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(input)) {
