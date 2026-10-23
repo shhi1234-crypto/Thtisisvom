@@ -567,14 +567,15 @@
         button.classList.toggle('vom-legacy-admin-menu',!isAdmin||!logout);
       });
       const links=approved?[['MY VOM','/me/'],['MEMBERS','/members/'],['CALENDAR','/calendar/']]:[['로그인하기','/me/'],['회원가입하기','/ot-room/']];
-      links.push(['HOME','/'],['INFO','/info/'],['VOM LIVE','/live/'],['BUSKING','/busking/'],['PRACTICE','/practice/'],['NOTICE','/#homeNews'],['Q&A','/qna/'],['EVENT','/event/']);
+      links.push(['HOME','/'],['INFO','/info/'],['VOM LIVE','/live/'],['BUSKING','/busking/'],['PRACTICE','/practice/'],['NOTICE','/#homeNews'],['Q&A','/qna/'],['EVENT','/event/'],['KAKAO CHANNEL','https://pf.kakao.com/_xgIeFX','external']);
       if(isAdmin||isOperator)links.push(['가입 관리','/ot-admin/']);
       if(isAdmin)links.push(['운영자료 · ADMIN SETTINGS','/admin-settings/'],['SITE LOG','/site-log/']);
       links.forEach(item=>{
         const link=document.createElement('a');link.href=item[1];const target=item[1].replace(/\/$/,'')||'/';
         if(path===target||(target!=='/'&&path.startsWith(target+'/')))link.classList.add('active');
         if(item[1]==='/me/'||item[1]==='/ot-room/')link.classList.add('vom-menu-account');
-        link.innerHTML='<span>'+item[0]+'</span><span>→</span>';card.appendChild(link);
+        if(item[2]==='external'){link.target='_blank';link.rel='noopener noreferrer';link.setAttribute('aria-label','VOM 카카오 채널 열기');}
+        link.innerHTML='<span>'+item[0]+'</span><span>'+(item[2]==='external'?'↗':'→')+'</span>';card.appendChild(link);
       });
     });
   }
