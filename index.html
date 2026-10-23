@@ -1853,7 +1853,7 @@ button{
 .modal.vom-glassfx::after{
   display:none!important;
 }
-.home-auth-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:20px 0 14px}.home-auth-actions a{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:40px;padding:0 14px;border-radius:11px;text-decoration:none;white-space:nowrap;font-size:12px;font-weight:800;letter-spacing:-.02em}.home-login-button{color:#fff!important;background:#7660dd;box-shadow:0 8px 20px #7660dd2b}.home-signup-button{color:#6650cd!important;background:#f0ebff;border:1px solid #dcd3fb}.home-channel-button{color:#46359b!important;background:rgba(255,255,255,.9);border:1px solid #c7bcff;box-shadow:0 8px 20px rgba(12,14,54,.16)}.home-channel-button:hover{border-color:#8f7bff;background:#fff}@media(max-width:480px){.home-auth-actions{gap:7px}.home-auth-actions a{flex:0 1 auto;padding:0 12px;font-size:12px;gap:8px}}
+.home-auth-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:20px 0 14px}.home-auth-actions a{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:40px;padding:0 14px;border-radius:11px;text-decoration:none;white-space:nowrap;font-size:12px;font-weight:800;letter-spacing:-.02em}.home-login-button{color:#fff!important;background:#7660dd;box-shadow:0 8px 20px #7660dd2b}.home-signup-button{color:#6650cd!important;background:#f0ebff;border:1px solid #dcd3fb}@media(max-width:480px){.home-auth-actions{gap:7px}.home-auth-actions a{flex:0 1 auto;padding:0 12px;font-size:12px;gap:8px}}
 
 .birthday-check,.guest-schedule-link{display:inline-flex;align-items:center;min-height:36px;padding:8px 12px;border:1px solid #ded7f5;border-radius:12px;background:#f6f2ff;color:#6c55ca;font-size:12px;font-weight:750;text-decoration:none}.guest-schedule-link{min-height:64px;width:100%;justify-content:space-between}.birthday-check:hover,.guest-schedule-link:hover{background:#eee6ff}
 .home-result-link{display:inline-flex;align-items:center;gap:10px;min-height:40px;margin:0 0 12px;color:#6c55ca;font-size:14px;font-weight:700;text-decoration:none}.home-result-link small{font-size:12px;font-weight:500;color:#858197}.home-result-link:hover{text-decoration:underline}.home-result-link[hidden],.home-auth-actions [hidden]{display:none!important}
@@ -2437,6 +2437,7 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 
 
 /* FINAL HERO ENTRY ALIGNMENT */
+.home-entry-grid .home-channel-prompt-card{grid-column:1/-1;min-height:72px;padding:14px 17px;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;align-items:center;column-gap:13px;row-gap:3px;border:1px solid rgba(53,156,145,.45);border-radius:21px;background:linear-gradient(135deg,rgba(221,255,248,.96),rgba(239,247,255,.96));box-shadow:0 12px 28px rgba(39,117,125,.12);color:#153d48;text-decoration:none;transition:transform .22s ease,box-shadow .22s ease}.home-entry-grid .home-channel-prompt-card:hover{transform:translateY(-2px);box-shadow:0 18px 34px rgba(39,117,125,.2)}.home-entry-grid .home-channel-prompt-card .home-entry-eyebrow{grid-column:1;grid-row:1;color:#227a72;font-size:9px;font-weight:900;letter-spacing:.12em}.home-entry-grid .home-channel-prompt-card strong{grid-column:1;grid-row:2;color:#153d48;font-size:15px;letter-spacing:-.04em}.home-entry-grid .home-channel-prompt-card small{grid-column:1;grid-row:2;justify-self:start;margin:0 0 0 82px;color:#55717a;font-size:10px;line-height:1.4}.home-entry-grid .home-channel-prompt-card b{grid-column:2;grid-row:1 / span 2;display:grid;width:31px;height:31px;place-items:center;border-radius:50%;background:linear-gradient(135deg,#37a99c,#3d79d4);color:#fff;font-size:15px}@media(max-width:520px){.home-entry-grid .home-channel-prompt-card small{margin-left:0;grid-row:3}.home-entry-grid .home-channel-prompt-card{grid-template-rows:auto auto auto;min-height:88px}}
 .home-auth-actions{display:none!important}
 .home-entry-grid{align-items:stretch}
 .home-entry-grid .home-info-summary{min-height:96px}
@@ -2759,7 +2760,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
         음악으로 이어지는 VOM의 이야기.
       </div>
 
-      <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a><a id="homeKakaoChannelButton" class="home-channel-button" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer" aria-label="VOM 카카오 채널 열기">카카오 채널 <span aria-hidden="true">↗</span></a></div>
+      <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
       <div class="home-entry-grid">
         <details class="home-info-guide home-entry-choice home-entry-choice-new">
           <summary class="home-info-summary">
@@ -2791,6 +2792,12 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
           <strong class="home-entry-title">로그인하기</strong>
           <small class="home-entry-copy">로그인하고 내 공간을 확인해요</small>
           <b class="home-entry-arrow" aria-hidden="true">→</b>
+        </a>
+        <a id="homeKakaoChannelButton" class="home-channel-prompt-card" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer" aria-label="VOM 카카오 채널 열기">
+          <span class="home-entry-eyebrow">VOM OFFICIAL CHANNEL</span>
+          <strong>카카오 채널</strong>
+          <small>새 소식과 안내를 편하게 받아보세요</small>
+          <b aria-hidden="true">↗</b>
         </a>
       </div>
 <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
