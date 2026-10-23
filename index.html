@@ -2769,7 +2769,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
 
       <div class="home-auth-actions"><a id="homeLoginButton" class="home-login-button" href="/me/">로그인하기 <span>→</span></a><a id="homeSignupButton" class="home-signup-button" href="/ot-room/">회원가입하기</a></div>
       <div class="home-entry-grid">
-        <details class="home-info-guide home-entry-choice home-entry-choice-new">
+        <details id="homeInfoGuide" class="home-info-guide home-entry-choice home-entry-choice-new">
           <summary class="home-info-summary">
             <span class="home-info-card">
               <span class="home-entry-eyebrow">처음이신가요?</span>
@@ -3277,6 +3277,8 @@ async function start(){
   document.getElementById('homeLoginButton').innerHTML=access.approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
   document.getElementById('homeSignupButton').hidden=access.approved;
   document.getElementById('homeResultLink').hidden=access.approved;
+  const homeInfoGuide=document.getElementById('homeInfoGuide');
+  if(homeInfoGuide){homeInfoGuide.hidden=access.approved;if(access.approved)homeInfoGuide.open=false;}
   const homeMemberPrompt=document.getElementById('homeMemberPrompt');
   if(homeMemberPrompt)homeMemberPrompt.hidden=access.approved;
   const homeGuideAction=document.getElementById('homeGuideAction');
@@ -4171,6 +4173,10 @@ async function adminLogout(){
   document.getElementById('homeLoginButton').innerHTML='로그인하기 <span>→</span>';
   document.getElementById('homeSignupButton').hidden=false;
   document.getElementById('homeResultLink').hidden=false;
+  const homeInfoGuide=document.getElementById('homeInfoGuide');
+  if(homeInfoGuide){homeInfoGuide.hidden=false;homeInfoGuide.open=false;}
+  const homeMemberPrompt=document.getElementById('homeMemberPrompt');
+  if(homeMemberPrompt)homeMemberPrompt.hidden=false;
   loadHomeBirthday({approved:false});
   window.vomRefreshShell?.();
 
