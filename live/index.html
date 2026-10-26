@@ -1620,9 +1620,14 @@ async function loadAllData(){
 
 
   const memberRequest =
-    db
-      .from('members_display')
-      .select('*');
+    adminMode
+      ? db
+          .from('members')
+          .select('id,name,nickname,role,region,join_order')
+          .eq('is_active',true)
+      : db
+          .from('members_display')
+          .select('*');
 
 
   const [

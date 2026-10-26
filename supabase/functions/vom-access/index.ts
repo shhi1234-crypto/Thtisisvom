@@ -46,9 +46,12 @@ export async function handle(req: Request, service: any, authClient: any) {
       return json(origin,{ok:true,...await memberContext(service,user.id)});
     }
     if (body.action === "login_members") {
-      const {data,error}=await service.from("members_display")
-        .select("id,name,nickname")
-        .order("join_order",{ascending:true});
+      const {data,error}=await service
+        .from("members")
+        .select("id,name,nickname,join_order")
+        .eq("is_active",true)
+        .order("join_order",{ascending:true})
+        .order("id",{ascending:true});
       if (error) throw new Error("login_members_lookup_failed");
       const members=(data||[]).map((member:any)=>({
         id:member.id,
