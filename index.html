@@ -2288,18 +2288,24 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 @media(prefers-reduced-motion:reduce){.home-member-prompt-card{transition:none}.home-about-hero::before{animation:none}}
 
 
-/* On phones, preserve the visual scenes without forcing each swipe into a full-screen slide. */
+/* Mobile scenes keep their snap, but reserve room above the fixed bottom navigation. */
 @media(max-width:700px){
+  :root{--home-mobile-nav-clearance:92px}
   html,
-  main.page{scroll-snap-type:none!important}
+  main.page{
+    scroll-snap-type:y proximity!important;
+    scroll-padding-bottom:calc(var(--home-mobile-nav-clearance) + env(safe-area-inset-bottom, 0px))!important;
+  }
   body{overscroll-behavior-y:auto}
   main.page>.hero,
   main.page>.ranking-section,
   main.page>.quick-stack,
   main.page>.quick,
   main.page>.section{
-    scroll-snap-align:none!important;
-    scroll-snap-stop:normal!important;
+    min-height:calc(100svh + var(--home-mobile-nav-clearance));
+    padding-bottom:calc(126px + env(safe-area-inset-bottom, 0px));
+    scroll-snap-align:start!important;
+    scroll-snap-stop:always!important;
   }
 }
 </style>
