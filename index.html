@@ -2286,6 +2286,22 @@ html[data-vom-theme="dark"] .home-about-hero h2{color:#f1f3ff!important}
 html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 @media(max-width:700px){.home-member-prompt-card{width:100%;margin-left:0}.home-about-hero{min-height:390px;padding:30px 24px;border-radius:27px}.home-about-hero::before{right:-36%;top:-18%;width:90%}.home-about-hero h2{max-width:220px;font-size:45px}.home-about-hero p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.home-member-prompt-card{transition:none}.home-about-hero::before{animation:none}}
+
+
+/* On phones, preserve the visual scenes without forcing each swipe into a full-screen slide. */
+@media(max-width:700px){
+  html,
+  main.page{scroll-snap-type:none!important}
+  body{overscroll-behavior-y:auto}
+  main.page>.hero,
+  main.page>.ranking-section,
+  main.page>.quick-stack,
+  main.page>.quick,
+  main.page>.section{
+    scroll-snap-align:none!important;
+    scroll-snap-stop:normal!important;
+  }
+}
 </style>
 
   <script src="/assets/vom-member-context.js?v=3"></script>
