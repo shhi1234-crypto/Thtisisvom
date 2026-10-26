@@ -115,7 +115,11 @@ async function loadSession(){
    // A temporary access-check failure must not destroy a valid local login.
    if(error.status!==401)throw error;
    const {data:refreshed,error:refreshError}=await db.auth.refreshSession();
-   if(refreshError||!refreshed?.session)throw error;
+   if(refreshError||!refreshed?.session){
+     await db.auth.signOut({scope:'local'});
+     session=null;
+     return;
+   }
    session=refreshed.session;
    context=await requestAccess({action:'context'},session.access_token);
  }
