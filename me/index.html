@@ -72,7 +72,7 @@
 @media(max-width:720px){.setlist-editor-layout{grid-template-columns:1fr}.setlist-guide-video{position:relative;top:auto}.guide-video-screen{min-height:254px}}
 
 </style>
-  <script src="/assets/vom-member-context.js?v=3"></script>
+  <script src="/assets/vom-member-context.js?v=4"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
 </head>
 <body>
@@ -445,6 +445,6 @@ function closeMenu(){const el=document.getElementById('menuOverlay');el.classLis
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{render();}}catch(error){renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
-<script src="/assets/vom-shell.js?v=20"></script>
+<script src="/assets/vom-shell.js?v=21"></script>
 </body>
 </html>
