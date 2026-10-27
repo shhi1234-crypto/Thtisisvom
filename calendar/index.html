@@ -2630,7 +2630,7 @@ button{
         class="filter"
         onclick="setFilter('OTHER',this)"
       >
-        OTHER
+        개인 벙 · 기타
       </button>
 
     </div>
@@ -2800,10 +2800,10 @@ button{
           onclick="setEventType('OTHER')"
           type="button"
         >
-          OTHER
+          개인 벙 · 기타
 
           <span>
-            Other
+            Meetup
           </span>
 
         </button>
@@ -3358,11 +3358,12 @@ let eventsLoaded = false;
 let presets = [];
 let mediaLibrary = [];
 
-let currentFilter = 'ALL';
+const calendarParams = new URLSearchParams(location.search);
+let currentFilter = calendarParams.get('type') === 'OTHER' ? 'OTHER' : 'ALL';
 
 let calendarView = 'LIST';
 
-const calendarScope = new URLSearchParams(location.search).get('view') === 'available' ? 'AVAILABLE' : 'ALL';
+const calendarScope = calendarParams.get('view') === 'available' ? 'AVAILABLE' : 'ALL';
 const plannerEventCreateRequested = new URLSearchParams(location.search).get('create') === '1';
 let plannerEventCreateHandled = false;
 
@@ -3597,6 +3598,7 @@ async function loadEvents(){
 
     events = data;
     eventsLoaded = true;
+    syncFilterButtons();
     renderCalendarView();
 
   }catch(error){
@@ -3694,6 +3696,12 @@ function buildTimeSelects(){
 /* ======================================================
    FILTER
 ====================================================== */
+
+function syncFilterButtons(){
+  document.querySelectorAll('.filter').forEach(function(button){
+    button.classList.toggle('active', (button.getAttribute('onclick') || '').indexOf(currentFilter) !== -1);
+  });
+}
 
 function setFilter(
   filter,
@@ -4048,7 +4056,7 @@ function renderRealCalendar(){
                     }
                   "
                 >
-                  ${formatMixedTitle(item.title || item.event_type || '일정')}
+                  ${formatMixedTitle(item.title || eventTypeLabel(item.event_type) || '일정')}
                 </div>
               `)
               .join('')
@@ -4193,7 +4201,7 @@ function renderSelectedCalendarDate(){
                   >
 
                     <div class="selected-date-type">
-                      ${escapeHtml(item.event_type || 'OTHER')}
+                      ${escapeHtml(eventTypeLabel(item.event_type))}
                     </div>
 
                     <div class="selected-date-title">
@@ -4446,10 +4454,7 @@ function createEventHtml(item){
 
         <div class="type">
 
-          ${escapeHtml(
-            item.event_type ||
-            'OTHER'
-          )}
+          ${escapeHtml(eventTypeLabel(item.event_type))}
 
         </div>
 
@@ -4671,7 +4676,7 @@ async function openScheduleDetail(item){
     <div class="schedule-detail-card">
 
       <div class="schedule-detail-type">
-        ${escapeHtml(item.event_type || 'OTHER')}
+        ${escapeHtml(eventTypeLabel(item.event_type))}
       </div>
 
       <h3 class="schedule-detail-title">
@@ -4933,11 +4938,11 @@ function updatePresetCopy(){
   else{
 
     title.textContent =
-      '세부 항목';
+      '개인 벙 · 기타 항목';
 
 
     help.textContent =
-      '운영진 회의 등 자주 사용하는 항목을 선택하세요.';
+      '개인 벙, 소모임, 운영진 회의 등 필요한 항목을 선택하세요.';
   }
 }
 
@@ -4972,7 +4977,7 @@ function updateTitlePlaceholder(){
   else{
 
     input.placeholder =
-      '예: 운영진 회의';
+      '예: 개인 벙 · 홍대 보컬 모임';
   }
 }
 
@@ -7083,8 +7088,8 @@ function eventMonthLabel(eventDate){
   const date=new Date(eventDate+'T12:00:00');
   return (date.getMonth()+1)+'월';
 }
-async function eventTypeLabel(type){
-  return type==='BUSKING'?'버스킹':type==='VOM LIVE'?'VOM LIVE':String(type||'일정');
+function eventTypeLabel(type){
+  return type==='BUSKING'?'버스킹':type==='VOM LIVE'?'VOM LIVE':type==='OTHER'?'개인 벙 · 기타':String(type||'일정');
 }
 
 function hostNameForEvent(event){
