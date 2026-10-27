@@ -29,7 +29,31 @@
     }catch(_){return '';}
   }
 
+  let observedAuthClient=null;
+  let observedAuthSubscription=null;
+
+  function notifyMemberAccessChange(){
+    inFlight=null;
+    inFlightToken='';
+    window.dispatchEvent(new CustomEvent('vom-member-access-changed'));
+  }
+
+  function observeAuthChanges(){
+    const client=authClient();
+    if(!client||client===observedAuthClient||!client.auth?.onAuthStateChange)return;
+    try{
+      observedAuthSubscription?.unsubscribe?.();
+      observedAuthClient=client;
+      const result=client.auth.onAuthStateChange(function(event){
+        if(event==='INITIAL_SESSION')return;
+        notifyMemberAccessChange();
+      });
+      observedAuthSubscription=result?.data?.subscription||null;
+    }catch(_){}
+  }
+
   window.vomGetMemberAccess=async function(){
+    observeAuthChanges();
     let token='';
     try{token=await currentToken();}catch(_){return guest;}
     if(!token)return guest;
