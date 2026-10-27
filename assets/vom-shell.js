@@ -54,6 +54,10 @@
     style.id = 'vom-shared-shell-style';
     style.textContent = `
       body.has-vom-bottom { padding-bottom: 100px !important; }
+      #homeMemberPrompt[hidden],
+      #homeInfoGuide[hidden],
+      #homeSignupButton[hidden],
+      #homeResultLink[hidden] { display: none !important; }
       nav.bottom.vom-global-bottom {
         position: fixed !important;
         z-index: 80 !important;
@@ -628,6 +632,26 @@
     });
   }
 
+  function syncHomeMemberSurface(approved){
+    const signedIn=approved===true;
+    document.body?.classList.toggle('vom-member-signed-in',signedIn);
+    const loginButton=document.getElementById('homeLoginButton');
+    if(loginButton)loginButton.innerHTML=signedIn?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
+    const memberPrompt=document.getElementById('homeMemberPrompt');
+    if(memberPrompt)memberPrompt.hidden=signedIn;
+    const infoGuide=document.getElementById('homeInfoGuide');
+    if(infoGuide){infoGuide.hidden=signedIn;if(signedIn)infoGuide.open=false;}
+    const signupButton=document.getElementById('homeSignupButton');
+    if(signupButton)signupButton.hidden=signedIn;
+    const resultLink=document.getElementById('homeResultLink');
+    if(resultLink)resultLink.hidden=signedIn;
+    const guideAction=document.getElementById('homeGuideAction');
+    if(guideAction){
+      guideAction.href=signedIn?'/me/':'/ot-room/';
+      guideAction.textContent=signedIn?'MY VOM에서 관리하기 →':'가입 방법 자세히 보기 →';
+    }
+  }
+
   let shellRefreshVersion=0;
   async function refreshShell(){
     const version=++shellRefreshVersion;
@@ -642,6 +666,7 @@
     normalizeBottomNavigation(context.approved);
     setUnifiedMenu(context.isAdmin,operator,context.approved);
     addMemberStatus(memberDisplayName(context.member, context.isAdmin ? '관리자' : '회원'),context.approved,context.isAdmin);
+    syncHomeMemberSurface(context.approved);
     try{window.vomApplyHomeAccessState?.(context);}catch(_){}
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
