@@ -2235,6 +2235,12 @@ body[data-home-scene="hero"] .aurora-orb-one{translate:0 0}body[data-home-scene=
 .home-member-open:hover{text-decoration:underline}
 @media(max-width:700px){.home-member-prompt{margin-left:0;font-size:9px}.quick-my-vom-panel{width:100%}}
 @media(prefers-reduced-motion:reduce){.quick-my-vom-arrow{transition:none}}
+/* Logged-in home controls must beat card layout display rules. */
+#homeMemberPrompt[hidden],
+#homeInfoGuide[hidden],
+#homeSignupButton[hidden],
+#homeResultLink[hidden]{display:none!important}
+
 /* HOME DARK MODE + BOLDER AURORA */
 body[data-home-scene="hero"] .aurora{background:linear-gradient(135deg,#e7ddff 0%,#ccecff 42%,#c9fff1 100%)!important}
 body[data-home-scene="ranking"] .aurora{background:linear-gradient(135deg,#d2c7ff 0%,#b7f1eb 44%,#f4c9ef 100%)!important}
@@ -4545,7 +4551,7 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=23"></script>
+<script src="/assets/vom-shell.js?v=24"></script>
 <script>
 (function(){
   let ticking=false;
