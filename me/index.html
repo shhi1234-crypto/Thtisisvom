@@ -102,12 +102,14 @@ const app=document.getElementById('app');
 let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false;
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function cleanDisplayText(value){return String(value??'').trim().replace(/\s+/g,' ')}
+function memberDisplayName(member,fallback='회원'){return cleanDisplayText(member?.name)||cleanDisplayText(member?.nickname)||fallback}
 function say(message,isError=false){const el=document.getElementById('toast');el.textContent=message;el.className='toast show'+(isError?' error':'');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.className='toast',3400)}
 function accountEmail(id){return 'member-'+Number(id)+'@member.thisisvom.app'}
 function authPassword(value){return 'VOM:'+String(value??'')}
 async function signInMember(memberId,password){const email=accountEmail(memberId);let result=await db.auth.signInWithPassword({email,password:authPassword(password)});if(!result.error)return result;return db.auth.signInWithPassword({email,password})}
-function selectHtml(id){return '<select id="'+id+'"><option value="">등록된 회원 선택</option>'+members.map(m=>'<option value="'+m.id+'">'+esc(m.name||m.nickname||'이름 미등록')+(m.region?' · '+esc(m.region):'')+'</option>').join('')+'</select>'}
-function memberName(id){const m=members.find(x=>String(x.id)===String(id));return m?(m.name||m.nickname||'회원'):''}
+function selectHtml(id){return '<select id="'+id+'"><option value="">등록된 회원 선택</option>'+members.map(m=>'<option value="'+m.id+'">'+esc(memberDisplayName(m,'이름 미등록'))+(m.region?' · '+esc(m.region):'')+'</option>').join('')+'</select>'}
+function memberName(id){const m=members.find(x=>String(x.id)===String(id));return m?memberDisplayName(m):''}
 
 async function invokeAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error){let message=error.message||'요청을 처리하지 못했습니다.';try{const text=await error.context?.text?.();const parsed=JSON.parse(text);message=parsed.error||message}catch(_){ }throw new Error(message)}if(data?.error)throw new Error(data.error);return data}
 async function loadMembers(){const {data,error}=await db.from('members_public').select('id,name,nickname,region,role,profile_image_url,favorite_singers,job,join_order').order('join_order',{ascending:true});if(error)throw error;members=data||[]}
@@ -178,8 +180,9 @@ function appInstallGuideMarkup(){
 
 function renderDashboard(){
   const force=accountSetting?.must_change_password;
-  const name=esc(myMember.name||myMember.nickname||'회원');
-  const region=myMember.region?' · '+esc(myMember.region):'';
+  const name=esc(memberDisplayName(myMember));
+  const normalizedRegion=cleanDisplayText(myMember.region);
+  const region=normalizedRegion?' · '+esc(normalizedRegion):'';
   app.innerHTML=
     (force?'<div class="force-reset"><b>비밀번호 재설정이 필요해요.</b>운영진이 비밀번호를 초기화했습니다. 아래 개인 설정에서 나만 아는 비밀번호로 바꿔 주세요.</div>':'')+
     '<div class="status"><b>MY VOM</b><span><strong>'+name+'</strong>님으로 로그인되어 있어요. 필요한 내용을 직접 관리해 주세요.</span></div>'+
@@ -326,7 +329,7 @@ async function addMySongLog(actionType,targetId,detail){
       action_type:actionType,
       target_type:'MEMBER_SONG',
       target_id:String(targetId||''),
-      target_name:String(myMember?.name||myMember?.nickname||''),
+      target_name:memberDisplayName(myMember,''),
       detail:detail||{}
     });
   }catch(error){console.warn('MY SETLIST LOG:',error)}
@@ -356,7 +359,7 @@ async function saveMySong(){
   }else{return say('파일을 선택해 주세요.',true)}
   const payload={
     member_id:String(myMember.id),
-    vocalist_name:myMember.name||myMember.nickname||'',
+    vocalist_name:memberDisplayName(myMember,''),
     song_title:title,
     artist_name:artist,
     duet_member_id:duet?String(duet.id):null,
@@ -442,6 +445,6 @@ function closeMenu(){const el=document.getElementById('menuOverlay');el.classLis
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 (async()=>{try{await loadSession();if(isAdministrator)render();else if(myMember){const warning=await loadWorkspace();render();if(warning)say(warning,true);}else{render();}}catch(error){renderWelcome();loginNotice(error.message||'잠시 후 다시 시도해 주세요.');}})();
 </script>
-<script src="/assets/vom-shell.js?v=18"></script>
+<script src="/assets/vom-shell.js?v=19"></script>
 </body>
 </html>
