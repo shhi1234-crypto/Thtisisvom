@@ -23,6 +23,31 @@
     applyVomTheme();
   }
 
+  let pwaRegistrationStarted = false;
+  function setupPwa() {
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = '/manifest.webmanifest';
+      document.head.appendChild(manifest);
+    }
+    if (!document.querySelector('meta[name="mobile-web-app-capable"]')) {
+      const capable = document.createElement('meta');
+      capable.name = 'mobile-web-app-capable';
+      capable.content = 'yes';
+      document.head.appendChild(capable);
+    }
+    const register = function () {
+      if (pwaRegistrationStarted || !('serviceWorker' in navigator) || location.protocol !== 'https:') return;
+      pwaRegistrationStarted = true;
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {
+        pwaRegistrationStarted = false;
+      });
+    };
+    if (document.readyState === 'complete') register();
+    else window.addEventListener('load', register, { once: true });
+  }
+
   function addStyle() {
     if (document.getElementById('vom-shared-shell-style')) return;
     const style = document.createElement('style');
@@ -632,6 +657,7 @@
 
   function bootstrap() {
     initVomTheme();
+    setupPwa();
     ensurePageAtmosphere();
     addStyle();
     normalizeBottomNavigation();
