@@ -34,6 +34,17 @@ async function ensureMemberAuth(service:any,memberId:number){
   return identity;
 }
 
+function profileText(value: unknown, label: string, maxLength: number) {
+  if (value !== null && value !== undefined && typeof value !== "string") {
+    throw new ApiError(400, label + "을(를) 다시 확인해 주세요.");
+  }
+  const text = String(value || "").trim().replace(/\s+/g, " ");
+  if (text.length > maxLength || /[\x00-\x1f\x7f]/.test(text)) {
+    throw new ApiError(400, label + "은(는) " + maxLength + "자 이내로 입력해 주세요.");
+  }
+  return text || null;
+}
+
 export async function handle(req: Request, service: any, authClient: any) {
   let origin = DEFAULT_ORIGIN;
   let claim: any = null, createdUser: string | null = null;
@@ -45,6 +56,28 @@ export async function handle(req: Request, service: any, authClient: any) {
       const user=await signedIn(req,service);
       return json(origin,{ok:true,...await memberContext(service,user.id)});
     }
+    if (body.action === "self_profile_update") {
+      const user = await signedIn(req, service);
+      const context = await memberContext(service, user.id);
+      if (!context.member?.id || !["APPROVED", "PASSWORD_CHANGE_REQUIRED"].includes(context.state)) {
+        throw new ApiError(403, "활동 회원만 내 프로필을 수정할 수 있어요.", "member_required");
+      }
+
+      const region = profileText(body.region, "사는 지역", 40);
+      const favoriteSingers = profileText(body.favorite_singers, "좋아하는 가수", 150);
+      const job = profileText(body.job, "직업", 80);
+      const { data: member, error } = await service
+        .from("members")
+        .update({ region, favorite_singers: favoriteSingers, job })
+        .eq("id", context.member.id)
+        .eq("auth_user_id", user.id)
+        .eq("is_active", true)
+        .select("id,name,nickname,role,region,favorite_singers,job")
+        .single();
+      if (error || !member) throw new Error("self_profile_update_failed");
+      return json(origin, { ok: true, member });
+    }
+
     if (body.action === "login_members") {
       const {data,error}=await service
         .from("members")
