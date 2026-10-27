@@ -2315,7 +2315,7 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 }
 </style>
 
-  <script src="/assets/vom-member-context.js?v=3"></script>
+  <script src="/assets/vom-member-context.js?v=4"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=21">
 <style id="vom-home-final-style">
 /* AURORA COLLISION MOTION */
@@ -3292,6 +3292,47 @@ function formatHomeNewsDate(value){
 
 /* START */
 
+function applyHomeAccessState(access){
+  const approved=access?.approved===true;
+  const homeLoginButton=document.getElementById('homeLoginButton');
+  if(homeLoginButton)homeLoginButton.innerHTML=approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
+  const homeSignupButton=document.getElementById('homeSignupButton');
+  if(homeSignupButton)homeSignupButton.hidden=approved;
+  const homeResultLink=document.getElementById('homeResultLink');
+  if(homeResultLink)homeResultLink.hidden=approved;
+  const homeInfoGuide=document.getElementById('homeInfoGuide');
+  if(homeInfoGuide){homeInfoGuide.hidden=approved;if(approved)homeInfoGuide.open=false;}
+  const homeMemberPrompt=document.getElementById('homeMemberPrompt');
+  if(homeMemberPrompt)homeMemberPrompt.hidden=approved;
+  const homeGuideAction=document.getElementById('homeGuideAction');
+  if(homeGuideAction){
+    homeGuideAction.href=approved?'/me/':'/ot-room/';
+    homeGuideAction.textContent=approved?'MY VOM에서 관리하기 →':'가입 방법 자세히 보기 →';
+  }
+}
+
+let homeAccessRefreshInFlight=null;
+let homeAccessRefreshTimer=0;
+async function syncHomeAccessState(refreshShell=true){
+  if(window.VOM_PUBLIC_MODE)return {approved:false,isAdmin:false,member:null};
+  if(homeAccessRefreshInFlight)return homeAccessRefreshInFlight;
+  homeAccessRefreshInFlight=(async()=>{
+    const access=await window.vomGetMemberAccess();
+    applyHomeAccessState(access);
+    loadHomeBirthday(access);
+    if(refreshShell)window.vomRefreshShell?.();
+    return access;
+  })();
+  try{return await homeAccessRefreshInFlight;}
+  finally{homeAccessRefreshInFlight=null;}
+}
+function scheduleHomeAccessStateSync(){
+  clearTimeout(homeAccessRefreshTimer);
+  homeAccessRefreshTimer=window.setTimeout(function(){
+    syncHomeAccessState().catch(function(){});
+  },0);
+}
+
 async function start(){
 
   if(window.VOM_PUBLIC_MODE){
@@ -3300,18 +3341,7 @@ async function start(){
 
   await restoreAdmin();
 
-  const access=await window.vomGetMemberAccess();
-  document.getElementById('homeLoginButton').innerHTML=access.approved?'MY VOM <span>→</span>':'로그인하기 <span>→</span>';
-  document.getElementById('homeSignupButton').hidden=access.approved;
-  document.getElementById('homeResultLink').hidden=access.approved;
-  const homeInfoGuide=document.getElementById('homeInfoGuide');
-  if(homeInfoGuide){homeInfoGuide.hidden=access.approved;if(access.approved)homeInfoGuide.open=false;}
-  const homeMemberPrompt=document.getElementById('homeMemberPrompt');
-  if(homeMemberPrompt)homeMemberPrompt.hidden=access.approved;
-  const homeGuideAction=document.getElementById('homeGuideAction');
-  if(homeGuideAction&&access.approved){homeGuideAction.href='/me/';homeGuideAction.textContent='MY VOM에서 관리하기 →';}
-
-  loadHomeBirthday(access);
+  const access=await syncHomeAccessState(false);
 
   await Promise.all([
     loadHomeActiveMembers(),
@@ -4449,6 +4479,16 @@ async function loadPublicVisitorCount(){
 trackHomeVisit();
 loadPublicVisitorCount();
 
+window.addEventListener('pageshow',scheduleHomeAccessStateSync);
+window.addEventListener('focus',scheduleHomeAccessStateSync);
+window.addEventListener('vom-member-access-changed',scheduleHomeAccessStateSync);
+window.addEventListener('storage',function(event){
+  if(event.key==='sb-aqfmhqultzpakfqwzulj-auth-token')scheduleHomeAccessStateSync();
+});
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible')scheduleHomeAccessStateSync();
+});
+
 start();
 </script>
 
@@ -4501,7 +4541,7 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=20"></script>
+<script src="/assets/vom-shell.js?v=21"></script>
 <script>
 (function(){
   let ticking=false;
