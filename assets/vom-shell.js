@@ -298,19 +298,11 @@
           top: 0 !important;
           z-index: 180 !important;
           isolation: isolate;
-          background: linear-gradient(90deg, rgba(10,17,42,.88), rgba(18,34,65,.78)) !important;
-          -webkit-backdrop-filter: blur(20px) saturate(128%);
-          backdrop-filter: blur(20px) saturate(128%);
-        }
-        html[data-vom-theme] header.header.vom-header::after {
-          content: "";
-          position: absolute;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(224,231,255,.34), transparent);
-          pointer-events: none;
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          -webkit-backdrop-filter: none !important;
+          backdrop-filter: none !important;
         }
         html[data-vom-theme] header.header.vom-header .member-session-popover { z-index: 2 !important; }
       }
