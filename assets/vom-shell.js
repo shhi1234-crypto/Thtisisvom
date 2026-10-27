@@ -292,6 +292,28 @@
         top:18px;
         right:18px;
       }
+      @media (min-width: 761px) {
+        .vom-header {
+          position: sticky !important;
+          top: 0 !important;
+          z-index: 180 !important;
+          isolation: isolate;
+          background: linear-gradient(90deg, rgba(10,17,42,.88), rgba(18,34,65,.78)) !important;
+          -webkit-backdrop-filter: blur(20px) saturate(128%);
+          backdrop-filter: blur(20px) saturate(128%);
+        }
+        .vom-header::after {
+          content: "";
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(224,231,255,.34), transparent);
+          pointer-events: none;
+        }
+        .vom-header .member-session-popover { z-index: 2 !important; }
+      }
       @media (max-width: 640px) {
         body.has-vom-bottom { padding-bottom: 92px !important; }
         nav.bottom.vom-global-bottom {
@@ -414,6 +436,15 @@
         button?.setAttribute('aria-expanded','false');
       }
     });
+  }
+
+  function memberDisplayName(member, fallback='회원') {
+    const values = [member?.name, member?.nickname];
+    for (const value of values) {
+      const normalized = String(value ?? '').trim().replace(/\s+/g, ' ');
+      if (normalized) return normalized;
+    }
+    return fallback;
   }
 
   function addMemberStatus(label, loggedIn, isAdmin=false) {
@@ -618,7 +649,7 @@
     if(version!==shellRefreshVersion)return;
     normalizeBottomNavigation(context.approved);
     setUnifiedMenu(context.isAdmin,operator,context.approved);
-    addMemberStatus(context.member?.name||context.member?.nickname||(context.isAdmin?'관리자':'회원'),context.approved,context.isAdmin);
+    addMemberStatus(memberDisplayName(context.member, context.isAdmin ? '관리자' : '회원'),context.approved,context.isAdmin);
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
   window.vomRefreshShell=refreshShell;
