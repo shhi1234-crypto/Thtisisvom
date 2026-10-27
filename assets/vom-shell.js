@@ -653,6 +653,21 @@
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
   window.vomRefreshShell=refreshShell;
+  let shellRefreshTimer=0;
+  function scheduleShellRefresh(){
+    clearTimeout(shellRefreshTimer);
+    shellRefreshTimer=window.setTimeout(function(){refreshShell();},0);
+  }
+  window.addEventListener('pageshow',scheduleShellRefresh);
+  window.addEventListener('focus',scheduleShellRefresh);
+  window.addEventListener('vom-member-access-changed',scheduleShellRefresh);
+  window.addEventListener('storage',function(event){
+    if(event.key==='sb-aqfmhqultzpakfqwzulj-auth-token')scheduleShellRefresh();
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible')scheduleShellRefresh();
+  });
+
 
   function loadConsultationWidget() {
     if (document.getElementById('vom-consultation-script')) return;
