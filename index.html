@@ -3311,6 +3311,11 @@ function applyHomeAccessState(access){
   }
 }
 
+window.vomApplyHomeAccessState=function(access){
+  applyHomeAccessState(access);
+  loadHomeBirthday(access);
+};
+
 let homeAccessRefreshInFlight=null;
 let homeAccessRefreshTimer=0;
 async function syncHomeAccessState(refreshShell=true){
@@ -3318,8 +3323,7 @@ async function syncHomeAccessState(refreshShell=true){
   if(homeAccessRefreshInFlight)return homeAccessRefreshInFlight;
   homeAccessRefreshInFlight=(async()=>{
     const access=await window.vomGetMemberAccess();
-    applyHomeAccessState(access);
-    loadHomeBirthday(access);
+    window.vomApplyHomeAccessState(access);
     if(refreshShell)window.vomRefreshShell?.();
     return access;
   })();
@@ -4541,7 +4545,7 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=22"></script>
+<script src="/assets/vom-shell.js?v=23"></script>
 <script>
 (function(){
   let ticking=false;
