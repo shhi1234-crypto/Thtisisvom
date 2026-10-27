@@ -642,6 +642,7 @@
     normalizeBottomNavigation(context.approved);
     setUnifiedMenu(context.isAdmin,operator,context.approved);
     addMemberStatus(memberDisplayName(context.member, context.isAdmin ? '관리자' : '회원'),context.approved,context.isAdmin);
+    try{window.vomApplyHomeAccessState?.(context);}catch(_){}
     if(context.isAdmin)addAdminBadge();else{document.querySelectorAll('.vom-shell-admin-badge').forEach(badge=>badge.remove());document.getElementById('adminBadge')?.classList.remove('show');}
   }
   window.vomRefreshShell=refreshShell;
