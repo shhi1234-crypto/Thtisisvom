@@ -3341,7 +3341,7 @@ async function start(){
 
   await restoreAdmin();
 
-  const access=await syncHomeAccessState(false);
+  const access=await syncHomeAccessState();
 
   await Promise.all([
     loadHomeActiveMembers(),
