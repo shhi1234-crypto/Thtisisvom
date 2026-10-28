@@ -229,7 +229,7 @@ const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_pu
 let adminMode=false;let currentMemberId=null;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[],directSongs=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
-let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup',saveToastTimer=null;
+let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup',saveToastTimer=null,currentSongReplacementId=null,newSongMode=false;
 
 async function start(){
   await checkAdmin();
@@ -367,13 +367,24 @@ async function loadBoard(id){
   settings.signup_slot_order=normalizeSignupOrder(settings.signup_slot_order,settings.max_participants);
   settings.song_slot_plan=normalizeSongSlotPlan(settings.song_slot_plan);
 
+  await refreshSlotSongs();
+}
+
+async function refreshSlotSongs(){
   const slotIds=slots.map(s=>s.id);
-  if(slotIds.length){
-    const {data,error}=await db.from('busking_setlist_slot_songs').select('*').in('slot_id',slotIds).order('sort_order',{ascending:true}).order('id',{ascending:true});
-    slotSongs=error?[]:(data||[]);
-  }else{
+  if(!slotIds.length){
     slotSongs=[];
+    performanceOrder=[];
+    return;
   }
+  const {data,error}=await db.from('busking_setlist_slot_songs').select('*').in('slot_id',slotIds).order('sort_order',{ascending:true}).order('id',{ascending:true});
+  if(error)throw error;
+  slotSongs=data||[];
+
+  // 현재 회차의 실제 편성곡만 최종 순서에 반영한다.
+  // 이전에 삭제되었거나 다른 회차 슬롯을 가리키는 순서는 화면에서 제외한다.
+  const activeSlotSongIds=new Set(slotSongs.map(song=>String(song.id)));
+  performanceOrder=performanceOrder.filter(row=>activeSlotSongIds.has(String(row.slot_song_id)));
 }
 
 function defaultCapacity(event){
@@ -1042,7 +1053,7 @@ function renderParticipantBoard(){
         <div class="song-stack">
           ${songs.length?songs.map((ss,i)=>{
             const song=repertoireById(ss.repertoire_id); if(!song)return '';
-            return `<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${canSong?`<span class="song-reorder" title="내 곡 순서 변경"><button class="tiny reorder-btn" onclick="movePersonalSong(${ss.id},-1)" ${i===0?'disabled':''}>↑</button><button class="tiny reorder-btn" onclick="movePersonalSong(${ss.id},1)" ${i===songs.length-1?'disabled':''}>↓</button></span>`:''}${songReferenceLinks(song)}${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
+            return `<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${canSong?`<span class="song-reorder" title="내 곡 순서 변경"><button class="tiny reorder-btn" onclick="movePersonalSong(${ss.id},-1)" ${i===0?'disabled':''}>↑</button><button class="tiny reorder-btn" onclick="movePersonalSong(${ss.id},1)" ${i===songs.length-1?'disabled':''}>↓</button></span><button class="tiny" onclick="openSongChooser(${slot.id},${ss.id})">변경</button>`:''}${songReferenceLinks(song)}${canSong?`<button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
           }).join(''):`<div class="song-stack">${Array.from({length:settings.max_songs_per_member},(_,i)=>`<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="slot-empty-text">${i+1}번째 곡 미정</span></div>`).join('')}</div>`}
         </div>
         <div class="slot-actions">
@@ -1385,30 +1396,169 @@ async function removeParticipant(id){
   await loadBoard(currentEventId);renderDetail(currentEventId);
 }
 
-function openSongChooser(slotId){
-  extraSongMode=false;
-  const slot=slots.find(x=>String(x.id)===String(slotId));if(!slot||!canEditSlotSongs(slot))return;
+function renderSongLibrary(){
+  if(!currentSongSlot)return;
+  const slot=currentSongSlot;
+  const m=memberById(slot.member_id);
   const current=songsForSlot(slot);
-  if(current.length>=settings.max_songs_per_member){alert(`최대 ${settings.max_songs_per_member}곡까지 추가할 수 있습니다.`);return}
-  currentSongSlot=slot;
-  const m=memberById(slot.member_id),used=new Set(current.map(x=>String(x.repertoire_id)));
-  const songs=repertoire.filter(s=>!used.has(String(s.id))&&(String(s.member_id||'')===String(slot.member_id)||norm(s.vocalist_name)===norm(m?.name||slot.member_name)));
-  songOverlayTitle.textContent=`${m?.name||slot.member_name||''} · Song`;
-  songOverlayNote.textContent=`개인곡 선택 · 현재 ${current.length}/${settings.max_songs_per_member}곡 · 추가 후 순서는 자유롭게 변경할 수 있습니다.`;
-  songLibrary.innerHTML=songs.length?songs.map(song=>`<div class="song-choice"><div><strong>${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}${song.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div><button class="secondary" onclick="addSongToSlot(${song.id})">추가</button></div>`).join(''):`<div class="empty" style="grid-column:1/-1">추가할 수 있는 개인곡이 없습니다.<br><br><a href="/members/" style="color:#715ddd;font-weight:800">MEMBERS에서 곡 관리 →</a></div>`;
+  const replacing=currentSongReplacementId?current.find(item=>String(item.id)===String(currentSongReplacementId)):null;
+  if(currentSongReplacementId&&!replacing)currentSongReplacementId=null;
+
+  const used=new Set(current.filter(item=>String(item.id)!==String(currentSongReplacementId||'')).map(item=>String(item.repertoire_id)));
+  const songs=repertoire.filter(song=>!used.has(String(song.id))&&(
+    String(song.member_id||'')===String(slot.member_id)||
+    norm(song.vocalist_name)===norm(m?.name||slot.member_name)
+  ));
+  const changing=Boolean(currentSongReplacementId);
+
+  newSongMode=false;
+  songOverlayTitle.textContent=`${m?.name||slot.member_name||''} · ${changing?'곡 변경':'개인곡 선택'}`;
+  songOverlayNote.textContent=changing
+    ? '공연 순서와 개인 순번은 유지한 채 이 곡만 교체합니다.'
+    : `개인곡 선택 · 현재 ${current.length}/${settings.max_songs_per_member}곡`;
+
+  songLibrary.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px">
+      <strong style="font-size:12px;color:#4e4790">개인 보유곡</strong>
+      <button class="secondary" type="button" onclick="openNewPersonalSong()">＋ 신규 곡 추가</button>
+    </div>
+    ${songs.length
+      ?songs.map(song=>`<div class="song-choice"><div><strong>${esc(song.song_title||'')}</strong><small>${esc(song.artist_name||'가수 미입력')}${song.duet_name?` · duet ${esc(song.duet_name)}`:''}</small></div><button class="secondary" onclick="addSongToSlot(${song.id})">${changing?'변경':'추가'}</button></div>`).join('')
+      :'<div class="empty">선택할 개인곡이 없습니다.<br>새 곡을 바로 등록해 추가할 수 있어요.</div>'
+    }`;
+}
+
+async function openSongChooser(slotId,replaceSongId=null){
+  extraSongMode=false;
+  const slot=slots.find(item=>String(item.id)===String(slotId));
+  if(!slot||!canEditSlotSongs(slot))return;
+
+  try{
+    await refreshSlotSongs();
+  }catch(error){
+    alert('개인곡 정보를 새로 불러오지 못했습니다.\\n'+(error?.message||'잠시 후 다시 시도해주세요.'));
+    return;
+  }
+
+  const refreshedSlot=slots.find(item=>String(item.id)===String(slotId));
+  if(!refreshedSlot||!canEditSlotSongs(refreshedSlot))return;
+  currentSongReplacementId=replaceSongId?String(replaceSongId):null;
+  const current=songsForSlot(refreshedSlot);
+  const replacing=currentSongReplacementId?current.find(item=>String(item.id)===String(currentSongReplacementId)):null;
+  if(currentSongReplacementId&&!replacing)currentSongReplacementId=null;
+
+  // 다른 화면에서 방금 추가된 곡도 즉시 반영해 0/6 표기와 실제 제한이 어긋나지 않게 한다.
+  renderParticipantBoard();
+
+  if(!currentSongReplacementId&&current.length>=settings.max_songs_per_member){
+    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 곡을 바꾸려면 해당 곡의 ‘변경’을 눌러주세요.`);
+    return;
+  }
+
+  currentSongSlot=refreshedSlot;
+  renderSongLibrary();
   songOverlay.classList.add('open');
   document.body.classList.add('modal-lock');
 }
-function closeSongChooser(){songOverlay.classList.remove('open');currentSongSlot=null;extraSongMode=false;document.body.classList.remove('modal-lock')}
+
+function openNewPersonalSong(){
+  if(!currentSongSlot||!canEditSlotSongs(currentSongSlot))return;
+  const member=memberById(currentSongSlot.member_id);
+  newSongMode=true;
+  songOverlayTitle.textContent=`${member?.name||currentSongSlot.member_name||''} · 신규 곡 추가`;
+  songOverlayNote.textContent='저장하면 이 멤버의 개인 보유곡에도 함께 등록되고, 지금 버스킹 셋리스트에 바로 반영됩니다.';
+  songLibrary.innerHTML=`
+    <div class="form-grid" style="margin-top:3px">
+      <div class="field-wrap"><label>곡명 <span style="color:#c94b64">*</span></label><input id="newPersonalSongTitle" class="field" maxlength="80" placeholder="예: 밤편지"></div>
+      <div class="field-wrap"><label>원곡 가수</label><input id="newPersonalSongArtist" class="field" maxlength="80" placeholder="예: 아이유"></div>
+      <div class="field-wrap full"><label>유튜브 링크 <span style="font-weight:600">(선택)</span></label><input id="newPersonalSongYoutube" class="field" type="url" placeholder="https://www.youtube.com/..."></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:7px;margin-top:13px">
+      <button class="secondary" type="button" onclick="renderSongLibrary()">← 개인곡 목록</button>
+      <button class="primary" type="button" onclick="saveNewPersonalSong()">저장 후 추가</button>
+    </div>`;
+}
+
+async function saveNewPersonalSong(){
+  const slot=currentSongSlot;
+  if(!slot||!canEditSlotSongs(slot))return;
+  const title=String(document.getElementById('newPersonalSongTitle')?.value||'').trim();
+  const artist=String(document.getElementById('newPersonalSongArtist')?.value||'').trim();
+  const youtube=String(document.getElementById('newPersonalSongYoutube')?.value||'').trim();
+  if(!title){alert('곡명을 입력해주세요.');return}
+  if(youtube&&!publicReferenceUrl(youtube)){alert('유효한 유튜브 링크를 입력해주세요.');return}
+
+  const member=memberById(slot.member_id);
+  const payload={
+    member_id:String(slot.member_id),
+    vocalist_name:member?.name||slot.member_name||'',
+    song_title:title,
+    artist_name:artist,
+    duet_member_id:null,
+    duet_name:'',
+    youtube_url:youtube
+  };
+  const {data,error}=await db.from('busking_repertoire').insert(payload).select('*').single();
+  if(error){alert('신규 개인곡 저장 실패\\n'+error.message);return}
+  repertoire=[...repertoire,data];
+  newSongMode=false;
+  await addSongToSlot(data.id);
+}
+
+function closeSongChooser(){
+  songOverlay.classList.remove('open');
+  currentSongSlot=null;
+  currentSongReplacementId=null;
+  newSongMode=false;
+  extraSongMode=false;
+  document.body.classList.remove('modal-lock');
+}
 
 async function addSongToSlot(repertoireId){
   if(!currentSongSlot)return;
-  const existing=songsForSlot(currentSongSlot);
-  if(!extraSongMode&&existing.length>=settings.max_songs_per_member)return;
-  const next=(existing.length?Math.max(...existing.map(x=>Number(x.sort_order)||0)):0)+1;
-  const {error}=await db.from('busking_setlist_slot_songs').insert({slot_id:currentSongSlot.id,repertoire_id:repertoireId,sort_order:next});
-  if(error){alert('곡 추가 실패\n'+error.message);return}
-  await loadBoard(currentEventId);await syncPerformanceOrderToPlan();await loadBoard(currentEventId);closeSongChooser();renderDetail(currentEventId);
+
+  try{
+    await refreshSlotSongs();
+  }catch(error){
+    alert('개인곡 정보를 새로 불러오지 못했습니다.\\n'+(error?.message||'잠시 후 다시 시도해주세요.'));
+    return;
+  }
+
+  const slot=slots.find(item=>String(item.id)===String(currentSongSlot.id));
+  if(!slot||!canEditSlotSongs(slot))return;
+  currentSongSlot=slot;
+
+  if(currentSongReplacementId){
+    const current=slotSongById(currentSongReplacementId);
+    if(!current||String(current.slot_id)!==String(slot.id)){
+      alert('변경할 곡을 다시 선택해주세요.');
+      closeSongChooser();
+      renderParticipantBoard();
+      return;
+    }
+    const {error}=await db.from('busking_setlist_slot_songs').update({repertoire_id:repertoireId}).eq('id',current.id);
+    if(error){alert('곡 변경 실패\\n'+error.message);return}
+    await loadBoard(currentEventId);
+    closeSongChooser();
+    renderDetail(currentEventId);
+    return;
+  }
+
+  const existing=songsForSlot(slot);
+  if(!extraSongMode&&existing.length>=settings.max_songs_per_member){
+    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 새로고침된 편성표를 확인해주세요.`);
+    closeSongChooser();
+    renderParticipantBoard();
+    return;
+  }
+  const next=(existing.length?Math.max(...existing.map(item=>Number(item.sort_order)||0)):0)+1;
+  const {error}=await db.from('busking_setlist_slot_songs').insert({slot_id:slot.id,repertoire_id:repertoireId,sort_order:next});
+  if(error){alert('곡 추가 실패\\n'+error.message);return}
+  await loadBoard(currentEventId);
+  await syncPerformanceOrderToPlan();
+  await loadBoard(currentEventId);
+  closeSongChooser();
+  renderDetail(currentEventId);
 }
 
 async function movePersonalSong(id,dir){
