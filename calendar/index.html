@@ -3451,8 +3451,9 @@ function setAdmin(active){
 
   if(active && plannerEventCreateRequested && !plannerEventCreateHandled){
     plannerEventCreateHandled=true;
-    history.replaceState(null,'','/calendar/');
-    setTimeout(()=>openEventModal(),0);
+    const requestedType=calendarParams.get('type')==='OTHER'?'OTHER':'VOM LIVE';
+    history.replaceState(null,'',requestedType==='OTHER'?'/calendar/?type=OTHER':'/calendar/');
+    setTimeout(()=>openEventModal(requestedType),0);
   }
 
   /* 인증 결과가 일정 로딩 화면을 덮어쓰지 않도록, 데이터가 준비된 뒤에만 다시 그립니다. */
@@ -6443,7 +6444,7 @@ async function uploadNewImage(){
    EVENT MODAL
 ====================================================== */
 
-function openEventModal(){
+function openEventModal(preferredType='VOM LIVE'){
 
   if(!adminMode){
     return;
@@ -6458,11 +6459,11 @@ function openEventModal(){
       'modalTitle'
     )
     .textContent =
-    '일정 추가';
+    preferredType==='OTHER'?'개인 벙 양식':'일정 추가';
 
 
   setEventType(
-    'VOM LIVE'
+    preferredType==='OTHER'?'OTHER':'VOM LIVE'
   );
 
 
