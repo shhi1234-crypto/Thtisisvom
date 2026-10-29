@@ -142,6 +142,21 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
   .time-block-head.compact .block-time-controls b{min-width:30px;font-size:8px}
 }
 
+
+
+/* Mutation-safe song controls: one source button per song, and phone actions occupy their own row. */
+.song-resource{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:104px;padding:0 10px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
+.song-resource.file{background:#e9f7f4;color:#287568}
+@media(max-width:760px){
+  .song-line{display:grid;grid-template-columns:28px minmax(0,1fr);gap:5px 6px;align-items:center;padding:4px 0}
+  .song-line .order-badge{grid-column:1;grid-row:1}
+  .song-line .song-name{grid-column:2;grid-row:1;white-space:normal;line-height:1.35}
+  .song-line .song-artist{display:none}
+  .song-line .song-tools{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;align-items:center;width:100%;margin:0;gap:4px}
+  .song-line .song-tools .song-resource{flex:1 1 118px;min-height:30px;height:30px;padding:0 10px}
+  .song-line .song-tools .song-reorder{display:inline-flex;gap:4px}
+}
+
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -229,7 +244,7 @@ const db=supabase.createClient('https://aqfmhqultzpakfqwzulj.supabase.co','sb_pu
 let adminMode=false;let currentMemberId=null;
 let events=[],locations=[],members=[],repertoire=[],slots=[],slotSongs=[],performanceOrder=[],directSongs=[];
 let settings={max_participants:5,max_songs_per_member:5,section_count:1,part1_capacity:5,part2_capacity:0,signup_slot_order:[],song_slot_plan:{}};
-let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup',saveToastTimer=null,currentSongReplacementId=null,newSongMode=false;
+let currentEventId=null,currentEditingPosition=null,currentSongSlot=null,dragOrderId=null,extraSongMode=false,selectedPersonalPos=null,currentSetlistTab='setup',saveToastTimer=null,currentSongReplacementId=null,newSongMode=false,boardMutationRevision=0;
 
 async function start(){
   await checkAdmin();
@@ -1514,6 +1529,35 @@ function closeSongChooser(){
   document.body.classList.remove('modal-lock');
 }
 
+function renderSongMutationNow(message,{closeChooser=false,closeDirect=false}={}){
+  const revision=++boardMutationRevision;
+  if(closeChooser)closeSongChooser();
+  if(closeDirect)closeDirectSong();
+  renderDetail(currentEventId);
+  if(message)showSaveToast(message);
+  return revision;
+}
+async function settleSongMutation(revision,message,{syncOrder=adminMode}={}){
+  let syncError=null;
+  if(syncOrder){
+    try{
+      await syncPerformanceOrderToPlan();
+    }catch(error){
+      syncError=error;
+      console.warn('SETLIST ORDER SYNC:',error);
+    }
+  }
+  if(revision!==boardMutationRevision)return;
+  try{
+    await loadBoard(currentEventId);
+  }catch(error){
+    console.warn('SETLIST BOARD REFRESH:',error);
+  }
+  if(revision!==boardMutationRevision)return;
+  renderDetail(currentEventId);
+  if(syncError)showSaveToast(message+' 편성표에는 반영됐어요. 최종 순서는 다시 반영해 주세요.');
+}
+
 async function addSongToSlot(repertoireId){
   if(!currentSongSlot)return;
 
@@ -1536,29 +1580,39 @@ async function addSongToSlot(repertoireId){
       renderParticipantBoard();
       return;
     }
-    const {error}=await db.from('busking_setlist_slot_songs').update({repertoire_id:repertoireId}).eq('id',current.id);
+    const {data,error}=await db.from('busking_setlist_slot_songs')
+      .update({repertoire_id:repertoireId})
+      .eq('id',current.id)
+      .select('*')
+      .single();
     if(error){alert('곡 변경 실패\\n'+error.message);return}
-    await loadBoard(currentEventId);
-    closeSongChooser();
-    renderDetail(currentEventId);
+    const changed=data||{...current,repertoire_id:repertoireId};
+    slotSongs=slotSongs.map(item=>String(item.id)===String(current.id)?changed:item);
+    const revision=renderSongMutationNow('곡을 변경했어요.',{closeChooser:true});
+    void settleSongMutation(revision,'곡을 변경했어요.',{syncOrder:adminMode});
     return;
   }
 
   const existing=songsForSlot(slot);
   if(!extraSongMode&&existing.length>=settings.max_songs_per_member){
-    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 새로고침된 편성표를 확인해주세요.`);
+    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 곡을 바꾸려면 해당 곡의 ‘변경’을 눌러주세요.`);
     closeSongChooser();
     renderParticipantBoard();
     return;
   }
+
   const next=(existing.length?Math.max(...existing.map(item=>Number(item.sort_order)||0)):0)+1;
-  const {error}=await db.from('busking_setlist_slot_songs').insert({slot_id:slot.id,repertoire_id:repertoireId,sort_order:next});
+  const {data,error}=await db.from('busking_setlist_slot_songs')
+    .insert({slot_id:slot.id,repertoire_id:repertoireId,sort_order:next})
+    .select('*')
+    .single();
   if(error){alert('곡 추가 실패\\n'+error.message);return}
-  await loadBoard(currentEventId);
-  await syncPerformanceOrderToPlan();
-  await loadBoard(currentEventId);
-  closeSongChooser();
-  renderDetail(currentEventId);
+
+  if(data)slotSongs=[...slotSongs,data];
+  else await refreshSlotSongs();
+
+  const revision=renderSongMutationNow('곡을 추가했어요.',{closeChooser:true});
+  void settleSongMutation(revision,'곡을 추가했어요.',{syncOrder:adminMode});
 }
 
 async function movePersonalSong(id,dir){
@@ -1606,16 +1660,24 @@ async function movePersonalSong(id,dir){
 }
 
 async function removeSong(id){
-  const ss=slotSongById(id);if(!ss)return;
+  const ss=slotSongById(id);
+  if(!ss)return;
   const slot=slots.find(x=>String(x.id)===String(ss.slot_id));
   if(!slot||(!canEditSlotSongs(slot)&&!adminMode))return;
-  await db.from('busking_setlist_order').delete().eq('slot_song_id',ss.id);
+
+  const {error:orderError}=await db.from('busking_setlist_order').delete().eq('slot_song_id',ss.id);
+  if(orderError){
+    alert('최종 셋리스트 정리를 먼저 처리하지 못했습니다.\\n'+orderError.message);
+    return;
+  }
+
   const {error}=await db.from('busking_setlist_slot_songs').delete().eq('id',id);
-  if(error){alert('곡 삭제 실패\n'+error.message);return}
-  await loadBoard(currentEventId);
-  await syncPerformanceOrderToPlan();
-  await loadBoard(currentEventId);
-  renderDetail(currentEventId);
+  if(error){alert('곡 삭제 실패\\n'+error.message);return}
+
+  slotSongs=slotSongs.filter(item=>String(item.id)!==String(id));
+  performanceOrder=performanceOrder.filter(item=>String(item.slot_song_id)!==String(id));
+  const revision=renderSongMutationNow('곡을 삭제했어요.');
+  void settleSongMutation(revision,'곡을 삭제했어요.',{syncOrder:adminMode});
 }
 
 
@@ -1663,7 +1725,6 @@ async function saveDirectSong(){
   if(!title)return alert('곡명을 입력해주세요.');
   if(directSongSelected.length<need)return alert(directSongType==='group'?'단체곡은 3명 이상 선택해주세요.':`${need}명을 선택해주세요.`);
   const names=directSongSelected.map(id=>memberById(id)?.name||slots.find(s=>String(s.member_id)===String(id))?.member_name||'');
-  // 솔로/듀엣은 첫 번째 선택자를 주체로 둔다. 단체곡은 주체가 없다.
   const owner=directSongType==='group'?null:directSongSelected[0];
   const pickedFile=directFile.files&&directFile.files[0];
   let attachment={file_url:null,file_name:null,file_path:null};
@@ -1682,18 +1743,24 @@ async function saveDirectSong(){
     youtube_url:youtube||null,
     ...attachment
   };
-  const {error}=await db.from('busking_setlist_direct_songs').insert(payload);
-  if(error){if(attachment.file_path)await removeBuskingAttachment(attachment.file_path);alert('직접 곡 추가 실패\n'+error.message);return}
-  closeDirectSong();await loadBoard(currentEventId);renderDetail(currentEventId);
+  const {data,error}=await db.from('busking_setlist_direct_songs').insert(payload).select('*').single();
+  if(error){if(attachment.file_path)await removeBuskingAttachment(attachment.file_path);alert('직접 곡 추가 실패\\n'+error.message);return}
+  directSongs=[...directSongs,data||{...payload,id:'pending-'+Date.now()}];
+  const revision=renderSongMutationNow('직접 추가곡을 저장했어요.',{closeDirect:true});
+  void settleSongMutation(revision,'직접 추가곡을 저장했어요.',{syncOrder:false});
 }
+
 async function removeDirectSong(id){
   if(!adminMode||!confirm('이 직접 추가곡을 현재 일정에서 삭제할까요?'))return;
   const before=directSongs.find(song=>String(song.id)===String(id));
   const {error}=await db.from('busking_setlist_direct_songs').delete().eq('id',id);
-  if(error){alert('삭제 실패\n'+error.message);return}
+  if(error){alert('삭제 실패\\n'+error.message);return}
   if(before?.file_path)await removeBuskingAttachment(before.file_path);
-  await loadBoard(currentEventId);renderDetail(currentEventId);
+  directSongs=directSongs.filter(song=>String(song.id)!==String(id));
+  const revision=renderSongMutationNow('직접 추가곡을 삭제했어요.');
+  void settleSongMutation(revision,'직접 추가곡을 삭제했어요.',{syncOrder:false});
 }
+
 
 /* =======================
    RANDOM PERFORMANCE ORDER
@@ -1934,13 +2001,18 @@ function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const t
 async function uploadDirectSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('direct',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
-function songReferenceLinks(song){const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');return `${youtube?`<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${file?`<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`:''}`}
-function finalSongReferenceLink(song){
-  const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url),name=String(song?.file_name||'첨부 파일');
-  if(youtube)return `<a class="yt" href="${attr(youtube)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`;
-  if(file)return `<a class="file-link" href="${attr(file)}" title="${attr(name)}" target="_blank" rel="noopener">📎 파일 ↗</a>`;
-  return '';
+function songReferenceLink(song){
+  const youtube=publicReferenceUrl(song?.youtube_url);
+  const file=publicReferenceUrl(song?.file_url);
+  const name=String(song?.file_name||'첨부 파일');
+  const href=file||youtube;
+  if(!href)return '';
+  const isFile=Boolean(file);
+  const label=isFile?'📎 파일 열기 ↗':'유튜브 바로가기 ↗';
+  return `<a class="song-resource ${isFile?'file':''}" href="${attr(href)}" ${isFile?`title="${attr(name)}"`:''} target="_blank" rel="noopener">${label}</a>`;
 }
+function songReferenceLinks(song){return songReferenceLink(song)}
+function finalSongReferenceLink(song){return songReferenceLink(song)}
 
 async function loadCurrentMember(){const {data}=await db.auth.getSession();const session=data.session;if(!session){currentMemberId=null;return}const {data:account,error}=await db.functions.invoke('member-account',{body:{action:'whoami'}});if(error||account?.error){console.warn('MEMBER SESSION',account?.error||error?.message);currentMemberId=null;return}currentMemberId=account?.member_id||null}
 async function checkAdmin(){
