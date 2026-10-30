@@ -2075,7 +2075,7 @@ function youtubeReferenceUrl(value){
   const safe=publicReferenceUrl(value);
   if(!safe)return '';
   try{
-    const host=new URL(safe).hostname.toLowerCase().replace(/^www\\./,'');
+    const host=new URL(safe).hostname.toLowerCase().replace(/^www\./,'');
     return ['youtube.com','m.youtube.com','music.youtube.com','youtu.be'].includes(host)?safe:'';
   }catch(_e){return ''}
 }
