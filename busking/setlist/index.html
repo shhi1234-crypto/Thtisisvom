@@ -146,7 +146,7 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
 
 
 /* Mutation-safe song controls: one source button per song, and phone actions occupy their own row. */
-.song-resource{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:104px;padding:0 10px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}
+.song-resource{display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:72px;padding:0 8px;border-radius:8px;background:#181b28;color:#fff;font-size:8px;font-weight:800;white-space:nowrap}
 .song-resource.file{background:#e9f7f4;color:#287568}
 @media(max-width:760px){
   .song-line{display:grid;grid-template-columns:28px minmax(0,1fr);gap:5px 6px;align-items:center;padding:4px 0}
@@ -154,7 +154,7 @@ body.modal-lock{overflow:hidden;overscroll-behavior:none;touch-action:none}.over
   .song-line .song-name{grid-column:2;grid-row:1;white-space:normal;line-height:1.35}
   .song-line .song-artist{display:none}
   .song-line .song-tools{grid-column:1/-1;grid-row:2;display:flex;flex-wrap:wrap;align-items:center;width:100%;margin:0;gap:4px}
-  .song-line .song-tools .song-resource{flex:1 1 118px;min-height:30px;height:30px;padding:0 10px}
+  .song-line .song-tools .song-resource{flex:0 0 auto;min-width:72px;min-height:28px;height:28px;padding:0 8px}.song-line .song-tools .tiny{min-height:28px;padding:5px 7px}
   .song-line .song-tools .song-reorder{display:inline-flex;gap:4px}
 }
 
@@ -395,7 +395,7 @@ async function refreshSlotSongs(){
   }
   const {data,error}=await db.from('busking_setlist_slot_songs').select('*').in('slot_id',slotIds).order('sort_order',{ascending:true}).order('id',{ascending:true});
   if(error)throw error;
-  slotSongs=data||[];
+  slotSongs=(data||[]).filter(song=>Boolean(repertoireById(song.repertoire_id)));
 
   // 현재 회차의 실제 편성곡만 최종 순서에 반영한다.
   // 이전에 삭제되었거나 다른 회차 슬롯을 가리키는 순서는 화면에서 제외한다.
@@ -546,7 +546,11 @@ function timelineStatus(event){
 function loc(row){return locations.find(x=>String(x.id)===String(row.location_id))}
 function memberById(id){return members.find(x=>String(x.id)===String(id))}
 function repertoireById(id){return repertoire.find(x=>String(x.id)===String(id))}
-function songsForSlot(slot){return slotSongs.filter(x=>String(x.slot_id)===String(slot.id)).sort((a,b)=>Number(a.sort_order)-Number(b.sort_order))}
+function songsForSlot(slot){
+  return slotSongs
+    .filter(x=>String(x.slot_id)===String(slot.id)&&Boolean(repertoireById(x.repertoire_id)))
+    .sort((a,b)=>Number(a.sort_order)-Number(b.sort_order));
+}
 function slotBySongId(slotSongId){const ss=slotSongs.find(x=>String(x.id)===String(slotSongId));return ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null}
 function slotSongById(id){return slotSongs.find(x=>String(x.id)===String(id))}
 function isStaffMember(m){return String(m?.role||'')==='운영진'}
@@ -989,7 +993,7 @@ function renderPersonalOrderPanel(){
   const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b);
   const songs=songsForSlot(slot).slice(0,songLimitForSlot(slot));
   const label=settings.section_count===2?`${part}부 개인순번`:'개인순번';
-  return `<div class="personal-order-panel person-${Math.min(pos,10)}"><div class="personal-order-heading"><span class="personal-order-number">${pos}번</span><strong>${esc(m?.name||slot.member_name||'')} · ${label}</strong></div><small>현재 ${songs.length}/${settings.max_songs_per_member}곡 · 아래 번호가 내 공연 순서입니다</small><div class="personal-order-seq">${arr.map(n=>`<span>#${n}</span>`).join('')}</div></div>`;
+  return `<div class="personal-order-panel person-${Math.min(pos,10)}"><div class="personal-order-heading"><span class="personal-order-number">${pos}번</span><strong>${esc(m?.name||slot.member_name||'')} · ${label}</strong></div><small>현재 ${songs.length}/${songLimitForSlot(slot)}곡 · 아래 번호가 내 공연 순서입니다</small><div class="personal-order-seq">${arr.map(n=>`<span>#${n}</span>`).join('')}</div></div>`;
 }
 
 function quickMemberOptions(){
@@ -2031,16 +2035,19 @@ function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachm
 function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);return `${prefix}/${Date.now()}-${token}.${ext}`}
 async function uploadDirectSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('direct',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
-function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
+function publicReferenceUrl(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  try{const url=new URL(raw);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return ''}
+}
 function songReferenceLink(song){
   const youtube=publicReferenceUrl(song?.youtube_url);
   const file=publicReferenceUrl(song?.file_url);
-  const name=String(song?.file_name||'첨부 파일');
-  const href=file||youtube;
+  const href=youtube||file;
   if(!href)return '';
-  const isFile=Boolean(file);
-  const label=isFile?'📎 파일 열기 ↗':'유튜브 바로가기 ↗';
-  return `<a class="song-resource ${isFile?'file':''}" href="${attr(href)}" ${isFile?`title="${attr(name)}"`:''} target="_blank" rel="noopener">${label}</a>`;
+  const isFile=!youtube&&Boolean(file);
+  const label=isFile?'📎 파일 ↗':'유튜브 ↗';
+  return `<a class="song-resource ${isFile?'file':''}" href="${attr(href)}" ${isFile?`title="${attr(String(song?.file_name||'첨부 파일'))}"`:''} target="_blank" rel="noopener">${label}</a>`;
 }
 function songReferenceLinks(song){return songReferenceLink(song)}
 function finalSongReferenceLink(song){return songReferenceLink(song)}
