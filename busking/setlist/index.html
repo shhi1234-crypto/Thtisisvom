@@ -990,7 +990,8 @@ function renderPersonalOrderPanel(){
   const pos=Number(selectedPersonalPos),slot=slots.find(s=>Number(s.sort_order)===pos);
   if(!slot)return '';
   const m=memberById(slot.member_id),part=partForPosition(pos);
-  const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b);
+  const limit=songLimitForSlot(slot);
+  const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b).slice(0,limit);
   const songs=songsForSlot(slot).slice(0,songLimitForSlot(slot));
   const label=settings.section_count===2?`${part}부 개인순번`:'개인순번';
   return `<div class="personal-order-panel person-${Math.min(pos,10)}"><div class="personal-order-heading"><span class="personal-order-number">${pos}번</span><strong>${esc(m?.name||slot.member_name||'')} · ${label}</strong></div><small>현재 ${songs.length}/${songLimitForSlot(slot)}곡 · 아래 번호가 내 공연 순서입니다</small><div class="personal-order-seq">${arr.map(n=>`<span>#${n}</span>`).join('')}</div></div>`;
@@ -1178,8 +1179,9 @@ function renderPerformanceOrder(){
     const positions=partPositions(part),planned=[];
     positions.forEach(pos=>{
       const slot=slots.find(x=>Number(x.sort_order)===Number(pos));
-      const songs=slot?songsForSlot(slot).slice(0,settings.max_songs_per_member):[];
-      for(let songIndex=0;songIndex<settings.max_songs_per_member;songIndex++){
+      const songLimit=slot?songLimitForSlot(slot):settings.max_songs_per_member;
+      const songs=slot?songsForSlot(slot).slice(0,songLimit):[];
+      for(let songIndex=0;songIndex<songLimit;songIndex++){
         const planSeq=songOrderNumber(pos,songIndex);if(!planSeq)continue;
         const ss=songs[songIndex]||null;
         const saved=ss?performanceOrder.find(x=>String(x.slot_song_id)===String(ss.id)):null;
