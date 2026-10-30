@@ -930,18 +930,22 @@ function publicReferenceUrl(value){
   if(!raw)return '';
   try{const url=new URL(raw);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return ''}
 }
+function youtubeReferenceUrl(value){
+  const safe=publicReferenceUrl(value);
+  if(!safe)return '';
+  try{
+    const host=new URL(safe).hostname.toLowerCase().replace(/^www\\./,'');
+    return ['youtube.com','m.youtube.com','music.youtube.com','youtu.be'].includes(host)?safe:'';
+  }catch(_e){return ''}
+}
 function songReferenceLink(song){
-  const youtube=publicReferenceUrl(song?.youtube_url);
+  const youtube=youtubeReferenceUrl(song?.youtube_url);
   const file=publicReferenceUrl(song?.file_url);
   const href=youtube||file;
   if(!href)return '';
-  const label=youtube?'유튜브 ↗':'📎 파일 ↗';
-  return `<a class="yt" href="${attr(href)}" target="_blank" rel="noopener">${label}</a>`;
-}
-function songsForSlot(slot){
-  return slotSongs
-    .filter(x=>String(x.slot_id)===String(slot.id)&&Boolean(repertoireById(x.repertoire_id)))
-    .sort((a,b)=>Number(a.sort_order)-Number(b.sort_order));
+  const isFile=!youtube&&Boolean(file);
+  const label=isFile?'📎 파일 ↗':'유튜브 ↗';
+  return `<a class="song-resource ${isFile?'file':''}" href="${attr(href)}" ${isFile?`title="${attr(String(song?.file_name||'첨부 파일'))}"`:''} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${label}</a>`;
 }
 function slotBySongId(slotSongId){const ss=slotSongs.find(x=>String(x.id)===String(slotSongId));return ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null}
 function slotSongById(id){return slotSongs.find(x=>String(x.id)===String(id))}
@@ -1467,7 +1471,7 @@ function renderParticipantBoard(){
       </div>`;
     }else{
       const m=memberById(slot.member_id),allSongs=songsForSlot(slot),songLimit=songLimitForSlot(slot),songs=allSongs.slice(0,songLimit),canSong=canEditSlotSongs(slot);
-      const limitControl=adminMode?'<span class="member-song-limit"><small>개인 목표</small><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',-1)" '+(songLimit<=songs.length?'disabled':'')+'>−</button><b>'+songLimit+'곡</b><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',1)">＋</button></span>':'';
+      const limitControl=adminMode?'<span class="member-song-limit"><small>등록 / 목표</small><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',-1)" '+(songLimit<=songs.length?'disabled':'')+'>−</button><b>'+songs.length+'/'+songLimit+'</b><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',1)">＋</button></span>':'';
       html+=`<div class="slot-row person-${Math.min(pos,10)}">
         <div><div class="slot-no">${pos}</div></div>
         <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small>${limitControl}</div>
@@ -1749,13 +1753,21 @@ async function moveSlot(id,dir){
 
   const target=slots.find(x=>Number(x.sort_order)===to);
   if(target){
-    await db.from('busking_setlist_slots').update({sort_order:-999}).eq('id',slot.id);
-    await db.from('busking_setlist_slots').update({sort_order:from}).eq('id',target.id);
-    await db.from('busking_setlist_slots').update({sort_order:to}).eq('id',slot.id);
+    const temporary=-1000000-Number(slot.id||0);
+    const first=await db.from('busking_setlist_slots').update({sort_order:temporary,updated_at:new Date().toISOString()}).eq('id',slot.id);
+    if(first.error){alert('참가자 순서 변경 실패\\n'+first.error.message);return}
+    const second=await db.from('busking_setlist_slots').update({sort_order:from,updated_at:new Date().toISOString()}).eq('id',target.id);
+    if(second.error){alert('참가자 순서 변경 실패\\n'+second.error.message);return}
+    const third=await db.from('busking_setlist_slots').update({sort_order:to,updated_at:new Date().toISOString()}).eq('id',slot.id);
+    if(third.error){alert('참가자 순서 변경 실패\\n'+third.error.message);return}
   }else{
-    await db.from('busking_setlist_slots').update({sort_order:to}).eq('id',slot.id);
+    const {error}=await db.from('busking_setlist_slots').update({sort_order:to,updated_at:new Date().toISOString()}).eq('id',slot.id);
+    if(error){alert('참가자 순서 변경 실패\\n'+error.message);return}
   }
-  await loadBoard(currentEventId);await syncPerformanceOrderToPlan();await loadBoard(currentEventId);renderDetail(currentEventId);
+  await loadBoard(currentEventId);
+  await syncPerformanceOrderToPlan({forcePlan:true});
+  await loadBoard(currentEventId);
+  renderDetail(currentEventId);
 }
 
 async function removeParticipant(id){
@@ -1959,53 +1971,81 @@ async function generateRandomOrder(){
   renderPerformanceOrder();
 }
 
-async function syncPerformanceOrderToPlan(){
+async function syncPerformanceOrderToPlan({forcePlan=false}={}){
   if(!validSongPlan())return;
+
+  const manual=!forcePlan&&settings.song_slot_plan?.__manual_order_v2===true;
   const desired=[];
   for(const slot of slots){
     const pos=Number(slot.sort_order),part=partForPosition(pos);
     const songs=songsForSlot(slot).slice(0,songLimitForSlot(slot));
     songs.forEach((ss,i)=>{
-      const seq=songOrderNumber(pos,i);
-      if(seq)desired.push({event_id:Number(currentEventId),part_no:part,sequence_no:seq,slot_song_id:ss.id,updated_at:new Date().toISOString()});
+      const planned=songOrderNumber(pos,i);
+      if(!planned)return;
+      const existing=performanceOrder.find(row=>String(row.slot_song_id)===String(ss.id));
+      const preserved=manual&&existing&&Number(existing.part_no)===Number(part)?Number(existing.sequence_no):0;
+      desired.push({
+        event_id:Number(currentEventId),
+        part_no:Number(part),
+        sequence_no:preserved||planned,
+        slot_song_id:ss.id,
+        updated_at:new Date().toISOString()
+      });
     });
   }
-  const activeSongIds=new Set(slotSongs.map(song=>String(song.id)));
-  let removed=false;
+
+  const desiredIds=new Set(desired.map(row=>String(row.slot_song_id)));
   for(const old of performanceOrder){
-    if(!activeSongIds.has(String(old.slot_song_id))){
+    if(!desiredIds.has(String(old.slot_song_id))){
       const {error}=await db.from('busking_setlist_order').delete().eq('id',old.id);
-      if(error){alert('공연 순서 정리 실패\n'+error.message);return}
-      removed=true;
+      if(error)throw error;
     }
   }
-  if(removed)await loadBoard(currentEventId);
-  const existingIds=new Set(performanceOrder.map(row=>String(row.slot_song_id)));
-  const missing=desired.filter(row=>!existingIds.has(String(row.slot_song_id))).sort((a,b)=>Number(a.part_no)-Number(b.part_no)||Number(a.sequence_no)-Number(b.sequence_no));
-  for(const row of missing){
-    const rows=performanceOrder.filter(item=>Number(item.part_no)===Number(row.part_no));
-    const target=Math.max(1,Math.min(rows.length+1,Number(row.sequence_no)||rows.length+1));
-    const ok=await insertPerformanceOrderAt(row,target);
-    if(!ok)return;
+
+  const existingBySong=new Map(
+    performanceOrder
+      .filter(row=>desiredIds.has(String(row.slot_song_id)))
+      .map(row=>[String(row.slot_song_id),row])
+  );
+
+  // 참가자 이동이나 순서 복원 때도 중복 번호 없이 안전하게 재배치한다.
+  for(const row of existingBySong.values()){
+    const temporary=-1000000-Number(row.id||0);
+    const {error}=await db.from('busking_setlist_order')
+      .update({sequence_no:temporary,updated_at:new Date().toISOString()})
+      .eq('id',row.id);
+    if(error)throw error;
+    row.sequence_no=temporary;
   }
+
+  const taken=new Set();
+  const nextOrder=[];
+  for(const row of desired){
+    let sequence=Math.max(1,Number(row.sequence_no)||1);
+    while(taken.has(`${row.part_no}:${sequence}`))sequence+=1;
+    taken.add(`${row.part_no}:${sequence}`);
+
+    const existing=existingBySong.get(String(row.slot_song_id));
+    if(existing){
+      const {data,error}=await db.from('busking_setlist_order')
+        .update({part_no:row.part_no,sequence_no:sequence,updated_at:new Date().toISOString()})
+        .eq('id',existing.id)
+        .select('*')
+        .single();
+      if(error)throw error;
+      nextOrder.push(data||{...existing,...row,sequence_no:sequence});
+    }else{
+      const {data,error}=await db.from('busking_setlist_order')
+        .insert({...row,sequence_no:sequence})
+        .select('*')
+        .single();
+      if(error)throw error;
+      nextOrder.push(data||{...row,sequence_no:sequence});
+    }
+  }
+  performanceOrder=nextOrder;
 }
 
-async function insertPerformanceOrderAt(row,targetSequence){
-  const part=Number(row.part_no);
-  const rows=performanceOrder.filter(item=>Number(item.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
-  const target=Math.max(1,Math.min(rows.length+1,Number(targetSequence)||rows.length+1));
-  const {data,error}=await db.from('busking_setlist_order').insert({...row,sequence_no:900000+part*10000+rows.length}).select().single();
-  if(error||!data){alert('공연 순서 저장 실패\n'+(error?.message||''));return false}
-  await loadBoard(currentEventId);
-  const fresh=performanceOrder.find(item=>String(item.id)===String(data.id)||String(item.slot_song_id)===String(row.slot_song_id));
-  if(!fresh)return false;
-  const reordered=performanceOrder.filter(item=>Number(item.part_no)===part).sort((a,b)=>Number(a.sequence_no)-Number(b.sequence_no));
-  const from=reordered.findIndex(item=>String(item.id)===String(fresh.id));
-  if(from>=0)reordered.splice(from,1);
-  reordered.splice(target-1,0,fresh);
-  await saveOrderSequence(part,reordered);
-  return true;
-}
 function randomizeNoThree(items){
   const source=items.map(x=>({...x}));
   for(let attempt=0;attempt<500;attempt++){
