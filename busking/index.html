@@ -67,7 +67,8 @@ a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{col
 .slot-row[class*="person-"]{background:linear-gradient(90deg,var(--person-bg),rgba(255,255,255,.82) 42%)}.slot-row[class*="person-"] .slot-no,.slot-row[class*="person-"] .order-badge{background:var(--person-bg);color:var(--person-ink)}.order-item[class*="person-"]{background:linear-gradient(90deg,var(--person-bg),#f8f7fb 36%)}.order-item[class*="person-"] .order-num{background:var(--person-bg);color:var(--person-ink)}
 
 .part-title{margin:12px 0 6px;padding:6px 10px;border-radius:12px;background:#f0edfb;color:#6654c7;font-size:11px;font-weight:800}.slot-table{overflow:hidden;border:1px solid rgba(28,34,65,.07);border-radius:18px}.slot-head,.slot-row{display:grid;grid-template-columns:44px 120px minmax(0,1fr) 126px;gap:8px;align-items:center}.slot-head{min-height:38px;padding:0 12px;background:#f4f2f8;color:#858a9b;font-size:9px;font-weight:800}.slot-row{min-height:54px;padding:5px 9px;border-top:1px solid var(--line);background:rgba(255,255,255,.76)}.slot-row.empty-slot{background:rgba(250,249,252,.74)}.slot-no{width:30px;height:30px;display:grid;place-items:center;border-radius:10px;background:#eeeaff;color:#6957cd;font-size:11px;font-weight:800}.slot-member strong{display:block;font-size:12px}.slot-member small{display:block;margin-top:3px;color:#858a9a;font-size:9px}.slot-empty-text{color:#a0a3af;font-size:11px}
-.song-stack{display:grid;gap:2px}.song-line{display:flex;align-items:center;gap:5px;min-width:0;min-height:24px}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:118px;padding:0 14px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
+.song-stack{display:grid;gap:2px}.song-line{display:flex;align-items:center;gap:5px;min-width:0;min-height:24px}.song-index{flex:0 0 auto;width:20px;height:20px;display:grid;place-items:center;border-radius:7px;background:#f0edf9;color:#6c59cc;font-size:8px;font-weight:800}.song-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:800}.song-artist{color:#8b8f9e;font-size:9px}.song-tools{margin-left:auto;display:flex;gap:4px;align-items:center}.yt{display:inline-flex;align-items:center;justify-content:center;height:25px;min-width:118px;padding:0 14px;border-radius:8px;background:#181b28;color:#fff;font-size:9px;font-weight:800;white-space:nowrap}.tiny{border:0;padding:6px 7px;border-radius:8px;background:#f0edf9;color:#6755c6;font-size:8px;font-weight:800;cursor:pointer}.tiny.danger{background:#fff0f2;color:#a74f62}.member-song-limit{display:inline-flex;align-items:center;gap:4px;margin-top:5px;padding:3px 5px;border:1px solid rgba(104,86,206,.22);border-radius:999px;background:#f6f3ff;color:#5c4cbc;font-size:8px;font-weight:800}.member-song-limit small{color:#8176ad;font-size:8px;font-weight:800}.member-song-limit b{min-width:26px;text-align:center;font-size:9px}.member-song-limit .tiny{padding:3px 5px;border-radius:6px}.member-song-limit .tiny:disabled{opacity:.38;cursor:not-allowed}
+.slot-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.empty{padding:35px;text-align:center;color:#9296a5;font-size:12px}
 
 .order-actions{display:flex;gap:7px;flex-wrap:wrap}.order-help{margin:0 0 13px;padding:10px 12px;border-radius:12px;background:#f7f5fb;color:#74798b;font-size:10px;line-height:1.65}
 .performance-parts{display:grid;gap:16px}.performance-part-title{display:flex;align-items:center;gap:8px;margin-bottom:7px;color:#6654c7;font-size:12px;font-weight:800}.performance-part-title::after{content:"";height:1px;flex:1;background:var(--line)}
@@ -928,6 +929,33 @@ function songsForSlot(slot){return slotSongs.filter(x=>String(x.slot_id)===Strin
 function slotBySongId(slotSongId){const ss=slotSongs.find(x=>String(x.id)===String(slotSongId));return ss?slots.find(s=>String(s.id)===String(ss.slot_id)):null}
 function slotSongById(id){return slotSongs.find(x=>String(x.id)===String(id))}
 function isStaffMember(m){return String(m?.role||'')==='운영진'}
+
+function songLimitForSlot(slot){
+  const fallback=Math.max(1,Number(settings.max_songs_per_member)||1);
+  const value=Number(settings.song_slot_plan?.__member_song_limits?.[String(slot?.id)]);
+  return Number.isInteger(value)&&value>=1&&value<=12?value:fallback;
+}
+async function changeSlotSongLimit(slotId,delta){
+  if(!adminMode)return;
+  const slot=slots.find(item=>String(item.id)===String(slotId));
+  if(!slot)return;
+  const current=songLimitForSlot(slot);
+  const assigned=songsForSlot(slot).length;
+  const next=Math.max(Math.max(1,assigned),Math.min(12,current+Number(delta||0)));
+  if(next===current){
+    if(current<=assigned)alert('이미 등록된 '+assigned+'곡보다 개인 목표를 낮출 수 없어요. 곡을 먼저 삭제한 뒤 다시 조절해 주세요.');
+    return;
+  }
+  if(!confirm((memberById(slot.member_id)?.name||slot.member_name||'이 참가자')+'의 개인 목표를 '+current+'곡에서 '+next+'곡으로 바꿀까요?'))return;
+  if(!settings.song_slot_plan||typeof settings.song_slot_plan!=='object'||Array.isArray(settings.song_slot_plan))settings.song_slot_plan={};
+  if(!settings.song_slot_plan.__member_song_limits||typeof settings.song_slot_plan.__member_song_limits!=='object'||Array.isArray(settings.song_slot_plan.__member_song_limits))settings.song_slot_plan.__member_song_limits={};
+  if(next===Math.max(1,Number(settings.max_songs_per_member)||1))delete settings.song_slot_plan.__member_song_limits[String(slot.id)];
+  else settings.song_slot_plan.__member_song_limits[String(slot.id)]=next;
+  const {error}=await db.from('busking_setlist_settings').update({song_slot_plan:settings.song_slot_plan,updated_at:new Date().toISOString()}).eq('event_id',Number(currentEventId));
+  if(error){alert('개인 목표 곡 수 저장 실패\\n'+error.message);return}
+  renderDetail(currentEventId);
+}
+
 function canEditSlotSongs(slot){return adminMode||String(slot?.member_id||'')===String(currentMemberId||'')}
 function partForPosition(pos){return settings.section_count===2&&pos>settings.part1_capacity?2:1}
 function partLabel(part){return settings.section_count===2?`${part}부`:'공연'}
@@ -1421,18 +1449,19 @@ function renderParticipantBoard(){
         <div class="slot-actions"><span class="slot-empty-text">${Number(nextParticipantPosition())===Number(pos)?'다음 선착순 배정':'대기'}</span></div>
       </div>`;
     }else{
-      const m=memberById(slot.member_id),allSongs=songsForSlot(slot),songs=allSongs,canSong=canEditSlotSongs(slot);
+      const m=memberById(slot.member_id),allSongs=songsForSlot(slot),songLimit=songLimitForSlot(slot),songs=allSongs.slice(0,songLimit),canSong=canEditSlotSongs(slot);
+      const limitControl=adminMode?'<span class="member-song-limit"><small>개인 목표</small><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',-1)" '+(songLimit<=songs.length?'disabled':'')+'>−</button><b>'+songLimit+'곡</b><button class="tiny" type="button" onclick="changeSlotSongLimit('+Number(slot.id)+',1)">＋</button></span>':'';
       html+=`<div class="slot-row person-${Math.min(pos,10)}">
         <div><div class="slot-no">${pos}</div></div>
-        <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small></div>
+        <div class="slot-member"><strong>${esc(m?.name||slot.member_name||'')}</strong><small>${esc(m?.role||'')}</small>${limitControl}</div>
         <div class="song-stack">
           ${songs.length?songs.map((ss,i)=>{
             const song=repertoireById(ss.repertoire_id); if(!song)return '';
-            return `<div class="song-line"><span class="order-badge">${i>=settings.max_songs_per_member?'삽입':'#'+(songOrderNumber(pos,i)||'-')}</span><span class="song-index">${i>=settings.max_songs_per_member?'＋':i+1}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${canSong?`<button class="tiny" onclick="openSongChooser(${slot.id},${ss.id})">변경</button><button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
-          }).join(''):`<div class="song-stack">${Array.from({length:settings.max_songs_per_member},(_,i)=>`<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="slot-empty-text">${i+1}번째 곡 미정</span></div>`).join('')}</div>`}
+            return `<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="song-index">${i+1}</span><span class="song-name">${esc(song.song_title||'')}</span><span class="song-artist">· ${esc(song.artist_name||'')}</span><span class="song-tools">${song.youtube_url?`<a class="yt" href="${attr(song.youtube_url)}" target="_blank" rel="noopener">유튜브 바로가기 ↗</a>`:''}${canSong?`<button class="tiny" onclick="openSongChooser(${slot.id},${ss.id})">변경</button><button class="tiny danger" onclick="removeSong(${ss.id})">삭제</button>`:''}</span></div>`;
+          }).join(''):`<div class="song-stack">${Array.from({length:songLimit},(_,i)=>`<div class="song-line"><span class="order-badge">#${songOrderNumber(pos,i)||'-'}</span><span class="slot-empty-text">${i+1}번째 곡 미정</span></div>`).join('')}</div>`}
         </div>
         <div class="slot-actions">
-          ${canSong&&songs.length<settings.max_songs_per_member?`<button class="secondary" onclick="openSongChooser(${slot.id})">＋ 곡 추가</button>`:''}
+          ${canSong&&songs.length<songLimit?`<button class="secondary" onclick="openSongChooser(${slot.id})">＋ 곡 추가</button>`:''}
           ${adminMode?`<button class="tiny" onclick="moveSlot(${slot.id},-1)">↑</button><button class="tiny" onclick="moveSlot(${slot.id},1)">↓</button><button class="tiny danger" onclick="removeParticipant(${slot.id})">참가 삭제</button>`:''}
         </div>
       </div>`;
@@ -1739,7 +1768,7 @@ function renderSongLibrary(){
   songOverlayTitle.textContent=`${m?.name||slot.member_name||''} · ${changing?'곡 변경':'개인곡 선택'}`;
   songOverlayNote.textContent=changing
     ? '공연 순서와 개인 순번은 유지한 채 이 곡만 교체합니다.'
-    : `MEMBERS 개인곡 · 현재 ${current.length}/${settings.max_songs_per_member}곡`;
+    : `MEMBERS 개인곡 · 현재 ${current.length}/${songLimitForSlot(slot)}곡`;
 
   songLibrary.innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:3px">
@@ -1775,8 +1804,9 @@ async function openSongChooser(slotId,replaceSongId=null){
   // 다른 화면에서 막 저장된 곡까지 다시 읽어, 편성표와 제한 값이 엇갈리지 않게 한다.
   renderParticipantBoard();
 
-  if(!currentSongReplacementId&&current.length>=settings.max_songs_per_member){
-    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 곡을 바꾸려면 해당 곡의 ‘변경’을 눌러주세요.`);
+  const songLimit=songLimitForSlot(refreshedSlot);
+  if(!currentSongReplacementId&&current.length>=songLimit){
+    alert(`이미 ${songLimit}곡이 등록되어 있습니다. 운영진이 개인 목표 곡 수를 조절하거나, 해당 곡의 ‘변경’을 눌러주세요.`);
     return;
   }
 
@@ -1869,8 +1899,9 @@ async function addSongToSlot(repertoireId){
   }
 
   const existing=songsForSlot(slot);
-  if(!extraSongMode&&existing.length>=settings.max_songs_per_member){
-    alert(`이미 ${settings.max_songs_per_member}곡이 등록되어 있습니다. 새로고침된 편성표를 확인해주세요.`);
+  const songLimit=songLimitForSlot(slot);
+  if(!extraSongMode&&existing.length>=songLimit){
+    alert(`이미 ${songLimit}곡이 등록되어 있습니다. 운영진에게 개인 목표 곡 수 조절을 요청하거나, 해당 곡의 ‘변경’을 눌러주세요.`);
     closeSongChooser();
     renderParticipantBoard();
     return;
@@ -1916,7 +1947,7 @@ async function syncPerformanceOrderToPlan(){
   const desired=[];
   for(const slot of slots){
     const pos=Number(slot.sort_order),part=partForPosition(pos);
-    const songs=songsForSlot(slot).slice(0,settings.max_songs_per_member);
+    const songs=songsForSlot(slot).slice(0,songLimitForSlot(slot));
     songs.forEach((ss,i)=>{
       const seq=songOrderNumber(pos,i);
       if(seq)desired.push({event_id:Number(currentEventId),part_no:part,sequence_no:seq,slot_song_id:ss.id,updated_at:new Date().toISOString()});
