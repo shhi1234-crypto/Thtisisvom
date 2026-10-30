@@ -72,6 +72,10 @@
 @keyframes setlistGuideProgress{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
 @media(max-width:720px){.setlist-editor-layout{grid-template-columns:1fr}.setlist-guide-video{position:relative;top:auto}.guide-video-screen{min-height:254px}}
 
+
+/* MY VOM coupon and point shop */
+.coupon-shop-panel{margin-top:12px}.member-coupon-body{padding:14px 15px 16px;background:linear-gradient(135deg,#faf9ff,#f2fbfa)}.member-point-card{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;padding:15px;border:1px solid #dcd5ff;border-radius:15px;background:linear-gradient(115deg,#f1edff,#eaf8f6)}.member-point-card span{display:block;color:#7966dc;font:800 9px/1 "DM Sans",sans-serif;letter-spacing:1.15px}.member-point-card strong{display:block;margin-top:6px;color:#353b55;font:800 22px/1 "DM Sans",Pretendard,sans-serif;letter-spacing:-.8px}.member-point-card p{margin:0;color:#6f778c;font-size:10px;line-height:1.65}.member-coupon-heading{margin:18px 0 9px;color:#3b4058;font-size:13px}.member-coupon-list{display:grid;gap:8px}.member-coupon-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px;border:1px solid #e6e2f1;border-radius:14px;background:#fff}.member-coupon-row>div{min-width:0}.member-coupon-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.member-coupon-title strong{color:#363b53;font-size:12px}.member-coupon-scope,.member-coupon-state{display:inline-flex;align-items:center;min-height:21px;padding:0 8px;border-radius:999px;font:800 9px Pretendard,sans-serif;white-space:nowrap}.member-coupon-scope{background:#eeebff;color:#6753d2}.member-coupon-state{background:#edf8f2;color:#34775c}.member-coupon-state.reserved{background:#fff4dd;color:#a66d22}.member-coupon-state.used{background:#edf0f6;color:#677089}.member-coupon-state.expired,.member-coupon-state.revoked{background:#fff0f3;color:#a45c6d}.member-coupon-row p{margin:6px 0 0;color:#757d90;font-size:10px;line-height:1.55}.member-coupon-row small{display:block;margin-top:5px;color:#969bab;font-size:9px}.member-coupon-error{margin:12px 0 0;padding:10px 11px;border-radius:11px;background:#fff3e8;color:#a16527;font-size:10px;line-height:1.55}.member-shop-list{display:grid;grid-template-columns:1fr 1fr;gap:9px}.member-shop-card{padding:13px;border:1px solid #e7e3f2;border-radius:14px;background:rgba(255,255,255,.9)}.member-shop-card>span{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:#edf9f4;color:#35785f;font:800 8px Pretendard,sans-serif}.member-shop-card h3{margin:8px 0 0;color:#373d54;font-size:12px}.member-shop-card p{margin:6px 0 0;color:#7b8294;font-size:9px;line-height:1.55}.member-shop-card b{display:block;margin-top:9px;color:#7560d5;font-size:9px;line-height:1.45}@media(max-width:560px){.member-point-card{grid-template-columns:1fr;gap:8px}.member-shop-list{grid-template-columns:1fr}.member-coupon-row{gap:8px;flex-direction:column}.member-coupon-state{align-self:flex-start}}
+
 </style>
   <script src="/assets/vom-member-context.js?v=4"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -100,7 +104,7 @@ const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const app=document.getElementById('app');
 
-let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false;
+let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false,myCoupons=[],shopProducts=[],myPointTotal=null,couponCenterError='';
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function cleanDisplayText(value){return String(value??'').trim().replace(/\s+/g,' ')}
@@ -115,7 +119,7 @@ function memberName(id){const m=members.find(x=>String(x.id)===String(id));retur
 async function invokeAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error){let message=error.message||'요청을 처리하지 못했습니다.';try{const text=await error.context?.text?.();const parsed=JSON.parse(text);message=parsed.error||message}catch(_){ }throw new Error(message)}if(data?.error)throw new Error(data.error);return data}
 async function loadMembers(){const {data,error}=await db.from('members_public').select('id,name,nickname,region,role,profile_image_url,favorite_singers,job,join_order').order('join_order',{ascending:true});if(error)throw error;members=data||[]}
 async function loadSession(){
- const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;if(!session)return;
+ const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;myCoupons=[];shopProducts=[];myPointTotal=null;couponCenterError='';if(!session)return;
  let context;
  try{
    context=await requestAccess({action:'context'},session.access_token);
@@ -150,6 +154,70 @@ async function loadMySongs(){
   mySongs=data||[];
 }
 
+
+async function loadCouponCenter(){
+  myCoupons=[];
+  shopProducts=[];
+  myPointTotal=null;
+  couponCenterError='';
+  if(!myMember?.id)return;
+  const [couponResponse,productResponse,pointResponse]=await Promise.all([
+    db.from('member_coupons').select('id,status,issued_at,expires_at,reserved_at,used_at,issued_note,point_shop_products(title,description,benefit_scope,purchase_mode,point_cost)').order('issued_at',{ascending:false}),
+    db.from('point_shop_products').select('id,code,title,description,benefit_scope,purchase_mode,point_cost,is_active,sort_order').eq('is_active',true).order('sort_order',{ascending:true}),
+    db.from('live_results').select('results')
+  ]);
+  const errors=[couponResponse.error,productResponse.error,pointResponse.error].filter(Boolean);
+  couponCenterError=errors.map(error=>error.message||'일부 정보를 불러오지 못했습니다.').join(' · ');
+  myCoupons=couponResponse.data||[];
+  shopProducts=productResponse.data||[];
+  if(!pointResponse.error){
+    myPointTotal=(pointResponse.data||[]).reduce((total,row)=>{
+      const match=(Array.isArray(row?.results)?row.results:[]).find(item=>String(item?.member_id)===String(myMember.id));
+      const points=Number(match?.total_points);
+      return total+(Number.isFinite(points)?points:0);
+    },0);
+  }
+}
+function couponProductForMember(coupon){
+  const raw=coupon?.point_shop_products;
+  return Array.isArray(raw)?(raw[0]||{}):(raw||{});
+}
+function memberCouponScope(scope){
+  return ({BUSKING:'버스킹',VOM_LIVE:'VOM LIVE',ALL:'전 행사'})[String(scope||'')]||'행사';
+}
+function memberCouponStatus(status){
+  return ({AVAILABLE:'사용 가능',RESERVED:'예약됨',USED:'사용 완료',EXPIRED:'만료됨',REVOKED:'발급 취소'})[String(status||'')]||'상태 확인';
+}
+function memberCouponDate(value){
+  if(!value)return '';
+  const date=new Date(value);
+  if(Number.isNaN(date.getTime()))return '';
+  return date.getFullYear()+'.'+String(date.getMonth()+1).padStart(2,'0')+'.'+String(date.getDate()).padStart(2,'0');
+}
+function memberPointText(value){
+  if(value===null)return '집계 준비 중';
+  const number=Number(value)||0;
+  return (Number.isInteger(number)?number.toLocaleString('ko-KR'):number.toLocaleString('ko-KR',{maximumFractionDigits:1}))+' P';
+}
+function couponAndShopMarkup(){
+  const couponRows=myCoupons.length
+    ? myCoupons.map(coupon=>{
+        const product=couponProductForMember(coupon);
+        const expires=memberCouponDate(coupon.expires_at);
+        const state=String(coupon.status||'').toLowerCase();
+        return '<article class="member-coupon-row"><div><div class="member-coupon-title"><span class="member-coupon-scope">'+esc(memberCouponScope(product.benefit_scope))+'</span><strong>'+esc(product.title||'VOM 쿠폰')+'</strong></div><p>'+esc(product.description||'운영진이 발급한 쿠폰입니다.')+'</p>'+(expires?'<small>만료일 · '+esc(expires)+'</small>':'<small>만료일 없음</small>')+'</div><span class="member-coupon-state '+esc(state)+'">'+esc(memberCouponStatus(coupon.status))+'</span></article>';
+      }).join('')
+    : '<div class="coupon-empty">아직 발급된 쿠폰이 없어요.<br>운영진이 발급하면 이곳에서 바로 확인할 수 있어요.</div>';
+  const catalog=shopProducts.length
+    ? shopProducts.map(product=>{
+        const adminOnly=product.purchase_mode==='ADMIN_GRANT_ONLY';
+        return '<article class="member-shop-card"><span>'+esc(memberCouponScope(product.benefit_scope))+'</span><h3>'+esc(product.title)+'</h3><p>'+esc(product.description)+'</p><b>'+esc(adminOnly?'운영진 발급 전용 · 포인트 구매 불가':'포인트 상품 준비 중')+'</b></article>';
+      }).join('')
+    : '<div class="coupon-empty">현재 준비된 상점 상품이 없어요.</div>';
+  const error=couponCenterError?'<p class="member-coupon-error">일부 정보를 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.</p>':'';
+  return '<details id="myCouponsPanel" class="dashboard-detail coupon-shop-panel"><summary><div><b>내 쿠폰 · 상점</b><small>운영진 발급 쿠폰과 누적 포인트를 확인해요.</small></div><i>⌄</i></summary><div class="member-coupon-body"><div class="member-point-card"><div><span>VOM POINT</span><strong>'+esc(memberPointText(myPointTotal))+'</strong></div><p>포인트 상품은 준비 중이에요. 우선 참가권은 포인트로 구매할 수 없는 운영진 발급 쿠폰입니다.</p></div>'+error+'<h3 class="member-coupon-heading">내 쿠폰</h3><div class="member-coupon-list">'+couponRows+'</div><h3 class="member-coupon-heading">VOM 상점</h3><div class="member-shop-list">'+catalog+'</div></div></details>';
+}
+
 function render(){
  document.querySelector('.eyebrow').textContent=isAdministrator?'ADMIN SPACE':'PERSONAL SPACE';
  document.querySelector('.title').textContent=isAdministrator?'관리자 공간':'MY VOM';
@@ -173,7 +241,7 @@ async function requestAccess(body,token){
  let response;try{response=await fetch(SUPABASE_URL+'/functions/v1/vom-access',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(15000)});}catch(_){throw new Error('로그인 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');}
  const data=await response.json();if(!response.ok)throw Object.assign(new Error(data.error||'로그인 정보를 확인하지 못했습니다.'),{status:response.status});return data;
 }
-async function loadWorkspace(){const results=await Promise.allSettled([loadMembers(),loadMySongs()]);return results.some(result=>result.status==='rejected')?'로그인은 완료됐지만 일부 개인 자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.':'';}
+async function loadWorkspace(){const results=await Promise.allSettled([loadMembers(),loadMySongs(),loadCouponCenter()]);return results.some(result=>result.status==='rejected')?'로그인은 완료됐지만 일부 개인 자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.':'';}
 
 function appInstallGuideMarkup(){
   return '<details class="dashboard-detail app-install-guide"><summary><div><b>VOM을 앱처럼 추가하기</b><small>홈 화면이나 바탕화면에서 바로 열 수 있어요.</small></div><i>⌄</i></summary><div class="app-install-body"><p>앱스토어 다운로드가 아니라, 지금 쓰는 브라우저에서 VOM을 홈 화면에 추가하는 방식이에요.</p><ol><li><strong>아이폰</strong> · Safari에서 공유 버튼 → <b>홈 화면에 추가</b></li><li><strong>안드로이드</strong> · Chrome 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></li><li><strong>PC</strong> · 주소창의 설치 아이콘 또는 브라우저 메뉴 → <b>앱 설치</b></li></ol><a class="app-install-link" href="/">홈에서 설치하기 →</a></div></details>';
@@ -245,7 +313,7 @@ function renderDashboard(){
   app.innerHTML=
     (force?'<div class="force-reset"><b>비밀번호 재설정이 필요해요.</b>운영진이 비밀번호를 초기화했습니다. 아래 개인 설정에서 나만 아는 비밀번호로 바꿔 주세요.</div>':'')+
     '<div class="status"><b>MY VOM</b><span><strong>'+name+'</strong>님으로 로그인되어 있어요. 필요한 내용을 직접 관리해 주세요.</span></div>'+
-    '<section class="card my-space-card"><div class="my-space-heading"><div><h2>내 활동 <span class="en">MY SPACE</span></h2><p class="card-intro">필요한 기능을 한 번씩만 정리해 두었어요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div><div class="quick-links my-space-menu"><a class="quick-link" href="/qna/?mine=1"><div><b>내 문의 이력 보기</b><small>내가 남긴 문의와 답변 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/"><div><b>내 일정 보기</b><small>VOM 모임과 행사 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정 보기</b><small>신청할 수 있는 공개 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available&type=OTHER"><div><b>개인 벙 찾아보기</b><small>열린 개인 벙·소모임의 참가 신청 확인</small></div><span>→</span></a><button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 편한 운영진에게 카카오톡으로 보내기</small></div><span>→</span></button><a class="quick-link" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer"><div><b>VOM 카카오톡 채널</b><small>공지와 1:1 문의를 받아보세요.</small></div><span>↗</span></a></div><details id="hangoutRequestForm" class="dashboard-detail hangout-request"><summary><div><b>VOM 벙 개설 신청 양식</b><small>복사해서 작성한 뒤, 편한 운영진에게 카카오톡으로 보내주세요.</small></div><i>⌄</i></summary><div class="hangout-request-body"><p>운영진이 확인한 뒤 카카오톡 일정표에 등록해 드려요.</p><pre class="hangout-request-template" aria-label="VOM 벙 개설 신청 양식">${esc(hangoutRequestTemplate())}</pre><button type="button" class="primary hangout-copy-button" onclick="copyHangoutRequest()">벙 양식 복사하기</button><p class="hangout-copy-note">복사 후 카카오톡에서 붙여넣고 빈칸을 채워 보내면 됩니다.</p></div></details><details id="myCouponsPanel" class="dashboard-detail"><summary><div><b>내 쿠폰</b><small>쿠폰이 발급되면 여기에서 확인해요.</small></div><i>⌄</i></summary><div class="coupon-empty">현재 발급된 쿠폰이 없어요.<br>쿠폰이 발급되면 여기에 표시할게요.</div></details>'+appInstallGuideMarkup()+'</section>'+
+    '<section class="card my-space-card"><div class="my-space-heading"><div><h2>내 활동 <span class="en">MY SPACE</span></h2><p class="card-intro">필요한 기능을 한 번씩만 정리해 두었어요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div><div class="quick-links my-space-menu"><a class="quick-link" href="/qna/?mine=1"><div><b>내 문의 이력 보기</b><small>내가 남긴 문의와 답변 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/"><div><b>내 일정 보기</b><small>VOM 모임과 행사 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정 보기</b><small>신청할 수 있는 공개 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available&type=OTHER"><div><b>개인 벙 찾아보기</b><small>열린 개인 벙·소모임의 참가 신청 확인</small></div><span>→</span></a><button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 편한 운영진에게 카카오톡으로 보내기</small></div><span>→</span></button><a class="quick-link" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer"><div><b>VOM 카카오톡 채널</b><small>공지와 1:1 문의를 받아보세요.</small></div><span>↗</span></a></div><details id="hangoutRequestForm" class="dashboard-detail hangout-request"><summary><div><b>VOM 벙 개설 신청 양식</b><small>복사해서 작성한 뒤, 편한 운영진에게 카카오톡으로 보내주세요.</small></div><i>⌄</i></summary><div class="hangout-request-body"><p>운영진이 확인한 뒤 카카오톡 일정표에 등록해 드려요.</p><pre class="hangout-request-template" aria-label="VOM 벙 개설 신청 양식">${esc(hangoutRequestTemplate())}</pre><button type="button" class="primary hangout-copy-button" onclick="copyHangoutRequest()">벙 양식 복사하기</button><p class="hangout-copy-note">복사 후 카카오톡에서 붙여넣고 빈칸을 채워 보내면 됩니다.</p></div></details>'+couponAndShopMarkup()+appInstallGuideMarkup()+'</section>'+
     '<details id="accountSettings" class="account-settings"><summary><span class="settings-mark">⚙</span><div><b>개인 설정</b><small>내 프로필 · 비밀번호 변경</small></div><i class="settings-arrow">⌄</i></summary><div class="account-settings-body">'+
       '<section class="account-setting-panel"><h3>내 프로필</h3><p class="card-intro">사는 지역, 좋아하는 가수와 직업을 직접 수정할 수 있어요.</p><div class="profile-row"><div class="field profile-region"><label for="profileRegion">사는 지역</label><input id="profileRegion" maxlength="40" value="'+esc(myMember.region||'')+'" placeholder="예: 부천"><p class="help">시·구·도 단위만 입력해 주세요. 상세 주소는 저장하지 않아요.</p></div><div class="field"><label for="profileFavorite">좋아하는 가수</label><input id="profileFavorite" maxlength="150" value="'+esc(myMember.favorite_singers||'')+'" placeholder="예: 박효신"></div><div class="field"><label for="profileJob">직업</label><input id="profileJob" maxlength="80" value="'+esc(myMember.job||'')+'" placeholder="예: 삐에로"></div></div><button class="primary" onclick="saveProfile()">프로필 저장</button></section>'+
       '<section class="account-setting-panel"><h3>비밀번호 변경</h3><p class="card-intro">본인만 아는 숫자 4자리로 설정해 주세요.</p><div class="profile-row"><div class="field"><label for="newPassword">새 비밀번호 (숫자 4자리)</label><input id="newPassword" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리"></div><div class="field"><label for="newPasswordConfirm">새 비밀번호 확인</label><input id="newPasswordConfirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력"></div></div><div class="field"><label>새 비밀번호 힌트 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(선택)</em></label><input id="newHint" maxlength="100" value="'+esc(accountSetting?.password_hint||'')+'" placeholder="예: 처음 함께 부른 곡"><p class="help">비밀번호 자체나 생일·전화번호는 적지 마세요.</p></div><button class="primary" onclick="changePassword()">비밀번호 저장</button></section>'+
@@ -498,7 +566,7 @@ async function saveProfile(){
   }
 }
 async function changePassword(){const password=document.getElementById('newPassword').value;const confirm=document.getElementById('newPasswordConfirm').value;const hint=document.getElementById('newHint').value.trim();if(!/^[0-9]{4}$/.test(password))return say('새 비밀번호는 숫자 4자리로 입력해 주세요.',true);if(password!==confirm)return say('새 비밀번호 확인이 일치하지 않습니다.',true);const {error}=await db.auth.updateUser({password:authPassword(password)});if(error)return say(error.message||'비밀번호를 바꾸지 못했습니다.',true);const {error:settingError}=await db.from('member_account_settings').update({password_hint:hint||null,must_change_password:false,password_changed_at:new Date().toISOString()}).eq('member_id',myMember.id);if(settingError)return say(settingError.message||'힌트를 저장하지 못했습니다.',true);accountSetting={...(accountSetting||{}),password_hint:hint,must_change_password:false};render();say('개인 비밀번호를 저장했어요.')}
-async function logout(){await db.auth.signOut();session=null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;render();window.vomRefreshShell?.();say('로그아웃했어요.')}
+async function logout(){await db.auth.signOut();session=null;myMember=null;isAdministrator=false;accountSetting=null;mySongs=[];editingMySongId=null;myCoupons=[];shopProducts=[];myPointTotal=null;couponCenterError='';render();window.vomRefreshShell?.();say('로그아웃했어요.')}
 function openMenu(){const el=document.getElementById('menuOverlay');el.classList.add('open');el.setAttribute('aria-hidden','false')}
 function closeMenu(){const el=document.getElementById('menuOverlay');el.classList.remove('open');el.setAttribute('aria-hidden','true')}
 document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
