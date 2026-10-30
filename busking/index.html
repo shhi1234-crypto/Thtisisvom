@@ -1368,7 +1368,8 @@ function renderSongDraw(){
       ${adminMode?`<button class="secondary" onclick="redrawSongPlan()">${valid?'곡 순서 다시 뽑기':'곡 순서 뽑기'}</button>`:''}
     </div>
     ${valid?`<div class="personal-order-title">개인별 공연 순번 · 참가자 번호별 준비 순서</div><div class="song-order-preview">${Array.from({length:settings.max_participants},(_,i)=>i+1).map(pos=>{
-      const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b);
+      const limit=songLimitForSlot(slot);
+  const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b).slice(0,limit);
       return `<span class="song-order-chip person-${Math.min(pos,10)}">개인순번 ${pos}번 · ${arr.map(n=>'#'+n).join(' → ')}</span>`;
     }).join('')}</div>`:'<div class="empty" style="padding:18px 0 4px">아직 곡 순서가 추첨되지 않았습니다.</div>'}
     ${adminMode?`<div class="quick-signup">
@@ -1508,8 +1509,9 @@ function renderPerformanceOrder(){
     const positions=partPositions(part),planned=[];
     positions.forEach(pos=>{
       const slot=slots.find(x=>Number(x.sort_order)===Number(pos));
-      const songs=slot?songsForSlot(slot).slice(0,settings.max_songs_per_member):[];
-      for(let songIndex=0;songIndex<settings.max_songs_per_member;songIndex++){
+      const songLimit=slot?songLimitForSlot(slot):settings.max_songs_per_member;
+      const songs=slot?songsForSlot(slot).slice(0,songLimit):[];
+      for(let songIndex=0;songIndex<songLimit;songIndex++){
         const planSeq=songOrderNumber(pos,songIndex);if(!planSeq)continue;
         const ss=songs[songIndex]||null;
         const saved=ss?performanceOrder.find(x=>String(x.slot_song_id)===String(ss.id)):null;
