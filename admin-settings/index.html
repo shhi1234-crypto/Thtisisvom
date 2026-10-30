@@ -230,7 +230,7 @@ async function start(){
 async function loadCouponCenter(){
   const [productsResponse,couponsResponse,membersResponse]=await Promise.all([
     db.from('point_shop_products').select('id,code,title,description,benefit_scope,purchase_mode,point_cost,is_active,sort_order').order('sort_order',{ascending:true}),
-    db.from('member_coupons').select('id,member_id,product_id,status,issued_at,expires_at,reserved_at,used_at,issued_note,updated_at,point_shop_products(title,description,benefit_scope,purchase_mode,point_cost),members(name,nickname,join_order)').order('issued_at',{ascending:false}),
+    db.from('member_coupons').select('id,member_id,product_id,status,issued_at,expires_at,reserved_at,used_at,issued_note,updated_at,point_shop_products(title,description,benefit_scope,purchase_mode,point_cost)').order('issued_at',{ascending:false}),
     db.from('members').select('id,name,nickname,role,is_active,join_order').eq('is_active',true).order('join_order',{ascending:true})
   ]);
   const errors=[productsResponse.error,couponsResponse.error,membersResponse.error].filter(Boolean);
