@@ -949,8 +949,7 @@ function renderSongDraw(){
         <button class="secondary" onclick="redrawSongPlan()">${valid?'순서 다시':'순서 뽑기'}</button>
       </div>`:''}
     </div>
-    ${valid?`<div class="personal-order-title">개인순번 확인 · 참가자 이름을 눌러주세요</div>
-      <div class="participant-chips">${assigned.length?assigned.map(slot=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id),name=m?.name||slot.member_name||'';return `<button class="participant-chip person-${Math.min(pos,10)} ${Number(selectedPersonalPos)===pos?'active':''}" onclick="selectPersonalOrder(${pos})" aria-label="${esc(name)} ${pos}번 개인순번 보기"><span class="participant-chip-no">${pos}</span><span class="participant-chip-name">${esc(name)}</span></button>`}).join(''):'<span class="slot-empty-text">참가자를 먼저 배치해주세요.</span>'}</div>
+    ${valid?`      <div class="participant-chips">${assigned.length?assigned.map(slot=>{const pos=Number(slot.sort_order),m=memberById(slot.member_id),name=m?.name||slot.member_name||'';return `<button class="participant-chip person-${Math.min(pos,10)} ${Number(selectedPersonalPos)===pos?'active':''}" onclick="selectPersonalOrder(${pos})" aria-label="${esc(name)} ${pos}번 개인순번 보기"><span class="participant-chip-no">${pos}</span><span class="participant-chip-name">${esc(name)}</span></button>`}).join(''):'<span class="slot-empty-text">참가자를 먼저 배치해주세요.</span>'}</div>
       <div id="personalOrderPanel">${renderPersonalOrderPanel()}</div>`:'<div class="empty" style="padding:18px 0 4px">아직 곡 순서가 추첨되지 않았습니다.</div>'}
     ${adminMode?`<div class="quick-signup">
       <select id="quickMemberPicker" class="field">${quickMemberOptions()}</select>
