@@ -626,34 +626,24 @@ function renderDetail(id){
     </section>
 
     <div class="setlist-tabs">
-      <button id="setupTabBtn" class="setlist-tab active" onclick="switchSetlistTab('setup')">편성 · 준비</button>
+      <button id="setupTabBtn" class="setlist-tab active" onclick="switchSetlistTab('setup')">개인곡 편성</button>
       <button id="finalTabBtn" class="setlist-tab" onclick="switchSetlistTab('final')">최종 셋리스트</button>
     </div>
 
     <section id="setupPanel" class="board setlist-panel">
       <div class="section-head">
-        <div><h2>Setlist Board</h2><p>참가자를 배치하고 각 멤버의 개인곡을 채웁니다.</p></div>
+        <div><h2>개인곡 편성</h2></div>
         ${adminMode?`<button class="primary" onclick="openSettings()">편성 설정</button>`:''}
       </div>
-      <div class="board-summary">
-        <div class="summary-card"><small>START</small><strong>${esc(row.start_time?String(row.start_time).slice(0,5):'미정')}</strong></div>
-        <div class="summary-card"><small>END</small><strong>${esc(row.end_time?String(row.end_time).slice(0,5):'미정')}</strong></div>
-        <div class="summary-card"><small>DURATION</small><strong>${esc(durationLabel(row))}</strong></div>
-        <div class="summary-card highlight"><small>PARTS</small><strong>${settings.section_count===2?'1부 + 2부':'1부만'}</strong></div>
-        <div class="summary-card highlight"><small>PARTICIPANTS</small><strong>${slots.length} / ${settings.max_participants}명</strong></div>
-        <div class="summary-card highlight"><small>SONGS / PERSON</small><strong>목표 ${settings.max_songs_per_member}곡</strong></div>
-      </div>
-      ${renderOperationSchedule(row)}
       ${renderSongDraw()}
       <div id="participantBoard"></div>
     </section>
 
     <section id="finalPanel" class="run-order setlist-panel hidden">
       <div class="section-head">
-        <div><h2>Final Setlist</h2><p>현장에서 바로 볼 수 있는 최종 공연 순서입니다.</p></div>
+        <div><h2>최종 셋리스트</h2></div>
         ${adminMode?`<div class="order-actions"><button class="primary" onclick="generateRandomOrder()">곡 순서 반영</button><button class="secondary" onclick="clearPerformanceOrder()">순서 초기화</button></div>`:''}
       </div>
-      <div class="order-help">자동 순서에는 2곡 이상 배정된 참가자마다 최소 한 번의 2곡 연속 무대가 포함됩니다. 4곡 이상 편성에서는 2곡 묶음 사이에 다른 단독 무대 2곡을 배치합니다. 준비시간은 5분 단위로 설정할 수 있고, 종료 전 15분은 정리시간으로 확보합니다. 공연 구간은 1곡당 5분 기준입니다. 구간의 ＋/−를 누르면 5분만 바뀌는 것이 아니라 다음 구간의 곡을 1곡씩 당겨오거나 넘기며 실제 곡 수와 시간이 함께 바뀝니다. 구간 사이에는 쉬는시간도 5분 단위로 추가할 수 있습니다.</div>
       ${renderOperationSchedule(row)}
       <div id="performanceOrder"></div>
     </section>`;
@@ -681,9 +671,9 @@ function renderOperationSchedule(row){
   const label=String(row?.event_type||'PERFORMANCE');
   const setup=getSetupMinutes();
   return `<div class="schedule-strip">
-    <div class="schedule-step"><small>SETUP · 준비 및 여유시간 ${setup}분</small><strong>${minutesToClock(t.setupStart)}–${minutesToClock(t.liveStart)}</strong>${adminMode?`<div class="setup-time-controls"><button onclick="changeSetupMinutes(-5)" title="준비시간 5분 줄이기">−</button><b>${setup}분</b><button onclick="changeSetupMinutes(5)" title="준비시간 5분 늘리기">＋</button></div>`:''}</div>
-    <div class="schedule-step live"><small>${esc(label)} · 공연 가능 시간</small><strong>${minutesToClock(t.liveStart)}–${minutesToClock(t.liveEnd)}</strong></div>
-    <div class="schedule-step"><small>CLEANUP · ${getCleanupMinutes()}MIN</small><strong>${minutesToClock(t.liveEnd)}–${minutesToClock(t.cleanupEnd)}</strong></div>
+    <div class="schedule-step"><small>준비 ${setup}분</small><strong>${minutesToClock(t.setupStart)}–${minutesToClock(t.liveStart)}</strong>${adminMode?`<div class="setup-time-controls"><button onclick="changeSetupMinutes(-5)" title="준비시간 5분 줄이기">−</button><b>${setup}분</b><button onclick="changeSetupMinutes(5)" title="준비시간 5분 늘리기">＋</button></div>`:''}</div>
+    <div class="schedule-step live"><small>${esc(label)}</small><strong>${minutesToClock(t.liveStart)}–${minutesToClock(t.liveEnd)}</strong></div>
+    <div class="schedule-step"><small>정리 ${getCleanupMinutes()}분</small><strong>${minutesToClock(t.liveEnd)}–${minutesToClock(t.cleanupEnd)}</strong></div>
   </div>`;
 }
 
@@ -946,16 +936,13 @@ function songOrderNumber(position,songIndex){
 
 function renderSongDraw(){
   const valid=validSongPlan();
-  const totalPerPart=settings.section_count===2
-    ? `${settings.part1_capacity*settings.max_songs_per_member}곡 / ${settings.part2_capacity*settings.max_songs_per_member}곡`
-    : `${settings.max_participants*settings.max_songs_per_member}곡`;
   const assigned=[...slots].sort((a,b)=>Number(a.sort_order)-Number(b.sort_order));
 
   return `<div class="song-draw">
     <div class="song-draw-top">
       <div>
-        <div class="song-draw-title">곡 순서 사전 추첨</div>
-        <div class="song-draw-sub">각 참가자에게 배정된 공연 순번 자체는 랜덤으로 유지하되, 2곡 이상 배정된 참가자는 최소 한 번 2곡 연속 무대로 편성합니다. 4곡 이상 편성에서는 2곡 묶음 사이에 다른 단독 무대 2곡을 둡니다. 참가자는 자신의 ${settings.max_songs_per_member}곡을 그 순번 안에서 자유롭게 재배치할 수 있습니다. 기본 6곡 = 30분으로 시작하며, 최종 셋리스트에서 5분을 조정할 때마다 곡도 1곡씩 다음 구간과 함께 이동합니다. · ${totalPerPart}</div>
+        <div class="song-draw-title">개인곡 순서</div>
+         <div class="song-draw-sub">멤버를 누르면 해당 멤버의 공연 순서를 확인합니다.</div>
       </div>
       ${adminMode?`<div class="song-draw-actions">
         <button class="secondary" onclick="openDirectSong()">＋ 직접 추가</button>
@@ -967,7 +954,7 @@ function renderSongDraw(){
       <div id="personalOrderPanel">${renderPersonalOrderPanel()}</div>`:'<div class="empty" style="padding:18px 0 4px">아직 곡 순서가 추첨되지 않았습니다.</div>'}
     ${adminMode?`<div class="quick-signup">
       <select id="quickMemberPicker" class="field">${quickMemberOptions()}</select>
-      <button class="primary" onclick="addNextSignupMember()">선착순 참가자 추가</button>
+      <button class="primary" onclick="addNextSignupMember()">참가자 추가</button>
     </div>`:''}
   </div>`;
 }
@@ -994,7 +981,7 @@ function renderPersonalOrderPanel(){
   const arr=[...(settings.song_slot_plan?.[pos]||settings.song_slot_plan?.[String(pos)]||[])].filter(Boolean).sort((a,b)=>a-b).slice(0,limit);
   const songs=songsForSlot(slot).slice(0,songLimitForSlot(slot));
   const label=settings.section_count===2?`${part}부 개인순번`:'개인순번';
-  return `<div class="personal-order-panel person-${Math.min(pos,10)}"><div class="personal-order-heading"><span class="personal-order-number">${pos}번</span><strong>${esc(m?.name||slot.member_name||'')} · ${label}</strong></div><small>현재 ${songs.length}/${songLimitForSlot(slot)}곡 · 아래 번호가 내 공연 순서입니다</small><div class="personal-order-seq">${arr.map(n=>`<span>#${n}</span>`).join('')}</div></div>`;
+  return `<div class="personal-order-panel person-${Math.min(pos,10)}"><div class="personal-order-heading"><span class="personal-order-number">${pos}번</span><strong>${esc(m?.name||slot.member_name||'')} · ${label}</strong></div><small>등록 ${songs.length}/${songLimitForSlot(slot)}곡</small><div class="personal-order-seq">${arr.map(n=>`<span>#${n}</span>`).join('')}</div></div>`;
 }
 
 function quickMemberOptions(){
