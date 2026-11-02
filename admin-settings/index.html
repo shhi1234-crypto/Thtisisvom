@@ -59,6 +59,63 @@
 /* Point shop & priority coupon center */
 .coupon-center-intro{margin:0 0 16px;color:#647089;font-size:12px;line-height:1.75}.coupon-center-intro b{color:#5f4cca}.coupon-load-error{margin:0 0 14px;padding:12px 14px;border:1px solid #f0cfab;border-radius:13px;background:#fff8ee;color:#9b642d;font-size:11px;line-height:1.6}.coupon-grant-panel{display:grid;grid-template-columns:minmax(185px,.7fr) minmax(0,1.3fr);gap:18px;padding:18px;border:1px solid #ddd5ff;border-radius:19px;background:linear-gradient(135deg,#f7f4ff,#effaf8)}.coupon-panel-kicker{display:block;color:#7662dd;font:800 10px/1 "DM Sans",sans-serif;letter-spacing:1.1px}.coupon-grant-panel h3{margin:8px 0 0;color:#313852;font-size:16px}.coupon-grant-panel p{margin:8px 0 0;color:#727a8f;font-size:11px;line-height:1.65}.coupon-grant-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}.coupon-grant-fields label{display:grid;gap:6px;color:#5e6477;font-size:10px;font-weight:800}.coupon-grant-fields select,.coupon-grant-fields input,.coupon-admin-actions select{width:100%;min-height:39px;border:1px solid #ddd8ef;border-radius:10px;background:#fff;color:#353b53;padding:0 10px;font:600 11px Pretendard,sans-serif}.coupon-note-field{grid-column:1/-1}.coupon-issue-button{grid-column:1/-1;min-height:42px;border:0;border-radius:11px;background:linear-gradient(105deg,#6954df,#8290ed);color:#fff;font:800 12px Pretendard,sans-serif;cursor:pointer;box-shadow:0 9px 20px rgba(100,81,215,.18)}.coupon-section-title{margin:24px 0 10px;color:#353b53;font-size:15px}.coupon-admin-list{display:grid;gap:9px}.coupon-admin-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 15px;border:1px solid #e6e2f1;border-radius:15px;background:#fff}.coupon-admin-main{min-width:0}.coupon-admin-top{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.coupon-admin-top strong{color:#343a51;font-size:13px}.coupon-scope,.coupon-state{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;font:800 9px Pretendard,sans-serif}.coupon-scope{background:#eeeaff;color:#6652d6}.coupon-state{background:#edf7f2;color:#34775e}.coupon-state.reserved{background:#fff5df;color:#a46c21}.coupon-state.used{background:#edf0f7;color:#677089}.coupon-state.expired,.coupon-state.revoked{background:#fff0f2;color:#a05b6a}.coupon-admin-main p{margin:6px 0 0;color:#788095;font-size:10px;line-height:1.45}.coupon-admin-main p b{color:#505870}.coupon-admin-main small{display:block;margin-top:4px;color:#9a9fb0;font-size:10px}.coupon-admin-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}.coupon-admin-actions select{min-width:100px}.coupon-save{min-height:39px;padding:0 10px;border:1px solid #d7cff8;border-radius:10px;background:#f6f3ff;color:#6651d4;font:800 10px Pretendard,sans-serif;cursor:pointer}.coupon-empty-state{padding:23px 15px;border:1px dashed #ddd6ef;border-radius:15px;color:#858c9d;font-size:11px;line-height:1.7;text-align:center}.shop-catalog-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.shop-catalog-card{padding:15px;border:1px solid #e7e2f2;border-radius:16px;background:linear-gradient(135deg,#fff,#faf9ff)}.shop-catalog-card>span{display:inline-flex;align-items:center;min-height:21px;padding:0 8px;border-radius:999px;background:#edf9f4;color:#33765e;font:800 9px Pretendard,sans-serif}.shop-catalog-card h3{margin:9px 0 0;color:#343a51;font-size:13px}.shop-catalog-card p{margin:7px 0 0;color:#7d8496;font-size:10px;line-height:1.6}.shop-catalog-card b{display:block;margin-top:11px;color:#7660d6;font-size:10px}.folder-card.COUPONS .folder-icon{background:#f0eaff;color:#6a56d8}.folder-card.COUPONS .folder-count{background:#f5f1ff;color:#6a56d8}@media(max-width:720px){.coupon-grant-panel{grid-template-columns:1fr;gap:14px}.coupon-admin-row{align-items:stretch;flex-direction:column}.coupon-admin-actions{width:100%}.coupon-admin-actions select{flex:1}.shop-catalog-list{grid-template-columns:1fr}.coupon-grant-fields{grid-template-columns:1fr}.coupon-note-field,.coupon-issue-button{grid-column:auto}}
 
+
+/* Compact operations home: urgency first, archives are available but not noisy. */
+.notice.admin-guide{padding:0;overflow:hidden;background:rgba(255,255,255,.7)}
+.notice.admin-guide summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;cursor:pointer;list-style:none;color:#655d83;font-weight:800}
+.notice.admin-guide summary::-webkit-details-marker{display:none}
+.notice.admin-guide summary::after{content:'⌄';color:#725ed6;font-size:16px;transition:.18s}
+.notice.admin-guide[open] summary{border-bottom:1px solid rgba(117,96,222,.1)}
+.notice.admin-guide[open] summary::after{transform:rotate(180deg)}
+.notice.admin-guide p{margin:0;padding:13px 16px;color:#61677b;font-size:11px;line-height:1.7}
+.folder-grid{display:block}
+.admin-home-overview{display:grid;gap:14px;margin-top:28px}
+.admin-home-summary{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:19px 20px;border:1px solid rgba(255,255,255,.96);border-radius:22px;background:linear-gradient(135deg,rgba(241,237,255,.9),rgba(234,249,247,.88));box-shadow:0 12px 30px rgba(31,37,74,.05)}
+.admin-home-summary>div{min-width:0}
+.admin-home-summary span{display:block;color:#7765d6;font-size:9px;font-weight:900;letter-spacing:.13em}
+.admin-home-summary h2{margin:5px 0 0;color:#2e344b;font-size:19px;letter-spacing:-.04em}
+.admin-home-summary p{margin:6px 0 0;color:#747b8e;font-size:11px;line-height:1.6}
+.admin-home-summary b{flex:0 0 auto;padding:8px 10px;border-radius:999px;background:rgba(255,255,255,.8);color:#6651cf;font-size:10px}
+.admin-home-primary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.admin-home-primary .folder-card{min-width:0;min-height:154px;padding:18px}
+.admin-home-primary .folder-kicker{margin-top:14px}
+.admin-home-primary .folder-card h2{font-size:16px}
+.admin-home-primary .folder-card p{min-height:32px}
+.admin-home-primary .folder-open{margin-top:13px}
+.admin-home-archive{overflow:hidden;border:1px solid rgba(218,212,240,.95);border-radius:21px;background:rgba(255,255,255,.76);box-shadow:0 11px 28px rgba(31,37,74,.04)}
+.admin-home-archive summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 18px;cursor:pointer;list-style:none}
+.admin-home-archive summary::-webkit-details-marker{display:none}
+.admin-home-archive summary b{display:block;color:#343a51;font-size:14px}
+.admin-home-archive summary small{display:block;margin-top:3px;color:#858b9b;font-size:10px}
+.admin-home-archive-summary-tail{display:flex;align-items:center;gap:9px;color:#705dd2;font-size:10px;font-weight:800;white-space:nowrap}
+.admin-home-archive-summary-tail i{font-style:normal;font-size:16px;transition:.18s}
+.admin-home-archive[open] summary{border-bottom:1px solid #ece8f5}
+.admin-home-archive[open] .admin-home-archive-summary-tail i{transform:rotate(180deg)}
+.admin-home-archive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:13px}
+.admin-home-archive-grid .folder-card{min-width:0;min-height:142px;padding:16px;border-radius:17px}
+.admin-home-archive-grid .folder-kicker{margin-top:12px}
+.admin-home-archive-grid .folder-card h2{font-size:15px}
+.admin-home-archive-grid .folder-card p{min-height:28px}
+.admin-home-archive-grid .folder-open{margin-top:11px}
+@media(max-width:850px){.admin-home-primary{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-home-archive-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+  .page{padding:28px 0 96px}
+  .title-row h1{font-size:clamp(48px,16vw,66px)}
+  .sub{margin-top:12px;font-size:11px}
+  .admin-home-overview{margin-top:20px}
+  .admin-home-summary{align-items:flex-start;flex-direction:column;padding:16px}
+  .admin-home-primary,.admin-home-archive-grid{grid-template-columns:1fr}
+  .admin-home-primary .folder-card{min-height:122px}
+  .admin-home-archive-grid .folder-card{min-height:112px}
+  .toolbar{align-items:stretch;flex-direction:column;margin:18px 0 12px}
+  .filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px;-webkit-overflow-scrolling:touch}
+  .filters::-webkit-scrollbar{display:none}
+  .filter{flex:0 0 auto;white-space:nowrap}
+  .add{width:100%}
+  .resource-section{padding:16px}
+  .section-head,.section-head-left{align-items:flex-start;flex-direction:column}
+}
+
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -73,8 +130,8 @@
 <main class="page">
   <div class="eyebrow">ADMIN SETTINGS</div>
   <div class="title-row"><h1><button id="materialsTitleHome" class="title-parent" type="button" onclick="setFilter('HOME')" aria-label="운영 자료 홈으로 돌아가기">운영 자료</button><span id="materialsTitleDivider" class="title-divider">·</span><span id="materialsTitleSub" class="title-sub"></span></h1></div>
-  <p class="sub">버스킹 신청처, 대관공연 정보, 일정별 운영 체크리스트와 이미지 자료를 한곳에서 관리합니다. 필요한 자료 묶음을 선택해 확인·수정할 수 있습니다.</p>
-  <div class="notice"><b>초기 자료 안내</b> · 기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</div>
+  <p class="sub">오늘 필요한 일정 운영과 새 문의부터 확인하고, 자료는 분류별로 꺼내 쓰세요.</p>
+  <details class="notice admin-guide"><summary>자료 관리 안내</summary><p>기존 운영 노션의 버스킹 신청처와 참고 링크를 옮겨두었습니다. 신청 가능 여부와 기한은 공연 전 반드시 해당 기관의 최신 공지를 확인해 주세요.</p></details>
 
   <section id="guard" class="guard">
     <h2>운영진 전용 페이지입니다.</h2>
@@ -985,14 +1042,19 @@ function renderResources(){
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
-    const loadError=itemLoadError?`<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>${esc(itemLoadError)}</div>`:'';
-
-    folderHome.innerHTML=Object.entries(folderMeta).map(([category,meta])=>{
+    const loadError=itemLoadError?'<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>'+esc(itemLoadError)+'</div>':'';
+    const primaryCategories=['OPERATIONS','INQUIRIES','REMINDERS','COUPONS'];
+    const archiveCategories=['BUSKING','RENTAL','GENERAL','IMAGES'];
+    const folderCard=(category,meta,styleClass='')=>{
       const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:category==='COUPONS'?memberCoupons.filter(item=>item.status==='AVAILABLE').length:items.filter(item=>item.category===category).length;
-      const countLabel=category==='IMAGES'?`${count}장`:category==='OPERATIONS'?`${count}개 일정`:category==='REMINDERS'?`${count}개 활성`:category==='INQUIRIES'?`새 문의 ${count}건`:category==='COUPONS'?`사용 가능 ${count}장`:`${count}건`;
-      return `<button class="folder-card ${category}" type="button" onclick="setFilter('${category}')"><div class="folder-top"><span class="folder-icon">${meta.icon}</span><span class="folder-count">${countLabel}</span></div><div class="folder-kicker">${meta.kicker}</div><h2>${meta.label}</h2><p>${meta.description}</p><div class="folder-open"><span>자료 열기</span><span>→</span></div></button>`;
-    }).join('')+`<a class="folder-card" href="/ot-admin/" style="text-decoration:none;color:inherit"><div class="folder-top"><span class="folder-icon">🎤</span><span class="folder-count">운영진</span></div><div class="folder-kicker">MEMBER REGISTRATION</div><h2>가입 관리</h2><p>가입 정보 · 본인사진 · 라이브 영상·음성 · 운영진 심사</p><div class="folder-open"><span>가입 관리 열기</span></div></a>`+loadError;
-
+      const countLabel=category==='IMAGES'?count+'장':category==='OPERATIONS'?count+'개 일정':category==='REMINDERS'?count+'개 활성':category==='INQUIRIES'?'새 문의 '+count+'건':category==='COUPONS'?'사용 가능 '+count+'장':count+'건';
+      return '<button class="folder-card '+category+' '+styleClass+'" type="button" onclick="setFilter(\''+category+'\')"><div class="folder-top"><span class="folder-icon">'+meta.icon+'</span><span class="folder-count">'+countLabel+'</span></div><div class="folder-kicker">'+meta.kicker+'</div><h2>'+meta.label+'</h2><p>'+meta.description+'</p><div class="folder-open"><span>열기</span><span>→</span></div></button>';
+    };
+    const primary=primaryCategories.map(category=>folderCard(category,folderMeta[category],'is-priority')).join('');
+    const archive=archiveCategories.map(category=>folderCard(category,folderMeta[category],'is-archive')).join('')+
+      '<a class="folder-card is-archive" href="/ot-admin/" style="text-decoration:none;color:inherit"><div class="folder-top"><span class="folder-icon">🎤</span><span class="folder-count">운영진</span></div><div class="folder-kicker">MEMBER REGISTRATION</div><h2>가입 관리</h2><p>가입 신청과 제출 자료를 검토합니다.</p><div class="folder-open"><span>열기</span><span>→</span></div></a>';
+    const newInquiryCount=inquiries.filter(isNewInquiry).length;
+    folderHome.innerHTML='<section class="admin-home-overview"><div class="admin-home-summary"><div><span>TODAY\'S DESK</span><h2>운영에 필요한 것부터</h2><p>일정 진행, 새 문의, 알림과 쿠폰을 먼저 확인하세요.</p></div><b>새 문의 '+newInquiryCount+'건</b></div><div class="admin-home-primary">'+primary+'</div><details class="admin-home-archive"><summary><div><b>자료 보관함 · 가입 관리</b><small>신청처, 대관, 이미지, 가입 검토</small></div><span class="admin-home-archive-summary-tail">5개 메뉴 <i>⌄</i></span></summary><div class="admin-home-archive-grid">'+archive+'</div></details>'+loadError+'</section>';
     return;
   }
 
