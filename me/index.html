@@ -76,6 +76,41 @@
 /* MY VOM coupon and point shop */
 .coupon-shop-panel{margin-top:12px}.member-coupon-body{padding:14px 15px 16px;background:linear-gradient(135deg,#faf9ff,#f2fbfa)}.member-point-card{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:14px;padding:15px;border:1px solid #dcd5ff;border-radius:15px;background:linear-gradient(115deg,#f1edff,#eaf8f6)}.member-point-card span{display:block;color:#7966dc;font:800 9px/1 "DM Sans",sans-serif;letter-spacing:1.15px}.member-point-card strong{display:block;margin-top:6px;color:#353b55;font:800 22px/1 "DM Sans",Pretendard,sans-serif;letter-spacing:-.8px}.member-point-card p{margin:0;color:#6f778c;font-size:10px;line-height:1.65}.member-coupon-heading{margin:18px 0 9px;color:#3b4058;font-size:13px}.member-coupon-list{display:grid;gap:8px}.member-coupon-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:13px;border:1px solid #e6e2f1;border-radius:14px;background:#fff}.member-coupon-row>div{min-width:0}.member-coupon-title{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.member-coupon-title strong{color:#363b53;font-size:12px}.member-coupon-scope,.member-coupon-state{display:inline-flex;align-items:center;min-height:21px;padding:0 8px;border-radius:999px;font:800 9px Pretendard,sans-serif;white-space:nowrap}.member-coupon-scope{background:#eeebff;color:#6753d2}.member-coupon-state{background:#edf8f2;color:#34775c}.member-coupon-state.reserved{background:#fff4dd;color:#a66d22}.member-coupon-state.used{background:#edf0f6;color:#677089}.member-coupon-state.expired,.member-coupon-state.revoked{background:#fff0f3;color:#a45c6d}.member-coupon-row p{margin:6px 0 0;color:#757d90;font-size:10px;line-height:1.55}.member-coupon-row small{display:block;margin-top:5px;color:#969bab;font-size:9px}.member-coupon-error{margin:12px 0 0;padding:10px 11px;border-radius:11px;background:#fff3e8;color:#a16527;font-size:10px;line-height:1.55}.member-shop-list{display:grid;grid-template-columns:1fr 1fr;gap:9px}.member-shop-card{padding:13px;border:1px solid #e7e3f2;border-radius:14px;background:rgba(255,255,255,.9)}.member-shop-card>span{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:999px;background:#edf9f4;color:#35785f;font:800 8px Pretendard,sans-serif}.member-shop-card h3{margin:8px 0 0;color:#373d54;font-size:12px}.member-shop-card p{margin:6px 0 0;color:#7b8294;font-size:9px;line-height:1.55}.member-shop-card b{display:block;margin-top:9px;color:#7560d5;font-size:9px;line-height:1.45}@media(max-width:560px){.member-point-card{grid-template-columns:1fr;gap:8px}.member-shop-list{grid-template-columns:1fr}.member-coupon-row{gap:8px;flex-direction:column}.member-coupon-state{align-self:flex-start}}
 
+
+/* Compact personal dashboard: core actions first, auxiliary tools stay folded. */
+.member-command-center{padding:22px}
+.member-command-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.member-command-copy{min-width:0}
+.member-command-copy h2{margin:0;font-size:20px;letter-spacing:-.04em}
+.member-command-copy .card-intro{margin:6px 0 0}
+.member-command-head .member-chip{max-width:100%;margin-top:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member-action-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
+.member-action-grid .quick-link{min-width:0;min-height:104px;padding:16px;align-items:flex-start}
+.member-action-grid .quick-link div{min-width:0}
+.member-action-grid .quick-link b{font-size:14px}
+.member-action-grid .quick-link small{line-height:1.55}
+.member-action-grid .quick-link span{margin-left:auto}
+.member-utility{margin-top:12px;overflow:hidden;border:1px solid #e7e2f4;border-radius:16px;background:#faf9ff}
+.member-utility>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 15px;cursor:pointer;list-style:none}
+.member-utility>summary::-webkit-details-marker{display:none}
+.member-utility>summary b{display:block;color:#3b4055;font-size:13px}
+.member-utility>summary small{display:block;margin-top:3px;color:#8990a1;font-size:10px}
+.member-utility>summary i{font-style:normal;color:#705ed7;transition:.18s}
+.member-utility[open]>summary{border-bottom:1px solid #ebe7f5}
+.member-utility[open]>summary i{transform:rotate(180deg)}
+.member-utility-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}
+.member-utility-list .quick-link{min-width:0;min-height:76px;padding:12px}
+.member-utility-list .quick-link b{font-size:12px}
+.member-utility-list .quick-link small{font-size:9px;line-height:1.45}
+@media(max-width:720px){
+  .member-command-center{padding:18px}
+  .member-command-head{align-items:flex-start;flex-direction:column}
+  .member-command-head .member-chip{width:100%;max-width:none;margin:0}
+  .member-action-grid,.member-utility-list{grid-template-columns:1fr}
+  .member-action-grid .quick-link{min-height:74px;align-items:center}
+  .member-utility-list .quick-link{min-height:64px;align-items:center}
+}
+
 </style>
   <script src="/assets/vom-member-context.js?v=4"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -312,15 +347,27 @@ function renderDashboard(){
   const region=normalizedRegion?' · '+esc(normalizedRegion):'';
   app.innerHTML=
     (force?'<div class="force-reset"><b>비밀번호 재설정이 필요해요.</b>운영진이 비밀번호를 초기화했습니다. 아래 개인 설정에서 나만 아는 비밀번호로 바꿔 주세요.</div>':'')+
-    '<div class="status"><b>MY VOM</b><span><strong>'+name+'</strong>님으로 로그인되어 있어요. 필요한 내용을 직접 관리해 주세요.</span></div>'+
-    '<section class="card my-space-card"><div class="my-space-heading"><div><h2>내 활동 <span class="en">MY SPACE</span></h2><p class="card-intro">필요한 기능을 한 번씩만 정리해 두었어요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div><div class="quick-links my-space-menu"><a class="quick-link" href="/qna/?mine=1"><div><b>내 문의 이력 보기</b><small>내가 남긴 문의와 답변 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/"><div><b>내 일정 보기</b><small>VOM 모임과 행사 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정 보기</b><small>신청할 수 있는 공개 일정 확인</small></div><span>→</span></a><a class="quick-link" href="/calendar/?view=available&type=OTHER"><div><b>개인 벙 찾아보기</b><small>열린 개인 벙·소모임의 참가 신청 확인</small></div><span>→</span></a><button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 편한 운영진에게 카카오톡으로 보내기</small></div><span>→</span></button><a class="quick-link" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer"><div><b>VOM 카카오톡 채널</b><small>공지와 1:1 문의를 받아보세요.</small></div><span>↗</span></a></div><details id="hangoutRequestForm" class="dashboard-detail hangout-request"><summary><div><b>VOM 벙 개설 신청 양식</b><small>복사해서 작성한 뒤, 편한 운영진에게 카카오톡으로 보내주세요.</small></div><i>⌄</i></summary><div class="hangout-request-body"><p>운영진이 확인한 뒤 카카오톡 일정표에 등록해 드려요.</p><pre class="hangout-request-template" aria-label="VOM 벙 개설 신청 양식">${esc(hangoutRequestTemplate())}</pre><button type="button" class="primary hangout-copy-button" onclick="copyHangoutRequest()">벙 양식 복사하기</button><p class="hangout-copy-note">복사 후 카카오톡에서 붙여넣고 빈칸을 채워 보내면 됩니다.</p></div></details>'+couponAndShopMarkup()+appInstallGuideMarkup()+'</section>'+
+    '<section class="card my-space-card member-command-center">'+
+      '<div class="member-command-head"><div class="member-command-copy"><h2>반가워요, '+name+'님 <span class="en">MY VOM</span></h2><p class="card-intro">지금 필요한 일정과 벙 신청부터 빠르게 이어가세요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div>'+
+      '<div class="member-action-grid">'+
+        '<a class="quick-link" href="/calendar/"><div><b>내 일정</b><small>VOM 모임과 행사 일정을 확인해요.</small></div><span>→</span></a>'+
+        '<a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정</b><small>현재 신청할 수 있는 공개 일정을 봐요.</small></div><span>→</span></a>'+
+        '<button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 운영진에게 바로 보내요.</small></div><span>→</span></button>'+
+      '</div>'+
+      '<details class="member-utility"><summary><div><b>추가 메뉴</b><small>문의, 개인 벙, 카카오톡 채널</small></div><i>⌄</i></summary><div class="member-utility-list">'+
+        '<a class="quick-link" href="/qna/?mine=1"><div><b>내 문의</b><small>내가 남긴 문의와 답변</small></div><span>→</span></a>'+
+        '<a class="quick-link" href="/calendar/?view=available&type=OTHER"><div><b>개인 벙 찾아보기</b><small>열린 벙과 소모임 보기</small></div><span>→</span></a>'+
+        '<a class="quick-link" href="https://pf.kakao.com/_xgIeFX" target="_blank" rel="noopener noreferrer"><div><b>VOM 카카오톡 채널</b><small>공지와 1:1 문의</small></div><span>↗</span></a>'+
+      '</div></details>'+
+      '<details id="hangoutRequestForm" class="dashboard-detail hangout-request"><summary><div><b>VOM 벙 개설 신청 양식</b><small>복사해서 작성한 뒤, 편한 운영진에게 카카오톡으로 보내주세요.</small></div><i>⌄</i></summary><div class="hangout-request-body"><p>운영진이 확인한 뒤 카카오톡 일정표에 등록해 드려요.</p><pre class="hangout-request-template" aria-label="VOM 벙 개설 신청 양식">'+esc(hangoutRequestTemplate())+'</pre><button type="button" class="primary hangout-copy-button" onclick="copyHangoutRequest()">벙 양식 복사하기</button><p class="hangout-copy-note">복사 후 카카오톡에서 붙여넣고 빈칸을 채워 보내면 됩니다.</p></div></details>'+couponAndShopMarkup()+appInstallGuideMarkup()+
+    '</section>'+
     '<details id="accountSettings" class="account-settings"><summary><span class="settings-mark">⚙</span><div><b>개인 설정</b><small>내 프로필 · 비밀번호 변경</small></div><i class="settings-arrow">⌄</i></summary><div class="account-settings-body">'+
       '<section class="account-setting-panel"><h3>내 프로필</h3><p class="card-intro">사는 지역, 좋아하는 가수와 직업을 직접 수정할 수 있어요.</p><div class="profile-row"><div class="field profile-region"><label for="profileRegion">사는 지역</label><input id="profileRegion" maxlength="40" value="'+esc(myMember.region||'')+'" placeholder="예: 부천"><p class="help">시·구·도 단위만 입력해 주세요. 상세 주소는 저장하지 않아요.</p></div><div class="field"><label for="profileFavorite">좋아하는 가수</label><input id="profileFavorite" maxlength="150" value="'+esc(myMember.favorite_singers||'')+'" placeholder="예: 박효신"></div><div class="field"><label for="profileJob">직업</label><input id="profileJob" maxlength="80" value="'+esc(myMember.job||'')+'" placeholder="예: 삐에로"></div></div><button class="primary" onclick="saveProfile()">프로필 저장</button></section>'+
       '<section class="account-setting-panel"><h3>비밀번호 변경</h3><p class="card-intro">본인만 아는 숫자 4자리로 설정해 주세요.</p><div class="profile-row"><div class="field"><label for="newPassword">새 비밀번호 (숫자 4자리)</label><input id="newPassword" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리"></div><div class="field"><label for="newPasswordConfirm">새 비밀번호 확인</label><input id="newPasswordConfirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력"></div></div><div class="field"><label>새 비밀번호 힌트 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(선택)</em></label><input id="newHint" maxlength="100" value="'+esc(accountSetting?.password_hint||'')+'" placeholder="예: 처음 함께 부른 곡"><p class="help">비밀번호 자체나 생일·전화번호는 적지 마세요.</p></div><button class="primary" onclick="changePassword()">비밀번호 저장</button></section>'+
       '<aside class="account-reset-guide"><b>비밀번호를 잊었다면</b><span>운영진에게 연락하면 초기화할 수 있어요. 초기화 후에는 이곳에서 새 비밀번호와 힌트를 다시 설정하면 됩니다.</span></aside>'+
-    '</div></details>'+
-    mySetlistMarkup();
+    '</div></details>'+mySetlistMarkup();
 }
+
 
 function mySongReferenceUrl(value){
   const raw=String(value||'').trim();
