@@ -2223,3 +2223,59 @@ html[data-vom-theme="dark"] body:has(.table-shell) .table-shell tbody td .order-
   color:#2a1b05!important;
   text-shadow:none!important;
 }
+
+
+/* MY SETLIST · clear, compact reference source chooser */
+html[data-vom-theme="dark"] .song-reference-head small{
+  color:#b7c1dd!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option{
+  border-color:#4a5780!important;
+  background:#17233f!important;
+  color:#e8edff!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option:hover{
+  border-color:#9b90f4!important;
+  background:#202d50!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option.is-selected{
+  border-color:#a99eff!important;
+  background:linear-gradient(135deg,#6254cd,#405b98)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(103,84,221,.32)!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option b{
+  color:inherit!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option small{
+  color:#bdc8e7!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option.is-selected small{
+  color:#f2efff!important;
+}
+html[data-vom-theme="dark"] .reference-mode-icon{
+  background:#2a3962!important;
+  color:#c8c1ff!important;
+}
+html[data-vom-theme="dark"] .reference-mode-option.is-selected .reference-mode-icon{
+  background:rgba(255,255,255,.2)!important;
+  color:#fff!important;
+}
+html[data-vom-theme="dark"] .song-file-picker{
+  border-color:#52658d!important;
+  background:#111b33!important;
+}
+html[data-vom-theme="dark"] .song-file-picker:hover{
+  border-color:#aa9eff!important;
+  background:#182644!important;
+}
+html[data-vom-theme="dark"] .song-file-picker-icon{
+  background:#2a3962!important;
+  color:#d4ceff!important;
+}
+html[data-vom-theme="dark"] .song-file-picker-copy b{
+  color:#f0f3ff!important;
+}
+html[data-vom-theme="dark"] .song-file-picker-arrow{
+  color:#bdb3ff!important;
+}
