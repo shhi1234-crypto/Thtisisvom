@@ -2279,3 +2279,79 @@ html[data-vom-theme="dark"] .song-file-picker-copy b{
 html[data-vom-theme="dark"] .song-file-picker-arrow{
   color:#bdb3ff!important;
 }
+
+
+/* CALENDAR · schedule owner controls stay readable in dark mode */
+html[data-vom-theme="dark"] .owner-section{
+  border-color:#35466f!important;
+  background:linear-gradient(135deg,#121c35,#172440)!important;
+}
+html[data-vom-theme="dark"] .owner-section .form-label,
+html[data-vom-theme="dark"] .owner-control-label span{
+  color:#f1f4ff!important;
+}
+html[data-vom-theme="dark"] .owner-section .form-help,
+html[data-vom-theme="dark"] .owner-control-label small{
+  color:#b7c4e1!important;
+}
+html[data-vom-theme="dark"] .owner-section-badge{
+  background:#2a3962!important;
+  color:#d4cdff!important;
+}
+html[data-vom-theme="dark"] .owner-host-select{
+  border-color:#50648e!important;
+  background-color:#0f1930!important;
+  color:#f2f5ff!important;
+}
+html[data-vom-theme="dark"] .owner-host-select:focus{
+  border-color:#aa9eff!important;
+  box-shadow:0 0 0 4px rgba(144,128,243,.17)!important;
+}
+html[data-vom-theme="dark"] .owner-host-select option{
+  background:#111b33!important;
+  color:#f2f5ff!important;
+}
+html[data-vom-theme="dark"] .owner-option{
+  border-color:#435574!important;
+  background:#15213c!important;
+  color:#edf2ff!important;
+}
+html[data-vom-theme="dark"] .owner-option:hover{
+  border-color:#9c91f5!important;
+  background:#1c2b4a!important;
+}
+html[data-vom-theme="dark"] .owner-option.is-lead{
+  border-color:#6957bd!important;
+  background:#1d294a!important;
+}
+html[data-vom-theme="dark"] .owner-option-copy b{
+  color:inherit!important;
+}
+html[data-vom-theme="dark"] .owner-option-copy small{
+  color:#b8c5e4!important;
+}
+html[data-vom-theme="dark"] .owner-option.is-lead .owner-option-copy small{
+  color:#cec7ff!important;
+}
+html[data-vom-theme="dark"] .owner-option-check{
+  border-color:#7183a9!important;
+  background:#0d162a!important;
+}
+html[data-vom-theme="dark"] .owner-option:has(input:checked){
+  border-color:#aaa0ff!important;
+  background:linear-gradient(135deg,#6556cf,#45659d)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(94,75,205,.3)!important;
+}
+html[data-vom-theme="dark"] .owner-option:has(input:checked) .owner-option-check{
+  border-color:#fff!important;
+  background:#fff!important;
+  color:#5c49bd!important;
+}
+html[data-vom-theme="dark"] .owner-option:has(input:checked) .owner-option-copy small{
+  color:#f0edff!important;
+}
+html[data-vom-theme="dark"] .owner-members-empty{
+  border-color:#485a7d!important;
+  color:#c0cae1!important;
+}
