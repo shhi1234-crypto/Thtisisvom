@@ -306,7 +306,7 @@ export async function dispatchEventMessages(service: any, limit = 12) {
   const now = new Date().toISOString();
   const { data: pending, error } = await service.from("event_message_outbox")
     .select("id,event_id,application_id,recipient_member_id,message_kind,payload,status,attempts")
-    .eq("status", "QUEUED")
+    .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
     .lte("next_attempt_at", now)
     .order("id", { ascending: true })
     .limit(Math.max(1, Math.min(50, Number(limit) || 12)));
