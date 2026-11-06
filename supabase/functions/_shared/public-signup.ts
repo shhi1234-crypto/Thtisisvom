@@ -1,6 +1,7 @@
 import { ApiError, VIDEO_BUCKET, MAX_VIDEO_BYTES, MAX_PHOTO_BYTES, signupDetails, validatePhoto, validateVideo, mediaLink, isRegistrationOpen, textField, tokenHash, newToken, validToken, json } from './ot-core.ts';
 import { applicantEmail, loginName, signupPassword } from './member-access.ts';
 import { notifyOT, notifyApproval } from './ot-push.ts';
+import { dispatchSignupMessages, queueSignupApplicationReceived } from './signup-message-outbox.ts';
 import { nextRegistrationAt } from './signup-reservations.ts';
 
 export function approvalSubscription(value: any) {
@@ -51,6 +52,7 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     // Keep existing account identifiers internally; new applicants enter only their name.
     const name=fields.login_name?loginName(fields.login_name):'join-'+crypto.randomUUID().replace(/-/g,'').slice(0,24),password=signupPassword(fields.password);
     const profile:any={...signupDetails(fields,now()),login_name:name,candidate_name:textField(fields.candidate_name,60,'이름'),somoim_nickname:textField(fields.somoim_nickname,80,'소모임 닉네임')};
+    const signupMessageConsent=fields.signup_message_consent==='yes';
     for (const [key,max,label] of [['phone',30,'연락처'],['region',80,'활동 지역'],['gender',20,'성별']] as const) profile[key]=textField(fields[key],max,label);
     const source=fields.media_source||'FILE',photo=form.get('photo'),media=form.get('video');
     if (!['FILE','LINK'].includes(String(source))) throw new ApiError(400,'라이브 자료 제출 방법을 선택해 주세요.');
@@ -66,6 +68,10 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     if (ie) throw new Error('public_signup_record_failed');
     const {error:be}=await service.rpc('vom_ot_bind_account',{p_invite_id:inviteId,p_claim_id:claimId,p_user_id:createdUser,p_profile:profile});
     if (be) throw new Error('public_signup_bind_failed');
+    try {
+      await queueSignupApplicationReceived(service,inviteId,profile.phone,profile.candidate_name,signupMessageConsent);
+      await dispatchSignupMessages(service,3);
+    } catch { console.error('Signup message queue deferred'); }
     const uploads:{file:File,type:{mime:string,extension:string},isPhoto:boolean}[]=[{file:photo,type:photoType,isPhoto:true}];
     if(mediaType)uploads.push({file:media as File,type:mediaType,isPhoto:false});
     for (const {file,type,isPhoto} of uploads) {
@@ -138,3 +144,4 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     }
   }
 }
+

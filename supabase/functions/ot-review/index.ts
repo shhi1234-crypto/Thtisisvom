@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, checkRequest, failure, headers, json, mediaLink, newToken, positiveInt, requireOperator, textField, tokenHash } from "../_shared/ot-core.ts";
 import { notifyPendingOT, notifyApproval, notifyPendingApprovals } from "../_shared/ot-push.ts";
+import { dispatchSignupMessages, queueSignupResultMessage } from "../_shared/signup-message-outbox.ts";
 
 export async function handle(req: Request, service: any) {
   let origin = DEFAULT_ORIGIN;
@@ -171,6 +172,10 @@ export async function handle(req: Request, service: any) {
       const { data, error } = await service.rpc("vom_ot_record_vote", { p_review_id: reviewId, p_member_id: voterId, p_decision: body.decision, p_actor_id: actor.userId });
       if (error) throw new ApiError(409, "이미 확정됐거나 심사 대상이 변경됐습니다. 목록을 새로 확인해 주세요.");
       try {await notifyApproval(service,reviewId);} catch {console.error('Approval notification queued');}
+      try {
+        await queueSignupResultMessage(service,reviewId,String(data?.status||''));
+        await dispatchSignupMessages(service,3);
+      } catch { console.error('Signup result message queue deferred'); }
       return json(origin, { ok: true, ...data });
     }
 
@@ -220,7 +225,7 @@ export async function handle(req: Request, service: any) {
       return json(origin, { ok: true });
     }
 
-    if (action === "retry_notifications") {const operator=await notifyPendingOT(service),applicant=await notifyPendingApprovals(service);return json(origin,{ok:true,attempted:operator.attempted+applicant.attempted});}
+    if (action === "retry_notifications") {const operator=await notifyPendingOT(service),applicant=await notifyPendingApprovals(service),signup=await dispatchSignupMessages(service,30);return json(origin,{ok:true,attempted:operator.attempted+applicant.attempted+signup.checked,signed_up:signup});}
     throw new ApiError(400, "지원하지 않는 요청입니다.");
   } catch (error) {
     return failure(origin, error);
@@ -231,3 +236,4 @@ if (import.meta.main) Deno.serve((req: Request) => handle(req, createClient(
   Deno.env.get("SUPABASE_URL") || "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
   { auth: { persistSession: false, autoRefreshToken: false } },
 )));
+
