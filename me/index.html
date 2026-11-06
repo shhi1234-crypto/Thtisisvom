@@ -381,25 +381,30 @@ function mySongReferenceUrl(value){
     return ['https:','http:'].includes(url.protocol)?url.href:'';
   }catch(_error){return ''}
 }
+function mySongYoutubeUrl(value){
+  const safe=mySongReferenceUrl(value);if(!safe)return '';
+  try{const host=new URL(safe).hostname.toLowerCase().replace(/^www\./,'');return ['youtube.com','m.youtube.com','music.youtube.com','youtu.be'].includes(host)?safe:''}catch(_error){return ''}
+}
 function mySongIssues(song){
   const issues=[];
   if(!String(song?.song_title||'').trim())issues.push('곡명');
   if(!String(song?.artist_name||'').trim())issues.push('원곡 가수');
-  const hasLink=!!mySongReferenceUrl(song?.youtube_url);
+  const hasLink=!!mySongYoutubeUrl(song?.youtube_url);
   const hasFile=!!mySongReferenceUrl(song?.file_url);
   if(!hasLink&&!hasFile)issues.push('재생 링크 또는 파일');
   else if(hasLink&&hasFile)issues.push('재생 자료 하나만 선택');
   return issues;
 }
 function mySongReferenceButtons(song){
-  const link=mySongReferenceUrl(song?.youtube_url);
+  const link=mySongYoutubeUrl(song?.youtube_url);
   const file=mySongReferenceUrl(song?.file_url);
-  return (link?'<a class="song-ref" href="'+esc(link)+'" target="_blank" rel="noopener">링크 열기 ↗</a>':'')+
-    (file?'<a class="song-ref" href="'+esc(file)+'" target="_blank" rel="noopener">파일 열기 ↗</a>':'');
+  if(link)return '<a class="song-ref" href="'+esc(link)+'" target="_blank" rel="noopener">YouTube 열기 ↗</a>';
+  if(file)return '<a class="song-ref" href="'+esc(file)+'" target="_blank" rel="noopener">파일 열기 ↗</a>';
+  return '';
 }
 function mySongRowMarkup(song){
   const issues=mySongIssues(song);
-  const hasLink=!!mySongReferenceUrl(song?.youtube_url);
+  const hasLink=!!mySongYoutubeUrl(song?.youtube_url);
   const hasFile=!!mySongReferenceUrl(song?.file_url);
   const refs=[hasLink?'재생 링크':'',hasFile?(song.file_name?'첨부 · '+song.file_name:'파일 첨부'):''].filter(Boolean).join(' · ')||'재생 자료 없음';
   const duet=song.duet_name?' · 듀엣 '+esc(song.duet_name):'';
@@ -410,7 +415,7 @@ function mySetlistMarkup(){
   const editing=setlistEditorOpen&&editingMySongId?mySongs.find(song=>String(song.id)===String(editingMySongId)):null;
   const editingIssues=editing?mySongIssues(editing):[];
   const issueCount=mySongs.filter(song=>mySongIssues(song).length).length;
-  const type=editing?.youtube_url?'link':editing?.file_url?'file':'';
+  const type=mySongYoutubeUrl(editing?.youtube_url)?'link':editing?.file_url?'file':'';
   const list=mySongs.length?mySongs.map(mySongRowMarkup).join(''):'<div class="my-song-empty">아직 저장한 개인곡이 없어요.<br>오른쪽의 셋리스트 만들기를 눌러 첫 곡을 등록해 주세요.</div>';
   const fileHelp=editing?.file_name?'현재 첨부: '+esc(editing.file_name)+' · 새 파일을 고르면 교체돼요.':'카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하';
   const duetOptions=members.filter(member=>String(member.id)!==String(myMember?.id)).map(member=>'<option value="'+esc(member.name||member.nickname||'')+'"></option>').join('');
@@ -541,7 +546,7 @@ async function saveMySong(){
   let linkUrl=null;
   let attachment={file_url:null,file_name:null,file_path:null};
   if(referenceType==='link'){
-    linkUrl=mySongReferenceUrl(document.getElementById('mySongYoutube').value);
+    linkUrl=mySongYoutubeUrl(document.getElementById('mySongYoutube').value);
     if(!linkUrl)return say('재생 링크를 정확히 입력해 주세요.',true);
   }else if(pickedFile){
     try{attachment=await uploadMySongAttachment(pickedFile)}catch(error){return say(error.message||'파일 업로드를 준비하지 못했습니다.',true)}
@@ -643,5 +648,6 @@ document.getElementById('menuOverlay').addEventListener('click',e=>{if(e.target=
 <script src="/assets/vom-shell.js?v=24"></script>
 </body>
 </html>
+
 
 
