@@ -1149,7 +1149,7 @@ function renderMemberSongs(){
   if(!currentSongMember)return;
   const list=memberSongs.filter(s=>String(s.member_id||'')===String(currentSongMember.id)||String(s.vocalist_name||'').trim()===String(currentSongMember.name||'').trim());
   const editable=adminMode;memberSongList.innerHTML=list.length?list.map(s=>{
-    const refs=[s.youtube_url?'YouTube 링크':'',s.file_name?`첨부 · ${s.file_name}`:''].filter(Boolean).join(' · ')||'링크/파일 없음';
+    const refs=memberSongReferenceSummary(s);
     return `<div class="member-song-row"><div><strong>${esc(s.song_title||'')} · ${esc(s.artist_name||'')}</strong><small>${s.duet_name?`duet ${esc(s.duet_name)} · `:''}${esc(refs)}</small></div><div class="member-song-actions">${memberSongReferenceButtons(s)}${editable?`<button class="mini" onclick="editMemberSong(${s.id})">수정</button><button class="mini danger" onclick="deleteMemberSong(${s.id})">삭제</button>`:''}</div></div>`;
   }).join(''):'<div class="empty">저장된 곡이 없습니다.</div>'
 }
@@ -1240,7 +1240,21 @@ function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const t
 async function uploadMemberSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('repertoire',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
 function publicReferenceUrl(value){try{const url=new URL(String(value||''),location.origin);return['https:','http:'].includes(url.protocol)?url.href:''}catch(_e){return''}}
-function memberSongReferenceButtons(song){const youtube=publicReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url);return `${youtube?`<a class="yt-btn" href="${attr(youtube)}" target="_blank" rel="noopener">YouTube ↗</a>`:''}${file?`<a class="file-btn" href="${attr(file)}" target="_blank" rel="noopener">📎 파일 열기 ↗</a>`:''}`}
+function youtubeReferenceUrl(value){
+  const safe=publicReferenceUrl(value);if(!safe)return '';
+  try{const host=new URL(safe).hostname.toLowerCase().replace(/^www\./,'');return['youtube.com','m.youtube.com','music.youtube.com','youtu.be'].includes(host)?safe:''}catch(_e){return ''}
+}
+function memberSongReferenceSummary(song){
+  if(youtubeReferenceUrl(song?.youtube_url))return 'YouTube 링크';
+  if(publicReferenceUrl(song?.file_url))return song?.file_name?`첨부 · ${song.file_name}`:'파일 첨부';
+  return '링크/파일 없음';
+}
+function memberSongReferenceButtons(song){
+  const youtube=youtubeReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url);
+  if(youtube)return `<a class="yt-btn" href="${attr(youtube)}" target="_blank" rel="noopener">YouTube ↗</a>`;
+  if(file)return `<a class="file-btn" href="${attr(file)}" target="_blank" rel="noopener">📎 파일 열기 ↗</a>`;
+  return '';
+}
 
 function openStaffRoles(){staffRoleOverlay.classList.add('open')}
 function closeStaffRoles(){staffRoleOverlay.classList.remove('open')}
@@ -1261,3 +1275,4 @@ function openMenu(){menuOverlay.classList.add('open')}function closeMenu(){menuO
 <script src="/assets/vom-shell.js?v=17"></script>
 </body>
 </html>
+
