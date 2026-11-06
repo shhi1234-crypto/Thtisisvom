@@ -13,6 +13,7 @@ main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-d
 .admin-sub label{display:block;font-size:12px;font-weight:700;margin:11px 0 3px;color:#5b5b72}
 .admin-sub textarea{display:block;width:100%;min-height:66px;padding:11px;border:1px solid #ddd8ee;border-radius:10px;font:14px/1.5 Arial,sans-serif;resize:vertical}
 .admin-sub input{margin:3px 0}.admin-actions{flex-wrap:wrap}.admin-actions button{font-size:12px;padding:9px 11px}
+.message-contact{margin:15px 0;padding:15px;border:1px solid #dcd4fa;border-radius:15px;background:linear-gradient(135deg,#faf8ff,#f1fbf8)}.message-contact b{display:block;color:#4f4386;font-size:13px}.message-contact p{margin:6px 0 0;color:#6f7588;font-size:11px;line-height:1.6}.message-contact label{display:block;margin-top:12px;color:#5d6175;font-size:12px;font-weight:700}.message-contact input[type="tel"]{margin:6px 0 0}.message-consent,.admin-toggle{display:flex!important;align-items:flex-start;gap:8px;margin-top:12px!important;padding:10px 11px;border:1px solid #e5e0f5;border-radius:11px;background:#fff;color:#5d6275!important;font-size:12px!important;font-weight:700;line-height:1.45}.message-consent input,.admin-toggle input{width:auto!important;flex:0 0 auto;height:16px;margin:0!important;accent-color:#7157cf}.message-contact small,.admin-toggle-note{display:block;margin:8px 0 0;color:#858b9c;font-size:10px;line-height:1.55}.chat-link{display:inline-flex;align-items:center;min-height:39px;margin-top:10px;padding:0 13px;border-radius:11px;background:#eeeaff;color:#5e4cc2;font-size:12px;font-weight:800}
 @media(max-width:600px){.row{align-items:flex-start;flex-direction:column}.card{padding:19px}}
 /* MEMBER APPLICATION GUIDE */
 .apply-flow-guide{margin:0 0 14px;border:1px solid #e4def7;border-radius:18px;background:linear-gradient(135deg,#faf8ff,#f0fbf8);overflow:hidden}
@@ -43,6 +44,9 @@ main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-d
 <label for="payDue">입금 기한 (선택)</label><input id="payDue" type="datetime-local">
 <label for="payInstruction">입금 안내 · 계좌 (선택)</label><textarea id="payInstruction" maxlength="500"></textarea>
 <label for="refundInstruction">취소·환불 안내 (선택)</label><textarea id="refundInstruction" maxlength="500"></textarea>
+<label class="admin-toggle"><input id="messagingEnabled" type="checkbox">신청·입금·참가 확정 안내를 자동 발송하기</label><p class="admin-toggle-note">카카오 알림톡 연동과 템플릿 설정이 끝난 뒤 켜 주세요. 신청자는 본인 번호와 수신 동의를 직접 확인합니다.</p>
+<label for="confirmedChatUrl">참가 확정 후 안내할 오픈채팅 링크 (선택)</label><input id="confirmedChatUrl" type="url" inputmode="url" maxlength="2048" placeholder="https://open.kakao.com/o/...">
+<label class="admin-toggle"><input id="smsFallbackEnabled" type="checkbox">알림톡 실패 시 문자로 전환하기</label><p class="admin-toggle-note">문자 대체발송에는 별도 발송 비용이 발생할 수 있어요.</p>
 <button style="margin-top:14px" onclick="savePaymentConfig()">설정 저장</button></div>
 <div class="admin-sub"><h2>신청자 상태 관리</h2><div id="adminRows"></div></div></section></main>
 <script>
@@ -71,8 +75,11 @@ function render(r){
  const canApply=e.application_enabled&&e.event_date>='2026-11-01'&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10)&&r.mine?.payment_status!=='REFUND_PENDING';
  let status=e.application_enabled?'접수 준비 중':'신청을 받지 않는 일정';
  if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
+ const notification=r.notification||{};
+ const needsMessageContact=Boolean(p.messaging_enabled)&&(!notification.has_phone||!notification.event_transaction_enabled);
+ const contactCard=needsMessageContact?'<div class="message-contact"><b>신청 상태를 카카오톡/문자로 받아보세요</b><p>신청 완료, 입금 확인, 참가 확정 안내에만 사용하며 다른 회원에게 공개되지 않습니다.</p><label for="applicationPhone">휴대폰 번호</label><input id="applicationPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="01012345678"><label class="message-consent"><input id="applicationConsent" type="checkbox">신청·입금·참가 확정 안내를 카카오톡 또는 문자로 받겠습니다.</label></div>':'';
  content.innerHTML='<div class="event-name">'+escapeHtml(e.title||'VOM 일정')+'</div><div class="meta">📅 '+escapeHtml(e.event_date)+' · '+escapeHtml(String(e.start_time||'').slice(0,5))+'<br>📍 '+escapeHtml(e.location||'장소 미정')+'</div><div class="info">'+escapeHtml(status)+(cap?' · '+r.count+' / '+cap+'명':'')+'</div>'+
- (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 운영진 확정 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">참가 신청하기</button></div>')+
+ (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 운영진 확정 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':contactCard+'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">'+(needsMessageContact?'동의 후 참가 신청하기':'참가 신청하기')+'</button></div>')+
  (e.application_opens_at?'<p class="muted">오픈: '+when(e.application_opens_at)+'</p>':'')+
  '<p class="muted">참가 신청은 본인 계정으로 진행하며, 입금 및 참가 확정은 운영진이 확인합니다.</p>';
  const payInfo='<div class="payment-box"><strong>참가비 · '+(fee===null?'설정 대기':fee===0?'무료':fee.toLocaleString('ko-KR')+'원')+'</strong>'
@@ -81,12 +88,16 @@ function render(r){
  +(p.refund_instructions?'<p class="payment-detail">취소·환불 · '+escapeHtml(p.refund_instructions)+'</p>':'')
  +(r.mine?'<p class="muted">내 입금·환불 상태 · '+escapeHtml(paymentText(r.mine.payment_status,fee))+'</p>':'')
  +(r.mine?.payment_status==='REFUND_PENDING'?'<p class="muted">취소 접수됨 · 환불을 기다리는 중이며 실제 환불이 완료된 상태는 아닙니다.</p>':'')+'</div>';
- content.insertAdjacentHTML('beforeend',payInfo);
+ const chatLink=r.mine?.status==='CONFIRMED'&&p.confirmed_chat_url?'<a class="chat-link" href="'+escapeHtml(p.confirmed_chat_url)+'" target="_blank" rel="noopener noreferrer">오픈채팅 입장하기 ↗</a>':'';
+ content.insertAdjacentHTML('beforeend',payInfo+chatLink);
  const admin=document.getElementById('admin');admin.classList.toggle('hide',!r.is_admin);
  if(r.is_admin){
   document.getElementById('feeWon').value=fee===null?'':String(fee);
   document.getElementById('payInstruction').value=p.payment_instructions||'';
   document.getElementById('refundInstruction').value=p.refund_instructions||'';
+  document.getElementById('messagingEnabled').checked=p.messaging_enabled===true;
+  document.getElementById('smsFallbackEnabled').checked=p.message_sms_fallback_enabled===true;
+  document.getElementById('confirmedChatUrl').value=p.confirmed_chat_url||'';
   const dt=p.payment_due_at?new Date(p.payment_due_at):null;
   document.getElementById('payDue').value=dt?new Date(dt.getTime()-dt.getTimezoneOffset()*60000).toISOString().slice(0,16):'';
   document.getElementById('adminRows').innerHTML=(r.applications||[]).map(a=>{
@@ -106,7 +117,17 @@ function render(r){
 }
 async function change(action){
  if(action==='cancel'&&!confirm(current?.mine?.payment_status==='PAID'?'취소하면 환불 대기로 전환됩니다. 실제 환불은 운영진이 처리합니다. 취소할까요?':'참가 신청을 취소할까요?'))return;
- try{notice.textContent='처리 중...';await request(action);await load()}catch(error){notice.textContent=error.message}
+ const extra={};
+ if(action==='apply'&&current?.payment?.messaging_enabled){
+   const phone=document.getElementById('applicationPhone');
+   const consent=document.getElementById('applicationConsent');
+   if(phone||consent){
+     if(!phone?.value.trim()||consent?.checked!==true){notice.textContent='알림 받을 휴대폰 번호와 수신 동의를 확인해 주세요.';return}
+     extra.notification_phone=phone.value.trim();
+     extra.notification_consent=true;
+   }
+ }
+ try{notice.textContent='처리 중...';await request(action,extra);await load()}catch(error){notice.textContent=error.message}
 }
 async function manage(id,action){
  const prompts={mark_paid:'실제 입금 내역을 확인했나요?',mark_unpaid:'입금 확인을 취소할까요?',confirm:'참가를 확정할까요?',unconfirm:'확정을 해제할까요?',refund_complete:'환불 송금을 실제로 마쳤나요? 버튼은 기록만 변경하며 송금을 실행하지 않습니다.'};
@@ -121,9 +142,13 @@ async function savePaymentConfig(){
   notice.textContent='설정 저장 중...';
   await request('payment_config',{fee_won:fee,payment_instructions:document.getElementById('payInstruction').value,
    refund_instructions:document.getElementById('refundInstruction').value,
-   payment_due_at:due?new Date(due).toISOString():null});
+   payment_due_at:due?new Date(due).toISOString():null,
+   messaging_enabled:document.getElementById('messagingEnabled').checked,
+   message_sms_fallback_enabled:document.getElementById('smsFallbackEnabled').checked,
+   confirmed_chat_url:document.getElementById('confirmedChatUrl').value.trim()});
   await load();notice.textContent='참가비 안내를 저장했습니다.';
  }catch(e){notice.textContent=e.message}
 }
 load();
 </script></body></html>
+

@@ -1,5 +1,6 @@
 import { processSignupReservations } from "../_shared/signup-reservations.ts";
 import { notifyPendingOT, notifyPendingApprovals } from "../_shared/ot-push.ts";
+import { dispatchEventMessages } from "../_shared/event-message-outbox.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import webpush from "npm:web-push@3.6.7";
 
@@ -87,6 +88,10 @@ Deno.serve(async(req)=>{
 
   if(action!=="due_reminders"||!config.cron_secret||req.headers.get("x-vom-cron-secret")!==config.cron_secret)return json({error:"not_allowed"},403);
   try { await processSignupReservations(admin); } catch { console.error("Signup reservation processing deferred"); }
+  const eventMessages=await dispatchEventMessages(admin,30).catch(()=>{
+    console.error("Event message dispatch deferred");
+    return {checked:0,accepted:0,failed:0,skipped:0,waiting:0};
+  });
 
   const now=seoulParts();
   const {data:settings,error:settingsError}=await admin.from("operation_reminders").select("id,title,message,trigger_type,run_at,monthly_day,notify_time").eq("is_active",true).in("trigger_type",["month_end_minus_one","month_end","once","monthly_day","next_month_schedule_check"]);
@@ -161,7 +166,7 @@ Deno.serve(async(req)=>{
 
   const otNotifications=await notifyPendingOT(admin).catch(()=>({attempted:0}));
   await notifyPendingApprovals(admin).catch(()=>({attempted:0}));
-  return json({ok:true,matched,sent,date:now.date,ot_notifications:otNotifications});
+  return json({ok:true,matched,sent,date:now.date,ot_notifications:otNotifications,event_messages:eventMessages});
 });
 
 async function sendToAll(admin:any,config:any,payload:{title:string;body:string;tag:string}){
@@ -182,3 +187,4 @@ async function sendToAll(admin:any,config:any,payload:{title:string;body:string;
   }
   return sent;
 }
+

@@ -25,15 +25,27 @@ export async function signedIn(req: Request, service: any) {
 export async function memberContext(service: any, userId: string) {
   const [{data:admin,error:ae},{data:member,error:me},{data:application,error:pe}] = await Promise.all([
     service.from("admins").select("user_id").eq("user_id",userId).maybeSingle(),
-    service.from("members").select("id,name,nickname,is_active,role").eq("auth_user_id",userId).maybeSingle(),
+    service.from("members").select("id,name,nickname,is_active,role,region,favorite_singers,job,phone").eq("auth_user_id",userId).maybeSingle(),
     service.from("ot_room_applicants").select("member_id").eq("auth_user_id",userId).maybeSingle(),
   ]);
   if (ae || me || pe) throw new Error("member_context_failed");
   if (admin) return {state:"APPROVED",is_admin:true,member:member || null};
   if (member?.is_active) {
-    const {data:setting,error} = await service.from("member_account_settings").select("must_change_password").eq("member_id",member.id).maybeSingle();
-    if (error) throw new Error("account_setting_failed");
-    return {state:setting?.must_change_password ? "PASSWORD_CHANGE_REQUIRED" : "APPROVED",is_admin:false,member};
+    const [{data:setting,error:settingError},{data:messaging,error:messagingError}] = await Promise.all([
+      service.from("member_account_settings").select("must_change_password").eq("member_id",member.id).maybeSingle(),
+      service.from("member_message_preferences").select("event_transaction_enabled,operator_alert_enabled").eq("member_id",member.id).maybeSingle(),
+    ]);
+    if (settingError) throw new Error("account_setting_failed");
+    if (messagingError) throw new Error("message_preference_failed");
+    return {
+      state:setting?.must_change_password ? "PASSWORD_CHANGE_REQUIRED" : "APPROVED",
+      is_admin:false,
+      member,
+      messaging: {
+        event_transaction_enabled: messaging?.event_transaction_enabled === true,
+        operator_alert_enabled: messaging?.operator_alert_enabled === true,
+      },
+    };
   }
   return {state:application ? "PENDING" : "UNLINKED",is_admin:false,member:null};
 }
@@ -45,3 +57,4 @@ export async function issueActivation(service: any, memberId: number, actorId: s
   if (error) throw new Error("activation_invite_failed");
   return {url:DEFAULT_ORIGIN+"/activate/#token="+token,message:"본인에게만 전달하는 7일 유효 개인 설정 링크입니다."};
 }
+

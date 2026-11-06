@@ -45,6 +45,17 @@ function profileText(value: unknown, label: string, maxLength: number) {
   return text || null;
 }
 
+function profilePhone(value: unknown) {
+  if (value === undefined) return undefined;
+  if (value !== null && typeof value !== "string") throw new ApiError(400, "휴대폰 번호를 다시 확인해 주세요.");
+  const raw = String(value || "").trim();
+  if (!raw) return null;
+  if (!/^[0-9\s+()\-]+$/.test(raw)) throw new ApiError(400, "휴대폰 번호를 숫자로 입력해 주세요.");
+  const digits = raw.replace(/\D/g, "");
+  if (!/^01\d{8,9}$/.test(digits)) throw new ApiError(400, "휴대폰 번호를 정확히 입력해 주세요.");
+  return digits;
+}
+
 export async function handle(req: Request, service: any, authClient: any) {
   let origin = DEFAULT_ORIGIN;
   let claim: any = null, createdUser: string | null = null;
@@ -66,16 +77,46 @@ export async function handle(req: Request, service: any, authClient: any) {
       const region = profileText(body.region, "사는 지역", 40);
       const favoriteSingers = profileText(body.favorite_singers, "좋아하는 가수", 150);
       const job = profileText(body.job, "직업", 80);
+      const phoneInput = profilePhone(body.phone);
+      const phone = phoneInput === undefined ? context.member.phone || null : phoneInput;
+      const eventTransactionEnabled = body.event_transaction_enabled === undefined
+        ? context.messaging?.event_transaction_enabled === true
+        : body.event_transaction_enabled === true;
+      const isOperator = ["모임장", "운영진"].includes(String(context.member.role || ""));
+      const requestedOperatorAlert = body.operator_alert_enabled === undefined
+        ? context.messaging?.operator_alert_enabled === true
+        : body.operator_alert_enabled === true;
+      if (requestedOperatorAlert && !isOperator) {
+        throw new ApiError(403, "운영 알림은 모임장·운영진 계정에서만 설정할 수 있어요.", "operator_required");
+      }
+      const operatorAlertEnabled = isOperator && requestedOperatorAlert;
+      if ((eventTransactionEnabled || operatorAlertEnabled) && !phone) {
+        throw new ApiError(400, "알림을 받으려면 휴대폰 번호를 입력해 주세요.", "phone_required");
+      }
+      const now = new Date().toISOString();
       const { data: member, error } = await service
         .from("members")
-        .update({ region, favorite_singers: favoriteSingers, job })
+        .update({ region, favorite_singers: favoriteSingers, job, phone })
         .eq("id", context.member.id)
         .eq("auth_user_id", user.id)
         .eq("is_active", true)
-        .select("id,name,nickname,role,region,favorite_singers,job")
+        .select("id,name,nickname,role,region,favorite_singers,job,phone")
         .single();
       if (error || !member) throw new Error("self_profile_update_failed");
-      return json(origin, { ok: true, member });
+      const { error: preferenceError } = await service.from("member_message_preferences").upsert({
+        member_id: context.member.id,
+        event_transaction_enabled: eventTransactionEnabled,
+        event_transaction_consented_at: eventTransactionEnabled ? now : null,
+        operator_alert_enabled: operatorAlertEnabled,
+        operator_alert_consented_at: operatorAlertEnabled ? now : null,
+        updated_at: now,
+      }, { onConflict: "member_id" });
+      if (preferenceError) throw new Error("message_preference_update_failed");
+      return json(origin, {
+        ok: true,
+        member,
+        messaging: { event_transaction_enabled: eventTransactionEnabled, operator_alert_enabled: operatorAlertEnabled },
+      });
     }
 
     if (body.action === "login_members") {
@@ -216,3 +257,4 @@ export async function handle(req: Request, service: any, authClient: any) {
 }
 if (import.meta.main) Deno.serve(req=>handle(req,createClient(Deno.env.get("SUPABASE_URL")||"",Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"",{auth:{persistSession:false,autoRefreshToken:false}}),
   createClient(Deno.env.get("SUPABASE_URL")||"",Deno.env.get("SUPABASE_ANON_KEY")||"",{auth:{persistSession:false,autoRefreshToken:false}})));
+

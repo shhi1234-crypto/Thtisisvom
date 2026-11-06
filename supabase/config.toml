@@ -20,5 +20,9 @@ verify_jwt = false
 [functions.member-account]
 verify_jwt = false
 
+[functions.event-application]
+verify_jwt = false
+
 [functions.public-events]
 verify_jwt = false
+

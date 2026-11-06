@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
       const user = await requireSignedInUser(req, admin);
       const { data: member, error } = await admin
         .from("members")
-        .select("id,name,nickname,role,region,favorite_singers,job")
+        .select("id,name,nickname,role,region,favorite_singers,job,phone")
         .eq("auth_user_id", user.id)
         .maybeSingle();
       if (error) throw error;
@@ -386,3 +386,4 @@ Deno.serve(async (req) => {
     return response({ error: error instanceof Error ? error.message : "처리 중 오류가 발생했습니다." }, 500, requestOrigin);
   }
 });
+
