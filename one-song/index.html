@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0f1f">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="/favicon.png?v=4">
+<title>ONE SONG 파트 배분 · Voice of Melody</title>
+<meta name="description" content="ONE SONG PROJECT 가사와 파트 배분 편집기">
+<link rel="canonical" href="https://thisisvom.vercel.app/one-song/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/vom-member-context.js?v=4"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=18">
+<link rel="stylesheet" href="/assets/one-song-editor.css?v=1">
+</head>
+<body>
+<div class="aurora"></div>
+<header class="vom-header os-header">
+  <a href="/" class="vom-header-brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <div class="vom-header-actions"><a class="os-back" href="/convenience/">편의 기능으로 돌아가기 <span aria-hidden="true">→</span></a><button class="vom-shell-menu-trigger" type="button" aria-label="메뉴 열기">☰</button></div>
+</header>
+
+<main class="os-page">
+  <div class="os-eyebrow">ONE SONG PROJECT</div>
+  <div class="os-title-row"><div><h1>파트 배분 편집기</h1><p class="os-print-title" id="projectPrintTitle"></p><p class="os-screen-description">가사 글자를 드래그해 파트를 지정하고, 저장한 뒤 다시 열어 이어서 편집하세요.</p></div><div id="saveStatus" class="os-save-status" role="status">불러오는 중</div></div>
+
+  <section id="accessDenied" class="os-panel os-access" hidden>
+    <h2 id="accessTitle">VOM 회원 전용 기능입니다.</h2>
+    <p id="accessMessage">가입 승인된 VOM 회원으로 로그인하면 파트 마법사를 사용할 수 있습니다.</p>
+    <a class="os-button os-button-primary" href="/me/?next=%2Fone-song%2F">MY VOM 로그인</a>
+  </section>
+
+  <div id="editorApp" hidden>
+    <section class="os-panel os-project-panel">
+      <div class="os-panel-top"><div><span class="os-kicker">PROJECT</span><h2>회차와 곡</h2></div><div class="os-project-actions"><button id="newProjectButton" class="os-button" type="button">새 프로젝트</button><button id="printButton" class="os-button" type="button">인쇄 · PDF</button><button id="saveButton" class="os-button os-button-primary" type="button">저장</button></div></div>
+      <div class="os-project-fields">
+        <label class="os-field os-project-picker">다시 열기<select id="projectSelect" aria-label="저장된 원쏭 프로젝트"></select></label>
+        <label class="os-field os-round-field">회차<input id="roundInput" type="number" min="1" max="999" inputmode="numeric"></label>
+        <label class="os-field os-song-field">곡 제목<input id="titleInput" type="text" maxlength="120" placeholder="곡 제목"></label>
+      </div>
+      <p class="os-help">저장되지 않은 변경이 있으면 상단 상태에 표시됩니다. 줄 번호는 현재 순서에 맞춰 01부터 자동으로 다시 매깁니다.</p>
+    </section>
+
+    <section class="os-panel os-participants-panel">
+      <div class="os-panel-top"><div><span class="os-kicker">SINGERS</span><h2>참여자와 기본 색</h2></div><button id="addParticipantButton" class="os-button" type="button">＋ 참여자</button></div>
+      <p class="os-help">한 곡에 최대 4명까지 등록할 수 있습니다. 성별을 고르면 기본 글자색과 추가 보컬 배경색이 적용되며, 색상표에서 조정할 수 있습니다.</p>
+      <div id="participantList" class="os-participant-list"></div>
+      <p id="sihyeonGenderNote" class="os-confirm-note" hidden>시현의 성별 색상 분류는 아직 확인되지 않았습니다. 실제 배분에 적용하기 전에 직접 설정해 주세요.</p>
+    </section>
+
+    <section class="os-panel os-tool-panel">
+      <div class="os-panel-top"><div><span class="os-kicker">SELECTION TOOLS</span><h2>선택 구간에 파트 지정</h2></div><div class="os-history-actions"><button id="undoButton" class="os-button os-icon-button" type="button" aria-label="실행 취소" title="실행 취소">↶</button><button id="redoButton" class="os-button os-icon-button" type="button" aria-label="다시 실행" title="다시 실행">↷</button></div></div>
+      <p id="selectionStatus" class="os-selection-status">가사 글자를 드래그해 선택하세요. 선택하지 않으면 활성 줄 전체에 적용됩니다.</p>
+      <div class="os-tool-fields">
+        <label class="os-field">역할<select id="roleSelect"><option value="original">원음</option><option value="together">함께 부름</option><option value="additional">추가 보컬</option></select></label>
+        <div class="os-field"><span class="os-field-label">참여자</span><div id="performerPicker" class="os-performer-picker"></div></div>
+      </div>
+      <div class="os-tool-actions"><button id="assignButton" class="os-button os-button-primary" type="button">파트 지정</button><button id="clearAssignmentButton" class="os-button os-button-danger" type="button">지정 취소</button></div>
+      <div class="os-color-tools">
+        <span class="os-field-label">선택한 글자 색</span><label class="os-color-choice"><input id="foregroundColor" type="color" value="#303744"><span>글자색</span></label><button id="applyForegroundButton" class="os-button os-small-button" type="button">적용</button>
+        <label class="os-color-choice"><input id="backgroundColor" type="color" value="#fff1a8"><span>배경색</span></label><button id="applyBackgroundButton" class="os-button os-small-button" type="button">적용</button><button id="boldButton" class="os-button os-small-button" type="button"><strong>B</strong> 볼드</button><button id="clearStyleButton" class="os-button os-small-button" type="button">색 원복</button>
+      </div>
+      <p class="os-help">직접 지정한 색은 파트 정보와 별도로 저장됩니다. 동성 동음은 볼드로 구분할 수 있고, 밑줄이나 테두리는 사용하지 않습니다.</p>
+    </section>
+
+    <section class="os-panel os-lyrics-panel">
+      <div class="os-panel-top os-lyrics-top"><div><span class="os-kicker">LYRICS</span><h2>가사와 파트</h2></div><button id="addLineButton" class="os-button" type="button">＋ 가사 줄</button></div>
+      <p class="os-help">각 가사는 실제 텍스트로 편집됩니다. 개인 파트가 바뀌는 곳은 줄을 나눠 입력하세요. 구절 메모는 가사를 입력하면 해당 문구를 찾아 표시합니다.</p>
+      <p id="lyricsSourceNote" class="os-confirm-note" hidden>현재 곡의 가사 텍스트가 아직 없습니다. 줄에 가사를 붙여 넣으면 구절 메모가 해당 글자 범위에 연결됩니다.</p>
+      <div id="lyricsList" class="os-lyrics-list"></div>
+    </section>
+  </div>
+</main>
+
+<nav class="bottom" aria-label="주요 메뉴">
+  <a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a><a href="/me/"><span class="nav-icon">♡</span>MY VOM</a><button type="button" aria-label="전체 메뉴 열기"><span class="nav-icon">☰</span>MENU</button>
+</nav>
+<div id="toast" class="os-toast" role="status" aria-live="polite"></div>
+<script src="/assets/one-song-editor.js?v=2"></script>
+<script src="/assets/vom-shell.js?v=17"></script>
+</body>
+</html>

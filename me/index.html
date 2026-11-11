@@ -261,7 +261,7 @@ function render(){
  if(isAdministrator)renderAdminDashboard();else if(myMember)renderDashboard();else renderWelcome();
 }
 function renderAdminDashboard(){
- app.innerHTML='<section class="card login-main"><h2>관리자로 로그인되어 있어요.</h2><p class="card-intro">필요한 운영 메뉴를 선택해 주세요.</p><div class="quick-links"><a class="quick-link" href="/admin-settings/"><div><b>운영 자료</b><small>운영 자료 · 이미지 보관함 · 알림 관리</small></div><span>→</span></a><a class="quick-link" href="/ot-admin/"><div><b>가입 관리</b><small>가입 신청 확인 · 사진과 라이브 자료 검토</small></div><span>→</span></a><a class="quick-link" href="/members/"><div><b>회원 관리</b><small>회원 정보 · 개인 계정 관리</small></div><span>→</span></a><a class="quick-link" href="/calendar/?create=1&type=OTHER"><div><b>개인 벙 등록</b><small>운영진이 확인한 벙을 일정과 참가 신청으로 등록</small></div><span>→</span></a></div><button class="logout-button" onclick="logout()">로그아웃</button></section>';
+ app.innerHTML='<section class="card login-main"><h2>관리자로 로그인되어 있어요.</h2><p class="card-intro">필요한 운영 메뉴를 선택해 주세요.</p><div class="quick-links"><a class="quick-link" href="/admin-settings/"><div><b>운영 자료</b><small>운영 자료 · 이미지 보관함 · 알림 관리</small></div><span>→</span></a><a class="quick-link" href="/ot-admin/"><div><b>가입 관리</b><small>가입 신청 확인 · 사진과 라이브 자료 검토</small></div><span>→</span></a><a class="quick-link" href="/members/"><div><b>회원 관리</b><small>회원 정보 · 개인 계정 관리</small></div><span>→</span></a><a class="quick-link" href="/calendar/?create=1&type=OTHER"><div><b>개인 벙 등록</b><small>운영진이 확인한 벙을 일정과 참가 신청으로 등록</small></div><span>→</span></a><a class="quick-link" href="/convenience/"><div><b>편의 기능</b><small>파트 마법사 등 회원용 도구</small></div><span>→</span></a></div><button class="logout-button" onclick="logout()">로그아웃</button></section>';
 }
 
 function renderWelcome(){
@@ -358,6 +358,9 @@ function renderDashboard(){
         '<a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정</b><small>현재 신청할 수 있는 공개 일정을 봐요.</small></div><span>→</span></a>'+
         '<button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 운영진에게 바로 보내요.</small></div><span>→</span></button>'+
       '</div>'+
+      '<details class="member-utility"><summary><div><b>편의 기능</b><small>파트 마법사 등 회원용 도구</small></div><i>⌄</i></summary><div class="member-utility-list">'+
+        '<a class="quick-link" href="/convenience/"><div><b>편의 기능 열기</b><small>승인된 회원이 파트 마법사와 회원 도구를 사용할 수 있어요.</small></div><span>→</span></a>'+
+      '</div></details>'+
       '<details class="member-utility"><summary><div><b>추가 메뉴</b><small>문의, 개인 벙, 카카오톡 채널</small></div><i>⌄</i></summary><div class="member-utility-list">'+
         '<a class="quick-link" href="/qna/?mine=1"><div><b>내 문의</b><small>내가 남긴 문의와 답변</small></div><span>→</span></a>'+
         '<a class="quick-link" href="/calendar/?view=available&type=OTHER"><div><b>개인 벙 찾아보기</b><small>열린 벙과 소모임 보기</small></div><span>→</span></a>'+
@@ -602,7 +605,7 @@ async function loginAdministrator(){
  const form=document.getElementById('adminLoginForm');if(!form.reportValidity())return;const btn=document.getElementById('adminLoginSubmit'),note=document.getElementById('adminLoginNotice');if(btn.disabled)return;btn.disabled=true;note.hidden=true;
  try{const {data,error}=await db.auth.signInWithPassword({email:document.getElementById('adminEmail').value.trim(),password:document.getElementById('adminPassword').value});if(error)throw new Error('관리자 이메일과 비밀번호를 확인해 주세요.');
    const context=await requestAccess({action:'context'},data.session.access_token);if(!context.is_admin){await db.auth.signOut({scope:'local'});throw new Error('관리자 계정으로 로그인해 주세요.');}
-   const next=new URLSearchParams(location.search).get('next');location.replace(next&&/^\/(members|calendar|schedule|live|busking|apply)(\/|$)/.test(next)?next:'/admin-settings/');
+   const next=new URLSearchParams(location.search).get('next');location.replace(next&&/^\/(members|calendar|schedule|live|busking|apply|convenience|one-song)(\/|$)/.test(next)?next:'/admin-settings/');
  }catch(error){await db.auth.signOut({scope:'local'});note.textContent=error.message||'관리자 로그인을 확인하지 못했습니다.';note.hidden=false;}finally{btn.disabled=false;}
 }
 async function loginAccount(){
@@ -616,7 +619,7 @@ async function loginAccount(){
   const result=await db.auth.setSession(data.session);if(result.error)throw result.error;
   if(data.state==='PENDING'){await db.auth.signOut({scope:'local'});throw new Error('가입 승인 안내를 받은 뒤 로그인해 주세요.');}
   await loadSession();if(!myMember)throw new Error('로그인 계정과 회원 정보의 연결을 확인하지 못했습니다. 운영진에게 확인해 주세요.');const warning=await loadWorkspace();render();window.vomRefreshShell?.();if(warning)say(warning,true);
-  const next=new URLSearchParams(location.search).get('next');if(data.state==='APPROVED'&&next&&/^\/(members|calendar|schedule|live|busking|apply)(\/|$)/.test(next))location.replace(next);
+  const next=new URLSearchParams(location.search).get('next');if(data.state==='APPROVED'&&next&&/^\/(members|calendar|schedule|live|busking|apply|convenience|one-song)(\/|$)/.test(next))location.replace(next);
  }catch(error){loginNotice(error.message);say(error.message,true);}finally{if(btn.isConnected){btn.disabled=false;btn.textContent='로그인';}}
 }
 async function saveProfile(){

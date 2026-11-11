@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0a0f1f">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="/favicon.png?v=4">
+<title>편의 기능 · Voice of Melody</title>
+<meta name="description" content="VOM 회원을 위한 편의 기능">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/vom-member-context.js?v=4"></script>
+<link rel="stylesheet" href="/assets/vom-shell.css?v=18">
+<style>
+*{box-sizing:border-box}
+body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Noto Sans KR",sans-serif}
+.vc-page{width:min(980px,calc(100% - 36px));margin:0 auto;padding:40px 0 126px}
+.vc-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px}
+.vc-eyebrow{color:#a99aff;font-size:10px;font-weight:800;letter-spacing:.16em}
+.vc-head h1{margin:6px 0 0;font-size:clamp(30px,5vw,46px);letter-spacing:-.055em}
+.vc-head p{margin:8px 0 0;color:#b6bfd6;font-size:13px;line-height:1.7}
+.vc-back{flex:0 0 auto;display:inline-flex;align-items:center;min-height:38px;padding:0 13px;border:1px solid #3c4667;border-radius:999px;color:#e7eaff;text-decoration:none;font-size:10px;font-weight:800}
+.vc-panel{padding:23px;border:1px solid #293452;border-radius:22px;background:rgba(19,28,51,.92);box-shadow:0 18px 48px rgba(0,0,0,.18)}
+.vc-access{padding:30px;text-align:center}
+.vc-access h2{margin:0;font-size:20px}
+.vc-access p{margin:9px auto 18px;max-width:530px;color:#bac3d8;font-size:12px;line-height:1.7}
+.vc-button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border:1px solid #6556c5;border-radius:12px;background:#6959d2;color:#fff;text-decoration:none;font-size:11px;font-weight:800}
+.vc-button.secondary{margin-left:6px;border-color:#3b496c;background:#1b2742}
+.vc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px}
+.vc-tool{min-height:184px;padding:20px;border:1px solid #364264;border-radius:18px;background:linear-gradient(145deg,#1b2847,#171d37);color:#f0f2ff;text-decoration:none;transition:transform .16s ease,border-color .16s ease}
+.vc-tool:hover{transform:translateY(-2px);border-color:#8274e8}
+.vc-tool.is-ready{background:linear-gradient(145deg,#2b2853,#17353c)}
+.vc-tool.is-coming{opacity:.82}
+.vc-icon{display:grid;width:37px;height:37px;place-items:center;border-radius:12px;background:#34305f;color:#cfc7ff;font-size:18px}
+.vc-tool h2{margin:17px 0 0;font-size:17px;letter-spacing:-.04em}
+.vc-tool p{margin:7px 0 0;color:#bac3d8;font-size:11px;line-height:1.65}
+.vc-tool-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:17px;color:#c5bcff;font-size:10px;font-weight:800}
+.vc-tool.is-coming .vc-tool-foot{color:#adb7cd}
+.vc-notice{margin:15px 2px 0;color:#8793ad;font-size:10px;line-height:1.65}
+[hidden]{display:none!important}
+@media(max-width:600px){.vc-page{width:calc(100% - 24px);padding-top:25px}.vc-head{align-items:flex-start;flex-direction:column}.vc-panel{padding:16px;border-radius:18px}.vc-access{padding:24px 18px}.vc-tool{min-height:160px;padding:17px}}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<header class="vom-header">
+  <a href="/" class="vom-header-brand"><strong>VOM</strong><small>VOICE OF MELODY</small></a>
+  <div class="vom-header-actions"><a class="vc-back" href="/me/">MY VOM으로 돌아가기</a><button class="vom-shell-menu-trigger" type="button" aria-label="메뉴 열기">☰</button></div>
+</header>
+<main class="vc-page">
+  <section id="convenienceAccess" class="vc-panel vc-access" hidden>
+    <h2 id="convenienceAccessTitle">VOM 회원 전용 기능입니다.</h2>
+    <p id="convenienceAccessMessage">가입 승인된 회원으로 로그인하면 편의 기능을 사용할 수 있습니다.</p>
+    <a id="convenienceLogin" class="vc-button" href="/me/?next=%2Fconvenience%2F">MY VOM 로그인</a>
+    <a class="vc-button secondary" href="/ot-room/">회원가입</a>
+  </section>
+  <section id="convenienceApp" hidden>
+    <div class="vc-head"><div><div class="vc-eyebrow">MEMBER TOOLS</div><h1>편의 기능</h1><p>VOM 회원이 자주 쓰는 도구를 모았어요. 필요한 기능을 선택해 주세요.</p></div><a class="vc-back" href="/me/">MY VOM</a></div>
+    <div class="vc-panel">
+      <div class="vc-grid">
+        <a class="vc-tool is-ready" href="/one-song/">
+          <span class="vc-icon" aria-hidden="true">♫</span>
+          <h2>파트 마법사</h2>
+          <p>가사를 입력하고 구간별 원음과 추가 보컬을 함께 정리해요.</p>
+          <span class="vc-tool-foot"><span>ONE SONG PROJECT</span><span aria-hidden="true">열기 →</span></span>
+        </a>
+        <article class="vc-tool is-coming" aria-label="정산 도우미, 준비 중">
+          <span class="vc-icon" aria-hidden="true">₩</span>
+          <h2>정산 도우미</h2>
+          <p>모임 비용을 편하게 정리할 수 있도록 준비하고 있어요.</p>
+          <span class="vc-tool-foot"><span>회원 편의 기능</span><span>준비 중</span></span>
+        </article>
+      </div>
+      <p class="vc-notice">편의 기능은 가입 승인된 VOM 회원과 운영진 계정에서 사용할 수 있습니다.</p>
+    </div>
+  </section>
+</main>
+<nav class="bottom" aria-label="주요 메뉴">
+  <a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a><a href="/me/"><span class="nav-icon">♡</span>MY VOM</a><button type="button" aria-label="전체 메뉴 열기"><span class="nav-icon">☰</span>MENU</button>
+</nav>
+<script src="/assets/vom-shell.js?v=17"></script>
+<script>
+(async function(){
+  const accessPanel=document.getElementById('convenienceAccess');
+  const accessMessage=document.getElementById('convenienceAccessMessage');
+  const app=document.getElementById('convenienceApp');
+  async function refreshAccess(){
+    app.hidden=true;
+    accessPanel.hidden=false;
+    try{
+      const access=await window.vomGetMemberAccess();
+      if(access?.approved){accessPanel.hidden=true;app.hidden=false;return;}
+      accessMessage.textContent='편의 기능은 가입 승인된 활동 회원만 사용할 수 있습니다. MY VOM에서 회원 상태를 확인해 주세요.';
+    }catch(_){
+      accessMessage.textContent='회원 권한을 확인하지 못했습니다. 다시 열거나 MY VOM에서 로그인 상태를 확인해 주세요.';
+    }
+  }
+  await refreshAccess();
+  window.addEventListener('vom-member-access-changed',refreshAccess);
+})();
+</script>
+</body>
+</html>
