@@ -6,15 +6,17 @@
 *{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:radial-gradient(circle at 85% 0,#eee9ff,transparent 45%),#f8f7fb;color:#262842}
 main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-decoration:none}.top{display:flex;justify-content:space-between;align-items:center;font-weight:800}.eyebrow{color:#785fdb;letter-spacing:.13em;font-size:12px;margin-top:45px}h1{font-size:34px;margin:9px 0 22px}.card{padding:25px;border:1px solid #ece7fa;background:#fff;border-radius:23px;box-shadow:0 15px 42px #4034790e;margin-bottom:15px}.event-name{font-size:23px;font-weight:800;line-height:1.4}.meta{margin:15px 0;color:#707388;font-size:13px;line-height:1.9}.info{border-radius:12px;background:#f3f0fc;color:#6553bd;padding:12px 14px;font-size:13px;line-height:1.6;margin:15px 0}h2{font-size:18px}button{border:0;border-radius:12px;padding:12px 19px;background:#7763de;color:white;font:700 14px Arial,sans-serif;cursor:pointer}button:disabled{opacity:.5;cursor:default}.secondary{background:#eeeafa;color:#6553bd}.danger{background:#fff0f0;color:#ba5260}.actions{display:flex;gap:8px;flex-wrap:wrap}.muted{color:#7c8092;font-size:13px;line-height:1.7}.hide{display:none!important}.row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #f0eef7;font-size:13px}.row small{color:#818397}.admin-actions{display:flex;gap:5px}input{width:100%;margin:6px 0 13px;padding:12px;border:1px solid #ddd8ee;border-radius:10px;font-size:15px}.status{font-weight:bold;color:#7157c7}#notice{margin:13px 0;min-height:20px;color:#ae4558;font-size:13px}
 
-<style>
 .payment-box{background:#f8f6fe;border:1px solid #e7e1f7;border-radius:15px;padding:16px;margin:15px 0;font-size:13px;line-height:1.8}
 .payment-box strong{font-size:17px}.payment-detail{white-space:pre-wrap;overflow-wrap:anywhere;color:#51576d}
+.refund-result{margin-top:11px;padding:11px 12px;border:1px solid #e7e1f7;border-radius:12px;background:#fff;color:#51576d;font-size:12px;line-height:1.7}.refund-result strong{display:block;margin-bottom:4px;font-size:13px;color:#3e4258}.refund-policy-history{margin-top:10px;padding:10px 12px;border-radius:12px;background:#faf9fd;color:#74798c;font-size:10px;line-height:1.6}.refund-policy-history b{color:#50546a}
 .payment-box .muted{margin:7px 0}.admin-sub{border-top:1px solid #eeeaf7;margin-top:19px;padding-top:18px}
 .admin-sub label{display:block;font-size:12px;font-weight:700;margin:11px 0 3px;color:#5b5b72}
 .admin-sub textarea{display:block;width:100%;min-height:66px;padding:11px;border:1px solid #ddd8ee;border-radius:10px;font:14px/1.5 Arial,sans-serif;resize:vertical}
 .admin-sub input{margin:3px 0}.admin-actions{flex-wrap:wrap}.admin-actions button{font-size:12px;padding:9px 11px}
 .message-contact{margin:15px 0;padding:15px;border:1px solid #dcd4fa;border-radius:15px;background:linear-gradient(135deg,#faf8ff,#f1fbf8)}.message-contact b{display:block;color:#4f4386;font-size:13px}.message-contact p{margin:6px 0 0;color:#6f7588;font-size:11px;line-height:1.6}.message-contact label{display:block;margin-top:12px;color:#5d6175;font-size:12px;font-weight:700}.message-contact input[type="tel"]{margin:6px 0 0}.message-consent,.admin-toggle{display:flex!important;align-items:flex-start;gap:8px;margin-top:12px!important;padding:10px 11px;border:1px solid #e5e0f5;border-radius:11px;background:#fff;color:#5d6275!important;font-size:12px!important;font-weight:700;line-height:1.45}.message-consent input,.admin-toggle input{width:auto!important;flex:0 0 auto;height:16px;margin:0!important;accent-color:#7157cf}.message-contact small,.admin-toggle-note{display:block;margin:8px 0 0;color:#858b9c;font-size:10px;line-height:1.55}.chat-link{display:inline-flex;align-items:center;min-height:39px;margin-top:10px;padding:0 13px;border-radius:11px;background:#eeeaff;color:#5e4cc2;font-size:12px;font-weight:800}
-@media(max-width:600px){.row{align-items:flex-start;flex-direction:column}.card{padding:19px}}
+.coupon-picker{margin:15px 0;padding:15px;border:1px solid #e5e0f5;border-radius:15px;background:#fbfaff}.coupon-picker h3{margin:0 0 9px;font-size:14px}.coupon-option{display:flex;align-items:flex-start;gap:9px;padding:10px 0;border-top:1px solid #eeebf6;color:#41465b;font-size:12px;line-height:1.5}.coupon-option input{width:auto;margin:3px 0 0;flex:0 0 auto;accent-color:#7157cf}.coupon-option small{display:block;color:#858b9c;font-size:10px}.coupon-preview{margin-top:9px;padding-top:9px;border-top:1px solid #e8e3f4;color:#5f548e;font-size:12px;line-height:1.7}.fee-breakdown{display:grid;grid-template-columns:1fr auto;gap:7px 12px;margin-top:10px;font-size:12px}.fee-breakdown b{text-align:right}.priority-pill{display:inline-flex;padding:3px 7px;border-radius:999px;background:#fff1d9;color:#9a6418;font-size:10px;font-weight:800}
+.admin-application{margin:10px 0;padding:14px;border:1px solid #e9e5f3;border-radius:14px;background:#fff}.admin-application.priority{border-color:#edcf8c;background:#fffdf7}.admin-application-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.admin-application-top strong{font-size:14px}.admin-application-top small{display:block;margin-top:4px;color:#818397;font-size:10px;line-height:1.5}.admin-finance-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 9px;margin-top:9px}.admin-finance-grid label{display:block;margin:6px 0 2px;color:#777b8d;font-size:10px}.admin-finance-grid input{margin:0;padding:9px;font-size:12px}.admin-coupon-list{display:grid;grid-template-columns:1fr 1fr;gap:5px 8px;margin:8px 0}.admin-coupon-list label{display:flex;gap:6px;align-items:flex-start;margin:0;color:#616579;font-size:10px;line-height:1.4}.admin-coupon-list input{width:auto;margin:1px 0;flex:0 0 auto}.admin-save{margin:6px 0 10px}.coupon-admin-form{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.coupon-admin-form .wide{grid-column:1/-1}.coupon-admin-form input,.coupon-admin-form select{margin:3px 0 10px}.coupon-admin-form label{display:block;margin:8px 0 2px;color:#62677a;font-size:11px;font-weight:700}.coupon-checks{display:flex;gap:12px;flex-wrap:wrap}.coupon-checks label{display:flex;align-items:center;gap:6px}.coupon-checks input{width:auto;margin:0}.coupon-admin-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #eeeaf6;font-size:11px}.coupon-admin-row small{display:block;color:#858b9c;margin-top:3px}.coupon-admin-row button{padding:7px 9px;font-size:10px}
+@media(max-width:600px){.row{align-items:flex-start;flex-direction:column}.card{padding:19px}.admin-coupon-list{grid-template-columns:1fr}}
 /* MEMBER APPLICATION GUIDE */
 .apply-flow-guide{margin:0 0 14px;border:1px solid #e4def7;border-radius:18px;background:linear-gradient(135deg,#faf8ff,#f0fbf8);overflow:hidden}
 .apply-flow-guide summary{display:flex;align-items:center;gap:10px;min-height:53px;padding:0 15px;cursor:pointer;list-style:none}
@@ -43,12 +45,23 @@ main{max-width:680px;margin:0 auto;padding:35px 18px 90px}a{color:#6e58cf;text-d
 <label for="feeWon">참가비 (원)</label><input id="feeWon" type="number" min="0" max="1000000" step="1" placeholder="무료 0 / 유료 10000">
 <label for="payDue">입금 기한 (선택)</label><input id="payDue" type="datetime-local">
 <label for="payInstruction">입금 안내 · 계좌 (선택)</label><textarea id="payInstruction" maxlength="500"></textarea>
-<label for="refundInstruction">취소·환불 안내 (선택)</label><textarea id="refundInstruction" maxlength="500"></textarea>
+<label for="headcountFixedDate">인원 픽스 날짜 · 한국 시간</label><input id="headcountFixedDate" type="date" required><label for="headcountFixedTime">시간 (선택)</label><input id="headcountFixedTime" type="time" step="60"><p class="admin-toggle-note">시간을 비우면 00:00으로 적용해요. 픽스 전 취소는 100%, 픽스 시각부터 환불 구간을 적용하며 행사 4일 전 00:00보다 늦게 설정할 수 없습니다.</p>
+<label for="refundInstruction">추가 환불 안내 (선택)</label><textarea id="refundInstruction" maxlength="500"></textarea>
 <label class="admin-toggle"><input id="messagingEnabled" type="checkbox">신청·입금·참가 확정 안내를 자동 발송하기</label><p class="admin-toggle-note">카카오 알림톡 연동과 템플릿 설정이 끝난 뒤 켜 주세요. 신청자는 본인 번호와 수신 동의를 직접 확인합니다.</p>
 <label for="confirmedChatUrl">참가 확정 후 안내할 오픈채팅 링크 (선택)</label><input id="confirmedChatUrl" type="url" inputmode="url" maxlength="2048" placeholder="https://open.kakao.com/o/...">
 <label class="admin-toggle"><input id="smsFallbackEnabled" type="checkbox">알림톡 실패 시 문자로 전환하기</label><p class="admin-toggle-note">문자 대체발송에는 별도 발송 비용이 발생할 수 있어요.</p>
-<button style="margin-top:14px" onclick="savePaymentConfig()">설정 저장</button></div>
-<div class="admin-sub"><h2>신청자 상태 관리</h2><div id="adminRows"></div></div></section></main>
+<button style="margin-top:14px" onclick="savePaymentConfig()">설정 저장</button><div id="refundPolicyHistory" class="refund-policy-history"></div></div>
+<div class="admin-sub"><h2>쿠폰 관리</h2><p class="muted">이 일정에 사용할 쿠폰을 만들고 회원에게 발급해요. 우선 참가권은 구매할 수 없고 운영진이 회원을 지정해 발급합니다. 일반 정원 마감 뒤에도 신청할 수 있으며 신청자 목록에서 먼저 표시됩니다.</p>
+<input id="couponEditingId" type="hidden"><div class="coupon-admin-form">
+<div class="wide"><label for="couponTitle">쿠폰 이름</label><input id="couponTitle" maxlength="100" placeholder="예: 참가비 5천원 할인"></div>
+<div><label for="couponType">쿠폰 유형</label><select id="couponType" onchange="syncCouponValue()"><option value="FIXED">정액 할인</option><option value="PERCENT">비율 할인</option><option value="FULL">전액 할인</option><option value="PRIORITY">우선 참가권</option></select></div>
+<div><label for="couponValue">할인 금액 / 비율</label><input id="couponValue" type="number" min="1" max="1000000" placeholder="원 또는 %"></div>
+<div><label for="couponMember">사용 가능 회원</label><select id="couponMember"><option value="">전체 활동 회원</option></select></div>
+<div><label for="couponValidFrom">사용 시작</label><input id="couponValidFrom" type="datetime-local"></div>
+<div><label for="couponExpiresAt">만료 시각</label><input id="couponExpiresAt" type="datetime-local"></div>
+<div class="wide coupon-checks"><label><input id="couponOneTime" type="checkbox" checked>1회 사용</label><label><input id="couponStackable" type="checkbox">다른 쿠폰과 중복 사용</label><label><input id="couponActive" type="checkbox" checked>사용 가능</label></div>
+<div class="wide"><button type="button" id="couponSaveButton" onclick="saveCoupon()">쿠폰 발급</button> <button type="button" class="secondary" onclick="resetCouponForm()">새 쿠폰</button></div></div><div id="couponRows"></div></div>
+<div class="admin-sub"><h2>신청자별 금액 · 상태</h2><p class="muted">신청 당시 기본 참가비와 최종 입금액은 회원별로 저장됩니다. 입금 또는 참가 확정 후 금액을 바꾸려면 사유를 남겨 변경 이력을 기록해요.</p><div id="adminRows"></div></div></section></main>
 <script>
 const base='https://aqfmhqultzpakfqwzulj.supabase.co',key='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(base,key);
@@ -57,6 +70,9 @@ const content=document.getElementById('content'),notice=document.getElementById(
 let current=null;
 const escapeHtml=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const when=v=>v?new Date(v).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+function kstParts(value){if(!value)return{};const date=new Date(value);if(Number.isNaN(date.getTime()))return{};const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(date);const get=t=>parts.find(p=>p.type===t)?.value||'';return{date:get('year')+'-'+get('month')+'-'+get('day'),time:get('hour')+':'+get('minute')}}
+function kstIso(dateValue,timeValue){const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateValue||'')),time=/^(\d{2}):(\d{2})$/.exec(String(timeValue||'00:00'));if(!match||!time)return null;return new Date(Date.UTC(Number(match[1]),Number(match[2])-1,Number(match[3]),Number(time[1])-9,Number(time[2]))).toISOString()}
+const refundRuleLabel=code=>({BEFORE_HEADCOUNT_FIX:'참석 확정 당일~인원 픽스 전날',HEADCOUNT_FIX_TO_4_DAYS:'인원 픽스 후~행사 4일 전','3_DAYS_TO_PREVIOUS_DAY':'행사 3일 전~전날',EVENT_DAY:'행사 당일'}[code]||'환불 규정 적용');
 async function request(action,extra={}){
  const {data,error}=await db.auth.getSession();if(error||!data.session)throw new Error('로그인 후 신청할 수 있습니다.');
  const response=await fetch(base+'/functions/v1/event-application',{method:'POST',headers:{'Content-Type':'application/json',apikey:key,Authorization:'Bearer '+data.session.access_token},body:JSON.stringify({action,event_id:eventId,...extra}),cache:'no-store'});
@@ -68,25 +84,50 @@ async function load(){
  try{const result=await request('view');current=result;render(result)}
  catch(error){content.innerHTML='<p class="muted">'+escapeHtml(error.message)+'</p><a href="/me/?next='+encodeURIComponent('/apply/?id='+eventId)+'">로그인하기 →</a>';}
 }
-function paymentText(status,fee){return fee===null?'참가비 설정 대기':fee===0?'무료 일정':({UNPAID:'미입금',PAID:'입금 확인',REFUND_PENDING:'환불 대기',REFUNDED:'환불 완료'}[status]||'미입금')}
+function paymentText(status,fee){return fee==null?'참가비 확인 중':fee===0?(status==='PAID'?'입금 확인':'입금 없음'):({UNPAID:'미입금',PAID:'입금 확인',REFUND_PENDING:'환불 대기',REFUNDED:'환불 완료'}[status]||'미입금')}
+function money(value){return value==null?'운영진 확인 중':Number(value||0).toLocaleString('ko-KR')+'원'}
+function couponTypeLabel(type){return ({FIXED:'정액 할인',PERCENT:'비율 할인',FULL:'전액 할인',PRIORITY:'우선 참가권'})[type]||'쿠폰'}
+function couponDescription(c){return c.coupon_type==='FIXED'?money(c.value)+' 할인':c.coupon_type==='PERCENT'?Number(c.value)+'% 할인':couponTypeLabel(c.coupon_type)}
+function couponChecks(selector){return Array.from(document.querySelectorAll(selector+':checked')).map(input=>input.value)}
+function applicationAllowed(){
+ const r=current||{},e=r.event||{},fee=r.payment?.fee_won,cap=Number(e.application_capacity),now=Date.parse(r.now),open=Date.parse(e.application_opens_at||'2026-10-19T11:00:00Z'),close=Date.parse(e.application_closes_at||'9999-12-31T00:00:00Z');
+ const selected=couponChecks('.coupon-choice'),prioritySelected=(r.available_coupons||[]).some(c=>c.coupon_type==='PRIORITY'&&selected.includes(String(c.id)));
+ const capped=Number(r.count)>=cap;
+ return r.is_member===true&&e.application_enabled&&Number.isSafeInteger(cap)&&cap>0&&e.event_date>='2026-11-01'&&Number.isInteger(fee)&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&(!capped||prioritySelected)&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10)&&r.mine?.payment_status!=='REFUND_PENDING';
+}
+function previewCoupons(){
+ const fee=Number(current?.payment?.fee_won),selected=couponChecks('.coupon-choice');let remaining=Number.isInteger(fee)&&fee>=0?fee:0,priority=false;
+ const coupons=(current?.available_coupons||[]).filter(c=>selected.includes(String(c.id)));
+ coupons.forEach(c=>{if(c.coupon_type==='FIXED')remaining=Math.max(0,remaining-Number(c.value||0));else if(c.coupon_type==='PERCENT')remaining-=Math.floor(remaining*Number(c.value||0)/100);else if(c.coupon_type==='FULL')remaining=0;else if(c.coupon_type==='PRIORITY')priority=true});
+ const box=document.getElementById('couponPreview');if(box)box.innerHTML='예상 할인 <b>'+money(fee-remaining)+'</b> · 최종 입금액 <b>'+money(remaining)+'</b>'+(priority?' · 우선 참가권 적용':'');
+ const applyButton=document.getElementById('applyButton');if(applyButton)applyButton.disabled=!applicationAllowed();
+}
 function render(r){
  const e=r.event,p=r.payment||{},fee=Number.isInteger(p.fee_won)?p.fee_won:null,active=['APPLIED','CONFIRMED'].includes(r.mine?.status),cap=e.application_capacity;
+ const visibleBaseFee=r.mine?r.mine.base_fee_won:fee;
  const now=Date.parse(r.now),open=Date.parse(e.application_opens_at||'2026-10-19T11:00:00Z'),close=Date.parse(e.application_closes_at||'9999-12-31T00:00:00Z');
- const canApply=e.application_enabled&&e.event_date>='2026-11-01'&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10)&&r.mine?.payment_status!=='REFUND_PENDING';
+ const priorityAvailable=(r.available_coupons||[]).some(c=>c.coupon_type==='PRIORITY');
+ const canApply=r.is_member===true&&e.application_enabled&&e.event_date>='2026-11-01'&&fee!==null&&now>=Date.parse('2026-10-19T11:00:00Z')&&now>=open&&now<close&&r.count<cap&&e.event_date>new Date(now+9*3600000).toISOString().slice(0,10)&&r.mine?.payment_status!=='REFUND_PENDING';
  let status=e.application_enabled?'접수 준비 중':'신청을 받지 않는 일정';
- if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
+ if(e.application_enabled){if(!cap)status='정원이 설정되지 않았습니다';else if(now<open||now<Date.parse('2026-10-19T11:00:00Z'))status='신청 오픈 전';else if(now>=close)status='신청 마감';else if(r.count>=cap&&priorityAvailable)status='일반 정원 마감 · 우선 참가권으로 신청 가능';else if(r.count>=cap)status='정원 마감';else status='신청 접수 중'}
  const notification=r.notification||{};
  const needsMessageContact=Boolean(p.messaging_enabled)&&(!notification.has_phone||!notification.event_transaction_enabled);
  const contactCard=needsMessageContact?'<div class="message-contact"><b>신청 상태를 카카오톡/문자로 받아보세요</b><p>신청 완료, 입금 확인, 참가 확정 안내에만 사용하며 다른 회원에게 공개되지 않습니다.</p><label for="applicationPhone">휴대폰 번호</label><input id="applicationPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="01012345678"><label class="message-consent"><input id="applicationConsent" type="checkbox">신청·입금·참가 확정 안내를 카카오톡 또는 문자로 받겠습니다.</label></div>':'';
+ const couponPicker=!active&&fee!==null?'<section class="coupon-picker"><h3>보유 쿠폰</h3>'+((r.available_coupons||[]).length?r.available_coupons.map(c=>'<label class="coupon-option"><input class="coupon-choice" type="checkbox" value="'+escapeHtml(c.id)+'" onchange="previewCoupons()"><span><b>'+escapeHtml(c.title)+'</b> · '+escapeHtml(couponDescription(c))+(c.one_time?' · 1회 사용':'')+(c.stackable?' · 중복 가능':'')+'<small>'+(c.coupon_type==='PRIORITY'?'운영진 발급 우선 참가권':(c.expires_at?'만료 '+escapeHtml(when(c.expires_at)):'만료일 없음'))+'</small></span></label>').join(''):'<p class="muted">현재 사용할 수 있는 쿠폰이 없어요.</p>')+'<div id="couponPreview" class="coupon-preview">예상 할인 <b>0원</b> · 최종 입금액 <b>'+money(fee)+'</b></div></section>':'';
+ const refundSummary=r.mine?.refund_rate_percent!=null?'<div class="refund-result"><strong>환불 계산 · '+escapeHtml(paymentText(r.mine.payment_status,r.mine.final_amount_won))+'</strong><div>'+escapeHtml(refundRuleLabel(r.mine.refund_rule_code))+' · 환불률 '+Number(r.mine.refund_rate_percent)+'%</div><div>실제 입금 '+money(r.mine.actual_paid_won||0)+' · 환불 예정 '+money(r.mine.refund_amount_won||0)+' · 차감 '+money(r.mine.refund_deduction_won||0)+'</div>'+(r.mine.cancelled_at?'<div>취소 신청 시각 · '+escapeHtml(when(r.mine.cancelled_at))+' (한국 시간)</div>':'')+'</div>':'';
+ const mySummary=r.mine?'<div class="fee-breakdown"><span>기본 참가비</span><b>'+money(r.mine.base_fee_won)+'</b><span>적용 쿠폰</span><b>'+escapeHtml((r.mine.applied_coupons_snapshot||[]).map(c=>c.title).join(' · ')||'없음')+'</b><span>쿠폰 할인</span><b>− '+money(r.mine.discount_amount_won)+'</b><span>최종 입금액</span><b>'+money(r.mine.final_amount_won)+'</b><span>실제 입금액</span><b>'+(r.mine.actual_paid_won==null?(r.mine.payment_status==='PAID'?'기록 없음':'미입금'):money(r.mine.actual_paid_won))+'</b><span>입금 상태</span><b>'+escapeHtml(paymentText(r.mine.payment_status,r.mine.final_amount_won))+'</b><span>참가 확정 상태</span><b>'+escapeHtml(r.mine.status==='CONFIRMED'?'확정':r.mine.status==='CANCELLED'?'취소':'확정 대기')+'</b>'+(r.mine.confirmed_at?'<span>참가 확정 시각</span><b>'+escapeHtml(when(r.mine.confirmed_at))+' (한국 시간)</b>':'')+'</div>'+refundSummary+(r.mine.priority_participant?'<p><span class="priority-pill">우선 참가권 적용</span></p>':''):'';
  content.innerHTML='<div class="event-name">'+escapeHtml(e.title||'VOM 일정')+'</div><div class="meta">📅 '+escapeHtml(e.event_date)+' · '+escapeHtml(String(e.start_time||'').slice(0,5))+'<br>📍 '+escapeHtml(e.location||'장소 미정')+'</div><div class="info">'+escapeHtml(status)+(cap?' · '+r.count+' / '+cap+'명':'')+'</div>'+
- (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 운영진 확정 대기')+'</p><div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':contactCard+'<div class="actions"><button '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">'+(needsMessageContact?'동의 후 참가 신청하기':'참가 신청하기')+'</button></div>')+
+ (active?'<p class="status">'+(r.mine.status==='CONFIRMED'?'✅ 참가 확정':'🕓 신청 완료 · 운영진 확정 대기')+'</p>'+mySummary+'<div class="actions"><button class="danger" onclick="change(\'cancel\')">신청 취소</button></div>':(!active&&r.mine?mySummary:'')+contactCard+couponPicker+'<div class="actions"><button id="applyButton" '+(!canApply?'disabled':'')+' onclick="change(\'apply\')">'+(needsMessageContact?'동의 후 참가 신청하기':'참가 신청하기')+'</button></div>')+
  (e.application_opens_at?'<p class="muted">오픈: '+when(e.application_opens_at)+'</p>':'')+
  '<p class="muted">참가 신청은 본인 계정으로 진행하며, 입금 및 참가 확정은 운영진이 확인합니다.</p>';
- const payInfo='<div class="payment-box"><strong>참가비 · '+(fee===null?'설정 대기':fee===0?'무료':fee.toLocaleString('ko-KR')+'원')+'</strong>'
+ previewCoupons();
+ const payInfo='<div class="payment-box"><strong>기본 참가비 · '+(visibleBaseFee==null?'운영진 확인 중':money(visibleBaseFee))+'</strong>'
  +(fee>0?'<div class="payment-detail">'+escapeHtml(p.payment_instructions||'입금 안내를 준비 중입니다.')+'</div>':'')
  +(fee>0&&p.payment_due_at?'<p class="muted">입금 기한 · '+escapeHtml(when(p.payment_due_at))+'</p>':'')
  +(p.refund_instructions?'<p class="payment-detail">취소·환불 · '+escapeHtml(p.refund_instructions)+'</p>':'')
- +(r.mine?'<p class="muted">내 입금·환불 상태 · '+escapeHtml(paymentText(r.mine.payment_status,fee))+'</p>':'')
+ +(p.headcount_fixed_at?'<p class="muted">인원 픽스 · '+escapeHtml(when(p.headcount_fixed_at))+' (한국 시간)</p>':'')
+ +'<p class="payment-detail">취소 환불 기준 · 인원 픽스 전 100% · 픽스 후~행사 4일 전 80% · 행사 3일 전~전날 50% · 행사 당일 0%</p>'
+ +(r.mine&&!active?'<p class="muted">내 입금·환불 상태 · '+escapeHtml(paymentText(r.mine.payment_status,r.mine.final_amount_won))+'</p>':'')
  +(r.mine?.payment_status==='REFUND_PENDING'?'<p class="muted">취소 접수됨 · 환불을 기다리는 중이며 실제 환불이 완료된 상태는 아닙니다.</p>':'')+'</div>';
  const chatLink=r.mine?.status==='CONFIRMED'&&p.confirmed_chat_url?'<a class="chat-link" href="'+escapeHtml(p.confirmed_chat_url)+'" target="_blank" rel="noopener noreferrer">오픈채팅 입장하기 ↗</a>':'';
  content.insertAdjacentHTML('beforeend',payInfo+chatLink);
@@ -98,25 +139,77 @@ function render(r){
   document.getElementById('messagingEnabled').checked=p.messaging_enabled===true;
   document.getElementById('smsFallbackEnabled').checked=p.message_sms_fallback_enabled===true;
   document.getElementById('confirmedChatUrl').value=p.confirmed_chat_url||'';
+  const fixedAt=kstParts(p.headcount_fixed_at);
+  document.getElementById('headcountFixedDate').value=fixedAt.date||'';
+  document.getElementById('headcountFixedTime').value=fixedAt.time||'';
+  document.getElementById('refundPolicyHistory').innerHTML=(r.refund_policy_history||[]).map(h=>'<div><b>'+escapeHtml(when(h.created_at))+' · 인원 픽스 변경</b><br>'+escapeHtml(when(h.before_values?.headcount_fixed_at))+' → '+escapeHtml(when(h.after_values?.headcount_fixed_at))+' (한국 시간)</div>').join('')||'인원 픽스 변경 이력이 없습니다.';
   const dt=p.payment_due_at?new Date(p.payment_due_at):null;
   document.getElementById('payDue').value=dt?new Date(dt.getTime()-dt.getTimezoneOffset()*60000).toISOString().slice(0,16):'';
   document.getElementById('adminRows').innerHTML=(r.applications||[]).map(a=>{
-   const id=Number(a.id),isPaid=fee>0&&a.payment_status==='PAID';
+  const id=Number(a.id),isPaid=Number(a.final_amount_won)>0&&a.payment_status==='PAID',selectedIds=(a.applied_coupon_ids||[]).map(String),locked=Boolean(a.financial_locked_at),refundLocked=a.status==='CANCELLED';
    let buttons='';
    if(a.status==='APPLIED'){
-     if(fee>0&&a.payment_status==='UNPAID')buttons+='<button onclick="manage('+id+',\'mark_paid\')">입금 확인</button>';
+     if(Number(a.final_amount_won)>0&&a.payment_status==='UNPAID')buttons+='<button onclick="manage('+id+',\'mark_paid\')">입금 확인</button>';
      if(isPaid)buttons+='<button class="secondary" onclick="manage('+id+',\'mark_unpaid\')">입금 취소</button>';
-     if(fee!==null&&(fee===0||isPaid))buttons+='<button onclick="manage('+id+',\'confirm\')">참가 확정</button>';
+     if(Number(a.final_amount_won)===0||isPaid)buttons+='<button onclick="manage('+id+',\'confirm\')">참가 확정</button>';
    }
    if(a.status==='CONFIRMED')buttons+='<button class="secondary" onclick="manage('+id+',\'unconfirm\')">확정 해제</button>';
-   if(a.status==='CANCELLED'&&a.payment_status==='REFUND_PENDING')buttons+='<button class="danger" onclick="manage('+id+',\'refund_complete\')">환불 완료 기록</button>';
-   return '<div class="row"><div><b>'+escapeHtml(a.name)+'</b><br><small>'+escapeHtml(a.status==='CONFIRMED'?'확정':a.status==='APPLIED'?'신청':'취소')+' · '+escapeHtml(paymentText(a.payment_status,fee))+'</small></div><div class="admin-actions">'+buttons+'</div></div>';
+   if(a.status==='CANCELLED'&&a.payment_status==='REFUND_PENDING')buttons+='<button class="danger" onclick="manage('+id+',\'refund_complete\')">'+(Number(a.refund_amount_won)===0?'환불 없음 처리':'환불 완료 기록')+'</button>';
+   const coupons=(r.event_coupons||[]).map(c=>'<label><input class="admin-coupon-'+id+'" type="checkbox" value="'+escapeHtml(c.id)+'" '+(selectedIds.includes(String(c.id))?'checked':'')+'> '+escapeHtml(c.title)+' · '+escapeHtml(couponTypeLabel(c.coupon_type))+'</label>').join('');
+   const couponNames=(a.applied_coupons_snapshot||[]).map(c=>c.title).filter(Boolean).join(' · ')||'없음';
+   const history=(a.financial_history||[]).map(h=>'<div class="row"><div><b>'+escapeHtml(when(h.created_at))+'</b><br><small>'+escapeHtml(h.reason)+'</small><br><small>기본 '+money(h.before_values?.base_fee_won)+' → '+money(h.after_values?.base_fee_won)+' · 최종 '+money(h.before_values?.final_amount_won)+' → '+money(h.after_values?.final_amount_won)+' · 실제 입금 '+(h.before_values?.actual_paid_won==null?'미입금':money(h.before_values.actual_paid_won))+' → '+(h.after_values?.actual_paid_won==null?'미입금':money(h.after_values.actual_paid_won))+'</small></div></div>').join('');
+   const refundHistory=(a.refund_history||[]).map(h=>'<div><b>'+escapeHtml(when(h.requested_at))+' 취소 · '+escapeHtml(h.status==='COMPLETED'?'환불 완료': '환불 대기')+'</b><br>'+escapeHtml(h.refund_rule_label)+' · 환불률 '+Number(h.refund_rate_percent)+'% · 실제 입금 '+money(h.actual_paid_snapshot_won)+' · 환불 예정 '+money(h.refund_amount_won)+' · 차감 '+money(h.deduction_amount_won)+(h.completed_at?' · 완료 '+escapeHtml(when(h.completed_at)):'')+'</div>').join('');
+   const refundPanel=a.refund_rate_percent!=null?'<div class="refund-result"><strong>환불 계산 · '+escapeHtml(refundRuleLabel(a.refund_rule_code))+'</strong><div>환불률 '+Number(a.refund_rate_percent)+'% · 실제 입금 '+money(a.actual_paid_won||0)+' · 환불 예정 '+money(a.refund_amount_won||0)+' · 차감 '+money(a.refund_deduction_won||0)+'</div>'+(a.confirmed_at?'<div>참가 확정 시각 · '+escapeHtml(when(a.confirmed_at))+' (한국 시간)</div>':'')+(a.cancelled_at?'<div>취소 신청 시각 · '+escapeHtml(when(a.cancelled_at))+' (한국 시간)</div>':'')+'</div>':'';
+   const refundHistoryPanel=refundHistory?'<details class="refund-policy-history"><summary>환불 계산 이력 '+(a.refund_history||[]).length+'건</summary>'+refundHistory+'</details>':'';
+   const financeEditor=refundLocked?'<p class="muted">취소 후 환불 계산과 금액 기록은 잠겨 있습니다.</p>':'<div class="admin-finance-grid"><div><label>신청자별 기본 참가비</label><input class="admin-base-'+id+'" type="number" min="0" max="1000000" value="'+(a.base_fee_won==null?(fee==null?'':fee):Number(a.base_fee_won))+'"></div><div><label>실제 입금액</label><input class="admin-actual-'+id+'" type="number" min="0" max="1000000" value="'+(a.actual_paid_won==null?'':Number(a.actual_paid_won))+'" placeholder="미입금"></div></div><div class="admin-coupon-list">'+(coupons||'<small>이 일정에 발급된 쿠폰이 없습니다.</small>')+'</div><button class="secondary admin-save" onclick="saveApplicationFinance('+id+','+locked+')">금액·쿠폰 저장</button>';
+   return '<article class="admin-application '+(a.priority_participant?'priority':'')+'"><div class="admin-application-top"><div><strong>'+escapeHtml(a.name)+(a.priority_participant?' <span class="priority-pill">우선 참가권</span>':'')+'</strong><small>'+escapeHtml(a.status==='CONFIRMED'?'참가 확정':a.status==='APPLIED'?'신청 접수':'신청 취소')+' · '+escapeHtml(paymentText(a.payment_status,a.final_amount_won))+' · '+(locked?'금액 잠김':'금액 수정 가능')+'</small></div><div class="admin-actions">'+buttons+'</div></div><div class="fee-breakdown"><span>기본 참가비</span><b>'+money(a.base_fee_won)+'</b><span>적용 쿠폰</span><b>'+escapeHtml(couponNames)+'</b><span>쿠폰 할인</span><b>− '+money(a.discount_amount_won)+'</b><span>최종 입금액</span><b>'+money(a.final_amount_won)+'</b><span>실제 입금액</span><b>'+(a.actual_paid_won==null?(a.payment_status==='PAID'?money(a.final_amount_won):'미입금'):money(a.actual_paid_won))+'</b></div>'+refundPanel+refundHistoryPanel+financeEditor+(history?'<details><summary>금액 변경 이력 '+(a.financial_history||[]).length+'건</summary>'+history+'</details>':'')+'</article>';
   }).join('')||'<p class="muted">신청자가 없습니다.</p>';
+  renderCouponAdmin(r);
 
  }
 }
+function toLocalInput(value){if(!value)return '';const d=new Date(value);return Number.isNaN(d.getTime())?'':new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+function renderCouponAdmin(r){
+ const memberSelect=document.getElementById('couponMember');
+ memberSelect.innerHTML='<option value="">전체 활동 회원</option>'+(r.eligible_members||[]).map(m=>'<option value="'+Number(m.id)+'">'+escapeHtml(m.name||'이름 미등록')+'</option>').join('');
+ if(!document.getElementById('couponEditingId').value)document.getElementById('couponValidFrom').value=toLocalInput(new Date());
+ document.getElementById('couponRows').innerHTML=(r.event_coupons||[]).map(c=>{
+  const member=(r.eligible_members||[]).find(m=>String(m.id)===String(c.allowed_member_id));
+  return '<div class="coupon-admin-row"><div><b>'+escapeHtml(c.title)+'</b> · '+escapeHtml(couponDescription(c))+'<small>'+escapeHtml(member?.name||'전체 활동 회원')+' · '+(c.one_time?'1회 사용':'반복 사용')+' · '+(c.stackable?'중복 가능':'단독 사용')+' · '+(c.is_active?'사용 가능':'중지')+' · '+(c.expires_at?'만료 '+escapeHtml(when(c.expires_at)):'만료일 없음')+'</small></div><button class="secondary" onclick="editCoupon(\''+escapeHtml(c.id)+'\')">수정</button></div>';
+ }).join('')||'<p class="muted">이 일정에 발급된 쿠폰이 없습니다.</p>';
+}
+function syncCouponValue(){
+ const type=document.getElementById('couponType').value,input=document.getElementById('couponValue');
+ input.disabled=type==='FULL'||type==='PRIORITY';input.placeholder=type==='PERCENT'?'1~100%':type==='FIXED'?'원 단위':'할인 금액 없음';
+ if(input.disabled)input.value='';
+ if(type==='PRIORITY'){document.getElementById('couponOneTime').checked=true;document.getElementById('couponOneTime').disabled=true;document.getElementById('couponMember').required=true}else{document.getElementById('couponOneTime').disabled=false;document.getElementById('couponMember').required=false}
+}
+function resetCouponForm(){
+ document.getElementById('couponEditingId').value='';document.getElementById('couponTitle').value='';document.getElementById('couponType').value='FIXED';document.getElementById('couponValue').value='';document.getElementById('couponMember').value='';document.getElementById('couponValidFrom').value=toLocalInput(new Date());document.getElementById('couponExpiresAt').value='';document.getElementById('couponOneTime').checked=true;document.getElementById('couponStackable').checked=false;document.getElementById('couponActive').checked=true;document.getElementById('couponSaveButton').textContent='쿠폰 발급';syncCouponValue();
+}
+function editCoupon(id){
+ const c=(current?.event_coupons||[]).find(item=>String(item.id)===String(id));if(!c)return;
+ document.getElementById('couponEditingId').value=c.id;document.getElementById('couponTitle').value=c.title||'';document.getElementById('couponType').value=c.coupon_type;document.getElementById('couponValue').value=c.value??'';document.getElementById('couponMember').value=c.allowed_member_id??'';document.getElementById('couponValidFrom').value=toLocalInput(c.valid_from);document.getElementById('couponExpiresAt').value=toLocalInput(c.expires_at);document.getElementById('couponOneTime').checked=c.one_time===true;document.getElementById('couponStackable').checked=c.stackable===true;document.getElementById('couponActive').checked=c.is_active===true;document.getElementById('couponSaveButton').textContent='쿠폰 수정';syncCouponValue();document.getElementById('couponTitle').scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function saveCoupon(){
+ const type=document.getElementById('couponType').value,value=document.getElementById('couponValue').value.trim(),member=document.getElementById('couponMember').value;
+ if(type==='PRIORITY'&&!member){notice.textContent='우선 참가권을 사용할 회원을 지정해 주세요.';return}
+ if(['FIXED','PERCENT'].includes(type)&&(!Number.isInteger(Number(value))||Number(value)<1)){notice.textContent='쿠폰 할인 금액 또는 비율을 확인해 주세요.';return}
+ const starts=document.getElementById('couponValidFrom').value;
+ const body={title:document.getElementById('couponTitle').value.trim(),coupon_type:type,value:value===''?null:Number(value),allowed_member_id:member||null,valid_from:starts?new Date(starts).toISOString():new Date().toISOString(),expires_at:document.getElementById('couponExpiresAt').value?new Date(document.getElementById('couponExpiresAt').value).toISOString():null,one_time:document.getElementById('couponOneTime').checked,stackable:document.getElementById('couponStackable').checked,is_active:document.getElementById('couponActive').checked};
+ const editing=document.getElementById('couponEditingId').value;
+ try{notice.textContent=editing?'쿠폰 수정 중...':'쿠폰 발급 중...';await request(editing?'coupon_update':'coupon_create',{...body,...(editing?{coupon_id:editing}:{})});await load();resetCouponForm();notice.textContent=editing?'쿠폰을 수정했습니다.':'쿠폰을 발급했습니다.';}catch(error){notice.textContent=error.message}
+}
+async function saveApplicationFinance(id,locked){
+ const base=Number(document.querySelector('.admin-base-'+id)?.value),actualRaw=document.querySelector('.admin-actual-'+id)?.value.trim(),actual=actualRaw===''?null:Number(actualRaw),coupons=couponChecks('.admin-coupon-'+id);
+ if(!Number.isSafeInteger(base)||base<0||base>1000000){notice.textContent='신청자별 기본 참가비는 0원부터 100만원까지 입력해 주세요.';return}
+ if(actual!==null&&(!Number.isSafeInteger(actual)||actual<0||actual>1000000)){notice.textContent='실제 입금액은 0원부터 100만원까지 입력해 주세요.';return}
+ const reason=locked?prompt('입금 확인 또는 참가 확정 후 금액을 변경하는 사유를 입력해 주세요.'):null;
+ if(locked&&!reason?.trim())return;
+ try{notice.textContent='신청자 금액 저장 중...';await request('financial_update',{application_id:id,base_fee_won:base,actual_paid_won:actual,coupon_ids:coupons,reason:reason?.trim()||null});await load();notice.textContent='신청자별 금액을 저장했습니다.';}catch(error){notice.textContent=error.message}
+}
 async function change(action){
- if(action==='cancel'&&!confirm(current?.mine?.payment_status==='PAID'?'취소하면 환불 대기로 전환됩니다. 실제 환불은 운영진이 처리합니다. 취소할까요?':'참가 신청을 취소할까요?'))return;
+ if(action==='cancel'&&!confirm('취소 신청 시각과 실제 입금액으로 환불률과 환불 예정액을 계산합니다. 운영진이 환불 처리를 완료할 때까지 다시 신청할 수 없습니다. 취소할까요?'))return;
  const extra={};
  if(action==='apply'&&current?.payment?.messaging_enabled){
    const phone=document.getElementById('applicationPhone');
@@ -127,22 +220,34 @@ async function change(action){
      extra.notification_consent=true;
    }
  }
+ if(action==='apply')extra.coupon_ids=couponChecks('.coupon-choice');
  try{notice.textContent='처리 중...';await request(action,extra);await load()}catch(error){notice.textContent=error.message}
 }
 async function manage(id,action){
- const prompts={mark_paid:'실제 입금 내역을 확인했나요?',mark_unpaid:'입금 확인을 취소할까요?',confirm:'참가를 확정할까요?',unconfirm:'확정을 해제할까요?',refund_complete:'환불 송금을 실제로 마쳤나요? 버튼은 기록만 변경하며 송금을 실행하지 않습니다.'};
+ const row=(current?.applications||[]).find(item=>Number(item.id)===Number(id));
+ const prompts={mark_paid:'실제 입금 내역을 확인했나요?',mark_unpaid:'입금 확인을 취소할까요?',confirm:'참가를 확정할까요?',unconfirm:'확정을 해제할까요?',refund_complete:Number(row?.refund_amount_won)===0?'예정 환불액은 0원입니다. 환불 없음으로 완료 처리하고 재신청을 허용할까요?':'환불 예정액 '+money(row?.refund_amount_won)+'을 실제로 송금했나요? 완료 처리 후 재신청할 수 있습니다. 이 버튼은 송금을 실행하지 않습니다.'};
  if(!confirm(prompts[action]||'변경할까요?'))return;
- try{notice.textContent='처리 중...';await request(action,{application_id:id});await load()}catch(error){notice.textContent=error.message}
+ const extra={application_id:id};
+ if(action==='mark_paid'){
+  const raw=prompt('실제로 입금된 금액을 원 단위로 입력해 주세요.',String(row?.actual_paid_won??row?.final_amount_won??''));
+  if(raw===null)return;const amount=Number(raw);if(!Number.isSafeInteger(amount)||amount<0||amount>1000000){notice.textContent='실제 입금액은 0원부터 100만원까지 입력해 주세요.';return}extra.actual_paid_won=amount;
+ }
+ try{notice.textContent='처리 중...';await request(action,extra);await load()}catch(error){notice.textContent=error.message}
 }
 async function savePaymentConfig(){
  const raw=document.getElementById('feeWon').value.trim(),fee=raw===''?null:Number(raw);
  if(fee!==null&&(!Number.isInteger(fee)||fee<0||fee>1000000)){notice.textContent='참가비는 0원부터 100만원까지 입력해 주세요.';return}
  const due=document.getElementById('payDue').value;
+ const headcountFixedDate=document.getElementById('headcountFixedDate').value;
+ const headcountFixedTime=document.getElementById('headcountFixedTime').value;
+ const headcountFixedAt=kstIso(headcountFixedDate,headcountFixedTime);
+ if(!headcountFixedAt){notice.textContent='인원 픽스 일시를 한국 시간 기준으로 입력해 주세요.';return}
  try{
   notice.textContent='설정 저장 중...';
   await request('payment_config',{fee_won:fee,payment_instructions:document.getElementById('payInstruction').value,
    refund_instructions:document.getElementById('refundInstruction').value,
    payment_due_at:due?new Date(due).toISOString():null,
+   headcount_fixed_at:headcountFixedAt,
    messaging_enabled:document.getElementById('messagingEnabled').checked,
    message_sms_fallback_enabled:document.getElementById('smsFallbackEnabled').checked,
    confirmed_chat_url:document.getElementById('confirmedChatUrl').value.trim()});
@@ -151,4 +256,5 @@ async function savePaymentConfig(){
 }
 load();
 </script></body></html>
+
 

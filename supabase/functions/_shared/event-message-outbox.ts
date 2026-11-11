@@ -32,10 +32,18 @@ type PaymentRow = {
 type ApplicationRow = {
   id: number;
   member_id: number;
+  payment_status?: string | null;
   applied_at?: string | null;
   paid_at?: string | null;
   confirmed_at?: string | null;
   cancelled_at?: string | null;
+  final_amount_won?: number | null;
+  actual_paid_won?: number | null;
+  refund_rule_code?: string | null;
+  refund_rule_label?: string | null;
+  refund_rate_percent?: number | null;
+  refund_amount_won?: number | null;
+  refund_deduction_won?: number | null;
 };
 
 type MemberRow = { id: number; name?: string | null; phone?: string | null };
@@ -90,7 +98,31 @@ function eventLabel(event: EventRow) {
 
 function moneyLabel(fee: unknown) {
   const amount = Number(fee);
-  return Number.isSafeInteger(amount) && amount >= 0 ? (amount === 0 ? "무료" : `${amount.toLocaleString("ko-KR")}원`) : "운영진 안내 확인";
+  return Number.isSafeInteger(amount) && amount >= 0 ? `${amount.toLocaleString("ko-KR")}원` : "운영진 안내 확인";
+}
+
+function refundNotice(application: ApplicationRow, payment: PaymentRow) {
+  const rate = Number(application.refund_rate_percent);
+  if (![0, 50, 80, 100].includes(rate)) {
+    return text(payment.refund_instructions, 500) || "환불 안내는 MY VOM에서 확인해 주세요.";
+  }
+  const actualPaid = Number(application.actual_paid_won ?? (application.payment_status === "PAID" ? application.final_amount_won : 0) ?? 0);
+  const refund = Number(application.refund_amount_won ?? 0);
+  const deduction = Number(application.refund_deduction_won ?? Math.max(0, actualPaid - refund));
+  const windowLabel = text(application.refund_rule_label, 80) || ({
+    BEFORE_HEADCOUNT_FIX: "참석 확정 당일~인원 픽스 전날",
+    HEADCOUNT_FIX_TO_4_DAYS: "인원 픽스 후~행사 4일 전",
+    "3_DAYS_TO_PREVIOUS_DAY": "행사 3일 전~전날",
+    EVENT_DAY: "행사 당일",
+  } as Record<string, string>)[String(application.refund_rule_code || "")] || "환불 규정 적용";
+  const lines = [
+    `적용 구간: ${windowLabel}`,
+    `환불률 ${rate}% · 실제 입금액 ${moneyLabel(actualPaid)}`,
+    `환불 예정액 ${moneyLabel(refund)} · 차감액 ${moneyLabel(deduction)}`,
+  ];
+  const extra = text(payment.refund_instructions, 180);
+  if (extra) lines.push(`추가 안내: ${extra}`);
+  return lines.join("\n").slice(0, 500);
 }
 
 function dueLabel(value: unknown) {
@@ -186,6 +218,12 @@ async function enqueue(
   const occurredAt = eventDedupedAt(kind, application) || new Date().toISOString();
   const dedupeKey = `${kind}:${application.id}:${occurredAt}`.slice(0, 180);
   const payload = payloadFor(event, payment, applicant, Boolean(payment.message_sms_fallback_enabled));
+  payload.fee_label = application.final_amount_won == null ? "운영진 안내 확인" : moneyLabel(application.final_amount_won);
+  if (kind === "MEMBER_APPLICATION_CANCELLED") payload.refund_instructions = refundNotice(application, payment);
+  if (application.final_amount_won === 0) {
+    payload.payment_due_label = "입금 불필요";
+    payload.payment_instructions = "입금할 금액이 없습니다.";
+  }
   payload.recipient_name = text(recipient.name, 40) || payload.recipient_name;
   const { error } = await service.from("event_message_outbox").upsert({
     event_id: event.id,
@@ -393,4 +431,5 @@ export async function dispatchEventMessages(service: any, limit = 12) {
   }
   return { checked: (pending || []).length, accepted, failed, skipped, waiting };
 }
+
 

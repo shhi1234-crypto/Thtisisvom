@@ -102,6 +102,7 @@
 .member-utility-list .quick-link{min-width:0;min-height:76px;padding:12px}
 .member-utility-list .quick-link b{font-size:12px}
 .member-utility-list .quick-link small{font-size:9px;line-height:1.45}
+.my-event-applications{margin-top:14px}.my-event-application-list{display:grid;gap:9px;padding:12px}.my-event-application{padding:13px;border:1px solid #e8e4f3;border-radius:14px;background:#fff}.my-event-application-title{display:flex;justify-content:space-between;align-items:flex-start;gap:9px}.my-event-application-title strong{color:#343950;font-size:12px}.my-event-application-title span{flex:0 0 auto;color:#6653d2;font-size:10px;font-weight:800}.my-event-application>small{display:block;margin-top:4px;color:#858b9c;font-size:10px}.my-event-money{display:grid;grid-template-columns:1fr auto;gap:5px 10px;margin-top:11px;padding-top:10px;border-top:1px solid #f0edf6;color:#72788c;font-size:10px}.my-event-money b{text-align:right;color:#42485d;font-size:10px}.my-event-application>em{display:inline-flex;margin-top:9px;padding:4px 8px;border-radius:999px;background:#fff3dd;color:#9c671d;font-size:9px;font-style:normal;font-weight:800}.my-event-application>a{display:block;margin-top:10px;color:#6856d4;font-size:10px;font-weight:800;text-decoration:none}
 @media(max-width:720px){
   .member-command-center{padding:18px}
   .member-command-head{align-items:flex-start;flex-direction:column}
@@ -139,10 +140,11 @@ const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
 const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const app=document.getElementById('app');
 
-let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,messagePreferences=null,mySongs=[],editingMySongId=null,setlistEditorOpen=false,myCoupons=[],shopProducts=[],myPointTotal=null,couponCenterError='';
+let members=[],session=null,myMember=null,isAdministrator=false,accountSetting=null,messagePreferences=null,mySongs=[],myEventApplications=[],editingMySongId=null,setlistEditorOpen=false,myCoupons=[],shopProducts=[],myPointTotal=null,couponCenterError='';
 
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function cleanDisplayText(value){return String(value??'').trim().replace(/\s+/g,' ')}
+function wonDisplay(value){return value==null?'운영진 확인 중':Number(value).toLocaleString('ko-KR')+'원'}
 function memberDisplayName(member,fallback='회원'){return cleanDisplayText(member?.name)||cleanDisplayText(member?.nickname)||fallback}
 function say(message,isError=false){const el=document.getElementById('toast');el.textContent=message;el.className='toast show'+(isError?' error':'');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.className='toast',3400)}
 function accountEmail(id){return 'member-'+Number(id)+'@member.thisisvom.app'}
@@ -154,7 +156,7 @@ function memberName(id){const m=members.find(x=>String(x.id)===String(id));retur
 async function invokeAccount(body){const {data,error}=await db.functions.invoke('member-account',{body});if(error){let message=error.message||'요청을 처리하지 못했습니다.';try{const text=await error.context?.text?.();const parsed=JSON.parse(text);message=parsed.error||message}catch(_){ }throw new Error(message)}if(data?.error)throw new Error(data.error);return data}
 async function loadMembers(){const {data,error}=await db.from('members_public').select('id,name,nickname,region,role,profile_image_url,favorite_singers,job,join_order').order('join_order',{ascending:true});if(error)throw error;members=data||[]}
 async function loadSession(){
- const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;messagePreferences=null;mySongs=[];editingMySongId=null;myCoupons=[];shopProducts=[];myPointTotal=null;couponCenterError='';if(!session)return;
+ const {data}=await db.auth.getSession();session=data.session||null;myMember=null;isAdministrator=false;accountSetting=null;messagePreferences=null;mySongs=[];myEventApplications=[];editingMySongId=null;myCoupons=[];shopProducts=[];myPointTotal=null;couponCenterError='';if(!session)return;
  let context;
  try{
    context=await requestAccess({action:'context'},session.access_token);
@@ -188,6 +190,29 @@ async function loadMySongs(){
     .order('updated_at',{ascending:false});
   if(error)throw error;
   mySongs=data||[];
+}
+
+
+async function loadMyEventApplications(){
+  myEventApplications=[];
+  if(!myMember?.id)return;
+  const {data,error}=await db.functions.invoke('event-application',{body:{action:'my_applications'}});
+  if(error){let message=error.message||'참가 신청 내역을 불러오지 못했습니다.';try{const raw=await error.context?.text?.();const parsed=JSON.parse(raw);message=parsed.error||message}catch(_){}throw new Error(message)}
+  if(data?.error)throw new Error(data.error);
+  myEventApplications=data?.applications||[];
+}
+
+function eventApplicationMarkup(){
+  const rows=myEventApplications.length?myEventApplications.map(item=>{
+    const event=item.event||{},status=item.status==='CONFIRMED'?'참가 확정':item.status==='CANCELLED'?'신청 취소':'확정 대기';
+    const payment=item.final_amount_won==null?'금액 확인 중':item.payment_status==='PAID'?'입금 확인':item.payment_status==='REFUND_PENDING'?'환불 대기':item.payment_status==='REFUNDED'?'환불 완료':Number(item.final_amount_won)===0?'0원 · 입금 없음':'미입금';
+    const date=event.event_date?String(event.event_date).replaceAll('-','.'):'';
+    const coupons=Array.isArray(item.applied_coupons_snapshot)?item.applied_coupons_snapshot.map(c=>c.title).filter(Boolean).join(' · '):'';
+    const refundRule=({BEFORE_HEADCOUNT_FIX:'참석 확정~인원 픽스 전',HEADCOUNT_FIX_TO_4_DAYS:'인원 픽스 후~행사 4일 전','3_DAYS_TO_PREVIOUS_DAY':'행사 3일 전~전날',EVENT_DAY:'행사 당일'})[item.refund_rule_code]||'환불 규정';
+    const refund=item.refund_rate_percent==null?'':'<div class="my-event-money"><span>환불 구간</span><b>'+esc(refundRule)+'</b><span>환불률</span><b>'+Number(item.refund_rate_percent)+'%</b><span>환불 예정액</span><b>'+wonDisplay(item.refund_amount_won)+'</b><span>차감액</span><b>'+wonDisplay(item.refund_deduction_won)+'</b></div><em>'+esc(payment)+' · 취소 신청 '+esc(item.cancelled_at?new Date(item.cancelled_at).toLocaleString("ko-KR",{timeZone:"Asia/Seoul",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}):"")+'</em>';
+    return '<article class="my-event-application"><div class="my-event-application-title"><strong>'+esc(event.title||'VOM 일정')+'</strong><span>'+esc(status)+'</span></div><small>'+esc(date)+(event.start_time?' · '+esc(String(event.start_time).slice(0,5)):'')+(event.location?' · '+esc(event.location):'')+'</small><div class="my-event-money"><span>기본 참가비</span><b>'+wonDisplay(item.base_fee_won)+'</b><span>적용 쿠폰</span><b>'+esc(coupons||'없음')+'</b><span>쿠폰 할인</span><b>− '+wonDisplay(item.discount_amount_won)+'</b><span>최종 입금액</span><b>'+wonDisplay(item.final_amount_won)+'</b><span>실제 입금액</span><b>'+(item.actual_paid_won==null?(item.payment_status==='PAID'?'기록 없음':'미입금'):wonDisplay(item.actual_paid_won))+'</b><span>입금 상태</span><b>'+esc(payment)+'</b></div>'+refund+(item.priority_participant?'<em>우선 참가권 적용</em>':'')+'<a href="/apply/?id='+Number(item.event_id)+'">신청 내역 열기 →</a></article>';
+  }).join(''):'<div class="coupon-empty">아직 참가 신청 내역이 없어요.<br>CALENDAR에서 신청할 수 있는 일정을 확인해 보세요.</div>';
+  return '<details class="dashboard-detail my-event-applications"><summary><div><b>내 참가 신청</b><small>참가비·쿠폰·입금·확정 상태</small></div><i>⌄</i></summary><div class="my-event-application-list">'+rows+'</div></details>';
 }
 
 
@@ -277,7 +302,7 @@ async function requestAccess(body,token){
  let response;try{response=await fetch(SUPABASE_URL+'/functions/v1/vom-access',{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPABASE_KEY,...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body),cache:'no-store',signal:AbortSignal.timeout(15000)});}catch(_){throw new Error('로그인 서버에 연결하지 못했습니다. 잠시 후 다시 시도해 주세요.');}
  const data=await response.json();if(!response.ok)throw Object.assign(new Error(data.error||'로그인 정보를 확인하지 못했습니다.'),{status:response.status});return data;
 }
-async function loadWorkspace(){const results=await Promise.allSettled([loadMembers(),loadMySongs(),loadCouponCenter()]);return results.some(result=>result.status==='rejected')?'로그인은 완료됐지만 일부 개인 자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.':'';}
+async function loadWorkspace(){const results=await Promise.allSettled([loadMembers(),loadMySongs(),loadCouponCenter(),loadMyEventApplications()]);return results.some(result=>result.status==='rejected')?'로그인은 완료됐지만 일부 개인 자료를 불러오지 못했습니다. 잠시 후 다시 열어 주세요.':'';}
 
 function appInstallGuideMarkup(){
   return '<details class="dashboard-detail app-install-guide"><summary><div><b>VOM을 앱처럼 추가하기</b><small>홈 화면이나 바탕화면에서 바로 열 수 있어요.</small></div><i>⌄</i></summary><div class="app-install-body"><p>앱스토어 다운로드가 아니라, 지금 쓰는 브라우저에서 VOM을 홈 화면에 추가하는 방식이에요.</p><ol><li><strong>아이폰</strong> · Safari에서 공유 버튼 → <b>홈 화면에 추가</b></li><li><strong>안드로이드</strong> · Chrome 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></li><li><strong>PC</strong> · 주소창의 설치 아이콘 또는 브라우저 메뉴 → <b>앱 설치</b></li></ol><a class="app-install-link" href="/">홈에서 설치하기 →</a></div></details>';
@@ -358,6 +383,7 @@ function renderDashboard(){
         '<a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정</b><small>현재 신청할 수 있는 공개 일정을 봐요.</small></div><span>→</span></a>'+
         '<button type="button" class="quick-link quick-link-button" onclick="openHangoutRequest()"><div><b>벙 개설 신청</b><small>양식을 복사해 운영진에게 바로 보내요.</small></div><span>→</span></button>'+
       '</div>'+
+      eventApplicationMarkup()+
       '<details class="member-utility"><summary><div><b>편의 기능</b><small>파트 마법사 등 회원용 도구</small></div><i>⌄</i></summary><div class="member-utility-list">'+
         '<a class="quick-link" href="/convenience/"><div><b>편의 기능 열기</b><small>승인된 회원이 파트 마법사와 회원 도구를 사용할 수 있어요.</small></div><span>→</span></a>'+
       '</div></details>'+
