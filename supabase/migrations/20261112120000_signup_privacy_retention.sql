@@ -15,6 +15,15 @@ alter table public.signup_message_outbox
   alter column recipient_phone drop not null,
   add column if not exists consent_snapshot boolean not null default false;
 
+-- Existing queued notices keep the explicit opt-in state captured for their invite.
+update public.signup_message_outbox as outbox
+set consent_snapshot = coalesce((
+  select preference.enabled is true and preference.consented_at is not null
+  from public.signup_message_preferences as preference
+  where preference.invite_id = outbox.invite_id
+), false)
+where outbox.status in ('QUEUED', 'WAITING_FOR_CONFIGURATION');
+
 -- A result notice is queued only after the applicant explicitly opted in.
 -- The outbox can finish delivery after the application profile itself is erased.
 update public.signup_message_outbox
