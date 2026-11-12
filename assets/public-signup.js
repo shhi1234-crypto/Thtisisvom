@@ -29,8 +29,19 @@
       const statuses={SCHEDULED:['접수 예약 중입니다','신청서가 저장되었습니다. 다음 날 오전 9시에 자동 접수되며, 접수 후 3시간 이내에 결과를 확인할 수 있습니다.'],IN_REVIEW:['운영진이 검토 중입니다','운영진이 제출 자료를 확인하고 있습니다. 검토가 지연되면 다음 날 안내될 수 있으니 잠시 후 다시 확인해 주세요.'],APPROVED:['합격 처리됐어요','신청 시 작성한 이름과 비밀번호로 로그인해 주세요.'],APPROVED_WAITING:['합격 처리 후 가입 완료를 진행 중입니다','운영진 검토를 통과했습니다. 회원 프로필 생성이 완료되면 로그인할 수 있습니다.'],REJECTED:['불합격 처리됐습니다','자세한 안내는 소모임 운영진에게 문의해 주세요.'],DISCARDED:['신청서가 폐기됐습니다','폐기된 신청서는 로그인 후보와 회원 목록에 노출되지 않습니다. 자세한 안내는 소모임 운영진에게 문의해 주세요.'],CANCELLED:['가입 신청이 취소됐습니다','접수 여부는 소모임 운영진에게 확인해 주세요.'],PREPARING:['가입 신청을 확인 중입니다','접수 여부 확인이 필요합니다. 소모임 운영진에게 문의해 주세요.']};
       const [title,detail]=statuses[data.state]||statuses.PREPARING;document.getElementById('applicationStatusTitle').textContent=title;document.getElementById('applicationStatusDetail').textContent=detail;
       document.getElementById('applicationStatusTime').textContent=(data.submitted_at?'접수: '+kst(data.submitted_at):data.scheduled_at?'접수 예정: '+kst(data.scheduled_at):'')+(data.check_at&&['SCHEDULED','IN_REVIEW'].includes(data.state)?' · 결과 확인 예정: '+kst(data.check_at)+'까지':'');
-      document.getElementById('applicationLoginLink').hidden=data.state!=='APPROVED';output.hidden=false;say('본인의 가입 신청 상태를 확인했습니다.','success');
+      document.getElementById('applicationLoginLink').hidden=data.state!=='APPROVED';document.getElementById('applicationWithdrawButton').hidden=!['SCHEDULED','IN_REVIEW'].includes(data.state);output.hidden=false;say('본인의 가입 신청 상태를 확인했습니다.','success');
     }catch(error){say(error.name==='TimeoutError'?'서버 연결이 지연됩니다. 잠시 후 다시 확인해 주세요.':error.message,'error');}finally{submit.disabled=false;}
+  });
+  document.getElementById('applicationWithdrawButton').addEventListener('click',async event=>{
+    const button=event.currentTarget;
+    if(!window.confirm('신청을 철회하면 운영진 심사가 중단되고 프로필과 제출한 사진·라이브 자료가 삭제됩니다. 진행할까요?'))return;
+    if(window.prompt('계속하려면 철회를 입력해 주세요.')!=='철회')return say('신청 철회가 취소됐어요.');
+    button.disabled=true;say('신청을 철회하고 정보를 삭제하고 있습니다.');
+    try{
+      const response=await fetch('https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/vom-access',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({action:'withdraw_application',candidate_name:document.getElementById('statusLoginName').value.trim(),password:document.getElementById('statusPassword').value}),cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});
+      const data=await response.json();if(!response.ok)throw new Error(data.error||'신청을 철회하지 못했습니다.');
+      document.getElementById('applicationStatusTitle').textContent='신청 철회 완료';document.getElementById('applicationStatusDetail').textContent='회원가입 신청이 취소됐고 신청 정보와 제출 자료 삭제를 마쳤습니다.';document.getElementById('applicationLoginLink').hidden=true;button.hidden=true;say('신청 철회와 정보 삭제가 완료됐어요.','success');
+    }catch(error){say(error.name==='TimeoutError'?'서버 연결이 지연됩니다. 잠시 후 신청 상태를 다시 확인해 주세요.':error.message,'error');}finally{button.disabled=false;}
   });
   function say(text,kind=''){message.textContent=text;message.className='ot-message'+(kind?' '+kind:'');}
   async function request(body){const response=await fetch(endpoint,{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(15000)});const data=await response.json();if(!response.ok)throw new Error(data.error||'요청을 처리하지 못했습니다.');return data;}

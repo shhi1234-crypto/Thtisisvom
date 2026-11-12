@@ -1,4 +1,5 @@
 import { normalizeKoreanMobile } from "./event-message-outbox.ts";
+import { nextMemberKakaoAllowedAt } from "./kakao-quiet-hours.ts";
 
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
 
@@ -23,7 +24,8 @@ type SignupOutboxRow = {
   invite_id: string;
   review_id?: number | null;
   message_kind: SignupMessageKind;
-  recipient_phone: string;
+  recipient_phone: string | null;
+  consent_snapshot: boolean;
   recipient_name: string;
   payload: Record<string, unknown>;
   status: string;
@@ -74,7 +76,9 @@ function payloadFor(kind: SignupMessageKind, name: unknown) {
     applicant_name: recipientName,
     confirmation_url: kind === "SIGNUP_APPROVED"
       ? "https://thisisvom.vercel.app/me/"
-      : "https://thisisvom.vercel.app/ot-room/?result=1",
+      : kind === "SIGNUP_REJECTED"
+        ? "https://thisisvom.vercel.app/"
+        : "https://thisisvom.vercel.app/ot-room/?result=1",
     fallback_sms_enabled: false,
   };
 }
@@ -95,7 +99,7 @@ function fallbackText(kind: SignupMessageKind, payload: Record<string, unknown>)
   if (kind === "SIGNUP_APPROVED") {
     return `[VOM 가입 승인]\n${name}님, VOM 가입 신청이 승인되었습니다.\n홈페이지에서 로그인해 주세요.\n${url}`;
   }
-  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n신청 결과와 안내를 확인해 주세요.\n${url}`;
+  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n추가 안내가 필요하면 홈페이지에서 문의해 주세요.\n${url}`;
 }
 
 export async function queueSignupMessage(service: any, input: SignupMessageInput) {
@@ -110,6 +114,7 @@ export async function queueSignupMessage(service: any, input: SignupMessageInput
     message_kind: input.kind,
     recipient_phone: phone,
     recipient_name: name,
+    consent_snapshot: true,
     dedupe_key: dedupeKey,
     payload,
     status: "QUEUED",
@@ -188,9 +193,20 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 }
 
 export async function dispatchSignupMessages(service: any, limit = 12) {
-  const now = new Date().toISOString();
+  const dispatchAt = new Date();
+  const now = dispatchAt.toISOString();
+  const quietUntil = nextMemberKakaoAllowedAt(dispatchAt);
+  if (quietUntil) {
+    const { data: deferred, error: deferError } = await service.from("signup_message_outbox")
+      .update({ next_attempt_at: quietUntil, updated_at: now })
+      .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
+      .lte("next_attempt_at", now)
+      .select("id");
+    if (deferError) throw deferError;
+    return { checked: 0, accepted: 0, failed: 0, skipped: 0, waiting: 0, deferred: (deferred || []).length };
+  }
   const { data: pending, error } = await service.from("signup_message_outbox")
-    .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,payload,status,attempts")
+    .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,consent_snapshot,payload,status,attempts")
     .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
     .lte("next_attempt_at", now)
     .order("id", { ascending: true })
@@ -203,7 +219,7 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       .update({ status: "SENDING", locked_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq("id", job.id)
       .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
-      .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,payload,status,attempts")
+      .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,consent_snapshot,payload,status,attempts")
       .maybeSingle();
     if (claimError) throw claimError;
     if (!claimed) continue;
@@ -213,13 +229,20 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       .eq("invite_id", current.invite_id)
       .maybeSingle();
     if (preferenceError) {
-      await mark(service, current.id, { status: "FAILED", last_error: "preference_lookup_failed", locked_at: null });
+      await mark(service, current.id, {
+        status: "FAILED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
+        last_error: "preference_lookup_failed",
+        locked_at: null,
+      });
       failed++;
       continue;
     }
     const recipientPhone = normalizeKoreanMobile(preference?.phone || current.recipient_phone);
-    if (!preference?.enabled || !recipientPhone) {
-      await mark(service, current.id, { status: "SKIPPED", last_error: "recipient_not_opted_in_or_invalid_phone", locked_at: null });
+    if ((preference && preference.enabled !== true) || current.consent_snapshot !== true || !recipientPhone) {
+      await mark(service, current.id, { status: "SKIPPED", recipient_phone: null, recipient_name: "회원", payload: {}, last_error: "recipient_not_opted_in_or_invalid_phone", locked_at: null });
       skipped++;
       continue;
     }
@@ -230,6 +253,21 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       waiting++;
       continue;
     }
+    const { data: stillSending, error: claimCheckError } = await service.from("signup_message_outbox")
+      .select("id").eq("id", current.id).eq("status", "SENDING").maybeSingle();
+    if (claimCheckError) {
+      await mark(service, current.id, {
+        status: "FAILED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
+        last_error: "outbox_claim_check_failed",
+        locked_at: null,
+      });
+      failed++;
+      continue;
+    }
+    if (!stillSending) continue;
     try {
       const response = await fetch(SOLAPI_SEND_URL, {
         method: "POST",
@@ -258,6 +296,9 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       if (!response.ok || String(message?.statusCode || "").startsWith("4") || String(message?.statusCode || "").startsWith("5")) {
         await mark(service, current.id, {
           status: "FAILED",
+          recipient_phone: null,
+          recipient_name: "회원",
+          payload: {},
           attempts: Number(current.attempts || 0) + 1,
           last_error: messageError(responseBody?.errorMessage || message?.statusCode || `solapi_http_${response.status}`),
           locked_at: null,
@@ -267,6 +308,9 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       }
       await mark(service, current.id, {
         status: "ACCEPTED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
         attempts: Number(current.attempts || 0) + 1,
         provider_message_id: text(message?.messageId || responseBody?.groupInfo?.groupId, 160) || null,
         accepted_at: new Date().toISOString(),
@@ -277,6 +321,9 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
     } catch (_) {
       await mark(service, current.id, {
         status: "FAILED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
         attempts: Number(current.attempts || 0) + 1,
         last_error: "solapi_request_unknown_outcome",
         locked_at: null,

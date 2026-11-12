@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, VIDEO_BUCKET, DEFAULT_ORIGIN, checkRequest, failure, headers, json, mediaLink, newToken, positiveInt, requireOperator, textField, tokenHash } from "../_shared/ot-core.ts";
 import { notifyPendingOT, notifyApproval, notifyPendingApprovals } from "../_shared/ot-push.ts";
 import { dispatchSignupMessages, queueSignupResultMessage } from "../_shared/signup-message-outbox.ts";
+import { purgeResolvedSignup } from "../_shared/privacy-purge.ts";
 
 export async function handle(req: Request, service: any) {
   let origin = DEFAULT_ORIGIN;
@@ -173,9 +174,10 @@ export async function handle(req: Request, service: any) {
       if (error) throw new ApiError(409, "이미 확정됐거나 심사 대상이 변경됐습니다. 목록을 새로 확인해 주세요.");
       try {await notifyApproval(service,reviewId);} catch {console.error('Approval notification queued');}
       try {
-        await queueSignupResultMessage(service,reviewId,String(data?.status||''));
-        await dispatchSignupMessages(service,3);
-      } catch { console.error('Signup result message queue deferred'); }
+        await queueSignupResultMessage(service, reviewId, String(data?.status || ""));
+        if (data?.status === "REJECTED") await purgeResolvedSignup(service, reviewId);
+        await dispatchSignupMessages(service, 3);
+      } catch { console.error("Signup result message or privacy cleanup deferred"); }
       return json(origin, { ok: true, ...data });
     }
 
@@ -208,6 +210,7 @@ export async function handle(req: Request, service: any) {
         }
         throw new Error("review_discard_failed");
       }
+      await purgeResolvedSignup(service, reviewId);
       return json(origin, { ok: true, ...data });
     }
 

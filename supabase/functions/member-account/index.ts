@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { issueActivation } from "../_shared/member-access.ts";
+import { anonymizeMemberAccount } from "../_shared/privacy-purge.ts";
 import webpush from "npm:web-push@3.6.7";
 
 const allowedOrigins = new Set([
@@ -341,13 +342,35 @@ Deno.serve(async (req) => {
       return response({ ok: true, member: data }, 200, requestOrigin);
     }
 
+    if (action === "withdraw_membership") {
+      const member = await requireLinkedMember(req, admin);
+      if (payload.confirm !== "탈퇴") return response({ error: "탈퇴 확인 문구를 입력해 주세요." }, 400, requestOrigin);
+      let result: any;
+      try {
+        result = await anonymizeMemberAccount(admin, Number(member.id));
+      } catch (error) {
+        if (error instanceof Error && error.message === "member_privacy_last_admin") {
+          return response({ error: "마지막 관리자 계정은 탈퇴할 수 없어요. 먼저 다른 관리자를 지정해 주세요." }, 409, requestOrigin);
+        }
+        throw error;
+      }
+      return response({ ok: true, ...result }, 200, requestOrigin);
+    }
+
     if (action === "admin_member_delete") {
       await requireAdminUser(req, admin);
       const memberId = asMemberId(payload.member_id);
       if (!memberId) return response({ error: "회원을 선택해 주세요." }, 400, requestOrigin);
-      const { error } = await admin.from("members").delete().eq("id", memberId);
-      if (error) throw error;
-      return response({ ok: true }, 200, requestOrigin);
+      let result: any;
+      try {
+        result = await anonymizeMemberAccount(admin, memberId);
+      } catch (error) {
+        if (error instanceof Error && error.message === "member_privacy_last_admin") {
+          return response({ error: "마지막 관리자 계정은 삭제할 수 없어요. 먼저 다른 관리자를 지정해 주세요." }, 409, requestOrigin);
+        }
+        throw error;
+      }
+      return response({ ok: true, ...result }, 200, requestOrigin);
     }
 
     if (action === "admin_reset") {

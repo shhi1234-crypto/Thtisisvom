@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import { ApiError, DEFAULT_ORIGIN, checkRequest, failure, headers, json, tokenHash, validToken } from "../_shared/ot-core.ts";
 import { applicantEmail, loginName, memberContext, newPassword, signedIn } from "../_shared/member-access.ts";
 import { applicationStatus } from "../_shared/application-status.ts";
+import { withdrawSignupApplication } from "../_shared/privacy-purge.ts";
 
 
 async function ensureMemberAuth(service:any,memberId:number){
@@ -137,8 +138,8 @@ export async function handle(req: Request, service: any, authClient: any) {
       }));
       return json(origin,{ok:true,members});
     }
-    if (body.action === "login" || body.action === "application_status") {
-      const lookup=body.action==='application_status';
+    if (body.action === "login" || body.action === "application_status" || body.action === "withdraw_application") {
+      const lookup=body.action === "application_status" || body.action === "withdraw_application";
       const byName=lookup&&body.candidate_name!==undefined;
       const name=byName?String(body.candidate_name||'').trim():lookup?loginName(body.login_name):String(body.login_name||"").trim();
       const password=body.password;
@@ -194,6 +195,11 @@ export async function handle(req: Request, service: any, authClient: any) {
       if(lookup){
         try {
           if(!identity||session.user.id!==identity)throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
+          if (body.action === "withdraw_application") {
+            const result = await withdrawSignupApplication(service, session.user.id);
+            await service.from("vom_login_attempts").delete().eq("login_hash", attemptKey);
+            return json(origin, { ok: true, ...result });
+          }
           const status=await applicationStatus(service,session.user.id);
           await service.from('vom_login_attempts').delete().eq('login_hash',attemptKey);
           return json(origin,{ok:true,...status});
