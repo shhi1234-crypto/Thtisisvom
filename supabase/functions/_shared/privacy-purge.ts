@@ -106,11 +106,11 @@ export async function purgeResolvedSignup(service: any, reviewId: number) {
 
   const userId = applicant?.auth_user_id || invite?.applicant_user_id;
   await removeMedia(service, [review.video_file_path, applicant?.profile_photo_path]);
-  await eraseAuthIdentity(service, userId);
-
   if (invite) {
     await clearPendingSignupMessages(service, invite.id, review.status);
     await clearSignupInvite(service, invite.id, userId);
+  } else {
+    await eraseAuthIdentity(service, userId);
   }
 
   const now = new Date().toISOString();
@@ -177,12 +177,9 @@ export async function withdrawSignupApplication(service: any, userId: string) {
     if (review.status !== "IN_REVIEW" || review.completed_at) {
       throw new Error("signup_withdrawal_review_resolved");
     }
-    const { error: discardError } = await service.rpc("vom_ot_discard_review", {
+    const { error: discardError } = await service.rpc("vom_ot_withdraw_review", {
       p_review_id: Number(review.id),
       p_actor_id: userId,
-      p_actor_member_id: null,
-      p_actor_name: "신청자",
-      p_reason: "신청자 철회",
     });
     if (discardError) throw new Error("signup_withdrawal_record_failed");
     await purgeResolvedSignup(service, Number(review.id));
@@ -211,6 +208,10 @@ export async function anonymizeMemberAccount(service: any, memberId: number) {
       .select("user_id").eq("user_id", member.auth_user_id).maybeSingle();
     if (adminCheckError) throw new Error("member_privacy_admin_check_failed");
     if (adminIdentity) {
+      const { count: adminCount, error: adminCountError } = await service.from("admins")
+        .select("user_id", { count: "exact", head: true });
+      if (adminCountError) throw new Error("member_privacy_admin_count_failed");
+      if (Number(adminCount || 0) <= 1) throw new Error("member_privacy_last_admin");
       const { error: revokeAdminError } = await service.from("admins").delete().eq("user_id", member.auth_user_id);
       if (revokeAdminError) throw new Error("member_privacy_admin_revocation_failed");
     }
@@ -274,6 +275,7 @@ export async function anonymizeMemberAccount(service: any, memberId: number) {
     service.from("member_activation_invites").delete().eq("member_id", memberId),
     service.from("member_coupons").delete().eq("member_id", memberId),
     service.from("ot_room_operator_access").delete().eq("member_id", memberId),
+    service.from("ot_review_reminder_outbox").delete().eq("recipient_member_id", memberId),
   ]);
   if (cleanupResults.some((result: any) => result.error)) throw new Error("member_privacy_related_data_cleanup_failed");
 
