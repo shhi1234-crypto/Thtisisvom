@@ -26,6 +26,37 @@ create index ot_review_reminder_outbox_queue_idx
 comment on table public.ot_review_reminder_outbox is
   'Service-only queue for 6-hour unresolved signup review reminders. Recipient contact data is read only at claim time and is not stored in this table.';
 
+-- Serialize administrator withdrawals so two concurrent requests cannot remove the last two admins.
+create or replace function public.vom_revoke_admin_if_not_last(
+  p_user_id uuid
+) returns boolean
+language plpgsql
+security invoker
+set search_path = ''
+as $function$
+begin
+  if p_user_id is null then return false; end if;
+  perform pg_advisory_xact_lock(781234567890::bigint);
+
+  if not exists (
+    select 1 from public.admins where user_id = p_user_id
+  ) then
+    return false;
+  end if;
+  if (select count(*) from public.admins) <= 1 then
+    raise exception 'member_privacy_last_admin';
+  end if;
+
+  delete from public.admins where user_id = p_user_id;
+  return true;
+end;
+$function$;
+
+revoke all on function public.vom_revoke_admin_if_not_last(uuid)
+  from public, anon, authenticated;
+grant execute on function public.vom_revoke_admin_if_not_last(uuid)
+  to service_role;
+
 create or replace function public.vom_enqueue_signup_review_reminders(
   p_as_of timestamptz default clock_timestamp()
 ) returns integer
