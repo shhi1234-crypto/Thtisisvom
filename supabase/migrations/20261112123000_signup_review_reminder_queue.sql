@@ -147,7 +147,7 @@ begin
       where review.id = queued.review_id
         and review.status = 'IN_REVIEW'
         and review.completed_at is null
-        and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
+        and queued.due_at <= as_of
         and member.role = '운영진'
         and member.is_active is true
         and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
@@ -174,7 +174,7 @@ begin
      and preference.operator_alert_enabled is true
     where review.status = 'IN_REVIEW'
       and review.completed_at is null
-      and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
+      and queued.due_at <= as_of
       and member.role = '운영진'
       and member.is_active is true
       and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
