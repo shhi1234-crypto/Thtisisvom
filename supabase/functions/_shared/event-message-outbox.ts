@@ -1,4 +1,5 @@
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
+import { nextMemberKakaoAllowedAt } from "./kakao-quiet-hours.ts";
 
 export const EVENT_MESSAGE_KINDS = [
   "MEMBER_APPLICATION_RECEIVED",
@@ -341,11 +342,19 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 }
 
 export async function dispatchEventMessages(service: any, limit = 12) {
-  const now = new Date().toISOString();
-  const { data: pending, error } = await service.from("event_message_outbox")
+  const dispatchAt = new Date();
+  const now = dispatchAt.toISOString();
+  const quietUntil = nextMemberKakaoAllowedAt(dispatchAt);
+  let pendingQuery = service.from("event_message_outbox")
     .select("id,event_id,application_id,recipient_member_id,message_kind,payload,status,attempts")
     .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
-    .lte("next_attempt_at", now)
+    .lte("next_attempt_at", now);
+  // During quiet hours, process only opted-in operator messages. Member messages
+  // remain queued and become eligible after 08:00 KST.
+  if (quietUntil) {
+    pendingQuery = pendingQuery.in("message_kind", ["OPERATOR_APPLICATION_RECEIVED", "OPERATOR_APPLICATION_CANCELLED"]);
+  }
+  const { data: pending, error } = await pendingQuery
     .order("id", { ascending: true })
     .limit(Math.max(1, Math.min(50, Number(limit) || 12)));
   if (error) throw error;
