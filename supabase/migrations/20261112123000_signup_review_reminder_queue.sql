@@ -1,8 +1,10 @@
--- Queue one 6-hour reminder for each eligible operator who has not voted.
+-- Queue one reminder 6 hours 30 minutes after receipt for each eligible operator who has not voted.
 create table public.ot_review_reminder_outbox (
   id bigint generated always as identity primary key,
   review_id bigint not null references public.ot_reviews(id) on delete cascade,
   recipient_member_id bigint not null references public.members(id) on delete cascade,
+  received_at timestamptz not null,
+  due_at timestamptz not null,
   status text not null default 'QUEUED'
     check (status in ('QUEUED','SENDING','ACCEPTED','FAILED','SKIPPED')),
   attempts integer not null default 0,
@@ -21,10 +23,10 @@ revoke all on public.ot_review_reminder_outbox from public, anon, authenticated;
 grant all on public.ot_review_reminder_outbox to service_role;
 
 create index ot_review_reminder_outbox_queue_idx
-  on public.ot_review_reminder_outbox(status, next_attempt_at, id);
+  on public.ot_review_reminder_outbox(status, next_attempt_at, due_at, id);
 
 comment on table public.ot_review_reminder_outbox is
-  'Service-only queue for 6-hour unresolved signup review reminders. Recipient contact data is read only at claim time and is not stored in this table.';
+  'Service-only queue for 6-hour-30-minute unresolved signup review reminders. Recipient contact data is read only at claim time and is not stored in this table.';
 
 -- Serialize administrator withdrawals so two concurrent requests cannot remove the last two admins.
 create or replace function public.vom_revoke_admin_if_not_last(
@@ -68,8 +70,10 @@ declare
   queued_count integer;
   as_of timestamptz := coalesce(p_as_of, clock_timestamp());
 begin
-  insert into public.ot_review_reminder_outbox(review_id, recipient_member_id)
-  select distinct review.id, member.id
+  insert into public.ot_review_reminder_outbox(review_id, recipient_member_id, received_at, due_at)
+  select distinct review.id, member.id,
+    coalesce(reservation.created_at, review.created_at),
+    coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes'
   from public.ot_reviews as review
   left join public.ot_room_invites as invitation on invitation.review_id = review.id
   left join public.ot_signup_reservations as reservation on reservation.invite_id = invitation.id
@@ -80,7 +84,7 @@ begin
    and preference.operator_alert_enabled is true
   where review.status = 'IN_REVIEW'
     and review.completed_at is null
-    and coalesce(reservation.created_at, review.created_at) <= as_of - interval '6 hours'
+    and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
     and member.role = '운영진'
     and member.is_active is true
     and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
@@ -143,7 +147,7 @@ begin
       where review.id = queued.review_id
         and review.status = 'IN_REVIEW'
         and review.completed_at is null
-        and coalesce(reservation.created_at, review.created_at) <= as_of - interval '6 hours'
+        and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
         and member.role = '운영진'
         and member.is_active is true
         and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
@@ -170,7 +174,7 @@ begin
      and preference.operator_alert_enabled is true
     where review.status = 'IN_REVIEW'
       and review.completed_at is null
-      and coalesce(reservation.created_at, review.created_at) <= as_of - interval '6 hours'
+      and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
       and member.role = '운영진'
       and member.is_active is true
       and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
