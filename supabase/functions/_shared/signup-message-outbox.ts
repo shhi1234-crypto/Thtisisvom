@@ -227,7 +227,14 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       .eq("invite_id", current.invite_id)
       .maybeSingle();
     if (preferenceError) {
-      await mark(service, current.id, { status: "FAILED", last_error: "preference_lookup_failed", locked_at: null });
+      await mark(service, current.id, {
+        status: "FAILED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
+        last_error: "preference_lookup_failed",
+        locked_at: null,
+      });
       failed++;
       continue;
     }
