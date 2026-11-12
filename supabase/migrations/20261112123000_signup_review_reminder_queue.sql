@@ -1,8 +1,9 @@
--- Queue one reminder 6 hours 30 minutes after receipt for each eligible operator who has not voted.
+-- Queue a 30-minute warning and a 6-hour overdue reminder per eligible operator.
 create table public.ot_review_reminder_outbox (
   id bigint generated always as identity primary key,
   review_id bigint not null references public.ot_reviews(id) on delete cascade,
   recipient_member_id bigint not null references public.members(id) on delete cascade,
+  reminder_type text not null check (reminder_type in ('PRE_30M','OVERDUE_6H')),
   received_at timestamptz not null,
   due_at timestamptz not null,
   status text not null default 'QUEUED'
@@ -15,7 +16,7 @@ create table public.ot_review_reminder_outbox (
   accepted_at timestamptz,
   created_at timestamptz not null default clock_timestamp(),
   updated_at timestamptz not null default clock_timestamp(),
-  unique (review_id, recipient_member_id)
+  unique (review_id, recipient_member_id, reminder_type)
 );
 
 alter table public.ot_review_reminder_outbox enable row level security;
@@ -26,7 +27,7 @@ create index ot_review_reminder_outbox_queue_idx
   on public.ot_review_reminder_outbox(status, next_attempt_at, due_at, id);
 
 comment on table public.ot_review_reminder_outbox is
-  'Service-only queue for 6-hour-30-minute unresolved signup review reminders. Recipient contact data is read only at claim time and is not stored in this table.';
+  'Service-only queue for the 5h30 pre-alert and 6h overdue signup review reminders. Recipient contact data is read only at claim time and not stored here.';
 
 -- Serialize administrator withdrawals so two concurrent requests cannot remove the last two admins.
 create or replace function public.vom_revoke_admin_if_not_last(
@@ -70,31 +71,60 @@ declare
   queued_count integer;
   as_of timestamptz := coalesce(p_as_of, clock_timestamp());
 begin
-  insert into public.ot_review_reminder_outbox(review_id, recipient_member_id, received_at, due_at)
-  select distinct review.id, member.id,
-    coalesce(reservation.created_at, review.created_at),
-    coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes'
-  from public.ot_reviews as review
-  left join public.ot_room_invites as invitation on invitation.review_id = review.id
-  left join public.ot_signup_reservations as reservation on reservation.invite_id = invitation.id
-  join public.members as member
-    on member.id = any(review.eligible_operator_ids)
-  join public.member_message_preferences as preference
-    on preference.member_id = member.id
-   and preference.operator_alert_enabled is true
-  where review.status = 'IN_REVIEW'
-    and review.completed_at is null
-    and coalesce(reservation.created_at, review.created_at) + interval '6 hours 30 minutes' <= as_of
-    and member.role = '운영진'
-    and member.is_active is true
-    and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
-    and not exists (
-      select 1
-      from public.ot_review_votes as vote
-      where vote.review_id = review.id
-        and vote.voter_member_id = member.id
+  with eligible as (
+    select
+      review.id as review_id,
+      member.id as recipient_member_id,
+      coalesce(reservation.created_at, review.created_at) as received_at
+    from public.ot_reviews as review
+    left join public.ot_room_invites as invitation on invitation.review_id = review.id
+    left join public.ot_signup_reservations as reservation on reservation.invite_id = invitation.id
+    join public.members as member
+      on member.id = any(review.eligible_operator_ids)
+    join public.member_message_preferences as preference
+      on preference.member_id = member.id
+     and preference.operator_alert_enabled is true
+    where review.status = 'IN_REVIEW'
+      and review.completed_at is null
+      and member.role = '운영진'
+      and member.is_active is true
+      and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
+      and not exists (
+        select 1
+        from public.ot_review_votes as vote
+        where vote.review_id = review.id
+          and vote.voter_member_id = member.id
+      )
+  ),
+  scheduled as (
+    select
+      eligible.review_id,
+      eligible.recipient_member_id,
+      eligible.received_at,
+      reminder.reminder_type,
+      eligible.received_at + reminder.reminder_offset as due_at
+    from eligible
+    cross join (values
+      ('PRE_30M'::text, interval '5 hours 30 minutes'),
+      ('OVERDUE_6H'::text, interval '6 hours')
+    ) as reminder(reminder_type, reminder_offset)
+  )
+  insert into public.ot_review_reminder_outbox(
+    review_id, recipient_member_id, reminder_type, received_at, due_at
+  )
+  select
+    scheduled.review_id,
+    scheduled.recipient_member_id,
+    scheduled.reminder_type,
+    scheduled.received_at,
+    scheduled.due_at
+  from scheduled
+  where scheduled.due_at <= as_of
+    and (
+      scheduled.reminder_type <> 'PRE_30M'
+      or as_of < scheduled.received_at + interval '6 hours'
     )
-  on conflict (review_id, recipient_member_id) do nothing;
+  on conflict (review_id, recipient_member_id, reminder_type) do nothing;
 
   get diagnostics queued_count = row_count;
   return queued_count;
@@ -113,6 +143,7 @@ create or replace function public.vom_claim_signup_review_reminders(
   outbox_id bigint,
   review_id bigint,
   recipient_member_id bigint,
+  reminder_type text,
   received_at timestamptz,
   reminder_due_at timestamptz,
   recipient_name text,
@@ -132,14 +163,12 @@ begin
   update public.ot_review_reminder_outbox as queued
   set status = 'SKIPPED',
       locked_at = null,
-      last_error = 'review_resolved_or_operator_checked',
+      last_error = 'review_resolved_operator_checked_or_reminder_expired',
       updated_at = as_of
   where queued.status in ('QUEUED','FAILED')
     and not exists (
       select 1
       from public.ot_reviews as review
-      left join public.ot_room_invites as invitation on invitation.review_id = review.id
-      left join public.ot_signup_reservations as reservation on reservation.invite_id = invitation.id
       join public.members as member
         on member.id = queued.recipient_member_id
        and member.id = any(review.eligible_operator_ids)
@@ -149,10 +178,14 @@ begin
       where review.id = queued.review_id
         and review.status = 'IN_REVIEW'
         and review.completed_at is null
-        and queued.due_at <= as_of
         and member.role = '운영진'
         and member.is_active is true
         and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
+        and queued.due_at <= as_of
+        and (
+          queued.reminder_type <> 'PRE_30M'
+          or as_of < queued.received_at + interval '6 hours'
+        )
         and not exists (
           select 1
           from public.ot_review_votes as vote
@@ -166,8 +199,6 @@ begin
     select queued.id
     from public.ot_review_reminder_outbox as queued
     join public.ot_reviews as review on review.id = queued.review_id
-    left join public.ot_room_invites as invitation on invitation.review_id = review.id
-    left join public.ot_signup_reservations as reservation on reservation.invite_id = invitation.id
     join public.members as member
       on member.id = queued.recipient_member_id
      and member.id = any(review.eligible_operator_ids)
@@ -176,10 +207,14 @@ begin
      and preference.operator_alert_enabled is true
     where review.status = 'IN_REVIEW'
       and review.completed_at is null
-      and queued.due_at <= as_of
       and member.role = '운영진'
       and member.is_active is true
       and regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g') ~ '^01[0-9]{8,9}$'
+      and queued.due_at <= as_of
+      and (
+        queued.reminder_type <> 'PRE_30M'
+        or as_of < queued.received_at + interval '6 hours'
+      )
       and not exists (
         select 1
         from public.ot_review_votes as vote
@@ -202,13 +237,15 @@ begin
         updated_at = as_of
     from ready
     where queued.id = ready.id
-    returning queued.id, queued.review_id, queued.recipient_member_id,
+    returning
+      queued.id, queued.review_id, queued.recipient_member_id, queued.reminder_type,
       queued.received_at, queued.due_at, queued.attempts
   )
   select
     claimed.id,
     claimed.review_id,
     claimed.recipient_member_id,
+    claimed.reminder_type,
     claimed.received_at,
     claimed.due_at,
     member.name,
