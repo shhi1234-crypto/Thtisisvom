@@ -303,6 +303,7 @@ export async function handle(req: Request, service: any) {
         if (String(error.message).includes("coupon_")) err("쿠폰 조건을 확인해 주세요. 이미 사용했거나 이 일정·회원에 적용할 수 없는 쿠폰일 수 있습니다.", 409);
         throw error;
       }
+      if (data?.auto_confirmed) await notifyWithoutBlocking(service, "MEMBER_PARTICIPATION_CONFIRMED", event, payment, applicationId);
       return reply(origin, data);
     }
 
@@ -344,9 +345,8 @@ export async function handle(req: Request, service: any) {
     if (["mark_paid", "mark_unpaid"].includes(body.action)) {
       const applicationId = numberId(body.application_id);
       const paid = body.action === "mark_paid";
-      const unpaid = body.action === "mark_unpaid";
       const { data: application, error: applicationError } = await service.from("event_applications")
-        .select("id,final_amount_won").eq("id", applicationId).eq("event_id", currentEventId).maybeSingle();
+        .select("id,base_fee_won,applied_coupon_ids,final_amount_won").eq("id", applicationId).eq("event_id", currentEventId).maybeSingle();
       if (applicationError) throw applicationError;
       if (!application) err("신청 내역을 찾지 못했습니다.", 404);
       if (application.final_amount_won == null) err("신청자별 기본 참가비를 먼저 입력해 주세요.", 409);
@@ -356,25 +356,22 @@ export async function handle(req: Request, service: any) {
         actualPaid = body.actual_paid_won == null || body.actual_paid_won === "" ? Number(application.final_amount_won) : Number(body.actual_paid_won);
         if (!Number.isSafeInteger(actualPaid) || actualPaid < 0 || actualPaid > 1000000) err("실제 입금액은 0원부터 100만원까지 입력해 주세요.", 400);
       }
-      const patch = paid
-        ? { payment_status: "PAID", actual_paid_won: actualPaid, financial_locked_at: new Date().toISOString(), paid_at: new Date().toISOString(), paid_recorded_by: userId, updated_at: new Date().toISOString() }
-        : unpaid
-          ? { payment_status: "UNPAID", actual_paid_won: null, paid_at: null, paid_recorded_by: null, updated_at: new Date().toISOString() }
-          : { payment_status: "REFUNDED", refunded_at: new Date().toISOString(), refunded_recorded_by: userId, updated_at: new Date().toISOString() };
-      let change = service.from("event_applications").update(patch).eq("id", applicationId).eq("event_id", currentEventId);
-      change = paid ? change.eq("status", "APPLIED").eq("payment_status", "UNPAID")
-        : unpaid ? change.eq("status", "APPLIED").eq("payment_status", "PAID")
-          : change.eq("status", "CANCELLED").eq("payment_status", "REFUND_PENDING");
-      const { data: changed, error: changeError } = await change.select("id,status,payment_status").maybeSingle();
-      if (changeError) throw changeError;
-      if (!changed) err("상태가 변경돼 처리하지 못했습니다. 목록을 새로 확인해 주세요.", 409);
-      if (paid) {
-        const { error: couponError } = await service.from("event_coupon_redemptions").update({ status: "USED", used_at: new Date().toISOString() })
-          .eq("application_id", applicationId).eq("status", "RESERVED");
-        if (couponError) throw couponError;
+      const { data, error } = await service.rpc("vom_event_application_financial_update", {
+        p_application_id: applicationId,
+        p_actor_id: userId,
+        p_base_fee_won: Number(application.base_fee_won),
+        p_coupon_ids: couponIds(application.applied_coupon_ids),
+        p_actual_paid_won: actualPaid,
+        p_reason: String(body.reason || "").trim() || null,
+      });
+      if (error) {
+        if (String(error.message).includes("financial_locked_reason_required")) err("입금 확인 또는 참가 확정 후 금액 변경에는 사유가 필요합니다.", 409);
+        if (String(error.message).includes("refund_financial_locked")) err(errorText(error), 409);
+        if (String(error.message).includes("coupon_")) err("쿠폰 조건을 확인해 주세요.", 409);
+        throw error;
       }
-      if (paid) await notifyWithoutBlocking(service, "MEMBER_PAYMENT_CONFIRMED", event, payment, applicationId);
-      return reply(origin, { ok: true, application: changed });
+      if (data?.auto_confirmed) await notifyWithoutBlocking(service, "MEMBER_PARTICIPATION_CONFIRMED", event, payment, applicationId);
+      return reply(origin, data);
     }
 
     if (body.action === "confirm" || body.action === "unconfirm") {
@@ -386,6 +383,7 @@ export async function handle(req: Request, service: any) {
       if (!application) err("신청 내역을 찾지 못했습니다.", 404);
       if (desired === "CONFIRMED" && application.final_amount_won == null) err("신청자별 기본 참가비를 먼저 입력해 주세요.", 409);
       if (desired === "CONFIRMED" && payment.fee_won == null && Number(application.final_amount_won) > 0) err("일정 참가비를 먼저 설정해 주세요.", 409);
+      if (desired === "CONFIRMED" && Number(application.final_amount_won) > 0) err("실제 입금액을 입력하고 저장하면 최종 입금액과 일치할 때 자동 확정됩니다.", 409);
       let update = service.from("event_applications").update({
         status: desired,
         confirmed_at: desired === "CONFIRMED" ? new Date().toISOString() : null,

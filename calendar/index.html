@@ -3926,9 +3926,13 @@ function getFilteredCalendarEvents(){
           currentFilter
       );
 
-  return calendarScope === 'AVAILABLE'
-    ? filtered.filter(isAvailableSchedule)
-    : filtered;
+  if(calendarScope !== 'AVAILABLE') return filtered;
+
+  const today = calendarDateString(new Date());
+  return filtered.filter(item =>
+    Boolean(item.event_date) &&
+    (item.event_date < today || isAvailableSchedule(item))
+  );
 }
 
 
