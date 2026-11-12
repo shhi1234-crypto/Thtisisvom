@@ -253,6 +253,21 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       waiting++;
       continue;
     }
+    const { data: stillSending, error: claimCheckError } = await service.from("signup_message_outbox")
+      .select("id").eq("id", current.id).eq("status", "SENDING").maybeSingle();
+    if (claimCheckError) {
+      await mark(service, current.id, {
+        status: "FAILED",
+        recipient_phone: null,
+        recipient_name: "회원",
+        payload: {},
+        last_error: "outbox_claim_check_failed",
+        locked_at: null,
+      });
+      failed++;
+      continue;
+    }
+    if (!stillSending) continue;
     try {
       const response = await fetch(SOLAPI_SEND_URL, {
         method: "POST",
