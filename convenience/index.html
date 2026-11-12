@@ -41,7 +41,7 @@ body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Not
 .vc-tool.is-coming .vc-tool-foot{color:#adb7cd}
 .vc-notice{margin:15px 2px 0;color:#8793ad;font-size:10px;line-height:1.65}
 /* Keep tool cards visible and high contrast alongside the shared dark theme. */
-html[data-vom-theme="dark"] body .vc-panel{display:block!important;min-height:180px;border-color:#364264!important;background:rgba(19,28,51,.96)!important;color:#f1f3ff!important}
+html[data-vom-theme="dark"] body #convenienceApp:not([hidden]) .vc-panel{min-height:180px;border-color:#364264!important;background:rgba(19,28,51,.96)!important;color:#f1f3ff!important}
 html[data-vom-theme="dark"] body .vc-panel :is(h1,h2,h3,h4,strong,b,label){color:#f0f2ff!important}
 html[data-vom-theme="dark"] body .vc-panel :is(p,small,span,.copy,.desc){color:#bac3d8!important}
 #convenienceApp:not([hidden]) .vc-grid{display:grid!important;visibility:visible!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
