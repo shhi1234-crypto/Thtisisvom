@@ -42,7 +42,7 @@ async function clearPendingSignupMessages(service: any, inviteId: string, status
     })
     .eq("invite_id", inviteId)
     .in("message_kind", kinds)
-    .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION", "FAILED"]);
+    .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION", "FAILED", "SENDING"]);
   if (error) throw new Error("privacy_outbox_cleanup_failed");
 }
 
