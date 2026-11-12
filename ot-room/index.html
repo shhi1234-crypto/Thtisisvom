@@ -71,7 +71,13 @@
   #accountForm .ot-name-fields{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)}
 }
 
-</style>
+
+@media(max-width:760px){
+  .ot-page{width:calc(100% - 28px);margin-top:23px}
+  .ot-card{padding:20px}
+  #accountForm .ot-fields{grid-template-columns:minmax(0,1fr);row-gap:20px}
+}
+\n</style>
 </head>
 <body class="ot-public">
 <header class="ot-header vom-header"><a class="ot-brand vom-header-brand" href="/">VOM <small>VOICE OF MELODY</small></a><div class="vom-header-actions"><button type="button" class="menu-btn" onclick="openMenu()" aria-label="메뉴 열기">☰</button></div></header>

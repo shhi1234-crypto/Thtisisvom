@@ -135,21 +135,89 @@ html[data-vom-theme="dark"] .os-back{border-color:#3a4668;background:#1b2745;col
   .os-panel-top.os-lyrics-top{display:block;margin:0 0 2mm}
   .os-panel-top.os-lyrics-top>div{display:none}
   .os-lyrics-list{display:grid;gap:1.1mm;margin:0}
-  .os-section-heading{margin:1.5mm 0 .5mm;color:#342b62!important;font-size:8pt;line-height:1.2}
+  .os-section-heading{margin:1.5mm 0 .5mm;color:#342b62!important;font-size:9pt;line-height:1.2}
   .os-section-heading::after{background:#d8d3e6!important}
   .os-line-card,.os-line-card.is-chorus{break-inside:avoid;min-height:0;padding:1mm 1.4mm;border:0;border-bottom:.25pt solid #e1e1e1;border-radius:0;background:#fff!important;box-shadow:none}
   .os-line-card.is-chorus{background:#fff4b8!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .os-line-main{grid-template-columns:15mm minmax(0,1fr) 24mm;gap:2mm;align-items:center}
   .os-line-number-wrap{font-size:6pt}
   .os-number-label{display:none}
-  .os-line-number{width:12mm;min-height:0;padding:0;border:0;border-radius:0;background:transparent!important;color:#25233b!important;font-size:8pt;line-height:1.25}
+  .os-line-number{width:12mm;min-height:0;padding:0;border:0;border-radius:0;background:transparent!important;color:#25233b!important;font-size:9pt;line-height:1.25}
   .os-lead-names,.os-additional-names{min-height:0;gap:1mm}
   .os-lead-names{margin:0 0 .3mm}
-  .os-name{min-height:0;padding:0 1mm;border:0!important;border-radius:0;font-size:7.5pt;line-height:1.25;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .os-name{min-height:0;padding:0 1mm;border:0!important;border-radius:0;font-size:8.5pt;line-height:1.25;print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .os-name-lead{padding-left:0!important;background:transparent!important}
-  .os-lyric-editor{min-height:0;padding:0;border:0!important;border-radius:0;background:transparent!important;color:#222!important;font-size:10pt;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
+  .os-lyric-editor{min-height:0;padding:0;border:0!important;border-radius:0;background:transparent!important;color:#222!important;font-size:11pt;line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere}
   .os-lyric-editor:empty::before{display:none}
   .os-lyric-editor span{print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .os-line-card.is-chorus .os-lyric-editor{background:transparent!important}
   #accessDenied{display:none!important}
+}
+
+/* Comfortable editor sizing on desktop and phones. */
+@media screen{
+  .os-back{font-size:12px}
+  .os-eyebrow,.os-kicker{font-size:11px}
+  .os-save-status{font-size:12px}
+  .os-panel h2{font-size:19px}
+  .os-button{min-height:42px;font-size:13px}
+  .os-small-button{min-height:38px;font-size:12px}
+  .os-field{font-size:12px}
+  .os-field input,.os-field select,.os-participant-row input[type=text],.os-participant-row select{min-height:46px;font-size:15px}
+  .os-help{font-size:12px;line-height:1.75}
+  .os-participant-row label{font-size:12px}
+  .os-participant-row input[type=color]{height:46px}
+  .os-participant-row .os-delete-participant{min-height:42px;font-size:12px}
+  .os-confirm-note{font-size:12px;line-height:1.7}
+  .os-selection-status{font-size:13px;line-height:1.7}
+  .os-performer-chip{min-height:38px;font-size:13px}
+  .os-performer-picker .os-picker-empty{font-size:12px}
+  .os-field-label,.os-color-choice{font-size:12px}
+  .os-color-choice input{width:34px;height:34px}
+  .os-lyrics-list{gap:16px}
+  .os-section-heading{font-size:13px}
+  .os-line-card{padding:15px}
+  .os-line-number-wrap{font-size:10px}
+  .os-line-number{min-height:42px;font-size:14px}
+  .os-lead-names,.os-additional-names{min-height:26px}
+  .os-name{min-height:25px;padding:2px 7px;font-size:12px}
+  .os-lyric-editor{min-height:42px;padding:5px 7px;font-size:18px;line-height:1.8}
+  .os-line-notes{font-size:11px}
+  .os-section-field{font-size:11px}
+  .os-section-field input{min-height:38px;font-size:12px}
+  .os-chorus-toggle{min-height:38px;font-size:11px}
+  .os-line-action{width:36px;height:36px;font-size:13px}
+  .os-empty-state{font-size:13px}
+}
+@media screen and (max-width:720px){
+  .os-page{width:calc(100% - 28px)}
+  .os-title-row{gap:10px}
+  .os-panel{padding:18px}
+  .os-project-actions{justify-content:flex-start}
+  .os-project-actions .os-button{min-height:42px;padding:0 11px;font-size:12px}
+  .os-participant-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px}
+  .os-participant-row label{min-width:0;font-size:12px}
+  .os-participant-row .os-delete-participant{grid-column:1/-1;justify-self:end;min-width:76px}
+  .os-line-main{grid-template-columns:40px minmax(0,1fr) minmax(62px,22%);gap:6px}
+  .os-line-number{width:38px;min-height:40px;font-size:13px}
+  .os-name{font-size:11px}
+  .os-lyric-editor{font-size:17px;line-height:1.85}
+  .os-line-meta{grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-left:46px}
+  .os-section-field{min-width:0;font-size:11px}
+  .os-section-field input{width:100%;min-height:40px;font-size:13px}
+  .os-chorus-toggle{min-height:40px;padding:0 9px;font-size:11px}
+  .os-line-actions{gap:6px}
+  .os-line-action{width:40px;height:40px}
+}
+@media screen and (max-width:440px){
+  .os-page{width:calc(100% - 20px)}
+  .os-panel{padding:14px}
+  .os-header .os-back{min-height:38px;padding:0 10px;font-size:11px}
+  .os-line-main{grid-template-columns:36px minmax(0,1fr) minmax(58px,22%);gap:4px}
+  .os-line-number{width:34px;min-height:38px;font-size:12px}
+  .os-name{padding:2px 4px;font-size:10px}
+  .os-lyric-editor{padding:4px 3px;font-size:16px;line-height:1.85}
+  .os-line-meta{margin-left:40px}
+  .os-section-field{font-size:10px}
+  .os-chorus-toggle{gap:4px;padding:0 6px;font-size:10px}
 }

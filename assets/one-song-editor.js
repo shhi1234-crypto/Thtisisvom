@@ -586,8 +586,14 @@
     }
   }
   function moveLine(lineId,destination) {
+    const requestedPosition = Number(destination);
+    if (!Number.isInteger(requestedPosition) || requestedPosition < 1 || requestedPosition > currentProject.data.lines.length) {
+      showToast(`줄 번호는 01부터 ${String(currentProject.data.lines.length).padStart(2,'0')} 사이로 입력해 주세요.`);
+      renderLines();
+      return;
+    }
     const currentIndex = currentProject.data.lines.findIndex(line => line.id === lineId);
-    const targetIndex = Math.max(0,Math.min(currentProject.data.lines.length-1,Number(destination)-1));
+    const targetIndex = requestedPosition - 1;
     if (currentIndex < 0 || currentIndex === targetIndex) return;
     const before = beginMutation();
     const [line] = currentProject.data.lines.splice(currentIndex,1);
