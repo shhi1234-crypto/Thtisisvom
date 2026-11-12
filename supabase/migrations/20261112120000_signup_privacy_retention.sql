@@ -13,7 +13,7 @@ create index if not exists ot_reviews_privacy_purge_idx
 
 alter table public.signup_message_outbox
   alter column recipient_phone drop not null,
-  add column if not exists consent_snapshot boolean not null default true;
+  add column if not exists consent_snapshot boolean not null default false;
 
 -- A result notice is queued only after the applicant explicitly opted in.
 -- The outbox can finish delivery after the application profile itself is erased.
