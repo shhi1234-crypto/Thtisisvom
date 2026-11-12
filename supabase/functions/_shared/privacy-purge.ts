@@ -156,6 +156,51 @@ export async function purgeResolvedSignups(service: any, limit = 25) {
   return { checked: (reviews || []).length, purged, deferred };
 }
 
+export async function withdrawSignupApplication(service: any, userId: string) {
+  const { data: applicant, error: applicantError } = await service.from("ot_room_applicants")
+    .select("auth_user_id,invite_id,profile_photo_path")
+    .eq("auth_user_id", userId).maybeSingle();
+  if (applicantError || !applicant || applicant.auth_user_id !== userId) {
+    throw new Error("signup_withdrawal_application_not_found");
+  }
+  const { data: invite, error: inviteError } = await service.from("ot_room_invites")
+    .select("id,review_id,applicant_user_id")
+    .eq("id", applicant.invite_id).maybeSingle();
+  if (inviteError || !invite || invite.applicant_user_id !== userId) {
+    throw new Error("signup_withdrawal_invite_invalid");
+  }
+
+  if (invite.review_id) {
+    const { data: review, error: reviewError } = await service.from("ot_reviews")
+      .select("id,status,completed_at").eq("id", invite.review_id).maybeSingle();
+    if (reviewError || !review) throw new Error("signup_withdrawal_review_lookup_failed");
+    if (review.status !== "IN_REVIEW" || review.completed_at) {
+      throw new Error("signup_withdrawal_review_resolved");
+    }
+    const { error: discardError } = await service.rpc("vom_ot_discard_review", {
+      p_review_id: Number(review.id),
+      p_actor_id: userId,
+      p_actor_member_id: null,
+      p_actor_name: "신청자",
+      p_reason: "신청자 철회",
+    });
+    if (discardError) throw new Error("signup_withdrawal_record_failed");
+    await purgeResolvedSignup(service, Number(review.id));
+    return { withdrawn: true, state: "CANCELLED" };
+  }
+
+  const { data: reservations, error: reservationError } = await service.from("ot_signup_reservations")
+    .select("media_path").eq("invite_id", invite.id);
+  if (reservationError) throw new Error("signup_withdrawal_reservation_lookup_failed");
+  await removeMedia(service, [
+    applicant.profile_photo_path,
+    ...(reservations || []).map((row: any) => row.media_path),
+  ]);
+  await clearPendingSignupMessages(service, invite.id, "DISCARDED");
+  await clearSignupInvite(service, invite.id, userId);
+  return { withdrawn: true, state: "CANCELLED" };
+}
+
 export async function anonymizeMemberAccount(service: any, memberId: number) {
   const { data: member, error: lookupError } = await service.from("members")
     .select("id,name,auth_user_id").eq("id", memberId).maybeSingle();
