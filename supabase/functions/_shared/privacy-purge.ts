@@ -204,16 +204,14 @@ export async function anonymizeMemberAccount(service: any, memberId: number) {
   if (lookupError || !member) throw new Error("member_privacy_lookup_failed");
 
   if (member.auth_user_id) {
-    const { data: adminIdentity, error: adminCheckError } = await service.from("admins")
-      .select("user_id").eq("user_id", member.auth_user_id).maybeSingle();
-    if (adminCheckError) throw new Error("member_privacy_admin_check_failed");
-    if (adminIdentity) {
-      const { count: adminCount, error: adminCountError } = await service.from("admins")
-        .select("user_id", { count: "exact", head: true });
-      if (adminCountError) throw new Error("member_privacy_admin_count_failed");
-      if (Number(adminCount || 0) <= 1) throw new Error("member_privacy_last_admin");
-      const { error: revokeAdminError } = await service.from("admins").delete().eq("user_id", member.auth_user_id);
-      if (revokeAdminError) throw new Error("member_privacy_admin_revocation_failed");
+    const { error: revokeAdminError } = await service.rpc("vom_revoke_admin_if_not_last", {
+      p_user_id: member.auth_user_id,
+    });
+    if (revokeAdminError) {
+      if (String(revokeAdminError.message || "").includes("member_privacy_last_admin")) {
+        throw new Error("member_privacy_last_admin");
+      }
+      throw new Error("member_privacy_admin_revocation_failed");
     }
   }
 
