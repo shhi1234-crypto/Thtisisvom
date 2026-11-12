@@ -217,7 +217,7 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       .update({ status: "SENDING", locked_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq("id", job.id)
       .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
-      .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,payload,status,attempts")
+      .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,consent_snapshot,payload,status,attempts")
       .maybeSingle();
     if (claimError) throw claimError;
     if (!claimed) continue;
