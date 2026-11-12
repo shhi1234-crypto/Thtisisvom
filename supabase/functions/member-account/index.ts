@@ -345,7 +345,15 @@ Deno.serve(async (req) => {
     if (action === "withdraw_membership") {
       const member = await requireLinkedMember(req, admin);
       if (payload.confirm !== "탈퇴") return response({ error: "탈퇴 확인 문구를 입력해 주세요." }, 400, requestOrigin);
-      const result = await anonymizeMemberAccount(admin, Number(member.id));
+      let result: any;
+      try {
+        result = await anonymizeMemberAccount(admin, Number(member.id));
+      } catch (error) {
+        if (error instanceof Error && error.message === "member_privacy_last_admin") {
+          return response({ error: "마지막 관리자 계정은 탈퇴할 수 없어요. 먼저 다른 관리자를 지정해 주세요." }, 409, requestOrigin);
+        }
+        throw error;
+      }
       return response({ ok: true, ...result }, 200, requestOrigin);
     }
 
@@ -353,7 +361,15 @@ Deno.serve(async (req) => {
       await requireAdminUser(req, admin);
       const memberId = asMemberId(payload.member_id);
       if (!memberId) return response({ error: "회원을 선택해 주세요." }, 400, requestOrigin);
-      const result = await anonymizeMemberAccount(admin, memberId);
+      let result: any;
+      try {
+        result = await anonymizeMemberAccount(admin, memberId);
+      } catch (error) {
+        if (error instanceof Error && error.message === "member_privacy_last_admin") {
+          return response({ error: "마지막 관리자 계정은 삭제할 수 없어요. 먼저 다른 관리자를 지정해 주세요." }, 409, requestOrigin);
+        }
+        throw error;
+      }
       return response({ ok: true, ...result }, 200, requestOrigin);
     }
 
