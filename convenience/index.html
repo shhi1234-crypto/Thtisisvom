@@ -40,6 +40,16 @@ body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Not
 .vc-tool-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:17px;color:#c5bcff;font-size:10px;font-weight:800}
 .vc-tool.is-coming .vc-tool-foot{color:#adb7cd}
 .vc-notice{margin:15px 2px 0;color:#8793ad;font-size:10px;line-height:1.65}
+/* Keep tool cards visible and high contrast alongside the shared dark theme. */
+html[data-vom-theme="dark"] body .vc-panel{display:block!important;min-height:180px;border-color:#364264!important;background:rgba(19,28,51,.96)!important;color:#f1f3ff!important}
+html[data-vom-theme="dark"] body .vc-panel :is(h1,h2,h3,h4,strong,b,label){color:#f0f2ff!important}
+html[data-vom-theme="dark"] body .vc-panel :is(p,small,span,.copy,.desc){color:#bac3d8!important}
+#convenienceApp:not([hidden]) .vc-grid{display:grid!important;visibility:visible!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+#convenienceApp:not([hidden]) .vc-tool{display:flex!important;visibility:visible!important;flex-direction:column;min-height:190px;border-color:#4a527d;background:linear-gradient(145deg,#27264f,#15333c);color:#f0f2ff!important;opacity:1}
+#convenienceApp:not([hidden]) .vc-tool h2{color:#f4f2ff!important}
+#convenienceApp:not([hidden]) .vc-tool p{color:#d1d5e8!important;font-size:13px;line-height:1.7}
+#convenienceApp:not([hidden]) .vc-tool-foot,#convenienceApp:not([hidden]) .vc-tool-foot span{color:#d2caff!important;font-size:11px}
+#convenienceApp:not([hidden]) .vc-tool .vc-icon{flex:0 0 40px;width:40px;height:40px}
 [hidden]{display:none!important}
 @media(max-width:600px){.vc-page{width:calc(100% - 24px);padding-top:25px}.vc-head{align-items:flex-start;flex-direction:column}.vc-panel{padding:16px;border-radius:18px}.vc-access{padding:24px 18px}.vc-tool{min-height:160px;padding:17px}}
 </style>
@@ -53,7 +63,7 @@ body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Not
 <main class="vc-page">
   <section id="convenienceAccess" class="vc-panel vc-access" hidden>
     <h2 id="convenienceAccessTitle">VOM 회원 전용 기능입니다.</h2>
-    <p id="convenienceAccessMessage">가입 승인된 회원으로 로그인하면 편의 기능을 사용할 수 있습니다.</p>
+    <p id="convenienceAccessMessage">회원가입 신청 후 운영진 심사에서 승인된 회원으로 로그인하면 편의 기능을 사용할 수 있습니다.</p>
     <a id="convenienceLogin" class="vc-button" href="/me/?next=%2Fconvenience%2F">MY VOM 로그인</a>
     <a class="vc-button secondary" href="/ot-room/">회원가입</a>
   </section>
@@ -74,7 +84,7 @@ body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Not
           <span class="vc-tool-foot"><span>회원 편의 기능</span><span>준비 중</span></span>
         </article>
       </div>
-      <p class="vc-notice">편의 기능은 가입 승인된 VOM 회원과 운영진 계정에서 사용할 수 있습니다.</p>
+      <p class="vc-notice">회원가입 신청만으로는 이용할 수 없으며, 운영진 심사에서 승인된 VOM 회원과 운영진 계정에서 사용할 수 있습니다.</p>
     </div>
   </section>
 </main>
@@ -87,14 +97,19 @@ body{min-height:100vh;margin:0;background:#0a0f1f;color:#f1f3ff;font-family:"Not
   const accessPanel=document.getElementById('convenienceAccess');
   const accessMessage=document.getElementById('convenienceAccessMessage');
   const app=document.getElementById('convenienceApp');
+  let accessRequest=0;
   async function refreshAccess(){
+    const request=++accessRequest;
     app.hidden=true;
     accessPanel.hidden=false;
+    accessMessage.textContent='회원 권한을 확인하고 있어요.';
     try{
       const access=await window.vomGetMemberAccess();
+      if(request!==accessRequest)return;
       if(access?.approved){accessPanel.hidden=true;app.hidden=false;return;}
-      accessMessage.textContent='편의 기능은 가입 승인된 활동 회원만 사용할 수 있습니다. MY VOM에서 회원 상태를 확인해 주세요.';
+      accessMessage.textContent='회원가입 신청서 제출만으로는 권한이 생기지 않습니다. 운영진 심사에서 승인된 뒤 사용할 수 있어요. MY VOM에서 상태를 확인해 주세요.';
     }catch(_){
+      if(request!==accessRequest)return;
       accessMessage.textContent='회원 권한을 확인하지 못했습니다. 다시 열거나 MY VOM에서 로그인 상태를 확인해 주세요.';
     }
   }
