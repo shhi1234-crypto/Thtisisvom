@@ -113,6 +113,8 @@ create or replace function public.vom_claim_signup_review_reminders(
   outbox_id bigint,
   review_id bigint,
   recipient_member_id bigint,
+  received_at timestamptz,
+  reminder_due_at timestamptz,
   recipient_name text,
   recipient_phone text,
   review_url text,
@@ -200,12 +202,15 @@ begin
         updated_at = as_of
     from ready
     where queued.id = ready.id
-    returning queued.id, queued.review_id, queued.recipient_member_id, queued.attempts
+    returning queued.id, queued.review_id, queued.recipient_member_id,
+      queued.received_at, queued.due_at, queued.attempts
   )
   select
     claimed.id,
     claimed.review_id,
     claimed.recipient_member_id,
+    claimed.received_at,
+    claimed.due_at,
     member.name,
     regexp_replace(coalesce(member.phone, ''), '[^0-9]', '', 'g'),
     'https://thisisvom.vercel.app/ot-admin/?id=' || claimed.review_id::text,
