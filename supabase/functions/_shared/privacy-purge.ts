@@ -1,11 +1,6 @@
 import { VIDEO_BUCKET } from "./ot-core.ts";
 import { queueSignupResultMessage } from "./signup-message-outbox.ts";
 
-function fail(result: any, code: string) {
-  if (result?.error) throw new Error(code);
-  return result?.data;
-}
-
 async function eraseAuthIdentity(service: any, userId: string | null | undefined) {
   if (!userId) return;
   const { error } = await service.auth.admin.updateUserById(userId, {
@@ -26,6 +21,12 @@ async function removeMedia(service: any, paths: Array<string | null | undefined>
 }
 
 async function clearPendingSignupMessages(service: any, inviteId: string, status: string) {
+  const { error: terminalError } = await service.from("signup_message_outbox")
+    .update({ recipient_phone: null, recipient_name: "회원", payload: {}, updated_at: new Date().toISOString() })
+    .eq("invite_id", inviteId)
+    .in("status", ["ACCEPTED", "SKIPPED", "FAILED"]);
+  if (terminalError) throw new Error("privacy_terminal_outbox_cleanup_failed");
+
   const kinds = status === "REJECTED"
     ? ["SIGNUP_APPLICATION_RECEIVED"]
     : ["SIGNUP_APPLICATION_RECEIVED", "SIGNUP_APPROVED", "SIGNUP_REJECTED"];
@@ -103,7 +104,7 @@ export async function purgeResolvedSignup(service: any, reviewId: number) {
   if (applicantError) throw new Error("privacy_profile_lookup_failed");
   if (applicant?.member_id) return { purged: false, reason: "linked_member" };
 
-  const userId = applicant?.auth_user_id || invite?.applicant_user_id || review.created_by;
+  const userId = applicant?.auth_user_id || invite?.applicant_user_id;
   await removeMedia(service, [review.video_file_path, applicant?.profile_photo_path]);
   await eraseAuthIdentity(service, userId);
 
@@ -159,6 +160,16 @@ export async function anonymizeMemberAccount(service: any, memberId: number) {
   const { data: member, error: lookupError } = await service.from("members")
     .select("id,name,auth_user_id").eq("id", memberId).maybeSingle();
   if (lookupError || !member) throw new Error("member_privacy_lookup_failed");
+
+  if (member.auth_user_id) {
+    const { data: adminIdentity, error: adminCheckError } = await service.from("admins")
+      .select("user_id").eq("user_id", member.auth_user_id).maybeSingle();
+    if (adminCheckError) throw new Error("member_privacy_admin_check_failed");
+    if (adminIdentity) {
+      const { error: revokeAdminError } = await service.from("admins").delete().eq("user_id", member.auth_user_id);
+      if (revokeAdminError) throw new Error("member_privacy_admin_revocation_failed");
+    }
+  }
 
   // Deactivate first so a partial cleanup cannot leave an account usable.
   const { error: deactivateError } = await service.from("members")
