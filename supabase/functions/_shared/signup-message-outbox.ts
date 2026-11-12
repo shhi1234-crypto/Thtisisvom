@@ -76,7 +76,9 @@ function payloadFor(kind: SignupMessageKind, name: unknown) {
     applicant_name: recipientName,
     confirmation_url: kind === "SIGNUP_APPROVED"
       ? "https://thisisvom.vercel.app/me/"
-      : "https://thisisvom.vercel.app/ot-room/?result=1",
+      : kind === "SIGNUP_REJECTED"
+        ? "https://thisisvom.vercel.app/"
+        : "https://thisisvom.vercel.app/ot-room/?result=1",
     fallback_sms_enabled: false,
   };
 }
@@ -97,7 +99,7 @@ function fallbackText(kind: SignupMessageKind, payload: Record<string, unknown>)
   if (kind === "SIGNUP_APPROVED") {
     return `[VOM 가입 승인]\n${name}님, VOM 가입 신청이 승인되었습니다.\n홈페이지에서 로그인해 주세요.\n${url}`;
   }
-  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n신청 결과와 안내를 확인해 주세요.\n${url}`;
+  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n추가 안내가 필요하면 홈페이지에서 문의해 주세요.\n${url}`;
 }
 
 export async function queueSignupMessage(service: any, input: SignupMessageInput) {
