@@ -168,11 +168,18 @@ Deno.serve(async (req) => {
 
   try {
     if (action === "public_member_count") {
-      const { count, error } = await admin
-        .from("members")
-        .select("id", { count: "exact", head: true });
-      if (error) throw error;
-      return response({ count: count ?? 0 }, 200, requestOrigin);
+      const [{ count, error: countError }, { data: activeMembers, error: activeError }] = await Promise.all([
+        admin.from("members").select("id", { count: "exact", head: true }),
+        admin.from("members").select("role").eq("is_active", true)
+      ]);
+      if (countError || activeError) throw countError || activeError;
+      const active = activeMembers || [];
+      return response({
+        count: count ?? 0,
+        active_count: active.length,
+        staff_count: active.filter((member: any) => ["운영진", "모임장"].includes(String(member.role || "").trim())).length,
+        helper_count: active.filter((member: any) => String(member.role || "").trim() === "헬퍼").length
+      }, 200, requestOrigin);
     }
 
     if (action === "hint") {
@@ -292,6 +299,33 @@ Deno.serve(async (req) => {
         .order("id", { ascending: true });
       if (error) throw error;
       return response({ members: data || [] }, 200, requestOrigin);
+    }
+
+    if (action === "admin_member_login_status") {
+      await requireAdminUser(req, admin);
+      const { data: memberRows, error: memberError } = await admin
+        .from("members")
+        .select("id,auth_user_id")
+        .order("id", { ascending: true });
+      if (memberError) throw memberError;
+
+      const linkedMembers = (memberRows || []).filter((member: any) => member.auth_user_id);
+      const usersById = new Map<string, any>();
+      const perPage = 1000;
+      for (let page = 1; page <= 100; page++) {
+        const { data, error } = await admin.auth.admin.listUsers({ page, perPage });
+        if (error) throw error;
+        const users = data?.users || [];
+        for (const user of users) usersById.set(String(user.id), user);
+        if (users.length < perPage) break;
+      }
+
+      return response({
+        members: linkedMembers.map((member: any) => ({
+          member_id: member.id,
+          last_sign_in_at: usersById.get(String(member.auth_user_id))?.last_sign_in_at || null
+        }))
+      }, 200, requestOrigin);
     }
 
     if (action === "admin_member_save") {
