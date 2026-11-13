@@ -154,3 +154,4 @@ export async function requireOperator(req: Request, service: any) {
   if (!isAdmin && !isOperator) throw new ApiError(403, "가입 심사 권한이 필요합니다. 멤버스에서 직책과 계정 연결을 확인해 주세요.");
   return { userId: data.user.id, isAdmin, memberId: isOperator ? Number(member.id) : null, name: member?.name || "관리자" };
 }
+
