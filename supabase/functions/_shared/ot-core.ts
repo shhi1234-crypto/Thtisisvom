@@ -144,13 +144,13 @@ export async function requireOperator(req: Request, service: any) {
   if (!token) throw new ApiError(401, "운영진 로그인이 필요합니다.");
   const { data, error } = await service.auth.getUser(token);
   if (error || !data.user) throw new ApiError(401, "로그인 정보를 확인하지 못했습니다.");
-  const [{ data: admin, error: ae }, { data: member, error: me }, { data: access, error: oe }] = await Promise.all([
+  const [{ data: admin, error: ae }, { data: member, error: me }] = await Promise.all([
     service.from("admins").select("user_id").eq("user_id", data.user.id).maybeSingle(),
     service.from("members").select("id,name,role,is_active").eq("auth_user_id", data.user.id).maybeSingle(),
-    service.from("ot_room_operator_access").select("member_id").eq("user_id", data.user.id).is("revoked_at", null).maybeSingle(),
   ]);
-  if (ae || me || oe) throw new Error("operator_lookup_failed");
+  if (ae || me) throw new Error("operator_lookup_failed");
   const isAdmin = !!admin;
-  if (!isAdmin && !(member?.role === "운영진" && member.is_active && Number(access?.member_id) === Number(member.id))) throw new ApiError(403, "OT 검토 권한이 필요합니다. 관리자에게 계정 확인을 요청해 주세요.");
-  return { userId: data.user.id, isAdmin, memberId: member?.role === "운영진" && member.is_active ? Number(member.id) : null, name: member?.name || "관리자" };
+  const isOperator = ["운영진", "모임장"].includes(member?.role) && member.is_active === true;
+  if (!isAdmin && !isOperator) throw new ApiError(403, "가입 심사 권한이 필요합니다. 멤버스에서 직책과 계정 연결을 확인해 주세요.");
+  return { userId: data.user.id, isAdmin, memberId: isOperator ? Number(member.id) : null, name: member?.name || "관리자" };
 }

@@ -738,22 +738,40 @@
   }
 
   function renderPopupBody(value) {
-    return String(value == null ? '' : value).split(/\r?\n/).map(function (line) {
+    const output = [];
+    const paragraph = [];
+    const flushParagraph = function () {
+      if (!paragraph.length) return;
+      output.push('<p class="vom-site-popup-copy">' + escapePopupHtml(paragraph.join(' ')) + '</p>');
+      paragraph.length = 0;
+    };
+    String(value == null ? '' : value).split(/\r?\n/).forEach(function (line) {
       const text = line.trim();
-      if (!text) return '';
+      if (!text) {
+        flushParagraph();
+        return;
+      }
       const prize = text.match(/^(\d+)등\s*[|｜]\s*(.+)$/);
       if (prize) {
+        flushParagraph();
         const rank = Number(prize[1]);
-        return '<div class="vom-site-popup-prize vom-site-popup-prize-' + rank + '"><span class="vom-site-popup-rank">' + escapePopupHtml(prize[1] + '등') + '</span><span class="vom-site-popup-prize-copy">' + escapePopupHtml(prize[2]) + '</span></div>';
+        output.push('<div class="vom-site-popup-prize vom-site-popup-prize-' + rank + '"><span class="vom-site-popup-rank">' + escapePopupHtml(prize[1] + '등') + '</span><span class="vom-site-popup-prize-copy">' + escapePopupHtml(prize[2]) + '</span></div>');
+        return;
       }
       if (/^\d{4}년\s+\d{1,2}월\s+\d{1,2}일\s+오후\s+\d{1,2}시\s+\d{1,2}분/.test(text)) {
-        return '<div class="vom-site-popup-date">' + escapePopupHtml(text) + '</div>';
+        flushParagraph();
+        output.push('<div class="vom-site-popup-date">' + escapePopupHtml(text) + '</div>');
+        return;
       }
       if (/^원투데이에 만나요[.!！]?$/u.test(text)) {
-        return '<p class="vom-site-popup-closing">' + escapePopupHtml(text) + '</p>';
+        flushParagraph();
+        output.push('<p class="vom-site-popup-closing">' + escapePopupHtml(text) + '</p>');
+        return;
       }
-      return '<p class="vom-site-popup-copy">' + escapePopupHtml(text) + '</p>';
-    }).filter(Boolean).join('');
+      paragraph.push(text);
+    });
+    flushParagraph();
+    return output.join('');
   }
 
   function renderSitePopup(notice) {
@@ -770,7 +788,7 @@
     if (!document.getElementById(styleId)) {
       const style = document.createElement('style');
       style.id = styleId;
-      style.textContent = '.vom-site-popup-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:22px;background:rgba(8,13,31,.68);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.vom-site-popup-card{position:relative;width:min(460px,100%);max-height:min(82vh,720px);overflow:auto;padding:30px 26px 23px;border:1px solid rgba(255,255,255,.92);border-radius:26px;background:radial-gradient(circle at 95% 4%,rgba(221,215,255,.62),transparent 132px),linear-gradient(145deg,#fff 0%,#fbfaff 100%);color:#252a41;box-shadow:0 28px 90px rgba(4,9,27,.34)}.vom-site-popup-card::before{content:"";position:absolute;top:0;left:24px;right:24px;height:4px;border-radius:0 0 5px 5px;background:linear-gradient(90deg,#7662df,#b9aaf4,#9ad9cb)}.vom-site-popup-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.vom-site-popup-kicker{color:#705bd5;font:800 10px/1 \"DM Sans\",Arial,sans-serif;letter-spacing:.12em}.vom-site-popup-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid #e8e5f1;border-radius:50%;background:#fff;color:#60667a;font-size:20px;cursor:pointer}.vom-site-popup-card .vom-site-popup-title{margin:0;color:#252a41!important;font-family:"Noto Sans KR",Pretendard,Arial,sans-serif!important;font-weight:800;font-size:25px;line-height:1.32;letter-spacing:-.045em;overflow-wrap:anywhere}.vom-site-popup-body{display:grid;gap:9px;margin:16px 0 0;color:#626a80;font:500 14px/1.75 "Noto Sans KR",Pretendard,Arial,sans-serif;overflow-wrap:anywhere}.vom-site-popup-top .vom-site-popup-kicker{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;background:#f1edff;color:#705bd5}.vom-site-popup-copy{margin:0}.vom-site-popup-date{padding:11px 13px;border:1px solid #e7e1fb;border-radius:14px;background:linear-gradient(110deg,#f3f0ff,#f4fbfa);color:#554993;font-size:13px;font-weight:800;line-height:1.7}.vom-site-popup-prize{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:10px;padding:10px 12px;border:1px solid #ece8f5;border-radius:13px;background:#fff;box-shadow:0 5px 14px rgba(39,34,86,.04);font-size:12px;line-height:1.55}.vom-site-popup-prize-1{border-color:#eee2b7;background:linear-gradient(110deg,#fffdf7,#fff)}.vom-site-popup-prize-2{border-color:#e4dff7;background:linear-gradient(110deg,#faf8ff,#fff)}.vom-site-popup-prize-3{border-color:#dceee8;background:linear-gradient(110deg,#f6fcfa,#fff)}.vom-site-popup-rank{display:grid;place-items:center;min-height:27px;border-radius:8px;background:#f1edff;color:#6553c8;font-size:10px;font-weight:900}.vom-site-popup-prize-1 .vom-site-popup-rank{background:#fff1cc;color:#906311}.vom-site-popup-prize-3 .vom-site-popup-rank{background:#e6f5ef;color:#397a65}.vom-site-popup-closing{margin:3px 0 0;color:#6553c8;font-weight:800}.vom-site-popup-link{display:inline-flex;align-items:center;gap:7px;min-height:42px;margin-top:19px;padding:0 14px;border-radius:12px;background:linear-gradient(110deg,#705ddd,#7d86e7);color:#fff!important;font:800 12px "Noto Sans KR",Pretendard,Arial,sans-serif;text-decoration:none!important}.vom-site-popup-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:15px;border-top:1px solid #ece9f4}.vom-site-popup-actions button{min-height:40px;padding:0 13px;border:1px solid #e4e1ed;border-radius:11px;background:#fff;color:#656b7d;font:700 11px "Noto Sans KR",Pretendard,Arial,sans-serif;cursor:pointer}.vom-site-popup-actions [data-popup-hide-three-days]{border-color:#d9d3f2;background:#f5f2ff;color:#6553cb}.vom-site-popup-card button:focus-visible,.vom-site-popup-card a:focus-visible{outline:3px solid rgba(116,96,221,.35);outline-offset:2px}@media(max-width:600px){.vom-site-popup-overlay{align-items:end;padding:12px 12px max(14px,env(safe-area-inset-bottom))}.vom-site-popup-card{width:100%;max-height:86vh;padding:28px 19px 18px;border-radius:23px}.vom-site-popup-title{font-size:22px}.vom-site-popup-body{gap:8px;font-size:13px}.vom-site-popup-date{padding:10px 11px;font-size:12px}.vom-site-popup-prize{grid-template-columns:35px minmax(0,1fr);gap:8px;padding:9px 10px;font-size:11px}.vom-site-popup-actions{margin-top:19px}.vom-site-popup-actions button{flex:1}}';
+      style.textContent = '.vom-site-popup-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:22px;background:rgba(8,13,31,.68);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.vom-site-popup-card{position:relative;width:min(520px,100%);max-height:min(82vh,720px);overflow:auto;padding:34px 30px 26px;border:1px solid rgba(255,255,255,.92);border-radius:26px;background:radial-gradient(circle at 95% 4%,rgba(221,215,255,.62),transparent 132px),linear-gradient(145deg,#fff 0%,#fbfaff 100%);color:#252a41;box-shadow:0 28px 90px rgba(4,9,27,.34)}.vom-site-popup-card::before{content:"";position:absolute;top:0;left:24px;right:24px;height:4px;border-radius:0 0 5px 5px;background:linear-gradient(90deg,#7662df,#b9aaf4,#9ad9cb)}.vom-site-popup-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.vom-site-popup-kicker{color:#705bd5;font:800 10px/1 \"DM Sans\",Arial,sans-serif;letter-spacing:.12em}.vom-site-popup-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid #e8e5f1;border-radius:50%;background:#fff;color:#60667a;font-size:20px;cursor:pointer}.vom-site-popup-card .vom-site-popup-title{margin:0;color:#252a41!important;font-family:"Noto Sans KR",Pretendard,Arial,sans-serif!important;font-weight:800;font-size:29px;line-height:1.32;letter-spacing:-.045em;overflow-wrap:anywhere}.vom-site-popup-body{display:grid;gap:9px;margin:16px 0 0;color:#626a80;font:500 15px/1.75 "Noto Sans KR",Pretendard,Arial,sans-serif;word-break:keep-all;overflow-wrap:normal}.vom-site-popup-top .vom-site-popup-kicker{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;background:#f1edff;color:#705bd5}.vom-site-popup-copy{margin:0}.vom-site-popup-date{padding:11px 13px;border:1px solid #e7e1fb;border-radius:14px;background:linear-gradient(110deg,#f3f0ff,#f4fbfa);color:#554993;font-size:14px;font-weight:800;line-height:1.75;word-break:keep-all}.vom-site-popup-prize{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:10px;padding:12px 14px;border:1px solid #ece8f5;border-radius:13px;background:#fff;box-shadow:0 5px 14px rgba(39,34,86,.04);font-size:13px;line-height:1.6;word-break:keep-all}.vom-site-popup-prize-copy{word-break:keep-all;overflow-wrap:normal}.vom-site-popup-prize-1{border-color:#eee2b7;background:linear-gradient(110deg,#fffdf7,#fff)}.vom-site-popup-prize-2{border-color:#e4dff7;background:linear-gradient(110deg,#faf8ff,#fff)}.vom-site-popup-prize-3{border-color:#dceee8;background:linear-gradient(110deg,#f6fcfa,#fff)}.vom-site-popup-rank{display:grid;place-items:center;min-height:31px;border-radius:9px;background:#f1edff;color:#6553c8;font-size:11px;font-weight:900}.vom-site-popup-prize-1 .vom-site-popup-rank{background:#fff1cc;color:#906311}.vom-site-popup-prize-3 .vom-site-popup-rank{background:#e6f5ef;color:#397a65}.vom-site-popup-closing{margin:4px 0 0;padding:12px 15px;border:1px solid #e4def8;border-radius:14px;background:linear-gradient(115deg,#f2efff,#f2fbf8);color:#4c4091;font-size:16px;font-weight:900;line-height:1.5;text-align:center;letter-spacing:-.025em}.vom-site-popup-link{display:inline-flex;align-items:center;gap:7px;min-height:42px;margin-top:19px;padding:0 14px;border-radius:12px;background:linear-gradient(110deg,#705ddd,#7d86e7);color:#fff!important;font:800 12px "Noto Sans KR",Pretendard,Arial,sans-serif;text-decoration:none!important}.vom-site-popup-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:15px;border-top:1px solid #ece9f4}.vom-site-popup-actions button{min-height:42px;padding:0 15px;border:1px solid #e4e1ed;border-radius:11px;background:#fff;color:#656b7d;font:700 12px "Noto Sans KR",Pretendard,Arial,sans-serif;cursor:pointer}.vom-site-popup-actions [data-popup-hide-three-days]{border-color:#d9d3f2;background:#f5f2ff;color:#6553cb}.vom-site-popup-card button:focus-visible,.vom-site-popup-card a:focus-visible{outline:3px solid rgba(116,96,221,.35);outline-offset:2px}@media(max-width:600px){.vom-site-popup-overlay{align-items:end;padding:12px 12px max(14px,env(safe-area-inset-bottom))}.vom-site-popup-card{width:100%;max-height:86vh;padding:30px 20px 19px;border-radius:23px}.vom-site-popup-card .vom-site-popup-title{font-size:26px}.vom-site-popup-body{gap:8px;font-size:14px}.vom-site-popup-date{padding:10px 11px;font-size:13px}.vom-site-popup-prize{grid-template-columns:38px minmax(0,1fr);gap:9px;padding:10px 11px;font-size:12px}.vom-site-popup-actions{margin-top:19px}.vom-site-popup-actions button{flex:1}}';
       document.head.appendChild(style);
     }
 

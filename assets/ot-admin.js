@@ -15,7 +15,7 @@
   function say(text,kind=''){message.textContent=text;message.hidden=!text;message.className='ot-message'+(kind?' '+kind:'');}
   async function request(body,binary=false){
     const {data}=await db.auth.getSession();
-    if(!data.session)throw Object.assign(new Error('운영진 로그인이 필요합니다.'),{status:401});
+    if(!data.session)throw Object.assign(new Error('가입 심사 권한이 있는 계정으로 로그인해 주세요.'),{status:401});
     const response=await fetch('https://aqfmhqultzpakfqwzulj.supabase.co/functions/v1/ot-review',{method:'POST',headers:{'Content-Type':'application/json',apikey:'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R',Authorization:'Bearer '+data.session.access_token},body:JSON.stringify(body),cache:'no-store',referrerPolicy:'no-referrer'});
     if(binary&&response.ok)return response.blob();
     let result;try{result=await response.json()}catch(_){throw new Error('서버 응답을 확인하지 못했습니다.');}
@@ -47,10 +47,8 @@
     reviewList.innerHTML=reviews.length?reviews.map(reviewHtml).join(''):'<div class="ot-empty">'+(filter==='IN_REVIEW'?'검토 대기 중인 가입 신청이 없습니다.':'해당 상태의 가입 신청이 없습니다.')+'</div>';
     media.forEach((value,id)=>{const host=document.getElementById('video-'+id);if(host)attachVideo(host,value.url,id,value.type);});
     photos.forEach((url,id)=>{const host=document.getElementById('photo-'+id);if(host)attachPhoto(host,url,id);});
-    document.getElementById('operatorAccessPanel').hidden=!state.actor.isAdmin;
     document.getElementById('operatorPushPanel').hidden=!state.actor.isAdmin;
     document.getElementById('operatorPushList').innerHTML=state.actor.isAdmin?state.operators.map(op=>'<div class="ot-invite-item"><div>'+esc(op.name)+'<small>'+(op.push_devices?'알림 등록됨 · '+Number(op.push_devices)+'대':'알림 등록 필요')+'</small><input id="push-link-'+Number(op.id)+'" aria-label="'+esc(op.name)+'님 알림 등록 링크" readonly hidden></div><button type="button" class="ot-button" data-action="operator_push_invite" data-member="'+Number(op.id)+'">등록 링크 보기</button></div>').join(''):'';
-    document.getElementById('operatorAccessList').innerHTML=state.actor.isAdmin?state.operators.map(op=>'<div class="ot-invite-item"><div>'+esc(op.name)+'<small>'+(op.ot_access?'가입 관리 권한 있음':op.has_account?'관리자 계정 확인 필요':'개인 계정 연결 필요')+'</small></div><button type="button" class="ot-button'+(op.ot_access?' ot-danger':'')+'" data-action="operator_access" data-member="'+Number(op.id)+'" data-enabled="'+(!op.ot_access)+'" '+(!op.has_account?'disabled':'')+'>'+(op.ot_access?'권한 회수':'권한 부여')+'</button></div>').join(''):'';
   }
   function attachVideo(host,url,id,type){
     host.replaceChildren();
@@ -94,7 +92,6 @@
       }
       if(action==='complete'){const memberId=Number(document.getElementById('member-'+id).value);if(!memberId)throw new Error('최종 가입 완료 회원을 선택해 주세요.');if(!confirm('선택한 회원이 이 신규 가입자와 같은 사람인지 확인했나요?'))return;await request({action:'complete',review_id:id,member_id:memberId});await refresh(false);say('최종 가입 완료 회원과 연결했습니다.','success');}
       if(action==='operator_push_invite'){const result=await request({action,member_id:Number(button.dataset.member)});const input=document.getElementById('push-link-'+Number(button.dataset.member));input.value=result.url;input.hidden=false;input.focus();input.select();try{await navigator.clipboard.writeText(result.url);say('본인용 알림 등록 링크를 복사했습니다. 해당 운영진에게 안내해 주세요.','success');}catch{say('표시된 본인용 링크를 복사해 해당 운영진에게 안내해 주세요.');}}
-      if(action==='operator_access'){const enabled=button.dataset.enabled==='true';if(!confirm(enabled?'본인 운영진 계정임을 확인했나요? 이 계정에서 신규 가입자의 사진·라이브 파일을 검토할 수 있게 됩니다.':'이 운영진의 가입 관리 권한을 회수할까요?'))return;await request({action:'operator_access',member_id:Number(button.dataset.member),enabled});await refresh(false);say(enabled?'가입 관리 권한을 부여했습니다.':'가입 관리 권한을 회수했습니다.','success');}
     }catch(error){denied(error);}finally{actionBusy=false;if(button.isConnected)button.disabled=false;}
   });
   document.getElementById('refreshButton').addEventListener('click',()=>refresh());
@@ -113,7 +110,7 @@
     }catch(error){note.textContent=error.message||'알림 상태를 확인하지 못했습니다.';if(error.status===401||error.status===403)denied(error);}finally{button.disabled=false;}
   });
   document.getElementById('retryNotificationButton').addEventListener('click',async event=>{event.target.disabled=true;try{await request({action:'retry_notifications'});await refresh(false);say('대기 중인 알림을 재시도했습니다.');}catch(error){denied(error);}finally{event.target.disabled=false;}});
-  db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){clearMedia();state=null;dashboard.hidden=true;login.hidden=false;reviewList.replaceChildren();document.getElementById('operatorName').textContent='';document.getElementById('operatorPushList').replaceChildren();document.getElementById('operatorAccessList').replaceChildren();document.getElementById('refreshButton').hidden=true;say('로그아웃됐습니다. 운영진 계정으로 다시 로그인해 주세요.');}});
+  db.auth.onAuthStateChange(event=>{if(event==='SIGNED_OUT'){clearMedia();state=null;dashboard.hidden=true;login.hidden=false;reviewList.replaceChildren();document.getElementById('operatorName').textContent='';document.getElementById('operatorPushList').replaceChildren();document.getElementById('refreshButton').hidden=true;say('로그아웃됐습니다. 가입 심사 권한이 있는 계정으로 다시 로그인해 주세요.');}});
   window.addEventListener('pagehide',clearMedia);
   refresh().then(()=>{if(focusId&&state){filter='ALL';document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter==='ALL'));render();document.getElementById('review-'+focusId)?.scrollIntoView({behavior:'smooth',block:'start'});}});
   setInterval(()=>{if(state&&!actionBusy&&!document.hidden)refresh(false,true);},30000);

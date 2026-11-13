@@ -19,7 +19,7 @@ export async function notifyOT(service: any, reviewId: number, send=webpush.send
       service.from("vom_push_config").select("vapid_public_key,vapid_private_key,subject").eq("id", 1).maybeSingle(),
       service.from("vom_push_subscriptions").select("id,endpoint,p256dh,auth,vom_push_invites!inner(is_active,recipient_name)")
         .eq("is_active", true).eq("vom_push_invites.is_active", true),
-      service.from('members').select('id,name').eq('role','운영진').eq('is_active',true).in('id',review.eligible_operator_ids||[]),
+      service.from('members').select('id,name').in('role',['운영진','모임장']).eq('is_active',true).in('id',review.eligible_operator_ids||[]),
       service.from('ot_operator_push_deliveries').select('subscription_id').eq('review_id',reviewId),
     ]);
     if (ce || se || oe || de) throw new Error("push_config_failed");

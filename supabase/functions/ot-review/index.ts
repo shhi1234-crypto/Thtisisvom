@@ -21,19 +21,18 @@ export async function handle(req: Request, service: any) {
         .eq('endpoint',endpoint).eq('is_active',true).eq('vom_push_invites.is_active',true).maybeSingle();
       if(error)throw new Error('device_notification_lookup_failed');
       const recipient=data?.vom_push_invites?.recipient_name;
-      const {data:operator,error:oe}=recipient?await service.from('members').select('id').eq('name',recipient).eq('role','운영진').eq('is_active',true).maybeSingle():{data:null,error:null};
+      const {data:operator,error:oe}=recipient?await service.from('members').select('id').eq('name',recipient).in('role',['운영진','모임장']).eq('is_active',true).maybeSingle():{data:null,error:null};
       if(oe)throw new Error('device_notification_operator_failed');
       return json(origin,{ok:true,registered:!!operator&&(actor.isAdmin||Number(operator.id)===Number(actor.memberId))});
     }
 
     if (action === "list") {
-      const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }, { data: accessRows, error: ae }] = await Promise.all([
+      const [{ data: reviews, error: re }, { data: operators, error: oe }, { data: invites, error: ie }] = await Promise.all([
         service.from("ot_reviews").select("id,candidate_name,somoim_nickname,status,due_at,created_at,resolved_at,eligible_operator_ids,required_majority,operator_notified_at,approval_notified_at,completed_member_id,completed_at,video_source,media_kind,discarded_at,discarded_by,discard_reason").order("created_at", { ascending: false }).limit(500),
-        service.from("members").select("id,name,nickname,auth_user_id").eq("role", "운영진").eq("is_active", true).order("join_order", { ascending: true }),
+        service.from("members").select("id,name,nickname,auth_user_id").in("role", ["운영진", "모임장"]).eq("is_active", true).order("join_order", { ascending: true }),
         service.from("ot_room_invites").select("id,somoim_nickname,created_at,expires_at,revoked_at,review_id,signup_source").eq('signup_source','INVITE').order("created_at", { ascending: false }).limit(100),
-        service.from("ot_room_operator_access").select("member_id,user_id,revoked_at"),
       ]);
-      if (re || oe || ie || ae) throw new Error("ot_list_failed");
+      if (re || oe || ie) throw new Error("ot_list_failed");
       const ids = (reviews || []).map((r: any) => r.id);
       const { data: votes, error: ve } = ids.length
         ? await service.from("ot_review_votes").select("review_id,voter_member_id,decision,updated_at").in("review_id", ids)
@@ -60,7 +59,6 @@ export async function handle(req: Request, service: any) {
       return json(origin, {
         ok: true, actor, operators: (operators || []).map((op: any) => ({
           id: op.id, name: op.name, nickname: op.nickname, has_account: !!op.auth_user_id,
-          ot_access: (accessRows || []).some((a: any) => a.member_id === op.id && a.user_id === op.auth_user_id && !a.revoked_at),
           push_devices:actor.isAdmin?(pushDevices||[]).filter((d:any)=>d.vom_push_invites?.recipient_name===op.name).length:undefined,
         })), invites, members,
         reviews: (reviews || []).map((r: any) => ({ ...r,
@@ -74,7 +72,7 @@ export async function handle(req: Request, service: any) {
     if(action==='operator_push_invite'){
       if(!actor.isAdmin)throw new ApiError(403,'관리자만 운영진 알림 등록 링크를 발급할 수 있습니다.');
       const memberId=positiveInt(body.member_id);
-      const {data:member,error:me}=await service.from('members').select('name').eq('id',memberId).eq('role','운영진').eq('is_active',true).maybeSingle();
+      const {data:member,error:me}=await service.from('members').select('name').eq('id',memberId).in('role',['운영진','모임장']).eq('is_active',true).maybeSingle();
       if(me||!member)throw new ApiError(400,'활동 중인 운영진을 선택해 주세요.');
       const {data:existing,error:ie}=await service.from('vom_push_invites').select('invite_token')
         .eq('recipient_name',member.name).eq('is_active',true).order('created_at',{ascending:false}).limit(1).maybeSingle();
@@ -101,25 +99,6 @@ export async function handle(req: Request, service: any) {
         .eq("id", body.invite_id).is("revoked_at", null).select("id").maybeSingle();
       if (error) throw new Error("invite_revoke_failed");
       if (!data) throw new ApiError(404, "이미 중지됐거나 존재하지 않는 등록 링크입니다.");
-      return json(origin, { ok: true });
-    }
-
-    if (action === "operator_access") {
-      if (!actor.isAdmin) throw new ApiError(403, "OT 권한 관리는 관리자만 할 수 있습니다.");
-      const memberId = positiveInt(body.member_id);
-      const { data: operator, error } = await service.from("members").select("id,auth_user_id")
-        .eq("id", memberId).eq("role", "운영진").eq("is_active", true).maybeSingle();
-      if (error || !operator?.auth_user_id) throw new ApiError(400, "운영진의 본인 개인 계정 연결을 먼저 확인해 주세요.");
-      if (body.enabled === true) {
-        const { error: ge } = await service.from("ot_room_operator_access").upsert({
-          user_id: operator.auth_user_id, member_id: memberId, granted_by: actor.userId,
-          granted_at: new Date().toISOString(), revoked_at: null,
-        }, { onConflict: "member_id" });
-        if (ge) throw new Error("ot_access_grant_failed");
-      } else if (body.enabled === false) {
-        const { error: de } = await service.from("ot_room_operator_access").update({ revoked_at: new Date().toISOString() }).eq("member_id", memberId);
-        if (de) throw new Error("ot_access_revoke_failed");
-      } else throw new ApiError(400, "권한 부여 또는 회수를 선택해 주세요.");
       return json(origin, { ok: true });
     }
 

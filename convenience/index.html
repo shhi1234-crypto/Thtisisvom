@@ -61,11 +61,12 @@ html[data-vom-theme="dark"] body .vc-panel :is(p,small,span,.copy,.desc){color:#
   <div class="vom-header-actions"><a class="vc-back" href="/me/">MY VOM으로 돌아가기</a><button class="vom-shell-menu-trigger" type="button" aria-label="메뉴 열기">☰</button></div>
 </header>
 <main class="vc-page">
-  <section id="convenienceAccess" class="vc-panel vc-access" hidden>
+  <section id="convenienceAccess" class="vc-panel vc-access">
     <h2 id="convenienceAccessTitle">VOM 회원 전용 기능입니다.</h2>
-    <p id="convenienceAccessMessage">회원가입 신청 후 운영진 심사에서 승인된 회원으로 로그인하면 편의 기능을 사용할 수 있습니다.</p>
+    <p id="convenienceAccessMessage">회원 권한을 확인하고 있어요. 잠시만 기다려 주세요.</p>
     <a id="convenienceLogin" class="vc-button" href="/me/?next=%2Fconvenience%2F">MY VOM 로그인</a>
     <a class="vc-button secondary" href="/ot-room/">회원가입</a>
+    <button id="convenienceRetry" class="vc-button secondary" type="button">다시 확인</button>
   </section>
   <section id="convenienceApp" hidden>
     <div class="vc-head"><div><div class="vc-eyebrow">MEMBER TOOLS</div><h1>편의 기능</h1><p>VOM 회원이 자주 쓰는 도구를 모았어요. 필요한 기능을 선택해 주세요.</p></div><a class="vc-back" href="/me/">MY VOM</a></div>
@@ -91,12 +92,14 @@ html[data-vom-theme="dark"] body .vc-panel :is(p,small,span,.copy,.desc){color:#
 <nav class="bottom" aria-label="주요 메뉴">
   <a href="/"><span class="nav-icon">⌂</span>HOME</a><a href="/calendar/"><span class="nav-icon">◫</span>CALENDAR</a><a href="/members/"><span class="nav-icon">♙</span>MEMBERS</a><a href="/me/"><span class="nav-icon">♡</span>MY VOM</a><button type="button" aria-label="전체 메뉴 열기"><span class="nav-icon">☰</span>MENU</button>
 </nav>
-<script src="/assets/vom-shell.js?v=17"></script>
+<script src="/assets/vom-shell.js?v=18"></script>
 <script>
 (async function(){
   const accessPanel=document.getElementById('convenienceAccess');
   const accessMessage=document.getElementById('convenienceAccessMessage');
   const app=document.getElementById('convenienceApp');
+  const accessTitle=document.getElementById('convenienceAccessTitle');
+  const retryButton=document.getElementById('convenienceRetry');
   let accessRequest=0;
   async function refreshAccess(){
     const request=++accessRequest;
@@ -106,13 +109,15 @@ html[data-vom-theme="dark"] body .vc-panel :is(p,small,span,.copy,.desc){color:#
     try{
       const access=await window.vomGetMemberAccess();
       if(request!==accessRequest)return;
-      if(access?.approved){accessPanel.hidden=true;app.hidden=false;return;}
-      accessMessage.textContent='회원가입 신청서 제출만으로는 권한이 생기지 않습니다. 운영진 심사에서 승인된 뒤 사용할 수 있어요. MY VOM에서 상태를 확인해 주세요.';
+      if(access?.approved===true||access?.isAdmin===true){accessPanel.hidden=true;app.hidden=false;return;}
+      accessTitle.textContent='승인된 VOM 회원 전용 기능입니다.';
+      accessMessage.textContent='회원가입 신청서 제출만으로는 권한이 생기지 않습니다. 운영진 심사에서 승인된 회원 또는 관리자 계정으로 로그인해 주세요.';
     }catch(_){
       if(request!==accessRequest)return;
       accessMessage.textContent='회원 권한을 확인하지 못했습니다. 다시 열거나 MY VOM에서 로그인 상태를 확인해 주세요.';
     }
   }
+  retryButton?.addEventListener('click',refreshAccess);
   await refreshAccess();
   window.addEventListener('vom-member-access-changed',refreshAccess);
 })();

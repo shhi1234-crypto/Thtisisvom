@@ -311,8 +311,8 @@ button{
   gap:9px;
   flex-wrap:wrap;
   color:#697084;
-  font-size:11px;
-  font-weight:700;
+  font-size:13px;
+  font-weight:800;
 }
 .home-today .today-date{
   padding:7px 11px;
@@ -327,6 +327,8 @@ button{
   background:rgba(242,238,255,.72);
   border:1px solid rgba(255,255,255,.92);
   color:#705bd6;
+  font-size:13px;
+  font-weight:800;
 }
 .home-today .birthday-mini.today{
   background:linear-gradient(135deg,rgba(255,247,215,.92),rgba(242,235,255,.9));
@@ -348,9 +350,15 @@ button{
   font-weight:800;
   line-height:1.5;
   overflow-wrap:anywhere;
+  font-size:13px;
 }
+.home-total-visitors{flex:0 0 auto;min-width:156px;margin:0 0 0 auto;padding:9px 14px;display:inline-flex;align-items:baseline;justify-content:flex-end;gap:8px;border:1px solid rgba(196,205,232,.3);border-radius:999px;background:linear-gradient(120deg,rgba(16,27,55,.84),rgba(44,48,84,.78));color:#d8def0;white-space:nowrap;box-shadow:0 7px 20px rgba(15,21,48,.12)}
+.home-total-visitors small{display:inline-flex;margin:0;color:#c7baff;font-size:9px;font-weight:900;letter-spacing:.11em}
+.home-total-visitors strong{font-size:18px;line-height:1;color:#fff;font-weight:900}
+.home-total-visitors span{color:#d0d5e4;font-size:12px}
+@media(max-width:640px){.home-total-visitors{min-height:40px;padding:8px 12px}.home-total-visitors strong{font-size:17px}.home-total-visitors span{font-size:11px}}
 @media(max-width:640px){
-  .home-today .birthday-people{padding:6px 9px}
+  .home-today .birthday-people{padding:6px 9px;font-size:12px}
 }
 
 /* NEXT SCHEDULE */
@@ -3067,16 +3075,12 @@ body.vom-home-dream{overflow-x:clip}
           <b aria-hidden="true">→</b>
         </a>
       </div>
-      <div class="visitor-mini home-total-visitors" title="홈페이지 누적 방문자">
-        <small>VISITORS</small>
-        <strong id="homeTotalVisitors">-</strong>
-        <span>누적 방문자</span>
-      </div>
 <a id="homeResultLink" class="home-result-link" href="/ot-room/?result=1">가입 결과 확인 <small>로그인 없이 확인하기 →</small></a>
 
 
       <div id="homeToday" class="home-today">
         <span class="today-date">오늘을 불러오는 중...</span>
+        <span class="home-total-visitors" title="홈페이지 누적 방문자"><small>VISITORS</small><strong id="homeTotalVisitors">-</strong><span>누적 방문자</span></span>
       </div>
 
 
@@ -3656,7 +3660,9 @@ async function loadHomeBirthday(access){
   const approved=access?.approved===true;
   const dateMarkup=`<span class="today-date">${formatHomeToday(now)}</span>`;
   const guestLink='<a class="birthday-check" href="/members/?view=birthday">생일자 확인하기 →</a>';
-  box.innerHTML=dateMarkup+'<span class="birthday-mini">생일을 불러오는 중…</span>'+(approved?'':guestLink);
+  const visitorMarkup='<span class="home-total-visitors" title="홈페이지 누적 방문자"><small>VISITORS</small><strong id="homeTotalVisitors">-</strong><span>누적 방문자</span></span>';
+  const renderToday=content=>{box.innerHTML=content+visitorMarkup;loadPublicVisitorCount();};
+  renderToday(dateMarkup+'<span class="birthday-mini">생일을 불러오는 중…</span>'+(approved?'':guestLink));
   try{
     const headers={apikey:SUPABASE_KEY,'Content-Type':'application/json'};
     if(approved){
@@ -3673,7 +3679,7 @@ async function loadHomeBirthday(access){
     const data=await response.json();
     const date=String(data.next_birthday||'').match(/^\d{4}-(\d{2})-(\d{2})$/);
     if(!date){
-      box.innerHTML=dateMarkup+'<span class="birthday-mini">🎂 등록된 생일이 아직 없어요</span>'+(approved?'':guestLink);
+      renderToday(dateMarkup+'<span class="birthday-mini">🎂 등록된 생일이 아직 없어요</span>'+(approved?'':guestLink));
       return;
     }
     const todayKorea=new Date(now.getTime()+9*3600000).toISOString().slice(0,10);
@@ -3687,9 +3693,9 @@ async function loadHomeBirthday(access){
         names='<span class="birthday-people">'+matching.map(person=>escapeHtml(String(person.name||'').trim())+'님').join(' · ')+'</span>';
       }
     }
-    box.innerHTML=dateMarkup+`<span class="birthday-mini${today?' today':''}">${label}</span>`+names+(approved?'':guestLink);
+    renderToday(dateMarkup+`<span class="birthday-mini${today?' today':''}">${label}</span>`+names+(approved?'':guestLink));
   }catch{
-    box.innerHTML=dateMarkup+'<span class="birthday-mini">생일 정보를 불러오지 못했어요.</span>'+(approved?'':guestLink);
+    renderToday(dateMarkup+'<span class="birthday-mini">생일 정보를 불러오지 못했어요.</span>'+(approved?'':guestLink));
   }
 }
 
@@ -4819,7 +4825,7 @@ start();
 })();
 </script>
 
-<script src="/assets/vom-shell.js?v=24"></script>
+<script src="/assets/vom-shell.js?v=25"></script>
 <script>
 (function(){
   let ticking=false;
