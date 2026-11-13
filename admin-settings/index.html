@@ -116,6 +116,7 @@
   .section-head,.section-head-left{align-items:flex-start;flex-direction:column}
 }
 
+.popup-admin-intro{margin:0 0 16px;padding:13px 14px;border:1px solid rgba(112,94,202,.12);border-radius:14px;background:linear-gradient(120deg,rgba(244,241,255,.8),rgba(240,249,247,.8));color:#687084;font-size:10px;line-height:1.7}.popup-admin-form{display:grid;gap:14px;padding:18px;border:1px solid rgba(112,94,202,.12);border-radius:18px;background:rgba(255,255,255,.82)}.popup-admin-field{display:grid;gap:7px;color:#4b5268;font-size:10px;font-weight:800}.popup-admin-field span{margin-left:5px;color:#8a90a1;font-size:9px;font-weight:600}.popup-admin-field input,.popup-admin-field textarea{width:100%;min-height:43px;padding:11px 12px;border:1px solid #e3dfef;border-radius:11px;background:#fff;color:#252b40;font:500 12px/1.6 Pretendard,Arial,sans-serif;outline:none}.popup-admin-field textarea{min-height:156px;resize:vertical}.popup-admin-field input:focus,.popup-admin-field textarea:focus{border-color:#9586e3;box-shadow:0 0 0 3px rgba(117,96,222,.1)}.popup-admin-field small{color:#8b91a1;font-size:9px;font-weight:500}.popup-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.popup-admin-toggle{display:flex;align-items:center;gap:8px;color:#4e5368;font-size:11px;font-weight:800}.popup-admin-toggle input{width:17px;height:17px;accent-color:#725ed8}.popup-admin-preview{padding:12px 13px;border:1px solid #e9e5f4;border-radius:12px;background:#faf9ff;color:#72798c;font-size:10px;line-height:1.65}.popup-admin-preview b{color:#6757cb}.popup-admin-preview p{margin:4px 0 0}.popup-admin-preview a{display:inline-block;margin-top:7px;color:#6d59cf;font-weight:800;text-decoration:none}.popup-admin-error{margin:0 0 12px;padding:11px 13px;border-radius:12px;background:#fff0f2;color:#a64b60;font-size:10px;line-height:1.5}.popup-admin-save{min-height:45px;border:0;border-radius:12px;background:linear-gradient(110deg,#705dd9,#7e86e6);color:#fff;font-size:12px;font-weight:900;cursor:pointer}@media(max-width:640px){.popup-admin-form{padding:14px}.popup-admin-grid{grid-template-columns:1fr}}
 </style>
   <script src="/assets/vom-member-context.js?v=3"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -248,9 +249,10 @@ const operationsMeta={label:'일정 운영',kicker:'EVENT CHECKLIST',icon:'✅',
 const remindersMeta={label:'리마인더 설정',kicker:'OPERATIONS ALERT',icon:'🔔',description:'자동 알림과 직접 만든 운영 알림'};
 const inquiriesMeta={label:'문의관리',kicker:'VOM INQUIRY CENTER',icon:'💬',description:'새 문의 확인 · 상태 관리 · 운영진 답변'};
 const couponsMeta={label:'쿠폰 · 상점',kicker:'POINT SHOP & COUPONS',icon:'🎟️',description:'우선 참가권 발급 · 사용 상태 · 상점 구성'};
-const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,REMINDERS:remindersMeta,INQUIRIES:inquiriesMeta,COUPONS:couponsMeta,IMAGES:imageMeta};
+const popupMeta={label:'홈페이지 팝업',kicker:'SITE NOTICE',icon:'📢',description:'방문자와 회원에게 보여줄 공지 팝업'};
+const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,REMINDERS:remindersMeta,INQUIRIES:inquiriesMeta,COUPONS:couponsMeta,POPUP:popupMeta,IMAGES:imageMeta};
 const initialSection=new URLSearchParams(location.search).get('section');
-let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],reminders=[],inquiries=[],inquiryMemberMap={},inquiryFilter='ALL',reminderEditingId='',reminderCreating=false,currentFilter=initialSection==='operations'?'OPERATIONS':initialSection==='inquiries'?'INQUIRIES':initialSection==='coupons'?'COUPONS':'HOME',operationFocusEventId=Number(new URLSearchParams(location.search).get('event'))||0,itemLoadError='',operationLoadError='',inquiryLoadError='',couponLoadError='',couponProducts=[],memberCoupons=[],couponMembers=[],referenceFileUrls={},currentReferenceFile=null,pendingReferenceFile=null,referenceFileRemoved=false,itemSaving=false,imageUploadCategory='POSTER';
+let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],reminders=[],inquiries=[],inquiryMemberMap={},inquiryFilter='ALL',reminderEditingId='',reminderCreating=false,currentFilter=initialSection==='operations'?'OPERATIONS':initialSection==='inquiries'?'INQUIRIES':initialSection==='coupons'?'COUPONS':initialSection==='popup'?'POPUP':'HOME',operationFocusEventId=Number(new URLSearchParams(location.search).get('event'))||0,itemLoadError='',operationLoadError='',inquiryLoadError='',couponLoadError='',couponProducts=[],memberCoupons=[],couponMembers=[],sitePopupNotice={id:1,title:'',body:'',link_label:'',link_url:'',is_active:false,updated_at:null},popupLoadError='',referenceFileUrls={},currentReferenceFile=null,pendingReferenceFile=null,referenceFileRemoved=false,itemSaving=false,imageUploadCategory='POSTER';
 const IMAGE_LIBRARY_BUCKET='admin-image-library';
 const IMAGE_LIBRARY_CATEGORIES=[
   {key:'POSTER',folder:'posters',label:'홍보용 포스터',description:'온라인 홍보 · 공유용',icon:'✦'},
@@ -278,8 +280,9 @@ async function start(){
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
   bindImagePaste();
-  const results=await Promise.allSettled([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries(),loadCouponCenter()]);
+  const results=await Promise.allSettled([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries(),loadCouponCenter(),loadPopupNotice()]);
   if(results[2].status==='rejected')operationLoadError='일정 운영 정보를 불러오지 못했습니다. 다시 열어 주세요.';
+  if(results[6].status==='rejected')popupLoadError='팝업 정보를 불러오지 못했습니다. 다시 열어 주세요.';
   renderResources();
 }
 
@@ -296,6 +299,49 @@ async function loadCouponCenter(){
   memberCoupons=couponsResponse.data||[];
   couponMembers=membersResponse.data||[];
 }
+async function loadPopupNotice(){
+  popupLoadError='';
+  const {data,error}=await db.from('site_popup_notice').select('id,title,body,link_label,link_url,is_active,updated_at').eq('id',1).maybeSingle();
+  if(error){popupLoadError=error.message||'팝업 정보를 불러오지 못했습니다.';throw error}
+  sitePopupNotice=data||{id:1,title:'',body:'',link_label:'',link_url:'',is_active:false,updated_at:null};
+}
+
+function popupSafeUrl(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  if(raw.startsWith('/')&&!raw.startsWith('//'))return raw;
+  try{const parsed=new URL(raw,location.origin);return parsed.protocol==='https:'?parsed.href:''}catch(_){return ''}
+}
+
+function renderPopupNotice(){
+  const item=sitePopupNotice||{title:'',body:'',link_label:'',link_url:'',is_active:false};
+  const previewLink=popupSafeUrl(item.link_url);
+  const linkMarkup=previewLink?'<a href="'+esc(previewLink)+'" target="_blank" rel="noopener">'+esc(item.link_label||'자세히 보기')+' 확인 ↗</a>':'';
+  const errorMarkup=popupLoadError?'<div class="popup-admin-error">'+esc(popupLoadError)+'</div>':'';
+  resourceStack.innerHTML='<section class="resource-section popup-admin"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(&quot;HOME&quot;)">← 운영 자료</button><div><div class="section-kicker">SITE NOTICE</div><h2>홈페이지 팝업</h2></div></div><span class="section-count">'+(item.is_active?'노출 중':'중지됨')+'</span></div><p class="popup-admin-intro">제목과 내용을 작성하고 노출을 켜면 회원과 방문자 화면에 표시됩니다. 공지를 수정하면 다시 표시됩니다.</p>'+errorMarkup+'<div class="popup-admin-form"><label class="popup-admin-field">팝업 제목<input id="popupTitle" maxlength="120" value="'+esc(item.title||'')+'" placeholder="예: 11월 일정 신청 안내"></label><label class="popup-admin-field">공지 내용<textarea id="popupBody" maxlength="3000" rows="6" placeholder="회원에게 전달할 내용을 입력해 주세요.">'+esc(item.body||'')+'</textarea><small>줄바꿈이 그대로 표시됩니다.</small></label><div class="popup-admin-grid"><label class="popup-admin-field">버튼 문구 <span>선택</span><input id="popupLinkLabel" maxlength="40" value="'+esc(item.link_label||'')+'" placeholder="예: 일정 확인하기"></label><label class="popup-admin-field">연결 주소 <span>선택 · https:// 또는 사이트 내 경로</span><input id="popupLinkUrl" maxlength="500" value="'+esc(item.link_url||'')+'" placeholder="https://… 또는 /calendar/"></label></div><label class="popup-admin-toggle"><input id="popupActive" type="checkbox" '+(item.is_active?'checked':'')+'> 방문자에게 팝업 띄우기</label><div class="popup-admin-preview"><b>노출 방식</b><p>‘닫기’는 현재 브라우저 탭에서 숨기고, ‘3일간 보지 않기’는 3일 동안 해당 기기에서 숨깁니다.</p>'+linkMarkup+'</div><button class="popup-admin-save" type="button" onclick="savePopupNotice()">변경사항 저장</button></div></section>';
+}
+
+async function savePopupNotice(){
+  if(!adminMode)return;
+  const title=String(document.getElementById('popupTitle')?.value||'').trim();
+  const body=String(document.getElementById('popupBody')?.value||'').trim();
+  const linkLabel=String(document.getElementById('popupLinkLabel')?.value||'').trim();
+  const rawLink=String(document.getElementById('popupLinkUrl')?.value||'').trim();
+  const isActive=!!document.getElementById('popupActive')?.checked;
+  const linkUrl=popupSafeUrl(rawLink);
+  if(isActive&&(!title||!body)){alert('팝업을 노출하려면 제목과 내용을 입력해 주세요.');return}
+  if(rawLink&&!linkUrl){alert('연결 주소는 https:// 주소 또는 /calendar/ 같은 사이트 내 경로로 입력해 주세요.');return}
+  try{
+    const {data:userData,error:userError}=await db.auth.getUser();
+    if(userError||!userData?.user)throw userError||new Error('운영진 로그인 정보를 확인하지 못했습니다.');
+    const {error}=await db.from('site_popup_notice').upsert({id:1,title,body,link_label:linkUrl?(linkLabel||'자세히 보기'):null,link_url:linkUrl||null,is_active:isActive,updated_by:userData.user.id,updated_at:new Date().toISOString()},{onConflict:'id'});
+    if(error)throw error;
+    await loadPopupNotice();
+    renderPopupNotice();
+    alert(isActive?'홈페이지 팝업을 저장하고 노출을 시작했어요.':'팝업을 저장하고 노출을 중지했어요.');
+  }catch(error){alert('팝업을 저장하지 못했습니다.\n'+(error.message||'잠시 후 다시 시도해 주세요.'))}
+}
+
 function couponMemberName(memberId){
   const member=couponMembers.find(item=>String(item.id)===String(memberId));
   return String(member?.name||member?.nickname||'회원 정보 없음').trim()||'회원 정보 없음';
@@ -1038,16 +1084,16 @@ function renderResources(){
   updateMaterialsTitle();
   const isHome=currentFilter==='HOME';
   folderHome.classList.toggle('hidden',!isHome);
-  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS'||currentFilter==='INQUIRIES');
+  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS'||currentFilter==='INQUIRIES'||currentFilter==='POPUP');
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
     const loadError=itemLoadError?'<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>'+esc(itemLoadError)+'</div>':'';
-    const primaryCategories=['OPERATIONS','INQUIRIES','REMINDERS','COUPONS'];
+    const primaryCategories=['OPERATIONS','INQUIRIES','REMINDERS','COUPONS','POPUP'];
     const archiveCategories=['BUSKING','RENTAL','GENERAL','IMAGES'];
     const folderCard=(category,meta,styleClass='')=>{
-      const count=category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:category==='COUPONS'?memberCoupons.filter(item=>item.status==='AVAILABLE').length:items.filter(item=>item.category===category).length;
-      const countLabel=category==='IMAGES'?count+'장':category==='OPERATIONS'?count+'개 일정':category==='REMINDERS'?count+'개 활성':category==='INQUIRIES'?'새 문의 '+count+'건':category==='COUPONS'?'사용 가능 '+count+'장':count+'건';
+      const count=category==='POPUP'?(sitePopupNotice.is_active?1:0):category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:category==='COUPONS'?memberCoupons.filter(item=>item.status==='AVAILABLE').length:items.filter(item=>item.category===category).length;
+      const countLabel=category==='POPUP'?(sitePopupNotice.is_active?'노출 중':'중지됨'):category==='IMAGES'?count+'장':category==='OPERATIONS'?count+'개 일정':category==='REMINDERS'?count+'개 활성':category==='INQUIRIES'?'새 문의 '+count+'건':category==='COUPONS'?'사용 가능 '+count+'장':count+'건';
       return '<button class="folder-card '+category+' '+styleClass+'" type="button" onclick="setFilter(\''+category+'\')"><div class="folder-top"><span class="folder-icon">'+meta.icon+'</span><span class="folder-count">'+countLabel+'</span></div><div class="folder-kicker">'+meta.kicker+'</div><h2>'+meta.label+'</h2><p>'+meta.description+'</p><div class="folder-open"><span>열기</span><span>→</span></div></button>';
     };
     const primary=primaryCategories.map(category=>folderCard(category,folderMeta[category],'is-priority')).join('');
@@ -1075,6 +1121,11 @@ function renderResources(){
 
   if(currentFilter==='COUPONS'){
     renderCouponCenter();
+    return;
+  }
+
+  if(currentFilter==='POPUP'){
+    renderPopupNotice();
     return;
   }
 
