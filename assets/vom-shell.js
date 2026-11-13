@@ -719,6 +719,107 @@
     }
   }
 
+  function escapePopupHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (character) {
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[character];
+    });
+  }
+
+  function popupSafeHref(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    if (raw.charAt(0) === '/' && raw.slice(0, 2) !== '//') return raw;
+    try {
+      const parsed = new URL(raw, window.location.origin);
+      return parsed.protocol === 'https:' ? parsed.href : '';
+    } catch (_) {
+      return '';
+    }
+  }
+
+  function renderSitePopup(notice) {
+    const revision = String(notice.updated_at || notice.title + '|' + notice.body);
+    const hideKey = 'vom-site-popup-hidden-v1';
+    const sessionKey = 'vom-site-popup-dismissed-v1:' + revision;
+    try {
+      const hidden = JSON.parse(window.localStorage.getItem(hideKey) || 'null');
+      if (hidden && hidden.revision === revision && Number(hidden.until) > Date.now()) return;
+      if (window.sessionStorage.getItem(sessionKey) === '1') return;
+    } catch (_) {}
+
+    const styleId = 'vom-site-popup-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = '.vom-site-popup-overlay{position:fixed;z-index:10000;inset:0;display:grid;place-items:center;padding:22px;background:rgba(8,13,31,.68);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}.vom-site-popup-card{position:relative;width:min(460px,100%);max-height:min(82vh,720px);overflow:auto;padding:26px;border:1px solid rgba(255,255,255,.88);border-radius:25px;background:linear-gradient(145deg,#fff 0%,#faf9ff 100%);color:#252a41;box-shadow:0 28px 90px rgba(4,9,27,.34)}.vom-site-popup-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.vom-site-popup-kicker{color:#705bd5;font:800 10px/1 \"DM Sans\",Arial,sans-serif;letter-spacing:.12em}.vom-site-popup-x{display:grid;place-items:center;width:34px;height:34px;border:1px solid #e8e5f1;border-radius:50%;background:#fff;color:#60667a;font-size:20px;cursor:pointer}.vom-site-popup-title{margin:0;color:#252a41;font:800 23px/1.35 Pretendard,Arial,sans-serif;letter-spacing:-.04em;overflow-wrap:anywhere}.vom-site-popup-body{margin:13px 0 0;color:#626a80;font:500 14px/1.85 Pretendard,Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}.vom-site-popup-link{display:inline-flex;align-items:center;gap:7px;min-height:42px;margin-top:19px;padding:0 14px;border-radius:12px;background:linear-gradient(110deg,#705ddd,#7d86e7);color:#fff!important;font:800 12px Pretendard,Arial,sans-serif;text-decoration:none!important}.vom-site-popup-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:24px;padding-top:15px;border-top:1px solid #ece9f4}.vom-site-popup-actions button{min-height:40px;padding:0 13px;border:1px solid #e4e1ed;border-radius:11px;background:#fff;color:#656b7d;font:700 11px Pretendard,Arial,sans-serif;cursor:pointer}.vom-site-popup-actions [data-popup-hide-three-days]{border-color:#d9d3f2;background:#f5f2ff;color:#6553cb}.vom-site-popup-card button:focus-visible,.vom-site-popup-card a:focus-visible{outline:3px solid rgba(116,96,221,.35);outline-offset:2px}@media(max-width:600px){.vom-site-popup-overlay{align-items:end;padding:12px 12px max(14px,env(safe-area-inset-bottom))}.vom-site-popup-card{width:100%;max-height:86vh;padding:22px 19px 18px;border-radius:23px}.vom-site-popup-title{font-size:21px}.vom-site-popup-body{font-size:14px}.vom-site-popup-actions{margin-top:19px}.vom-site-popup-actions button{flex:1}}';
+      document.head.appendChild(style);
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'vom-site-popup-overlay';
+    overlay.innerHTML = '<section class="vom-site-popup-card" role="dialog" aria-modal="true" aria-labelledby="vomSitePopupTitle" aria-describedby="vomSitePopupBody"><div class="vom-site-popup-top"><span class="vom-site-popup-kicker">VOM NOTICE</span><button class="vom-site-popup-x" type="button" data-popup-close aria-label="팝업 닫기">×</button></div><h2 class="vom-site-popup-title" id="vomSitePopupTitle">' + escapePopupHtml(notice.title) + '</h2><div class="vom-site-popup-body" id="vomSitePopupBody">' + escapePopupHtml(notice.body) + '</div>' + (popupSafeHref(notice.link_url) ? '<a class="vom-site-popup-link" href="' + escapePopupHtml(popupSafeHref(notice.link_url)) + '">' + escapePopupHtml(notice.link_label || '자세히 보기') + ' <span aria-hidden="true">→</span></a>' : '') + '<div class="vom-site-popup-actions"><button type="button" data-popup-hide-three-days>3일간 보지 않기</button><button type="button" data-popup-close>닫기</button></div></section>';
+    document.body.appendChild(overlay);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const dismiss = function (forThreeDays) {
+      try {
+        window.sessionStorage.setItem(sessionKey, '1');
+        if (forThreeDays) {
+          window.localStorage.setItem(hideKey, JSON.stringify({revision:revision, until:Date.now() + 3 * 24 * 60 * 60 * 1000}));
+        }
+      } catch (_) {}
+      document.removeEventListener('keydown', onKeyDown);
+      overlay.remove();
+      document.body.style.overflow = previousOverflow;
+    };
+    const onKeyDown = function (event) {
+      if (event.key === 'Escape') {
+        dismiss(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(overlay.querySelectorAll('a[href],button:not([disabled])'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    overlay.querySelectorAll('[data-popup-close]').forEach(function (button) {
+      button.addEventListener('click', function () { dismiss(false); });
+    });
+    overlay.querySelector('[data-popup-hide-three-days]').addEventListener('click', function () {
+      dismiss(true);
+    });
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) dismiss(false);
+    });
+    overlay.querySelector('.vom-site-popup-x').focus({preventScroll:true});
+    document.addEventListener('keydown', onKeyDown);
+  }
+
+  function loadSitePopup() {
+    if (/^\/(admin|admin-settings|ot-admin|operator-alert|site-log)(\/|$)/.test(path)) return;
+    const endpoint = new URL('/rest/v1/site_popup_notice', SUPABASE_URL);
+    endpoint.searchParams.set('id', 'eq.1');
+    endpoint.searchParams.set('is_active', 'eq.true');
+    endpoint.searchParams.set('select', 'title,body,link_label,link_url,updated_at');
+    window.fetch(endpoint.href, {
+      headers: {apikey:SUPABASE_KEY, Authorization:'Bearer ' + SUPABASE_KEY}
+    }).then(function (response) {
+      if (!response.ok) return [];
+      return response.json();
+    }).then(function (rows) {
+      if (Array.isArray(rows) && rows[0] && rows[0].title && rows[0].body) renderSitePopup(rows[0]);
+    }).catch(function () {});
+  }
+
   function bootstrap() {
     initVomTheme();
     setupPwa();
@@ -730,6 +831,7 @@
     ensureFallbackMenu();
     setUnifiedMenu();
     refreshShell();
+    loadSitePopup();
     loadConsultationWidget();
   }
 
