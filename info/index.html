@@ -1372,54 +1372,22 @@ async function loadPeople(){
 
   try{
 
-    const {data,error} =
-      await db
-        .from('members_display')
-        .select('*');
+    const {data,error} = await db.functions.invoke(
+      'member-account',
+      {body:{action:'public_member_count'}}
+    );
+    if(error) throw error;
 
-
-    if(error){
-      throw error;
+    const activeCount = Number(data?.active_count);
+    const staffCount = Number(data?.staff_count);
+    const helperCount = Number(data?.helper_count);
+    if(!Number.isSafeInteger(activeCount) || !Number.isSafeInteger(staffCount) || !Number.isSafeInteger(helperCount)){
+      throw new Error('invalid_member_stats');
     }
 
-
-    const active =
-      (data || [])
-        .filter(
-          isActiveMember
-        );
-
-
-    const staff =
-      active.filter(
-        row =>
-          String(
-            row.role || ''
-          ).trim() ===
-          '운영진'
-      );
-
-
-    const helper =
-      active.filter(
-        row =>
-          String(
-            row.role || ''
-          ).trim() ===
-          '헬퍼'
-      );
-
-
-    memberEl.textContent =
-      active.length;
-
-
-    staffEl.textContent =
-      staff.length;
-
-
-    helperEl.textContent =
-      helper.length;
+    memberEl.textContent = activeCount.toLocaleString('ko-KR');
+    staffEl.textContent = staffCount.toLocaleString('ko-KR');
+    helperEl.textContent = helperCount.toLocaleString('ko-KR');
 
   }catch(error){
 
