@@ -3096,6 +3096,14 @@ body.vom-home-dream{overflow-x:clip}
   .aurora-music-mark{animation:none!important}
 }
 </style>
+
+<style id="home-attendance-shortcut-style">
+.home-attendance-shortcut{width:min(760px,calc(100% - 7px));margin:12px 0 0 7px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:14px;border:1px solid rgba(184,171,255,.32);border-radius:16px;background:linear-gradient(110deg,rgba(115,91,218,.22),rgba(42,147,152,.14));box-shadow:0 12px 28px rgba(8,14,34,.12)}
+.home-attendance-copy{min-width:0;display:flex;flex-direction:column;gap:4px}.home-attendance-copy small{color:#bdb6eb;font-size:9px;font-weight:850;letter-spacing:.12em}.home-attendance-copy strong{color:#fff;font-size:14px;letter-spacing:-.025em}.home-attendance-copy time{color:#d5d9e9;font-size:11px;font-weight:650}
+.home-attendance-action{flex:0 0 auto;min-height:40px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(195,184,255,.4);border-radius:12px;background:rgba(130,108,227,.28);color:#fff!important;text-decoration:none!important;font-size:12px;font-weight:850;transition:background .18s ease,transform .18s ease}.home-attendance-action:hover{transform:translateY(-1px);background:rgba(143,120,242,.42)}.home-attendance-action:focus-visible{outline:3px solid #c2b5ff;outline-offset:3px}
+@media(max-width:640px){.home-attendance-shortcut{width:100%;margin:10px 0 0;padding:11px 12px;gap:9px}.home-attendance-copy strong{font-size:13px}.home-attendance-action{min-height:39px;padding:0 11px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.home-attendance-action{transition:none}}
+</style>
 </head>
 
 <body class="vom-home-dream">
@@ -3213,6 +3221,10 @@ body.vom-home-dream{overflow-x:clip}
           <div class="home-birthday-info"><span class="birthday-mini">생일 정보를 불러오는 중…</span></div>
         </div>
         <span class="home-total-visitors" title="홈페이지 누적 방문자"><small>VISITORS</small><strong id="homeTotalVisitors">-</strong><span>누적 방문자</span></span>
+      </div>
+      <div class="home-attendance-shortcut">
+        <div class="home-attendance-copy"><small>VOM TODAY</small><strong>오늘도 들러줘서 반가워요</strong><time id="homeAttendanceDate"></time></div>
+        <a class="home-attendance-action" href="/attendance/">출석체크 바로하기 <span aria-hidden="true">→</span></a>
       </div>
 
 
@@ -3770,11 +3782,13 @@ async function start(){
 
 
 function formatHomeToday(date=new Date()){
-  const y=date.getFullYear();
-  const m=String(date.getMonth()+1).padStart(2,'0');
-  const d=String(date.getDate()).padStart(2,'0');
-  const w=['일','월','화','수','목','금','토'][date.getDay()];
-  return `${y}. ${m}. ${d} ${w}`;
+  const parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);
+  const value=type=>parts.find(part=>part.type===type)?.value||'';
+  const weekday=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(date);
+  const formatted=value('year')+'. '+value('month')+'. '+value('day')+' '+weekday;
+  const attendanceDate=document.getElementById('homeAttendanceDate');
+  if(attendanceDate)attendanceDate.textContent='오늘은 '+formatted;
+  return formatted;
 }
 
 function parseMemberBirth(v){

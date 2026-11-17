@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#151c37">
+  <meta name="robots" content="noindex,nofollow">
+  <title>출석체크 · VOM</title>
+  <link rel="icon" href="/favicon.png?v=4">
+  <link rel="stylesheet" href="/assets/vom-shell.css?v=24">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{color-scheme:dark;--ink:#f5f5ff;--muted:#b9c2dc;--purple:#a99aff;--line:rgba(210,217,246,.2)}
+    *{box-sizing:border-box}
+    body.attendance-page{min-height:100vh;margin:0;background:radial-gradient(ellipse at 18% 14%,rgba(114,94,210,.32),transparent 34%),radial-gradient(ellipse at 88% 86%,rgba(52,166,173,.2),transparent 38%),#111a30;color:var(--ink);font-family:Pretendard,"Noto Sans KR",Arial,sans-serif}
+    .attendance-header{width:min(1120px,calc(100% - 36px));height:76px;margin:auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .attendance-brand{color:#f7f6ff;text-decoration:none;font-weight:950;font-size:24px;letter-spacing:-.06em}.attendance-brand small{display:block;margin-top:2px;font-size:7px;letter-spacing:.2em;color:#bdb3f5}
+    .attendance-home{color:#d7d1ff;text-decoration:none;font-weight:750;font-size:13px}
+    .attendance-main{width:min(620px,calc(100% - 36px));margin:clamp(46px,10vh,110px) auto 80px}
+    .attendance-eyebrow{margin:0 0 12px;color:#b2a2ff;font-size:10px;letter-spacing:.16em;font-weight:900}
+    h1{margin:0;color:#fff;font-size:clamp(34px,7vw,52px);letter-spacing:-.07em;line-height:1.1}
+    .attendance-lead{margin:15px 0 28px;color:var(--muted);font-size:15px;line-height:1.75}
+    .attendance-card{padding:clamp(22px,6vw,34px);border:1px solid rgba(221,225,255,.28);border-radius:28px;background:linear-gradient(140deg,rgba(255,255,255,.12),rgba(255,255,255,.055));box-shadow:0 28px 80px rgba(0,0,0,.23);backdrop-filter:blur(18px)}
+    .attendance-date-label{color:#d5cffb;font-size:11px;letter-spacing:.1em;font-weight:850}
+    .attendance-date{display:block;margin-top:8px;color:#fff;font-size:clamp(23px,5vw,32px);font-weight:900;letter-spacing:-.05em}
+    .attendance-status{min-height:50px;margin:18px 0 14px;padding:14px 15px;border:1px solid rgba(207,211,239,.16);border-radius:14px;background:rgba(8,14,33,.38);color:#d5daeb;font-size:14px;line-height:1.6}
+    .attendance-status[data-state="done"]{color:#e2fff6;border-color:rgba(120,224,199,.36);background:rgba(55,148,130,.18)}
+    .attendance-status[data-state="error"]{color:#ffe6eb;border-color:rgba(255,164,176,.35);background:rgba(153,61,81,.16)}
+    .attendance-check{width:100%;min-height:56px;border:0;border-radius:15px;background:linear-gradient(105deg,#745ce0,#8d80ec);color:#fff;font-size:15px;font-weight:900;letter-spacing:-.02em;box-shadow:0 12px 25px rgba(105,82,216,.28);cursor:pointer}
+    .attendance-check:disabled{opacity:.7;cursor:default;box-shadow:none}
+    .attendance-login{display:block;margin:15px 0 0;text-align:center;color:#d0c8ff;text-decoration:underline;text-underline-offset:4px;font-size:13px;font-weight:750}
+    .attendance-footnote{margin:22px 2px 0;color:#a8b1c9;font-size:12px;line-height:1.7}
+    @media(max-width:480px){.attendance-header{height:64px;width:calc(100% - 28px)}.attendance-main{width:calc(100% - 28px);margin-top:54px}.attendance-lead{font-size:14px}.attendance-card{border-radius:22px}}
+  </style>
+</head>
+<body class="attendance-page">
+  <header class="attendance-header">
+    <a class="attendance-brand" href="/" aria-label="VOM 홈으로">VOM<small>VOICE OF MELODY</small></a>
+    <a class="attendance-home" href="/">홈으로</a>
+  </header>
+  <main class="attendance-main">
+    <p class="attendance-eyebrow">VOM DAILY CHECK-IN</p>
+    <h1>오늘의 출석</h1>
+    <p class="attendance-lead">오늘도 VOM에 들러 주셔서 반가워요.<br>하루 한 번, 출석을 남길 수 있어요.</p>
+    <section class="attendance-card" aria-labelledby="attendanceTitle">
+      <div class="attendance-date-label" id="attendanceTitle">오늘 날짜 · 한국시간</div>
+      <time class="attendance-date" id="todayDate"></time>
+      <p class="attendance-status" id="attendanceStatus" role="status" aria-live="polite">로그인 정보를 확인하고 있어요.</p>
+      <button class="attendance-check" id="attendanceButton" type="button" disabled>출석 정보를 불러오는 중…</button>
+      <a class="attendance-login" id="attendanceLogin" href="/me/?next=%2Fattendance%2F" hidden>로그인 화면으로 이동하기</a>
+    </section>
+    <p class="attendance-footnote">출석 기록은 한국시간 날짜를 기준으로 하루 한 번 저장됩니다.</p>
+  </main>
+  <script>
+    (()=>{
+      const SUPABASE_URL='https://aqfmhqultzpakfqwzulj.supabase.co';
+      const SUPABASE_KEY='sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
+      const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+      const button=document.getElementById('attendanceButton');
+      const status=document.getElementById('attendanceStatus');
+      const login=document.getElementById('attendanceLogin');
+      const date=document.getElementById('todayDate');
+      const today=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',dateStyle:'full'}).format(new Date());
+      date.textContent=today;
+      const dateParts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+      const datePart=(type)=>dateParts.find(part=>part.type===type)?.value||'';
+      date.dateTime=`${datePart('year')}-${datePart('month')}-${datePart('day')}`;
+      const setStatus=(message,state='')=>{status.textContent=message;status.dataset.state=state;};
+      const goLogin=()=>{location.replace('/me/?next=%2Fattendance%2F');};
+      async function updateStatus(action='status'){
+        button.disabled=true;
+        button.textContent=action==='checkin'?'출석 기록 중…':'출석 정보를 불러오는 중…';
+        try{
+          const {data,error}=await db.functions.invoke('member-attendance',{body:{action}});
+          if(error){if(error.context?.status===401){goLogin();return;}throw error;}
+          if(data?.error){if(data.code==='auth_required'){goLogin();return;}if(data.code==='active_member_required'){setStatus('승인된 VOM 회원으로 로그인하면 출석을 남길 수 있어요.','error');login.hidden=false;button.hidden=true;return;}throw new Error(data.error);}
+          if(data.checked_in){setStatus(action==='checkin'&&data.just_checked_in?'오늘 출석을 남겼어요. 반가워요!':'오늘 출석은 이미 완료했어요. 내일 또 만나요.','done');button.textContent='오늘 출석 완료 ✓';button.disabled=true;return;}
+          setStatus('로그인되어 있어요. 버튼을 누르면 오늘 출석이 저장됩니다.');
+          button.dataset.action='checkin';
+          button.textContent='오늘 출석 체크하기';button.disabled=false;
+        }catch(error){
+          setStatus(error.message||'출석 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.','error');
+          button.textContent='다시 불러오기';button.disabled=false;
+          button.dataset.action='status';
+        }
+      }
+      button.addEventListener('click',()=>updateStatus(button.dataset.action==='status'?'status':'checkin'));
+      (async()=>{
+        const {data}=await db.auth.getSession();
+        if(!data?.session?.access_token){goLogin();return;}
+        await updateStatus();
+      })();
+    })();
+  </script>
+</body>
+</html>
+
