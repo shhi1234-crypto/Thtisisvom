@@ -21,8 +21,6 @@
     h1{margin:0;color:#fff;font-size:clamp(34px,7vw,52px);letter-spacing:-.07em;line-height:1.1}
     .attendance-lead{margin:15px 0 28px;color:var(--muted);font-size:15px;line-height:1.75}
     .attendance-card{padding:clamp(22px,6vw,34px);border:1px solid rgba(221,225,255,.28);border-radius:28px;background:linear-gradient(140deg,rgba(255,255,255,.12),rgba(255,255,255,.055));box-shadow:0 28px 80px rgba(0,0,0,.23);backdrop-filter:blur(18px)}
-    .attendance-date-label{color:#d5cffb;font-size:11px;letter-spacing:.1em;font-weight:850}
-    .attendance-date{display:block;margin-top:8px;color:#fff;font-size:clamp(23px,5vw,32px);font-weight:900;letter-spacing:-.05em}
     .attendance-status{min-height:50px;margin:18px 0 14px;padding:14px 15px;border:1px solid rgba(207,211,239,.16);border-radius:14px;background:rgba(8,14,33,.38);color:#d5daeb;font-size:14px;line-height:1.6}
     .attendance-status[data-state="done"]{color:#e2fff6;border-color:rgba(120,224,199,.36);background:rgba(55,148,130,.18)}
     .attendance-status[data-state="error"]{color:#ffe6eb;border-color:rgba(255,164,176,.35);background:rgba(153,61,81,.16)}
@@ -42,14 +40,11 @@
     <p class="attendance-eyebrow">VOM DAILY CHECK-IN</p>
     <h1>오늘의 출석</h1>
     <p class="attendance-lead">오늘도 VOM에 들러 주셔서 반가워요.<br>하루 한 번, 출석을 남길 수 있어요.</p>
-    <section class="attendance-card" aria-labelledby="attendanceTitle">
-      <div class="attendance-date-label" id="attendanceTitle">오늘 날짜 · 한국시간</div>
-      <time class="attendance-date" id="todayDate"></time>
+    <section class="attendance-card" aria-label="출석 상태">
       <p class="attendance-status" id="attendanceStatus" role="status" aria-live="polite">로그인 정보를 확인하고 있어요.</p>
       <button class="attendance-check" id="attendanceButton" type="button" disabled>출석 정보를 불러오는 중…</button>
       <a class="attendance-login" id="attendanceLogin" href="/me/?next=%2Fattendance%2F" hidden>로그인 화면으로 이동하기</a>
     </section>
-    <p class="attendance-footnote">출석 기록은 한국시간 날짜를 기준으로 하루 한 번 저장됩니다.</p>
   </main>
   <script>
     (()=>{
@@ -59,12 +54,6 @@
       const button=document.getElementById('attendanceButton');
       const status=document.getElementById('attendanceStatus');
       const login=document.getElementById('attendanceLogin');
-      const date=document.getElementById('todayDate');
-      const today=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',dateStyle:'full'}).format(new Date());
-      date.textContent=today;
-      const dateParts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
-      const datePart=(type)=>dateParts.find(part=>part.type===type)?.value||'';
-      date.dateTime=`${datePart('year')}-${datePart('month')}-${datePart('day')}`;
       const setStatus=(message,state='')=>{status.textContent=message;status.dataset.state=state;};
       const goLogin=()=>{location.replace('/me/?next=%2Fattendance%2F');};
       async function updateStatus(action='status'){

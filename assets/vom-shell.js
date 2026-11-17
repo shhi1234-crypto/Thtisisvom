@@ -699,7 +699,6 @@
 
 
   function ensurePageAtmosphere() {
-    if (path === '/') return;
     const body = document.body;
     if (!body) return;
     let layer = body.querySelector(':scope > .aurora');
@@ -708,14 +707,52 @@
       layer.className = 'aurora';
       body.prepend(layer);
     }
-    layer.classList.add('vom-shell-aurora');
+    if (path !== '/') {
+      layer.classList.add('vom-shell-aurora');
+      if (!layer.querySelector('.vom-atmosphere-mist')) {
+        ['one', 'two', 'three', 'four'].forEach(function (name) {
+          const mist = document.createElement('span');
+          mist.className = 'vom-atmosphere-mist ' + name;
+          layer.appendChild(mist);
+        });
+      }
+    }
     layer.setAttribute('aria-hidden', 'true');
-    if (!layer.querySelector('.vom-atmosphere-mist')) {
-      ['one', 'two', 'three', 'four'].forEach(function (name) {
-        const mist = document.createElement('span');
-        mist.className = 'vom-atmosphere-mist ' + name;
-        layer.appendChild(mist);
-      });
+    if (!layer.querySelector('.vom-music-atmosphere')) {
+      const music = document.createElement('div');
+      music.className = 'vom-music-atmosphere';
+      music.setAttribute('aria-hidden', 'true');
+      music.innerHTML = `
+        <svg class="vom-music-score" viewBox="0 0 1000 1000" preserveAspectRatio="none" focusable="false">
+          <g class="vom-score-staff">
+            <path d="M-30 205 C130 155 228 164 332 210 S548 270 666 213 S865 156 1030 199"/>
+            <path d="M-30 218 C130 168 228 177 332 223 S548 283 666 226 S865 169 1030 212"/>
+            <path d="M-30 231 C130 181 228 190 332 236 S548 296 666 239 S865 182 1030 225"/>
+            <path d="M-30 244 C130 194 228 203 332 249 S548 309 666 252 S865 195 1030 238"/>
+            <path d="M-30 257 C130 207 228 216 332 262 S548 322 666 265 S865 208 1030 251"/>
+          </g>
+          <path class="vom-score-melody" d="M-20 235 C105 188 190 179 286 209 S460 299 562 278 S739 169 833 179 S965 238 1025 214"/>
+          <g class="vom-score-note note-one"><ellipse cx="252" cy="207" rx="7" ry="4" transform="rotate(-24 252 207)"/><path d="M258 205v-30"/></g>
+          <g class="vom-score-note note-two"><ellipse cx="570" cy="276" rx="7" ry="4" transform="rotate(-24 570 276)"/><path d="M576 274v-31"/></g>
+          <g class="vom-score-note note-three"><ellipse cx="840" cy="180" rx="7" ry="4" transform="rotate(-24 840 180)"/><path d="M846 178v-30"/></g>
+          <g class="vom-score-staff lower">
+            <path d="M-30 755 C130 705 228 714 332 760 S548 820 666 763 S865 706 1030 749"/>
+            <path d="M-30 768 C130 718 228 727 332 773 S548 833 666 776 S865 719 1030 762"/>
+            <path d="M-30 781 C130 731 228 740 332 786 S548 846 666 789 S865 732 1030 775"/>
+            <path d="M-30 794 C130 744 228 753 332 799 S548 859 666 802 S865 745 1030 788"/>
+            <path d="M-30 807 C130 757 228 766 332 812 S548 872 666 815 S865 758 1030 801"/>
+          </g>
+          <path class="vom-score-melody lower-melody" d="M-20 786 C105 739 190 730 286 760 S460 850 562 829 S739 720 833 730 S965 789 1025 765"/>
+        </svg>
+        <span class="vom-music-mark mic" aria-hidden="true"><svg viewBox="0 0 64 64"><rect x="23" y="7" width="18" height="34" rx="9"/><path d="M15 29a17 17 0 0 0 34 0M32 46v10M22 56h20"/></svg></span>
+        <span class="vom-music-mark headphones" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M11 35v-5a21 21 0 0 1 42 0v5"/><rect x="9" y="33" width="12" height="20" rx="6"/><rect x="43" y="33" width="12" height="20" rx="6"/><path d="M50 52c-2 5-7 7-14 7h-5"/></svg></span>
+        <span class="vom-music-mark treble" aria-hidden="true">𝄞</span>
+        <span class="vom-music-mark bass" aria-hidden="true">𝄢</span>
+        <span class="vom-music-mark note note-a" aria-hidden="true">♪</span>
+        <span class="vom-music-mark note note-b" aria-hidden="true">♫</span>
+        <span class="vom-music-mark note note-c" aria-hidden="true">♬</span>
+      `;
+      layer.appendChild(music);
     }
   }
 
