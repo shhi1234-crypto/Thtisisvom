@@ -2307,25 +2307,49 @@ html[data-vom-theme="dark"] .home-about-hero p{color:#b5bfd7!important}
 @media(prefers-reduced-motion:reduce){.home-member-prompt-card{transition:none}.home-about-hero::before{animation:none}}
 
 
-/* Mobile scenes keep their snap, but reserve room above the fixed bottom navigation. */
+/* Mobile home flows naturally so short sections do not leave empty viewport-height gaps. */
 @media(max-width:700px){
-  :root{--home-mobile-nav-clearance:92px}
-  html,
-  main.page{
-    scroll-snap-type:y proximity!important;
-    scroll-padding-bottom:calc(var(--home-mobile-nav-clearance) + env(safe-area-inset-bottom, 0px))!important;
-  }
+  html,main.page{scroll-snap-type:none!important;scroll-padding:0!important}
   body{overscroll-behavior-y:auto}
   main.page>.hero,
   main.page>.ranking-section,
   main.page>.quick-stack,
-  main.page>.quick,
   main.page>.section{
-    min-height:calc(100svh + var(--home-mobile-nav-clearance));
-    padding-bottom:calc(126px + env(safe-area-inset-bottom, 0px));
-    scroll-snap-align:start!important;
-    scroll-snap-stop:always!important;
+    min-height:auto!important;
+    padding-top:38px!important;
+    padding-bottom:46px!important;
+    scroll-snap-align:none!important;
+    scroll-snap-stop:normal!important;
+    justify-content:flex-start!important;
   }
+  main.page>.hero{
+    display:flex!important;
+    flex-direction:column;
+    align-items:stretch;
+    gap:20px;
+    padding-top:26px!important;
+    padding-bottom:30px!important;
+  }
+  main.page>.ranking-section{margin:0!important}
+  main.page>.quick-stack{display:block!important;margin:0!important}
+  main.page>.section{margin-top:0!important}
+  main.page>.hero>.next-live{width:100%;margin-top:4px}
+  .home-about-hero{min-height:0!important;padding:28px 22px!important}
+  .home-scroll-button{
+    position:relative!important;
+    left:auto!important;
+    bottom:auto!important;
+    align-self:center;
+    margin:15px auto 0;
+    transform:none!important;
+    animation:none!important;
+  }
+}
+@media(max-width:390px){
+  main.page>.ranking-section,
+  main.page>.quick-stack,
+  main.page>.section{padding-top:32px!important;padding-bottom:40px!important}
+  .home-about-hero{padding:25px 19px!important}
 }
 </style>
 
@@ -2661,7 +2685,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-one{
   left:-8%!important;
   top:12%!important;
   background:radial-gradient(ellipse at 34% 43%,rgba(151,122,255,.68),rgba(101,86,228,.22) 48%,transparent 76%)!important;
-  animation:vomHomeOrbOne 22s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbOne 20s cubic-bezier(.42,0,.24,1) -6s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-two{
   width:clamp(240px,33vw,530px)!important;
@@ -2669,7 +2693,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-two{
   right:-9%!important;
   top:25%!important;
   background:radial-gradient(ellipse at 56% 35%,rgba(92,231,216,.59),rgba(67,162,227,.20) 50%,transparent 76%)!important;
-  animation:vomHomeOrbTwo 25s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbTwo 24s cubic-bezier(.42,0,.24,1) -13s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-three{
   width:clamp(190px,26vw,420px)!important;
@@ -2677,7 +2701,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-three{
   left:38%!important;
   bottom:-1%!important;
   background:radial-gradient(ellipse at 38% 45%,rgba(255,165,223,.49),rgba(166,111,231,.17) 52%,transparent 76%)!important;
-  animation:vomHomeOrbThree 19s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbThree 19s cubic-bezier(.42,0,.24,1) -4s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-four{
   width:clamp(105px,14vw,235px)!important;
@@ -2685,7 +2709,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-four{
   left:19%!important;
   top:18%!important;
   background:radial-gradient(ellipse at 36% 34%,rgba(255,216,151,.66),rgba(248,142,211,.20) 48%,transparent 76%)!important;
-  animation:vomHomeOrbFour 16s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbFour 17s cubic-bezier(.42,0,.24,1) -9s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-five{
   width:clamp(82px,11vw,175px)!important;
@@ -2693,7 +2717,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-five{
   right:23%!important;
   bottom:15%!important;
   background:radial-gradient(ellipse at 38% 32%,rgba(142,211,255,.62),rgba(134,106,236,.18) 50%,transparent 76%)!important;
-  animation:vomHomeOrbFive 13s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbFive 22s cubic-bezier(.42,0,.24,1) -15s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-six{
   width:clamp(38px,5vw,94px)!important;
@@ -2701,7 +2725,7 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-orb-six{
   right:28%!important;
   top:12%!important;
   background:radial-gradient(ellipse at 34% 30%,rgba(255,244,173,.82),rgba(255,148,206,.21) 49%,transparent 77%)!important;
-  animation:vomHomeOrbSix 10s ease-in-out infinite alternate!important;
+  animation:vomHomeOrbSix 14s cubic-bezier(.42,0,.24,1) -7s infinite!important;
 }
 html[data-vom-theme="dark"] body.vom-home-dream .aurora-ribbon{
   border:0!important;
@@ -2738,12 +2762,47 @@ html[data-vom-theme="dark"] body.vom-home-dream .aurora-spark{
   0%{transform:translate3d(-4%,2%,0) rotate(-5deg) scale(1);opacity:.5}
   100%{transform:translate3d(6%,-4%,0) rotate(7deg) scale(1.12);opacity:.82}
 }
-@keyframes vomHomeOrbOne{0%{transform:translate3d(-3vw,-2vh,0) rotate(-12deg) scale(1)}100%{transform:translate3d(10vw,7vh,0) rotate(8deg) scale(1.13)}}
-@keyframes vomHomeOrbTwo{0%{transform:translate3d(2vw,-2vh,0) rotate(11deg) scale(1)}100%{transform:translate3d(-9vw,7vh,0) rotate(-8deg) scale(1.16)}}
-@keyframes vomHomeOrbThree{0%{transform:translate3d(-1vw,2vh,0) rotate(6deg) scale(1)}100%{transform:translate3d(9vw,-7vh,0) rotate(-13deg) scale(1.17)}}
-@keyframes vomHomeOrbFour{0%{transform:translate3d(0,0,0) rotate(-7deg) scale(.94)}100%{transform:translate3d(8vw,5vh,0) rotate(13deg) scale(1.2)}}
-@keyframes vomHomeOrbFive{0%{transform:translate3d(1vw,0,0) rotate(8deg) scale(1)}100%{transform:translate3d(-7vw,-7vh,0) rotate(-12deg) scale(1.18)}}
-@keyframes vomHomeOrbSix{0%{transform:translate3d(0,0,0) rotate(-7deg) scale(.9)}100%{transform:translate3d(-4vw,5vh,0) rotate(11deg) scale(1.22)}}
+@keyframes vomHomeOrbOne{
+  0%,100%{transform:translate3d(-4vw,-2vh,0) rotate(-14deg) scale(.96)}
+  23%{transform:translate3d(2vw,4vh,0) rotate(-2deg) scale(1.07)}
+  48%{transform:translate3d(12vw,10vh,0) rotate(13deg) scale(1.16)}
+  67%{transform:translate3d(15vw,3vh,0) rotate(2deg) scale(1.04)}
+  84%{transform:translate3d(7vw,-4vh,0) rotate(-11deg) scale(.98)}
+}100%{transform:translate3d(10vw,7vh,0) rotate(8deg) scale(1.13)}}
+@keyframes vomHomeOrbTwo{
+  0%,100%{transform:translate3d(3vw,-3vh,0) rotate(12deg) scale(.98)}
+  21%{transform:translate3d(-4vw,3vh,0) rotate(2deg) scale(1.08)}
+  46%{transform:translate3d(-13vw,9vh,0) rotate(-13deg) scale(1.17)}
+  64%{transform:translate3d(-17vw,1vh,0) rotate(-3deg) scale(1.05)}
+  83%{transform:translate3d(-8vw,-6vh,0) rotate(10deg) scale(.96)}
+}100%{transform:translate3d(-9vw,7vh,0) rotate(-8deg) scale(1.16)}}
+@keyframes vomHomeOrbThree{
+  0%,100%{transform:translate3d(-2vw,3vh,0) rotate(7deg) scale(.96)}
+  25%{transform:translate3d(6vw,-4vh,0) rotate(16deg) scale(1.09)}
+  51%{transform:translate3d(12vw,-11vh,0) rotate(-5deg) scale(1.18)}
+  70%{transform:translate3d(4vw,-8vh,0) rotate(-16deg) scale(1.06)}
+  86%{transform:translate3d(-4vw,0,0) rotate(-2deg) scale(.98)}
+}100%{transform:translate3d(9vw,-7vh,0) rotate(-13deg) scale(1.17)}}
+@keyframes vomHomeOrbFour{
+  0%,100%{transform:translate3d(-1vw,0,0) rotate(-8deg) scale(.94)}
+  28%{transform:translate3d(4vw,8vh,0) rotate(4deg) scale(1.08)}
+  54%{transform:translate3d(10vw,3vh,0) rotate(15deg) scale(1.2)}
+  78%{transform:translate3d(6vw,-5vh,0) rotate(-1deg) scale(1.03)}
+}100%{transform:translate3d(8vw,5vh,0) rotate(13deg) scale(1.2)}}
+@keyframes vomHomeOrbFive{
+  0%,100%{transform:translate3d(1vw,1vh,0) rotate(9deg) scale(.98)}
+  24%{transform:translate3d(-5vw,-7vh,0) rotate(-3deg) scale(1.1)}
+  50%{transform:translate3d(-10vw,-12vh,0) rotate(-15deg) scale(1.18)}
+  73%{transform:translate3d(-3vw,-5vh,0) rotate(-4deg) scale(1.04)}
+  87%{transform:translate3d(5vw,2vh,0) rotate(8deg) scale(.95)}
+}100%{transform:translate3d(-7vw,-7vh,0) rotate(-12deg) scale(1.18)}}
+@keyframes vomHomeOrbSix{
+  0%,100%{transform:translate3d(0,0,0) rotate(-8deg) scale(.9)}
+  22%{transform:translate3d(-3vw,4vh,0) rotate(5deg) scale(1.1)}
+  48%{transform:translate3d(-7vw,9vh,0) rotate(17deg) scale(1.22)}
+  68%{transform:translate3d(-4vw,5vh,0) rotate(5deg) scale(1.04)}
+  84%{transform:translate3d(1vw,-1vh,0) rotate(-11deg) scale(.93)}
+}100%{transform:translate3d(-4vw,5vh,0) rotate(11deg) scale(1.22)}}
 @keyframes vomHomeRibbonOne{0%{transform:translate(-50%,-50%) rotate(-24deg) scale(.86)}100%{transform:translate(-46%,-56%) rotate(-7deg) scale(1.18)}}
 @keyframes vomHomeRibbonTwo{0%{transform:translate(-50%,-50%) rotate(31deg) scale(.72)}100%{transform:translate(-55%,-42%) rotate(45deg) scale(1.13)}}
 @keyframes vomHomeRibbonThree{0%{transform:translate(-50%,-50%) rotate(66deg) scale(.94)}100%{transform:translate(-43%,-58%) rotate(52deg) scale(1.22)}}
@@ -2989,11 +3048,68 @@ body.vom-home-dream{overflow-x:clip}
 .home-promotion-status b{color:#fff!important}
 .home-promotion-status small,.home-promotion-note{color:#e2e8fa!important}
 </style>
+
+<style id="vom-home-mobile-flow-and-music">
+/* Make the mobile homepage read as one continuous page instead of forced full-screen scenes. */
+@media(max-width:700px){
+  html,main.page{scroll-snap-type:none!important;scroll-padding:0!important}
+  main.page>.hero,
+  main.page>.ranking-section,
+  main.page>.quick-stack,
+  main.page>.section{
+    min-height:auto!important;
+    padding-top:38px!important;
+    padding-bottom:46px!important;
+    scroll-snap-align:none!important;
+    scroll-snap-stop:normal!important;
+    justify-content:flex-start!important;
+  }
+  main.page>.hero{display:flex!important;flex-direction:column;align-items:stretch;gap:20px;padding-top:26px!important;padding-bottom:30px!important}
+  main.page>.ranking-section{margin:0!important}
+  main.page>.quick-stack{display:block!important;margin:0!important}
+  main.page>.section{margin-top:0!important}
+  main.page>.hero>.next-live{width:100%;margin-top:4px}
+  .home-about-hero{min-height:0!important;padding:28px 22px!important}
+  .home-scroll-button{position:relative!important;left:auto!important;bottom:auto!important;align-self:center;margin:15px auto 0;transform:none!important;animation:none!important}
+}
+@media(max-width:390px){
+  main.page>.ranking-section,main.page>.quick-stack,main.page>.section{padding-top:32px!important;padding-bottom:40px!important}
+  .home-about-hero{padding:25px 19px!important}
+}
+
+/* Very faint music outlines drift behind the page content. */
+.aurora-music-mark{position:absolute;z-index:2;display:block;width:clamp(48px,6.5vw,86px);height:auto;color:rgba(239,236,255,.13);opacity:.54;pointer-events:none;will-change:transform;filter:drop-shadow(0 0 16px rgba(187,170,255,.035))}
+.aurora-music-mark svg{display:block;width:100%;height:auto;overflow:visible}
+.aurora-mic{left:11%;top:34%;animation:vomMusicMicDrift 21s ease-in-out infinite}
+.aurora-headphones{right:10%;top:62%;width:clamp(54px,7vw,96px);animation:vomMusicHeadphonesDrift 24s ease-in-out -8s infinite}
+.aurora-speaker{left:67%;bottom:12%;width:clamp(43px,5.7vw,76px);animation:vomMusicSpeakerDrift 19s ease-in-out -11s infinite}
+@keyframes vomMusicMicDrift{0%,100%{transform:translate3d(0,0,0) rotate(-9deg)}50%{transform:translate3d(8px,-14px,0) rotate(-2deg)}}
+@keyframes vomMusicHeadphonesDrift{0%,100%{transform:translate3d(0,0,0) rotate(8deg)}50%{transform:translate3d(-11px,13px,0) rotate(1deg)}}
+@keyframes vomMusicSpeakerDrift{0%,100%{transform:translate3d(0,0,0) rotate(-5deg)}50%{transform:translate3d(10px,-11px,0) rotate(3deg)}}
+@media(max-width:700px){
+  .aurora-music-mark{color:rgba(239,236,255,.11);opacity:.48}
+  .aurora-mic{left:5%;top:23%;width:53px}
+  .aurora-headphones{right:5%;top:67%;width:61px}
+  .aurora-speaker{left:71%;bottom:16%;width:47px}
+}
+@media(prefers-reduced-motion:reduce){
+  .aurora-music-mark{animation:none!important}
+}
+</style>
 </head>
 
 <body class="vom-home-dream">
 
-<div class="aurora" aria-hidden="true"><span class="aurora-orb aurora-orb-one"></span><span class="aurora-orb aurora-orb-two"></span><span class="aurora-orb aurora-orb-three"></span><span class="aurora-orb aurora-orb-four"></span><span class="aurora-orb aurora-orb-five"></span><span class="aurora-orb aurora-orb-six"></span><span class="aurora-ring aurora-ring-one"></span><span class="aurora-ring aurora-ring-two"></span><span class="aurora-ring aurora-ring-three"></span><span class="aurora-ribbon aurora-ribbon-one"></span><span class="aurora-ribbon aurora-ribbon-two"></span><span class="aurora-ribbon aurora-ribbon-three"></span><span class="aurora-glow"></span><span class="aurora-spark spark-one">✦</span><span class="aurora-spark spark-two">✧</span><span class="aurora-spark spark-three">·</span><span class="aurora-spark spark-four">✦</span></div>
+<div class="aurora" aria-hidden="true">
+  <span class="aurora-orb aurora-orb-one"></span><span class="aurora-orb aurora-orb-two"></span><span class="aurora-orb aurora-orb-three"></span>
+  <span class="aurora-orb aurora-orb-four"></span><span class="aurora-orb aurora-orb-five"></span><span class="aurora-orb aurora-orb-six"></span>
+  <span class="aurora-ring aurora-ring-one"></span><span class="aurora-ring aurora-ring-two"></span><span class="aurora-ring aurora-ring-three"></span>
+  <span class="aurora-ribbon aurora-ribbon-one"></span><span class="aurora-ribbon aurora-ribbon-two"></span><span class="aurora-ribbon aurora-ribbon-three"></span><span class="aurora-glow"></span>
+  <span class="aurora-spark spark-one">✦</span><span class="aurora-spark spark-two">✧</span><span class="aurora-spark spark-three">·</span><span class="aurora-spark spark-four">✦</span>
+  <span class="aurora-music-mark aurora-mic"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="24" y="8" width="16" height="31" rx="8" stroke="currentColor" stroke-width="1.7"/><path d="M17 30v3a15 15 0 0 0 30 0v-3M32 48v8m-9 0h18M27 17h10M27 22h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+  <span class="aurora-music-mark aurora-headphones"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M11 34v-4a21 21 0 0 1 42 0v4M11 34h8v16h-4a4 4 0 0 1-4-4V34Zm42 0h-8v16h4a4 4 0 0 0 4-4V34Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 52c2 3 5 4 8 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+  <span class="aurora-music-mark aurora-speaker"><svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="17" y="7" width="30" height="50" rx="5" stroke="currentColor" stroke-width="1.7"/><circle cx="32" cy="22" r="5" stroke="currentColor" stroke-width="1.7"/><circle cx="32" cy="41" r="10" stroke="currentColor" stroke-width="1.7"/><circle cx="32" cy="41" r="3" stroke="currentColor" stroke-width="1.4"/></svg></span>
+</div>
 
 <header class="header vom-header">
 
