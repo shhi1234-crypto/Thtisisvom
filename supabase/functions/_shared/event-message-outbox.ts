@@ -292,7 +292,7 @@ export function variablesFor(kind: EventMessageKind, payload: Record<string, unk
     "#{입금안내}": value("payment_instructions"), "#{신청상태링크}": value("application_url"),
   };
   if (kind === "MEMBER_PAYMENT_CONFIRMED" || kind === "MEMBER_PARTICIPATION_CONFIRMED") {
-    return { ...common, "#{참가비}": value("fee_label"), "#{오픈채팅링크}": value("confirmed_chat_url") };
+    return { ...common, "#{오픈채팅링크}": value("confirmed_chat_url") };
   }
   if (kind === "MEMBER_APPLICATION_CANCELLED") return { ...common, "#{환불안내}": value("refund_instructions"), "#{신청상태링크}": value("application_url") };
   return { "#{신청자명}": value("applicant_name"), "#{일정명}": value("event_title"), "#{일정일시}": value("event_label"), "#{신청상태링크}": value("application_url") };

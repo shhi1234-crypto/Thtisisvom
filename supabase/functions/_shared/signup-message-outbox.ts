@@ -82,7 +82,6 @@ export function variablesFor(kind: SignupMessageKind, payload: Record<string, un
   const variables: Record<string, string> = {
     "#{신청자명}": text(payload.applicant_name, 60),
   };
-  if (kind === "SIGNUP_APPROVED") variables["#{확인링크}"] = text(payload.confirmation_url, 2048);
   return variables;
 }
 
