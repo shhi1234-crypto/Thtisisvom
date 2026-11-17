@@ -2389,20 +2389,20 @@ html[data-vom-theme="dark"] body .aurora .vom-music-mark svg{
   fill:none!important;stroke:currentColor!important;stroke-width:2.1!important;stroke-linecap:round!important;stroke-linejoin:round!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.mic{
-  left:9%!important;top:14%!important;width:clamp(48px,5.5vw,72px)!important;
+  left:var(--vom-music-x,9%)!important;top:var(--vom-music-y,14%)!important;width:clamp(48px,5.5vw,72px)!important;
   color:rgba(133,233,220,.78)!important;animation:vomWanderMic 23s ease-in-out -8s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.headphones{
-  left:82%!important;top:58%!important;width:clamp(55px,6.8vw,88px)!important;
+  left:var(--vom-music-x,82%)!important;top:var(--vom-music-y,58%)!important;width:clamp(55px,6.8vw,88px)!important;
   color:rgba(188,179,255,.78)!important;animation:vomWanderHeadphones 28s ease-in-out -13s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.treble{
-  left:47%!important;top:78%!important;width:auto!important;aspect-ratio:auto!important;
+  left:var(--vom-music-x,47%)!important;top:var(--vom-music-y,78%)!important;width:auto!important;aspect-ratio:auto!important;
   color:rgba(242,190,232,.7)!important;font:400 clamp(54px,7vw,88px)/1 "Noto Music","Segoe UI Symbol",serif!important;
   animation:vomWanderClef 25s ease-in-out -5s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.bass{
-  left:72%!important;top:10%!important;width:auto!important;aspect-ratio:auto!important;
+  left:var(--vom-music-x,72%)!important;top:var(--vom-music-y,10%)!important;width:auto!important;aspect-ratio:auto!important;
   color:rgba(145,221,235,.68)!important;font:400 clamp(48px,6.2vw,76px)/1 "Noto Music","Segoe UI Symbol",serif!important;
   animation:vomWanderBass 21s ease-in-out -11s infinite alternate!important;
 }
@@ -2410,15 +2410,15 @@ html[data-vom-theme="dark"] body .aurora .vom-music-mark.note{
   width:clamp(47px,5.2vw,70px)!important;aspect-ratio:1!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-a{
-  left:73%!important;top:27%!important;color:rgba(255,221,165,.78)!important;
+  left:var(--vom-music-x,73%)!important;top:var(--vom-music-y,27%)!important;color:rgba(255,221,165,.78)!important;
   animation:vomWanderNoteA 18s ease-in-out -6s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-b{
-  left:15%!important;top:68%!important;color:rgba(145,235,222,.78)!important;
+  left:var(--vom-music-x,15%)!important;top:var(--vom-music-y,68%)!important;color:rgba(145,235,222,.78)!important;
   animation:vomWanderNoteB 26s ease-in-out -17s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-c{
-  left:43%!important;top:43%!important;color:rgba(212,194,255,.76)!important;
+  left:var(--vom-music-x,43%)!important;top:var(--vom-music-y,43%)!important;color:rgba(212,194,255,.76)!important;
   animation:vomWanderNoteC 22s ease-in-out -12s infinite alternate!important;
 }
 html[data-vom-theme="dark"] body .aurora .vom-music-mark.note .note-head{
@@ -2440,14 +2440,14 @@ html[data-vom-theme="dark"] body .aurora .vom-music-mark.note .note-head.alt{
   html[data-vom-theme="dark"] body .aurora .vom-music-score{inset:-1% -4%!important;width:108%!important;height:102%!important;opacity:.7!important}
   html[data-vom-theme="dark"] body .aurora .vom-score-staff{stroke-width:1.55!important;stroke:rgba(186,195,255,.17)!important}
   html[data-vom-theme="dark"] body .aurora .vom-music-mark{width:48px!important;opacity:.27!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.mic{left:7%!important;top:12%!important;width:44px!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.headphones{left:83%!important;top:57%!important;width:50px!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.treble{left:63%!important;top:81%!important;font-size:57px!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.bass{left:78%!important;top:11%!important;font-size:52px!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.mic{left:var(--vom-music-x,7%)!important;top:var(--vom-music-y,12%)!important;width:44px!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.headphones{left:var(--vom-music-x,83%)!important;top:var(--vom-music-y,57%)!important;width:50px!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.treble{left:var(--vom-music-x,63%)!important;top:var(--vom-music-y,81%)!important;font-size:57px!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.bass{left:var(--vom-music-x,78%)!important;top:var(--vom-music-y,11%)!important;font-size:52px!important}
   html[data-vom-theme="dark"] body .aurora .vom-music-mark.note{width:45px!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-a{left:66%!important;top:30%!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-b{left:10%!important;top:73%!important}
-  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-c{left:42%!important;top:45%!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-a{left:var(--vom-music-x,66%)!important;top:var(--vom-music-y,30%)!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-b{left:var(--vom-music-x,10%)!important;top:var(--vom-music-y,73%)!important}
+  html[data-vom-theme="dark"] body .aurora .vom-music-mark.note-c{left:var(--vom-music-x,42%)!important;top:var(--vom-music-y,45%)!important}
 }
 @media(prefers-reduced-motion:reduce){
   html[data-vom-theme="dark"] body .aurora .vom-score-melody,

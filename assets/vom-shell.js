@@ -741,6 +741,30 @@
         <span class="vom-music-mark note note-b" aria-hidden="true"><svg viewBox="0 0 80 80"><path class="note-stem" d="M28 51V15l34-7v36"/><path class="note-beam" d="M28 22l34-7"/><ellipse class="note-head alt" cx="19" cy="53" rx="10" ry="6" transform="rotate(-23 19 53)"/><ellipse class="note-head alt" cx="53" cy="44" rx="10" ry="6" transform="rotate(-23 53 44)"/></svg></span>
         <span class="vom-music-mark note note-c" aria-hidden="true"><svg viewBox="0 0 80 80"><path class="note-stem" d="M28 51V15l34-7v36"/><path class="note-beam" d="M28 22l34-7"/><ellipse class="note-head" cx="19" cy="53" rx="10" ry="6" transform="rotate(-23 19 53)"/><ellipse class="note-head" cx="53" cy="44" rx="10" ry="6" transform="rotate(-23 53 44)"/></svg></span>
       `;
+      const marks = Array.from(music.querySelectorAll('.vom-music-mark'));
+      const anchors = [
+        [6, 10], [28, 12], [55, 9], [83, 14],
+        [12, 34], [40, 30], [68, 34], [93, 42],
+        [5, 60], [31, 53], [60, 57], [84, 66],
+        [18, 84], [45, 78], [70, 86], [93, 92]
+      ];
+      for (let index = anchors.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [anchors[index], anchors[swapIndex]] = [anchors[swapIndex], anchors[index]];
+      }
+      const placed = [];
+      for (const point of anchors) {
+        const spaced = placed.every(function (other) {
+          return Math.hypot((point[0] - other[0]) * 0.7, point[1] - other[1]) >= 17;
+        });
+        if (spaced) placed.push(point);
+        if (placed.length === marks.length) break;
+      }
+      marks.forEach(function (mark, index) {
+        const point = placed[index] || anchors[index];
+        mark.style.setProperty('--vom-music-x', point[0] + '%');
+        mark.style.setProperty('--vom-music-y', point[1] + '%');
+      });
       layer.appendChild(music);
     }
   }
