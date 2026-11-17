@@ -2,11 +2,10 @@ import { normalizeKoreanMobile } from "./event-message-outbox.ts";
 import { retryDelayMs, retryableProviderFailure } from "./notification-schedule.ts";
 
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
-const THIRTY_MINUTES = 30 * 60_000;
 const SIX_HOURS = 6 * 60 * 60_000;
 const MAX_ATTEMPTS = 5;
 
-export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_30M" | "SIGNUP_OPERATOR_REVIEW_6H";
+export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H";
 
 function clean(value: unknown, max = 500) {
   return String(value ?? "").replace(/[\x00-\x1f\x7f]/g, " ").trim().slice(0, max);
@@ -20,14 +19,11 @@ function configuredSecrets() {
   return apiKey && apiSecret && senderPhone && pfId ? { apiKey, apiSecret, senderPhone, pfId } : null;
 }
 
-function templateIdFor(kind: OperatorReminderKind) {
-  const secret = kind === "SIGNUP_OPERATOR_REVIEW_30M"
-    ? "SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REVIEW_30M"
-    : "SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REVIEW_6H";
-  return Deno.env.get(secret) || "";
+function templateIdFor(_kind: OperatorReminderKind) {
+  return Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REMINDER") || "";
 }
 
-export function operatorReminderVariables(kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
+export function operatorReminderVariables(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
   return {
     "#{운영진명}": clean(operatorName, 60),
     "#{신청자명}": clean(applicantName, 60),
@@ -36,13 +32,11 @@ export function operatorReminderVariables(kind: OperatorReminderKind, operatorNa
   };
 }
 
-function fallbackText(kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
+function fallbackText(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
   const operator = clean(operatorName, 60) || "운영진";
   const applicant = clean(applicantName, 60) || "신청자";
   const link = `https://thisisvom.vercel.app/ot-admin/?id=${Number(reviewId)}`;
-  return kind === "SIGNUP_OPERATOR_REVIEW_30M"
-    ? `[VOM 가입 심사 알림]\n${operator}님, ${applicant}님의 가입 신청 심사 기준 시각까지 30분 남았습니다.\n아직 의견을 남기지 않으셨다면 검토해 주세요.\n${link}`
-    : `[VOM 가입 심사 알림]\n${operator}님, ${applicant}님의 가입 신청 후 6시간이 지났지만 아직 심사가 완료되지 않았습니다.\n아직 확인하지 않은 운영진에게만 보내는 알림입니다. 검토해 주세요.\n${link}`;
+  return `[VOM 가입 심사 알림]\n${operator}님, ${applicant}님의 가입 신청이 접수된 지 6시간이 지났습니다.\n아직 확인하지 않은 운영진에게만 보내는 알림입니다. 검토해 주세요.\n${link}`;
 }
 
 function backoff(attempt: number, now = new Date()) {
@@ -58,7 +52,7 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 
 export async function queueSignupOperatorReminders(service: any, now = new Date()) {
   const { data: reviews, error: reviewError } = await service.from("ot_reviews")
-    .select("id,candidate_name,created_at,due_at,eligible_operator_ids")
+    .select("id,candidate_name,created_at,eligible_operator_ids")
     .eq("status", "IN_REVIEW")
     .order("created_at", { ascending: true })
     .limit(1000);
@@ -81,29 +75,24 @@ export async function queueSignupOperatorReminders(service: any, now = new Date(
   let queued = 0, eligible = 0;
   const currentTime = now.getTime();
   for (const review of reviews || []) {
-    const due = Date.parse(String(review.due_at || ""));
     const created = Date.parse(String(review.created_at || ""));
-    const kinds: OperatorReminderKind[] = [];
-    if (Number.isFinite(due) && currentTime >= due - THIRTY_MINUTES && currentTime < due) kinds.push("SIGNUP_OPERATOR_REVIEW_30M");
-    if (Number.isFinite(created) && currentTime >= created + SIX_HOURS) kinds.push("SIGNUP_OPERATOR_REVIEW_6H");
-    if (!kinds.length) continue;
+    if (!Number.isFinite(created) || currentTime < created + SIX_HOURS) continue;
+    const kind: OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H";
 
     for (const operatorId of (review.eligible_operator_ids || []).map(Number)) {
       const operator = operatorById.get(operatorId) as any;
       if (!operator || voted.has(`${Number(review.id)}:${operatorId}`)) continue;
       eligible++;
-      for (const kind of kinds) {
-        const { error } = await service.from("ot_operator_message_outbox").upsert({
-          review_id: Number(review.id),
-          recipient_member_id: operatorId,
-          message_kind: kind,
-          status: "QUEUED",
-          next_attempt_at: now.toISOString(),
-          updated_at: now.toISOString(),
-        }, { onConflict: "review_id,recipient_member_id,message_kind", ignoreDuplicates: true });
-        if (error) throw error;
-        queued++;
-      }
+      const { error } = await service.from("ot_operator_message_outbox").upsert({
+        review_id: Number(review.id),
+        recipient_member_id: operatorId,
+        message_kind: kind,
+        status: "QUEUED",
+        next_attempt_at: now.toISOString(),
+        updated_at: now.toISOString(),
+      }, { onConflict: "review_id,recipient_member_id,message_kind", ignoreDuplicates: true });
+      if (error) throw error;
+      queued++;
     }
   }
   return { queued, eligible };

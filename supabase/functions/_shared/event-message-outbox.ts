@@ -249,37 +249,9 @@ export async function queueApplicationMessages(
   application: ApplicationRow,
   applicant: MemberRow,
 ) {
-  if (!payment.messaging_enabled) return { queued: 0 };
-  let queued = 0;
-  if (!kind.startsWith("OPERATOR_")) {
-    await enqueue(service, kind, event, payment, application, applicant, applicant);
-    queued++;
-  }
-  const operatorKind: EventMessageKind | null = kind === "MEMBER_APPLICATION_RECEIVED"
-    ? "OPERATOR_APPLICATION_RECEIVED"
-    : kind === "MEMBER_APPLICATION_CANCELLED"
-      ? "OPERATOR_APPLICATION_CANCELLED"
-      : null;
-  if (!operatorKind) return { queued };
-  const { data: operators, error } = await service.from("members")
-    .select("id,name,role")
-    .eq("is_active", true)
-    .in("role", ["모임장", "운영진"]);
-  if (error) throw error;
-  const operatorIds = (operators || []).map((operator: any) => Number(operator.id)).filter(Number.isSafeInteger);
-  if (!operatorIds.length) return { queued };
-  const { data: preferences, error: preferenceError } = await service.from("member_message_preferences")
-    .select("member_id,operator_alert_enabled")
-    .in("member_id", operatorIds)
-    .eq("operator_alert_enabled", true);
-  if (preferenceError) throw preferenceError;
-  const optedIn = new Set((preferences || []).map((item: any) => Number(item.member_id)));
-  for (const operator of operators || []) {
-    if (!optedIn.has(Number(operator.id))) continue;
-    await enqueue(service, operatorKind, event, payment, application, operator, applicant);
-    queued++;
-  }
-  return { queued };
+  if (!payment.messaging_enabled || kind.startsWith("OPERATOR_")) return { queued: 0 };
+  await enqueue(service, kind, event, payment, application, applicant, applicant);
+  return { queued: 1 };
 }
 
 function configuredSecrets() {
@@ -291,13 +263,12 @@ function configuredSecrets() {
 }
 
 function templateIdFor(kind: EventMessageKind) {
-  const names: Record<EventMessageKind, string> = {
+  if (kind === "OPERATOR_APPLICATION_RECEIVED" || kind === "OPERATOR_APPLICATION_CANCELLED") return "";
+  const names: Record<Exclude<EventMessageKind, "OPERATOR_APPLICATION_RECEIVED" | "OPERATOR_APPLICATION_CANCELLED">, string> = {
     MEMBER_APPLICATION_RECEIVED: "SOLAPI_TEMPLATE_APPLICATION_RECEIVED",
     MEMBER_PAYMENT_CONFIRMED: "SOLAPI_TEMPLATE_PAYMENT_CONFIRMED",
-    MEMBER_PARTICIPATION_CONFIRMED: "SOLAPI_TEMPLATE_PARTICIPATION_CONFIRMED",
+    MEMBER_PARTICIPATION_CONFIRMED: "SOLAPI_TEMPLATE_PAYMENT_CONFIRMED",
     MEMBER_APPLICATION_CANCELLED: "SOLAPI_TEMPLATE_APPLICATION_CANCELLED",
-    OPERATOR_APPLICATION_RECEIVED: "SOLAPI_TEMPLATE_OPERATOR_APPLICATION",
-    OPERATOR_APPLICATION_CANCELLED: "SOLAPI_TEMPLATE_OPERATOR_CANCELLED",
   };
   return Deno.env.get(names[kind]) || "";
 }
@@ -320,8 +291,9 @@ export function variablesFor(kind: EventMessageKind, payload: Record<string, unk
     ...common, "#{참가비}": value("fee_label"), "#{입금기한}": value("payment_due_label"),
     "#{입금안내}": value("payment_instructions"), "#{신청상태링크}": value("application_url"),
   };
-  if (kind === "MEMBER_PAYMENT_CONFIRMED") return { ...common, "#{신청상태링크}": value("application_url") };
-  if (kind === "MEMBER_PARTICIPATION_CONFIRMED") return { ...common, "#{오픈채팅링크}": value("confirmed_chat_url") };
+  if (kind === "MEMBER_PAYMENT_CONFIRMED" || kind === "MEMBER_PARTICIPATION_CONFIRMED") {
+    return { ...common, "#{참가비}": value("fee_label"), "#{오픈채팅링크}": value("confirmed_chat_url") };
+  }
   if (kind === "MEMBER_APPLICATION_CANCELLED") return { ...common, "#{환불안내}": value("refund_instructions"), "#{신청상태링크}": value("application_url") };
   return { "#{신청자명}": value("applicant_name"), "#{일정명}": value("event_title"), "#{일정일시}": value("event_label"), "#{신청상태링크}": value("application_url") };
 }
@@ -330,8 +302,9 @@ function fallbackText(kind: EventMessageKind, payload: Record<string, unknown>) 
   const value = (key: string) => text(payload[key], 700);
   const common = `${value("event_title")}\n${value("event_label")}`;
   if (kind === "MEMBER_APPLICATION_RECEIVED") return `[VOM 신청 완료]\n${value("recipient_name")}님, 신청이 완료됐어요.\n${common}\n참가비: ${value("fee_label")}\n입금 기한: ${value("payment_due_label")}\n${value("payment_instructions")}\n상태 확인: ${value("application_url")}`;
-  if (kind === "MEMBER_PAYMENT_CONFIRMED") return `[VOM 입금 확인]\n${value("recipient_name")}님, 입금 확인이 완료됐어요.\n${common}\n참가 확정은 MY VOM에서 안내해 드릴게요.\n${value("application_url")}`;
-  if (kind === "MEMBER_PARTICIPATION_CONFIRMED") return `[VOM 참가 확정]\n${value("recipient_name")}님, 참가가 확정됐어요.\n${common}\n오픈채팅 입장: ${value("confirmed_chat_url")}`;
+  if (kind === "MEMBER_PAYMENT_CONFIRMED" || kind === "MEMBER_PARTICIPATION_CONFIRMED") {
+    return `[VOM 입금 확인 및 참가 확정]\n${value("recipient_name")}님, 입금 확인과 참가 확정이 완료됐어요.\n${common}\n오픈채팅 입장: ${value("confirmed_chat_url")}`;
+  }
   if (kind === "MEMBER_APPLICATION_CANCELLED") return `[VOM 신청 취소]\n${value("recipient_name")}님, 신청 취소가 접수됐어요.\n${value("event_title")}\n${value("refund_instructions")}\n${value("application_url")}`;
   const verb = kind === "OPERATOR_APPLICATION_RECEIVED" ? "신청했습니다" : "취소했습니다";
   return `[VOM 운영 알림]\n${value("applicant_name")}님이 ${value("event_title")}에 ${verb}.\n${value("event_label")}\n${value("application_url")}`;
@@ -377,6 +350,11 @@ export async function dispatchEventMessages(service: any, limit = 12) {
     if (claimError) throw claimError;
     if (!claimed) continue;
     const current = claimed as OutboxRow;
+    if (current.message_kind.startsWith("OPERATOR_")) {
+      await mark(service, current.id, { status: "SKIPPED", last_error: "no_operator_event_template_configured", locked_at: null });
+      skipped++;
+      continue;
+    }
     const [recipientResult, preferenceResult] = await Promise.all([
       service.from("members").select("id,name,phone,is_active").eq("id", current.recipient_member_id).maybeSingle(),
       service.from("member_message_preferences").select("event_transaction_enabled,operator_alert_enabled").eq("member_id", current.recipient_member_id).maybeSingle(),
