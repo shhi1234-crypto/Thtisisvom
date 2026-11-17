@@ -3223,7 +3223,7 @@ body.vom-home-dream{overflow-x:clip}
         <span class="home-total-visitors" title="홈페이지 누적 방문자"><small>VISITORS</small><strong id="homeTotalVisitors">-</strong><span>누적 방문자</span></span>
       </div>
       <div class="home-attendance-shortcut">
-        <div class="home-attendance-copy"><small>VOM TODAY</small><strong>오늘도 들러줘서 반가워요</strong><time id="homeAttendanceDate"></time></div>
+        <div class="home-attendance-copy"><small>VOM TODAY</small><strong>오늘도 들러줘서 반가워요</strong></div>
         <a class="home-attendance-action" href="/attendance/">출석체크 바로하기 <span aria-hidden="true">→</span></a>
       </div>
 
@@ -3786,8 +3786,6 @@ function formatHomeToday(date=new Date()){
   const value=type=>parts.find(part=>part.type===type)?.value||'';
   const weekday=new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',weekday:'short'}).format(date);
   const formatted=value('year')+'. '+value('month')+'. '+value('day')+' '+weekday;
-  const attendanceDate=document.getElementById('homeAttendanceDate');
-  if(attendanceDate)attendanceDate.textContent='오늘은 '+formatted;
   return formatted;
 }
 
