@@ -1,3 +1,5 @@
+import { memberMessageNextAttemptAt, retryDelayMs, retryableProviderFailure } from "./notification-schedule.ts";
+
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
 
 export const EVENT_MESSAGE_KINDS = [
@@ -311,7 +313,7 @@ async function authorization(apiKey: string, apiSecret: string) {
   return `HMAC-SHA256 apiKey=${apiKey}, date=${date}, salt=${salt}, signature=${signature}`;
 }
 
-function variablesFor(kind: EventMessageKind, payload: Record<string, unknown>) {
+export function variablesFor(kind: EventMessageKind, payload: Record<string, unknown>) {
   const value = (key: string) => text(payload[key], 500);
   const common = { "#{회원명}": value("recipient_name"), "#{일정명}": value("event_title"), "#{일정일시}": value("event_label") };
   if (kind === "MEMBER_APPLICATION_RECEIVED") return {
@@ -341,7 +343,14 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 }
 
 export async function dispatchEventMessages(service: any, limit = 12) {
-  const now = new Date().toISOString();
+  const nowDate = new Date();
+  const now = nowDate.toISOString();
+  const expiredBefore = new Date(nowDate.getTime() - 10 * 60_000).toISOString();
+  const { error: leaseError } = await service.from("event_message_outbox")
+    .update({ status: "FAILED", locked_at: null, last_error: "delivery_outcome_unknown", updated_at: now })
+    .eq("status", "SENDING")
+    .lt("locked_at", expiredBefore);
+  if (leaseError) throw leaseError;
   const { data: pending, error } = await service.from("event_message_outbox")
     .select("id,event_id,application_id,recipient_member_id,message_kind,payload,status,attempts")
     .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
@@ -352,9 +361,17 @@ export async function dispatchEventMessages(service: any, limit = 12) {
   let accepted = 0, failed = 0, skipped = 0, waiting = 0;
   for (const pendingRow of pending || []) {
     const job = pendingRow as OutboxRow;
+    if (!job.message_kind.startsWith("OPERATOR_")) {
+      const deferUntil = memberMessageNextAttemptAt(nowDate);
+      if (deferUntil) {
+        await mark(service, job.id, { status: "QUEUED", next_attempt_at: deferUntil, locked_at: null, last_error: "member_quiet_hours" });
+        waiting++;
+        continue;
+      }
+    }
     const { data: claimed, error: claimError } = await service.from("event_message_outbox")
       .update({ status: "SENDING", locked_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-      .eq("id", job.id).eq("status", "QUEUED")
+      .eq("id", job.id).in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
       .select("id,event_id,application_id,recipient_member_id,message_kind,payload,status,attempts")
       .maybeSingle();
     if (claimError) throw claimError;
@@ -379,7 +396,7 @@ export async function dispatchEventMessages(service: any, limit = 12) {
     const secrets = configuredSecrets();
     const templateId = templateIdFor(current.message_kind);
     if (!secrets || !templateId) {
-      await mark(service, current.id, { status: "WAITING_FOR_CONFIGURATION", last_error: "solapi_configuration_incomplete", locked_at: null });
+      await mark(service, current.id, { status: "WAITING_FOR_CONFIGURATION", next_attempt_at: new Date(Date.now() + 30 * 60_000).toISOString(), last_error: "solapi_configuration_incomplete", locked_at: null });
       waiting++;
       continue;
     }
@@ -410,8 +427,16 @@ export async function dispatchEventMessages(service: any, limit = 12) {
       try { responseBody = JSON.parse(responseText); } catch (_) { /* handled below */ }
       const message = responseBody?.messageList?.[0] || responseBody?.failedMessageList?.[0];
       if (!response.ok || String(message?.statusCode || "").startsWith("4") || String(message?.statusCode || "").startsWith("5")) {
-        await mark(service, current.id, { status: "FAILED", attempts: Number(current.attempts || 0) + 1, last_error: messageError(responseBody?.errorMessage || message?.statusCode || `solapi_http_${response.status}`), locked_at: null });
-        failed++;
+        const attempts = Number(current.attempts || 0) + 1;
+        const retryable = retryableProviderFailure(response.status, message?.statusCode);
+        await mark(service, current.id, {
+          status: retryable && attempts < 5 ? "QUEUED" : "FAILED",
+          attempts,
+          next_attempt_at: new Date(Date.now() + retryDelayMs(attempts)).toISOString(),
+          last_error: messageError(responseBody?.errorMessage || message?.statusCode || `solapi_http_${response.status}`),
+          locked_at: null,
+        });
+        if (retryable && attempts < 5) waiting++; else failed++;
         continue;
       }
       await mark(service, current.id, {

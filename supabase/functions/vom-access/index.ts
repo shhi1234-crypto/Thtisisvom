@@ -94,6 +94,17 @@ export async function handle(req: Request, service: any, authClient: any) {
         throw new ApiError(400, "알림을 받으려면 휴대폰 번호를 입력해 주세요.", "phone_required");
       }
       const now = new Date().toISOString();
+      const phoneChanged = phone !== (context.member.phone || null);
+      const eventConsentAt = eventTransactionEnabled
+        ? (context.messaging?.event_transaction_enabled === true && context.messaging?.event_transaction_consented_at && !phoneChanged
+          ? context.messaging.event_transaction_consented_at
+          : now)
+        : null;
+      const operatorConsentAt = operatorAlertEnabled
+        ? (context.messaging?.operator_alert_enabled === true && context.messaging?.operator_alert_consented_at && !phoneChanged
+          ? context.messaging.operator_alert_consented_at
+          : now)
+        : null;
       const { data: member, error } = await service
         .from("members")
         .update({ region, favorite_singers: favoriteSingers, job, phone })
@@ -106,9 +117,9 @@ export async function handle(req: Request, service: any, authClient: any) {
       const { error: preferenceError } = await service.from("member_message_preferences").upsert({
         member_id: context.member.id,
         event_transaction_enabled: eventTransactionEnabled,
-        event_transaction_consented_at: eventTransactionEnabled ? now : null,
+        event_transaction_consented_at: eventConsentAt,
         operator_alert_enabled: operatorAlertEnabled,
-        operator_alert_consented_at: operatorAlertEnabled ? now : null,
+        operator_alert_consented_at: operatorConsentAt,
         updated_at: now,
       }, { onConflict: "member_id" });
       if (preferenceError) throw new Error("message_preference_update_failed");
@@ -167,6 +178,13 @@ export async function handle(req: Request, service: any, authClient: any) {
         identity=await ensureMemberAuth(service,Number(selected.id));
         selected.auth_user_id=identity;
       }
+      if(!identity&&!lookup){
+        const {data:applicantMatches,error}=await service.from("ot_room_applicants")
+          .select("auth_user_id").eq("candidate_name",name).limit(2);
+        if(error)throw new Error("applicant_name_lookup_failed");
+        if((applicantMatches||[]).length>1)throw new ApiError(409,"같은 이름의 신청자가 있어요. 회원가입 때 입력한 소모임 닉네임으로 로그인해 주세요.");
+        identity=applicantMatches?.[0]?.auth_user_id||null;
+      }
       if(!identity){
         const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq(byName?'candidate_name':'login_name',byName?name:name.toLowerCase()).maybeSingle();
         if(error){if(byName&&error.code==='PGRST116')throw new ApiError(400,'이름만으로 신청을 확인하기 어렵습니다. 소모임 운영진에게 확인해 주세요.');throw new Error("login_identity_lookup_failed");}
@@ -177,7 +195,7 @@ export async function handle(req: Request, service: any, authClient: any) {
       if(attemptError)throw new Error("login_attempt_check_failed");
       if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
       let result;
-      const resolvedId=selected?.auth_user_id||(selected?identity:(byName?identity:null));
+      const resolvedId=selected?.auth_user_id||identity||null;
       if (resolvedId) {
         const {data,error}=await service.auth.admin.getUserById(resolvedId);
         if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
@@ -257,4 +275,5 @@ export async function handle(req: Request, service: any, authClient: any) {
 }
 if (import.meta.main) Deno.serve(req=>handle(req,createClient(Deno.env.get("SUPABASE_URL")||"",Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"",{auth:{persistSession:false,autoRefreshToken:false}}),
   createClient(Deno.env.get("SUPABASE_URL")||"",Deno.env.get("SUPABASE_ANON_KEY")||"",{auth:{persistSession:false,autoRefreshToken:false}})));
+
 

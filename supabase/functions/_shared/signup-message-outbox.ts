@@ -1,4 +1,5 @@
 import { normalizeKoreanMobile } from "./event-message-outbox.ts";
+import { memberMessageNextAttemptAt, retryDelayMs, retryableProviderFailure } from "./notification-schedule.ts";
 
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
 
@@ -72,30 +73,29 @@ function payloadFor(kind: SignupMessageKind, name: unknown) {
   return {
     recipient_name: recipientName,
     applicant_name: recipientName,
-    confirmation_url: kind === "SIGNUP_APPROVED"
-      ? "https://thisisvom.vercel.app/me/"
-      : "https://thisisvom.vercel.app/ot-room/?result=1",
+    confirmation_url: kind === "SIGNUP_APPROVED" ? "https://thisisvom.vercel.app/me/" : "",
     fallback_sms_enabled: false,
   };
 }
 
-function variablesFor(payload: Record<string, unknown>) {
-  return {
+export function variablesFor(kind: SignupMessageKind, payload: Record<string, unknown>) {
+  const variables: Record<string, string> = {
     "#{신청자명}": text(payload.applicant_name, 60),
-    "#{확인링크}": text(payload.confirmation_url, 2048),
   };
+  if (kind === "SIGNUP_APPROVED") variables["#{확인링크}"] = text(payload.confirmation_url, 2048);
+  return variables;
 }
 
 function fallbackText(kind: SignupMessageKind, payload: Record<string, unknown>) {
   const name = text(payload.applicant_name, 60) || "회원";
   const url = text(payload.confirmation_url, 2048);
   if (kind === "SIGNUP_APPLICATION_RECEIVED") {
-    return `[VOM 가입 신청 접수]\n${name}님, 가입 신청이 접수되었습니다.\n운영진 검토 후 결과를 안내해 드립니다.\n확인: ${url}`;
+    return `[VOM 가입 신청 접수]\n${name}님, 가입 신청이 접수되었습니다.\n운영진 검토 후 승인 또는 결과를 이 번호로 안내해 드립니다.`;
   }
   if (kind === "SIGNUP_APPROVED") {
-    return `[VOM 가입 승인]\n${name}님, VOM 가입 신청이 승인되었습니다.\n홈페이지에서 로그인해 주세요.\n${url}`;
+    return `[VOM 가입 승인]\n${name}님, VOM 가입 신청이 승인되었습니다.\n홈페이지에 로그인해 MY VOM을 이용해 주세요.\n홈페이지 로그인: ${url}`;
   }
-  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n신청 결과와 안내를 확인해 주세요.\n${url}`;
+  return `[VOM 가입 결과 안내]\n${name}님, 이번 가입 신청은 승인되지 않았습니다.\n추가 문의가 있으면 VOM 운영진에게 연락해 주세요.`;
 }
 
 export async function queueSignupMessage(service: any, input: SignupMessageInput) {
@@ -126,18 +126,22 @@ export async function queueSignupApplicationReceived(
   phone: unknown,
   name: unknown,
   consent: boolean,
+  eventTransactionConsent: boolean,
+  consentedAt: string,
 ) {
-  if (!consent) return { queued: 0, skipped: true };
   const mobile = normalizeKoreanMobile(phone);
   if (!mobile) return { queued: 0, skipped: true };
   const { error } = await service.from("signup_message_preferences").upsert({
     invite_id: inviteId,
     phone: mobile,
-    enabled: true,
-    consented_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    enabled: consent,
+    consented_at: consent ? consentedAt : null,
+    event_transaction_enabled: eventTransactionConsent,
+    event_transaction_consented_at: eventTransactionConsent ? consentedAt : null,
+    updated_at: consentedAt,
   }, { onConflict: "invite_id" });
   if (error) throw error;
+  if (!consent) return { queued: 0, skipped: true };
   return queueSignupMessage(service, {
     inviteId,
     kind: "SIGNUP_APPLICATION_RECEIVED",
@@ -188,7 +192,14 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 }
 
 export async function dispatchSignupMessages(service: any, limit = 12) {
-  const now = new Date().toISOString();
+  const nowDate = new Date();
+  const now = nowDate.toISOString();
+  const expiredBefore = new Date(nowDate.getTime() - 10 * 60_000).toISOString();
+  const { error: leaseError } = await service.from("signup_message_outbox")
+    .update({ status: "FAILED", locked_at: null, last_error: "delivery_outcome_unknown", updated_at: now })
+    .eq("status", "SENDING")
+    .lt("locked_at", expiredBefore);
+  if (leaseError) throw leaseError;
   const { data: pending, error } = await service.from("signup_message_outbox")
     .select("id,invite_id,review_id,message_kind,recipient_phone,recipient_name,payload,status,attempts")
     .in("status", ["QUEUED", "WAITING_FOR_CONFIGURATION"])
@@ -199,6 +210,12 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
   let accepted = 0, failed = 0, skipped = 0, waiting = 0;
   for (const row of pending || []) {
     const job = row as SignupOutboxRow;
+    const deferUntil = memberMessageNextAttemptAt(nowDate);
+    if (deferUntil) {
+      await mark(service, job.id, { status: "QUEUED", next_attempt_at: deferUntil, locked_at: null, last_error: "member_quiet_hours" });
+      waiting++;
+      continue;
+    }
     const { data: claimed, error: claimError } = await service.from("signup_message_outbox")
       .update({ status: "SENDING", locked_at: new Date().toISOString(), updated_at: new Date().toISOString() })
       .eq("id", job.id)
@@ -226,7 +243,7 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
     const secrets = configuredSecrets();
     const templateId = templateIdFor(current.message_kind);
     if (!secrets || !templateId) {
-      await mark(service, current.id, { status: "WAITING_FOR_CONFIGURATION", last_error: "solapi_configuration_incomplete", locked_at: null });
+      await mark(service, current.id, { status: "WAITING_FOR_CONFIGURATION", next_attempt_at: new Date(Date.now() + 30 * 60_000).toISOString(), last_error: "solapi_configuration_incomplete", locked_at: null });
       waiting++;
       continue;
     }
@@ -242,7 +259,7 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
             kakaoOptions: {
               pfId: secrets.pfId,
               templateId,
-              variables: variablesFor(current.payload),
+            variables: variablesFor(current.message_kind, current.payload),
               disableSms: true,
             },
             customFields: { vom_signup_outbox_id: String(current.id), vom_invite_id: current.invite_id },
@@ -256,13 +273,16 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
       try { responseBody = JSON.parse(responseText); } catch (_) { /* handled below */ }
       const message = responseBody?.messageList?.[0] || responseBody?.failedMessageList?.[0];
       if (!response.ok || String(message?.statusCode || "").startsWith("4") || String(message?.statusCode || "").startsWith("5")) {
+        const attempts = Number(current.attempts || 0) + 1;
+        const retryable = retryableProviderFailure(response.status, message?.statusCode);
         await mark(service, current.id, {
-          status: "FAILED",
-          attempts: Number(current.attempts || 0) + 1,
+          status: retryable && attempts < 5 ? "QUEUED" : "FAILED",
+          attempts,
+          next_attempt_at: new Date(Date.now() + retryDelayMs(attempts)).toISOString(),
           last_error: messageError(responseBody?.errorMessage || message?.statusCode || `solapi_http_${response.status}`),
           locked_at: null,
         });
-        failed++;
+        if (retryable && attempts < 5) waiting++; else failed++;
         continue;
       }
       await mark(service, current.id, {
@@ -286,4 +306,5 @@ export async function dispatchSignupMessages(service: any, limit = 12) {
   }
   return { checked: (pending || []).length, accepted, failed, skipped, waiting };
 }
+
 

@@ -2,6 +2,7 @@ import { processSignupReservations } from "../_shared/signup-reservations.ts";
 import { notifyPendingOT, notifyPendingApprovals } from "../_shared/ot-push.ts";
 import { dispatchEventMessages } from "../_shared/event-message-outbox.ts";
 import { dispatchSignupMessages } from "../_shared/signup-message-outbox.ts";
+import { dispatchSignupOperatorReminders, queueSignupOperatorReminders } from "../_shared/ot-operator-message-outbox.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 import webpush from "npm:web-push@3.6.7";
 
@@ -63,9 +64,9 @@ Deno.serve(async(req)=>{
   const body=await req.json().catch(()=>null);
   const action=body?.action;
   const {data:config,error:configError}=await admin.from("vom_push_config").select("vapid_public_key,vapid_private_key,subject,cron_secret").eq("id",1).maybeSingle();
-  if(configError||!config)return json({error:"push_not_configured"},503);
 
   if(action==="event_created"){
+    if(configError||!config?.vapid_public_key||!config?.vapid_private_key)return json({error:"push_not_configured"},503);
     if(req.headers.get("origin")!==allowedOrigin)return json({error:"not_allowed"},403);
     const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"");
     if(!token)return json({error:"auth_required"},401);
@@ -87,7 +88,7 @@ Deno.serve(async(req)=>{
     return json({ok:true,sent});
   }
 
-  if(action!=="due_reminders"||!config.cron_secret||req.headers.get("x-vom-cron-secret")!==config.cron_secret)return json({error:"not_allowed"},403);
+  if(action!=="due_reminders"||configError||!config?.cron_secret||req.headers.get("x-vom-cron-secret")!==config.cron_secret)return json({error:"not_allowed"},403);
   try { await processSignupReservations(admin); } catch { console.error("Signup reservation processing deferred"); }
   const eventMessages=await dispatchEventMessages(admin,30).catch(()=>{
     console.error("Event message dispatch deferred");
@@ -95,6 +96,14 @@ Deno.serve(async(req)=>{
   });
   const signupMessages=await dispatchSignupMessages(admin,30).catch(()=>{
     console.error("Signup message dispatch deferred");
+    return {checked:0,accepted:0,failed:0,skipped:0,waiting:0};
+  });
+  const signupOperatorReminders=await queueSignupOperatorReminders(admin).catch(()=>{
+    console.error("Signup operator reminder queue deferred");
+    return {queued:0,eligible:0};
+  });
+  const signupOperatorMessages=await dispatchSignupOperatorReminders(admin,30).catch(()=>{
+    console.error("Signup operator reminder dispatch deferred");
     return {checked:0,accepted:0,failed:0,skipped:0,waiting:0};
   });
 
@@ -171,10 +180,11 @@ Deno.serve(async(req)=>{
 
   const otNotifications=await notifyPendingOT(admin).catch(()=>({attempted:0}));
   await notifyPendingApprovals(admin).catch(()=>({attempted:0}));
-  return json({ok:true,matched,sent,date:now.date,ot_notifications:otNotifications,event_messages:eventMessages,signup_messages:signupMessages});
+  return json({ok:true,matched,sent,date:now.date,ot_notifications:otNotifications,event_messages:eventMessages,signup_messages:signupMessages,signup_operator_reminders:signupOperatorReminders,signup_operator_messages:signupOperatorMessages});
 });
 
 async function sendToAll(admin:any,config:any,payload:{title:string;body:string;tag:string}){
+  if(!config?.vapid_public_key||!config?.vapid_private_key||!config?.subject)return 0;
   const {data:subs,error}=await admin.from("vom_push_subscriptions").select("id,endpoint,p256dh,auth").eq("is_active",true);
   if(error)return 0;
   webpush.setVapidDetails(config.subject,config.vapid_public_key,config.vapid_private_key);
@@ -192,4 +202,5 @@ async function sendToAll(admin:any,config:any,payload:{title:string;body:string;
   }
   return sent;
 }
+
 

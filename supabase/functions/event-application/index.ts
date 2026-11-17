@@ -309,7 +309,7 @@ export async function handle(req: Request, service: any) {
 
     if (["apply", "cancel"].includes(body.action)) {
       if (!member?.is_active) err("활동 회원만 신청할 수 있습니다.", 403);
-      if (body.action === "apply" && payment.messaging_enabled) {
+      if (body.action === "apply" && payment.messaging_enabled && body.notification_consent === true) {
         try {
           await ensureOwnEventMessagingContact(service, member, userId, body.notification_phone, body.notification_consent);
         } catch (error: any) {
@@ -365,7 +365,7 @@ export async function handle(req: Request, service: any) {
         p_reason: String(body.reason || "").trim() || null,
       });
       if (error) {
-        if (String(error.message).includes("financial_locked_reason_required")) err("입금 확인 또는 참가 확정 후 금액 변경에는 사유가 필요합니다.", 409);
+        if (String(error.message).includes("financial_locked_reason_required")) err("입금 확인 또는 참가 확정 후의 금액 변경에는 사유가 필요합니다.", 409);
         if (String(error.message).includes("refund_financial_locked")) err(errorText(error), 409);
         if (String(error.message).includes("coupon_")) err("쿠폰 조건을 확인해 주세요.", 409);
         throw error;

@@ -47,14 +47,17 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     try {form=await new Response(stream,{headers:{'Content-Type':req.headers.get('content-type')||''}}).formData();}catch {throw new ApiError(oversized?413:400,oversized?'본인사진과 라이브 파일의 용량을 확인해 주세요.':'회원가입 신청 내용을 읽지 못했습니다.');}
     const fields=Object.fromEntries(form);
     if (fields.consent!=='yes') throw new ApiError(400,'가입 정보와 제출 자료의 수집·검토에 동의해 주세요.');
-    if (fields.signup_message_consent!=='yes') throw new ApiError(400,'가입 신청 접수와 심사 결과 알림 수신에 동의해 주세요.');
     if (fields.live_confirmed!=='yes') throw new ApiError(400,'가창 부분 30초 이상, 믹싱·튠 보정 없는 라이브 자료인지 확인해 주세요.');
     if (fields.password!==fields.password_confirm) throw new ApiError(400,'비밀번호 확인이 일치하지 않습니다.');
     // Keep existing account identifiers internally; new applicants enter only their name.
     const name=fields.login_name?loginName(fields.login_name):'join-'+crypto.randomUUID().replace(/-/g,'').slice(0,24),password=signupPassword(fields.password);
     const profile:any={...signupDetails(fields,now()),login_name:name,candidate_name:textField(fields.candidate_name,60,'이름'),somoim_nickname:textField(fields.somoim_nickname,80,'소모임 닉네임')};
-    const signupMessageConsent=true;
+    const signupMessageConsent=fields.signup_message_consent==='yes';
+    const eventNotificationConsent=fields.event_notification_consent==='yes';
     for (const [key,max,label] of [['phone',30,'연락처'],['region',80,'활동 지역'],['gender',20,'성별']] as const) profile[key]=textField(fields[key],max,label);
+    const normalizedPhone=String(profile.phone||'').replace(/\D/g,'');
+    if(!/^01\d{8,9}$/.test(normalizedPhone)) throw new ApiError(400,'휴대폰 번호를 정확히 입력해 주세요.');
+    profile.phone=normalizedPhone;
     const source=fields.media_source||'FILE',photo=form.get('photo'),media=form.get('video');
     if (!['FILE','LINK'].includes(String(source))) throw new ApiError(400,'라이브 자료 제출 방법을 선택해 주세요.');
     if (!(photo instanceof File) || (source==='FILE'&&!(media instanceof File))) throw new ApiError(400,'본인사진과 라이브 영상·음성 파일 또는 링크를 등록해 주세요.');
@@ -69,10 +72,9 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     if (ie) throw new Error('public_signup_record_failed');
     const {error:be}=await service.rpc('vom_ot_bind_account',{p_invite_id:inviteId,p_claim_id:claimId,p_user_id:createdUser,p_profile:profile});
     if (be) throw new Error('public_signup_bind_failed');
-    try {
-      await queueSignupApplicationReceived(service,inviteId,profile.phone,profile.candidate_name,signupMessageConsent);
-      await dispatchSignupMessages(service,3);
-    } catch { console.error('Signup message queue deferred'); }
+    await queueSignupApplicationReceived(service,inviteId,profile.phone,profile.candidate_name,signupMessageConsent,eventNotificationConsent,now().toISOString());
+    try { await dispatchSignupMessages(service,3); }
+    catch { console.error('Signup message delivery deferred'); }
     const uploads:{file:File,type:{mime:string,extension:string},isPhoto:boolean}[]=[{file:photo,type:photoType,isPhoto:true}];
     if(mediaType)uploads.push({file:media as File,type:mediaType,isPhoto:false});
     for (const {file,type,isPhoto} of uploads) {
@@ -145,4 +147,5 @@ export async function publicSignup(req: Request, service: any, origin: string, n
     }
   }
 }
+
 
