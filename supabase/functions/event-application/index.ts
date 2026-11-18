@@ -163,18 +163,21 @@ export async function handle(req: Request, service: any) {
       if (appError) throw appError;
       const eventIds = [...new Set((applications || []).map((item: any) => Number(item.event_id)))];
       const { data: events, error: eventsError } = eventIds.length
-        ? await service.from("events").select("id,title,event_date,start_time,location").in("id", eventIds)
+        ? await service.from("events").select("id,title,event_date,start_time,location,is_test_only,test_member_id").in("id", eventIds)
         : { data: [], error: null };
       if (eventsError) throw eventsError;
-      const byId = new Map((events || []).map((item: any) => [Number(item.id), item]));
+      const byId = new Map((events || []).filter((item: any) => item.is_test_only !== true || Number(item.test_member_id) === Number(member.id)).map((item: any) => [Number(item.id), item]));
       return reply(origin, { ok: true, applications: (applications || []).map((item: any) => ({ ...item, event: byId.get(Number(item.event_id)) || null })) });
     }
     const currentEventId = eventId as number;
     const { data: event, error: eventError } = await service.from("events")
-      .select("id,title,event_date,start_time,location,event_type,application_enabled,application_capacity,application_opens_at,application_closes_at")
+      .select("id,title,event_date,start_time,location,event_type,application_enabled,application_capacity,application_opens_at,application_closes_at,is_test_only,test_member_id")
       .eq("id", currentEventId).maybeSingle();
     if (eventError) throw eventError;
     if (!event) err("일정을 찾을 수 없습니다.", 404);
+    if (event.is_test_only === true && !isAdmin && Number(event.test_member_id) !== Number(member?.id)) {
+      err("이 테스트 일정은 지정된 회원만 확인하거나 신청할 수 있습니다.", 403);
+    }
     if (event.event_date < "2026-11-01" && !isAdmin) err("11월 이후 일정부터 신청할 수 있습니다.", 403);
     if (["admin_list", "confirm", "unconfirm", "payment_config", "mark_paid", "mark_unpaid", "refund_complete", "financial_update", "coupon_create", "coupon_update"].includes(body.action) && !isAdmin) {
       err("운영진 관리 권한이 없습니다.", 403);
