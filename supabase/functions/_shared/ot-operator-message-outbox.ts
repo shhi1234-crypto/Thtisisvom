@@ -2,10 +2,10 @@ import { normalizeKoreanMobile } from "./event-message-outbox.ts";
 import { retryDelayMs, retryableProviderFailure } from "./notification-schedule.ts";
 
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
-const THIRTY_MINUTES = 30 * 60_000;
+const SIX_HOURS = 6 * 60 * 60_000;
 const MAX_ATTEMPTS = 5;
 
-export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_30M";
+export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H";
 
 function clean(value: unknown, max = 500) {
   return String(value ?? "").replace(/[\x00-\x1f\x7f]/g, " ").trim().slice(0, max);
@@ -20,21 +20,23 @@ function configuredSecrets() {
 }
 
 function templateIdFor(_kind: OperatorReminderKind) {
-  return Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REMINDER") || "";
+  return Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REVIEW_6H") || "";
 }
 
-export function operatorReminderVariables(_kind: OperatorReminderKind, operatorName: unknown, reviewId: number) {
+export function operatorReminderVariables(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
   return {
     "#{운영진명}": clean(operatorName, 60),
-    // The SOLAPI buttons are configured as https://#{검토링크}.
+    "#{신청자명}": clean(applicantName, 60),
+    // The SOLAPI button is configured as https://#{검토링크}.
     "#{검토링크}": `thisisvom.vercel.app/ot-admin/?id=${Number(reviewId)}`,
   };
 }
 
-function fallbackText(_kind: OperatorReminderKind, operatorName: unknown, reviewId: number) {
+function fallbackText(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
   const operator = clean(operatorName, 60) || "운영진";
+  const applicant = clean(applicantName, 60) || "신청자";
   const link = `https://thisisvom.vercel.app/ot-admin/?id=${Number(reviewId)}`;
-  return `[VOM 가입 심사 알림]\n${operator}님, 회원가입 신청 확인 마감까지 30분 남았습니다.\n아직 확인하지 않으셨다면 신청 자료를 검토해 주세요.\n${link}`;
+  return `[VOM 가입 심사 알림]\n${operator}님, ${applicant}님의 가입 신청 접수 후 6시간이 지났지만 심사가 아직 미확정입니다.\n아직 의견을 남기지 않은 운영진에게만 안내드려요. 검토해 주세요.\n${link}`;
 }
 
 function backoff(attempt: number, now = new Date()) {
@@ -50,7 +52,7 @@ async function mark(service: any, id: number, patch: Record<string, unknown>) {
 
 export async function queueSignupOperatorReminders(service: any, now = new Date()) {
   const { data: reviews, error: reviewError } = await service.from("ot_reviews")
-    .select("id,due_at,eligible_operator_ids")
+    .select("id,candidate_name,created_at,eligible_operator_ids")
     .eq("status", "IN_REVIEW")
     .order("created_at", { ascending: true })
     .limit(1000);
@@ -73,10 +75,8 @@ export async function queueSignupOperatorReminders(service: any, now = new Date(
   let queued = 0, eligible = 0;
   const currentTime = now.getTime();
   for (const review of reviews || []) {
-    const due = Date.parse(String(review.due_at || ""));
-    if (!Number.isFinite(due)) continue;
-    if (currentTime < due - THIRTY_MINUTES || currentTime >= due) continue;
-    const kind: OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_30M";
+    const created = Date.parse(String(review.created_at || ""));
+    if (!Number.isFinite(created) || currentTime < created + SIX_HOURS) continue;
 
     for (const operatorId of (review.eligible_operator_ids || []).map(Number)) {
       const operator = operatorById.get(operatorId) as any;
@@ -85,7 +85,7 @@ export async function queueSignupOperatorReminders(service: any, now = new Date(
       const { error } = await service.from("ot_operator_message_outbox").upsert({
         review_id: Number(review.id),
         recipient_member_id: operatorId,
-        message_kind: kind,
+        message_kind: "SIGNUP_OPERATOR_REVIEW_6H",
         status: "QUEUED",
         next_attempt_at: now.toISOString(),
         updated_at: now.toISOString(),
@@ -129,7 +129,7 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
     if (!claimed) continue;
 
     const [{ data: review, error: reviewError }, { data: operator, error: operatorError }, { data: vote, error: voteError }] = await Promise.all([
-      service.from("ot_reviews").select("id,status").eq("id", claimed.review_id).maybeSingle(),
+      service.from("ot_reviews").select("id,candidate_name,status").eq("id", claimed.review_id).maybeSingle(),
       service.from("members").select("id,name,phone,role,is_active").eq("id", claimed.recipient_member_id).maybeSingle(),
       service.from("ot_review_votes").select("review_id").eq("review_id", claimed.review_id).eq("voter_member_id", claimed.recipient_member_id).maybeSingle(),
     ]);
@@ -173,11 +173,11 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
           messages: [{
             to: phone,
             from: secrets.senderPhone,
-            text: fallbackText(kind, operator.name, Number(review.id)),
+            text: fallbackText(kind, operator.name, review.candidate_name, Number(review.id)),
             kakaoOptions: {
               pfId: secrets.pfId,
               templateId,
-              variables: operatorReminderVariables(kind, operator.name, Number(review.id)),
+              variables: operatorReminderVariables(kind, operator.name, review.candidate_name, Number(review.id)),
               disableSms: true,
             },
             customFields: { vom_ot_operator_outbox_id: String(claimed.id), vom_review_id: String(review.id), vom_operator_member_id: String(operator.id) },
