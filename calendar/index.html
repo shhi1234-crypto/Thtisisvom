@@ -2974,6 +2974,11 @@ button{
           <label style="font-size:9px;color:#7f8392;">신청 마감 일시 (선택)</label>
           <input id="applicationClosesAt" type="datetime-local" class="text-input">
         </div>
+        <div id="testOnlyControls" style="margin-top:12px;padding:12px;border:1px solid #e1daf8;border-radius:13px;background:#faf8ff" hidden>
+          <label style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:10px"><input id="isTestOnlyEvent" type="checkbox" onchange="syncTestEventControls()" style="margin-top:3px;accent-color:#7561dc"><span><b style="display:block;color:#40356f">테스트 전용 일정</b><small style="display:block;margin-top:4px;color:#77728c;line-height:1.55">운영진과 지정 회원에게만 보여요. 지정 전에는 운영진만 확인할 수 있어요.</small></span></label>
+          <label for="testMemberId" style="display:block;margin:11px 0 6px;font-size:9px;color:#77728c">확인·신청 가능한 테스트 회원</label>
+          <select id="testMemberId" class="pretty-select"><option value="">미지정 · 운영진만 확인</option></select>
+        </div>
         <div style="font-size:10px;color:#80799a;margin-top:7px;line-height:1.65">오픈 전까지 비활성 상태이며, 소모임 게시 여부와 독립적으로 관리됩니다. 참가비·입금 및 환불 안내는 일정 저장 후 CALENDAR의 ‘참가 신청 · 신청 현황’에서 설정할 수 있습니다.</div>
       </div>
       <div class="field">
@@ -3384,6 +3389,7 @@ let currentEventType =
 
 let adminMode = false;
 let operationMembers = [];
+let testEventMembers = [];
 let operationTasks = [];
 
 let selectedImageUrl = '';
@@ -3483,10 +3489,28 @@ async function adminLogout(){
 ====================================================== */
 
 async function loadOperationMembers(){
-  if(!adminMode){operationMembers=[];return}
-  const {data,error}=await db.from('members_public').select('id,name,role,join_order').in('role',['모임장','운영진']).order('join_order',{ascending:true});
-  operationMembers=error?[]:(data||[]);
+  if(!adminMode){operationMembers=[];testEventMembers=[];return}
+  const [operations,testMembers]=await Promise.all([
+    db.from('members_public').select('id,name,role,join_order').in('role',['모임장','운영진']).order('join_order',{ascending:true}),
+    db.from('members_public').select('id,name,role,join_order').eq('is_active',true).order('join_order',{ascending:true})
+  ]);
+  operationMembers=operations.error?[]:(operations.data||[]);
+  testEventMembers=testMembers.error?[]:(testMembers.data||[]);
   renderOwnerFields();
+  renderTestMemberOptions(document.getElementById('testMemberId')?.value||'');
+}
+function renderTestMemberOptions(selectedId=''){
+  const select=document.getElementById('testMemberId');
+  if(!select)return;
+  select.innerHTML='<option value="">미지정 · 운영진만 확인</option>'+testEventMembers.map(member=>'<option value="'+member.id+'">'+escapeHtml(member.name||'이름 미등록')+'</option>').join('');
+  select.value=String(selectedId||'');
+}
+function syncTestEventControls(){
+  const enabled=document.getElementById('isTestOnlyEvent')?.checked===true;
+  const panel=document.getElementById('testOnlyControls');
+  const select=document.getElementById('testMemberId');
+  if(panel)panel.hidden=!enabled;
+  if(select)select.disabled=!enabled;
 }
 function renderOwnerFields(hostId='',supportIds=[]){
   const host=document.getElementById('eventHostMember');
@@ -3581,7 +3605,7 @@ async function loadEvents(){
     const response =
       await fetch(
         SUPABASE_URL +
-        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at%2Csomoim_open_enabled%2Capplication_enabled%2Capplication_capacity%2Capplication_opens_at%2Capplication_closes_at&order=event_date.asc%2Cstart_time.asc',
+        '/rest/v1/events?select=id%2Ctitle%2Cevent_type%2Cevent_date%2Cstart_time%2Cend_time%2Clocation%2Clocation_id%2Cimage_url%2Cdescription%2Chost_note%2Chost_member_id%2Csupport_member_ids%2Csomoim_open_at%2Csomoim_open_enabled%2Capplication_enabled%2Capplication_capacity%2Capplication_opens_at%2Capplication_closes_at%2Cis_test_only%2Ctest_member_id&order=event_date.asc%2Cstart_time.asc',
         {
           method:'GET',
           credentials:'omit',
@@ -4471,6 +4495,7 @@ function createEventHtml(item){
         <div class="type">
 
           ${escapeHtml(eventTypeLabel(item.event_type))}
+          ${item.is_test_only && adminMode ? '<span style="display:inline-block;margin-left:7px;padding:3px 7px;border-radius:999px;background:#f2edff;color:#6650c7;font-size:8px;font-weight:900;vertical-align:middle">테스트 전용</span>' : ''}
 
         </div>
 
@@ -6553,6 +6578,9 @@ function clearForm(){
     document.getElementById('applicationOpensAt').value='';
     document.getElementById('applicationClosesAt').value='';
     syncApplicationControls();
+    document.getElementById('isTestOnlyEvent').checked=false;
+    renderTestMemberOptions('');
+    syncTestEventControls();
     document.getElementById('somoimOpenMode').value = 'NONE';
     document.getElementById('somoimOpenAt').value = '';
     syncSomoimOpenMode();
@@ -6728,6 +6756,8 @@ async function saveEvent(){
       application_capacity:applicationEnabled?capacity:null,
       application_opens_at:applicationEnabled&&opensInput?new Date(opensInput).toISOString():null,
       application_closes_at:applicationEnabled&&closesInput?new Date(closesInput).toISOString():null,
+      is_test_only:document.getElementById('isTestOnlyEvent').checked,
+      test_member_id:document.getElementById('isTestOnlyEvent').checked&&document.getElementById('testMemberId').value?Number(document.getElementById('testMemberId').value):null,
 
       event_type:
         currentEventType,
@@ -6808,13 +6838,15 @@ async function saveEvent(){
     }
 
     if(!id && result.data){
-      await createAutoOperationTasks(result.data);
-      await notifyNewEvent(result.data);
+      if(result.data.is_test_only!==true){
+        await createAutoOperationTasks(result.data);
+        await notifyNewEvent(result.data);
+      }
       window.location.href='/planner/?event='+encodeURIComponent(result.data.id)+'&notice=1';
       return;
     }
 
-    if(id){
+    if(id&&!payload.is_test_only){
       await syncSomoimOperationTasks({...payload,id:Number(id)});
     }
 
@@ -6997,6 +7029,9 @@ function editEvent(id){
     document.getElementById('applicationOpensAt').value=toLocalDateTimeInput(item.application_opens_at);
     document.getElementById('applicationClosesAt').value=toLocalDateTimeInput(item.application_closes_at);
     syncApplicationControls();
+    document.getElementById('isTestOnlyEvent').checked=item.is_test_only===true;
+    renderTestMemberOptions(item.test_member_id||'');
+    syncTestEventControls();
     document.getElementById('somoimOpenMode').value = item.somoim_open_enabled===false ? 'NONE' : 'OPEN';
     document.getElementById('somoimOpenAt').value = toLocalDateTimeInput(item.somoim_open_at);
     syncSomoimOpenMode();
