@@ -185,27 +185,58 @@ export async function handle(req: Request, service: any, authClient: any) {
         if((applicantMatches||[]).length>1)throw new ApiError(409,"같은 이름의 신청자가 있어요. 회원가입 때 입력한 소모임 닉네임으로 로그인해 주세요.");
         identity=applicantMatches?.[0]?.auth_user_id||null;
       }
-      if(!identity){
-        const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq(byName?'candidate_name':'login_name',byName?name:name.toLowerCase()).maybeSingle();
-        if(error){if(byName&&error.code==='PGRST116')throw new ApiError(400,'이름만으로 신청을 확인하기 어렵습니다. 소모임 운영진에게 확인해 주세요.');throw new Error("login_identity_lookup_failed");}
+      let applicantIdentities:string[]=[];
+      if(lookup&&byName){
+        const {data:applicants,error}=await service.from("ot_room_applicants").select("auth_user_id")
+          .eq("candidate_name",name).order("created_at",{ascending:false}).limit(20);
+        if(error)throw new Error("application_identity_lookup_failed");
+        applicantIdentities=Array.from(new Set((applicants||[]).map((row:any)=>String(row.auth_user_id||"")).filter(Boolean)));
+        identity=applicantIdentities[0]||null;
+      } else if(!identity){
+        const {data,error}=await service.from("ot_room_applicants").select("auth_user_id").eq('login_name',name.toLowerCase()).maybeSingle();
+        if(error)throw new Error("login_identity_lookup_failed");
         identity=data?.auth_user_id;
       }
-      const attemptKey=await tokenHash(identity?"user:"+identity:"login:"+name.toLowerCase());
-      const {data:allowed,error:attemptError}=await service.rpc("vom_claim_login_attempt",{p_key:attemptKey});
-      if(attemptError)throw new Error("login_attempt_check_failed");
-      if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
+      let attemptKey="";
       let result;
-      const resolvedId=selected?.auth_user_id||identity||null;
-      if (resolvedId) {
-        const {data,error}=await service.auth.admin.getUserById(resolvedId);
-        if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
-        result=await authClient.auth.signInWithPassword({email:data.user.email,password:"VOM:"+password});
-        if (result.error) result=await authClient.auth.signInWithPassword({email:data.user.email,password});
-        if (!result.error && result.data.session?.user.id!==resolvedId){await authClient.auth.signOut({scope:'local'});throw new ApiError(401,"개인 계정 정보를 다시 확인해 주세요.");}
-      } else if(byName){
-        throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
-      } else {
-        result=await authClient.auth.signInWithPassword({email:await applicantEmail(name.toLowerCase()),password:"VOM:"+password});
+      if(lookup&&byName&&applicantIdentities.length>1){
+        let allowedCandidates=0,blockedCandidates=0;
+        for(const applicantId of applicantIdentities){
+          const candidateKey=await tokenHash("user:"+applicantId);
+          const {data:allowed,error:attemptError}=await service.rpc("vom_claim_login_attempt",{p_key:candidateKey});
+          if(attemptError)throw new Error("login_attempt_check_failed");
+          if(allowed!==true){blockedCandidates++;continue;}
+          allowedCandidates++;
+          const {data,error}=await service.auth.admin.getUserById(applicantId);
+          if(error||!data.user?.email)continue;
+          let candidateResult=await authClient.auth.signInWithPassword({email:data.user.email,password:"VOM:"+password});
+          if(candidateResult.error)candidateResult=await authClient.auth.signInWithPassword({email:data.user.email,password});
+          if(!candidateResult.error&&candidateResult.data.session?.user.id===applicantId){
+            identity=applicantId;attemptKey=candidateKey;result=candidateResult;break;
+          }
+          if(!candidateResult.error&&candidateResult.data.session)await authClient.auth.signOut({scope:'local'});
+        }
+        if(!result){
+          if(allowedCandidates===0&&blockedCandidates>0)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
+          throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
+        }
+      }else{
+        attemptKey=await tokenHash(identity?"user:"+identity:"login:"+name.toLowerCase());
+        const {data:allowed,error:attemptError}=await service.rpc("vom_claim_login_attempt",{p_key:attemptKey});
+        if(attemptError)throw new Error("login_attempt_check_failed");
+        if(allowed!==true)throw new ApiError(429,"로그인 시도가 많습니다. 15분 후 다시 시도해 주세요.");
+        const resolvedId=selected?.auth_user_id||identity||null;
+        if (resolvedId) {
+          const {data,error}=await service.auth.admin.getUserById(resolvedId);
+          if (error||!data.user?.email) throw new ApiError(401,"개인 계정 정보를 확인하지 못했습니다. 운영진에게 확인해 주세요.");
+          result=await authClient.auth.signInWithPassword({email:data.user.email,password:"VOM:"+password});
+          if (result.error) result=await authClient.auth.signInWithPassword({email:data.user.email,password});
+          if (!result.error && result.data.session?.user.id!==resolvedId){await authClient.auth.signOut({scope:'local'});throw new ApiError(401,"개인 계정 정보를 다시 확인해 주세요.");}
+        } else if(byName){
+          throw new ApiError(401,'신청한 이름과 비밀번호를 다시 확인해 주세요.');
+        } else {
+          result=await authClient.auth.signInWithPassword({email:await applicantEmail(name.toLowerCase()),password:"VOM:"+password});
+        }
       }
       if (result.error || !result.data.session) throw new ApiError(401,"회원 이름과 개인 비밀번호를 다시 확인해 주세요.");
       const session=result.data.session;
