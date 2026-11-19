@@ -5,7 +5,7 @@ const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
 const SIX_HOURS = 6 * 60 * 60_000;
 const MAX_ATTEMPTS = 5;
 
-export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H";
+export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H" | "SIGNUP_OPERATOR_APPLICATION_RECEIVED";
 
 function clean(value: unknown, max = 500) {
   return String(value ?? "").replace(/[\x00-\x1f\x7f]/g, " ").trim().slice(0, max);
@@ -19,8 +19,10 @@ function configuredSecrets() {
   return apiKey && apiSecret && senderPhone && pfId ? { apiKey, apiSecret, senderPhone, pfId } : null;
 }
 
-function templateIdFor(_kind: OperatorReminderKind) {
-  return Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REVIEW_6H") || "";
+function templateIdFor(kind: OperatorReminderKind) {
+  return kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED"
+    ? Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_APPLICATION_RECEIVED") || ""
+    : Deno.env.get("SOLAPI_TEMPLATE_SIGNUP_OPERATOR_REVIEW_6H") || "";
 }
 
 export function operatorReminderVariables(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
@@ -32,10 +34,13 @@ export function operatorReminderVariables(_kind: OperatorReminderKind, operatorN
   };
 }
 
-function fallbackText(_kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
+function fallbackText(kind: OperatorReminderKind, operatorName: unknown, applicantName: unknown, reviewId: number) {
   const operator = clean(operatorName, 60) || "운영진";
   const applicant = clean(applicantName, 60) || "신청자";
   const link = `https://thisisvom.vercel.app/ot-admin/?id=${Number(reviewId)}`;
+  if (kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED") {
+    return `[VOM 가입 신청 알림]\n${operator}님, ${applicant}님의 회원가입 신청이 접수됐습니다.\n아래 버튼에서 신청 내용을 확인하고 검토를 진행해 주세요.\n${link}`;
+  }
   return `[VOM 가입 심사 알림]\n${operator}님, ${applicant}님의 가입 신청 접수 후 6시간이 지났지만 심사가 아직 미확정입니다.\n아직 의견을 남기지 않은 운영진에게만 안내드려요. 검토해 주세요.\n${link}`;
 }
 
@@ -128,12 +133,16 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
     if (claimError) throw claimError;
     if (!claimed) continue;
 
-    const [{ data: review, error: reviewError }, { data: operator, error: operatorError }, { data: vote, error: voteError }] = await Promise.all([
+    const kind = String(claimed.message_kind) as OperatorReminderKind;
+    const [{ data: review, error: reviewError }, { data: operator, error: operatorError }, { data: vote, error: voteError }, { data: preference, error: preferenceError }] = await Promise.all([
       service.from("ot_reviews").select("id,candidate_name,status").eq("id", claimed.review_id).maybeSingle(),
       service.from("members").select("id,name,phone,role,is_active").eq("id", claimed.recipient_member_id).maybeSingle(),
       service.from("ot_review_votes").select("review_id").eq("review_id", claimed.review_id).eq("voter_member_id", claimed.recipient_member_id).maybeSingle(),
+      kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED"
+        ? service.from("member_message_preferences").select("operator_alert_enabled").eq("member_id", claimed.recipient_member_id).maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
     ]);
-    if (reviewError || operatorError || voteError) {
+    if (reviewError || operatorError || voteError || preferenceError) {
       const attempts = Number(claimed.attempts || 0) + 1;
       await mark(service, Number(claimed.id), { status: attempts >= MAX_ATTEMPTS ? "FAILED" : "QUEUED", attempts, next_attempt_at: backoff(attempts, now), last_error: "recipient_lookup_failed", locked_at: null });
       failed++;
@@ -144,13 +153,17 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
       skipped++;
       continue;
     }
+    if (kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED" && preference?.operator_alert_enabled !== true) {
+      await mark(service, Number(claimed.id), { status: "SKIPPED", last_error: "operator_alert_consent_disabled", locked_at: null });
+      skipped++;
+      continue;
+    }
     const phone = normalizeKoreanMobile(operator.phone);
     if (!phone) {
       await mark(service, Number(claimed.id), { status: "SKIPPED", last_error: "operator_phone_missing_or_invalid", locked_at: null });
       skipped++;
       continue;
     }
-    const kind = String(claimed.message_kind) as OperatorReminderKind;
     const secrets = configuredSecrets();
     const templateId = templateIdFor(kind);
     if (!secrets || !templateId) {
