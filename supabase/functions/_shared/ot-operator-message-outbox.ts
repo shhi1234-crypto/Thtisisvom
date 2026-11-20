@@ -3,6 +3,7 @@ import { retryDelayMs, retryableProviderFailure } from "./notification-schedule.
 
 const SOLAPI_SEND_URL = "https://api.solapi.com/messages/v4/send-many/detail";
 const SIX_HOURS = 6 * 60 * 60_000;
+const SIGNUP_OPERATOR_REMINDERS_START_AT = Date.parse("2026-11-20T00:29:52.000Z");
 const MAX_ATTEMPTS = 5;
 
 export type OperatorReminderKind = "SIGNUP_OPERATOR_REVIEW_6H" | "SIGNUP_OPERATOR_APPLICATION_RECEIVED";
@@ -67,25 +68,29 @@ export async function queueSignupOperatorReminders(service: any, now = new Date(
   const reviewIds = reviews.map((review: any) => Number(review.id));
   const allOperatorIds = [...new Set(reviews.flatMap((review: any) => (review.eligible_operator_ids || []).map(Number)))]
     .filter((id: number) => Number.isSafeInteger(id) && id > 0);
-  const [{ data: votes, error: voteError }, { data: operators, error: operatorError }] = await Promise.all([
+  const [{ data: votes, error: voteError }, { data: operators, error: operatorError }, { data: preferences, error: preferenceError }] = await Promise.all([
     service.from("ot_review_votes").select("review_id,voter_member_id").in("review_id", reviewIds),
     allOperatorIds.length
-      ? service.from("members").select("id,name,role,is_active").in("id", allOperatorIds).in("role", ["운영진", "모임장"]).eq("is_active", true)
+      ? service.from("members").select("id,name,role,is_active,phone").in("id", allOperatorIds).in("role", ["운영진", "모임장"]).eq("is_active", true)
+      : Promise.resolve({ data: [], error: null }),
+    allOperatorIds.length
+      ? service.from("member_message_preferences").select("member_id,operator_alert_enabled").in("member_id", allOperatorIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
-  if (voteError || operatorError) throw voteError || operatorError;
+  if (voteError || operatorError || preferenceError) throw voteError || operatorError || preferenceError;
 
   const voted = new Set((votes || []).map((vote: any) => `${Number(vote.review_id)}:${Number(vote.voter_member_id)}`));
   const operatorById = new Map((operators || []).map((operator: any) => [Number(operator.id), operator]));
+  const preferenceById = new Map((preferences || []).map((preference: any) => [Number(preference.member_id), preference]));
   let queued = 0, eligible = 0;
   const currentTime = now.getTime();
   for (const review of reviews || []) {
     const created = Date.parse(String(review.created_at || ""));
-    if (!Number.isFinite(created) || currentTime < created + SIX_HOURS) continue;
+    if (!Number.isFinite(created) || created < SIGNUP_OPERATOR_REMINDERS_START_AT || currentTime < created + SIX_HOURS) continue;
 
     for (const operatorId of (review.eligible_operator_ids || []).map(Number)) {
       const operator = operatorById.get(operatorId) as any;
-      if (!operator || voted.has(`${Number(review.id)}:${operatorId}`)) continue;
+      if (!operator || voted.has(`${Number(review.id)}:${operatorId}`) || (preferenceById.get(operatorId) as any)?.operator_alert_enabled !== true || !normalizeKoreanMobile(operator.phone)) continue;
       eligible++;
       const { error } = await service.from("ot_operator_message_outbox").upsert({
         review_id: Number(review.id),
@@ -138,9 +143,7 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
       service.from("ot_reviews").select("id,candidate_name,status").eq("id", claimed.review_id).maybeSingle(),
       service.from("members").select("id,name,phone,role,is_active").eq("id", claimed.recipient_member_id).maybeSingle(),
       service.from("ot_review_votes").select("review_id").eq("review_id", claimed.review_id).eq("voter_member_id", claimed.recipient_member_id).maybeSingle(),
-      kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED"
-        ? service.from("member_message_preferences").select("operator_alert_enabled").eq("member_id", claimed.recipient_member_id).maybeSingle()
-        : Promise.resolve({ data: null, error: null }),
+      service.from("member_message_preferences").select("operator_alert_enabled").eq("member_id", claimed.recipient_member_id).maybeSingle(),
     ]);
     if (reviewError || operatorError || voteError || preferenceError) {
       const attempts = Number(claimed.attempts || 0) + 1;
@@ -153,7 +156,7 @@ export async function dispatchSignupOperatorReminders(service: any, limit = 20, 
       skipped++;
       continue;
     }
-    if (kind === "SIGNUP_OPERATOR_APPLICATION_RECEIVED" && preference?.operator_alert_enabled !== true) {
+    if (preference?.operator_alert_enabled !== true) {
       await mark(service, Number(claimed.id), { status: "SKIPPED", last_error: "operator_alert_consent_disabled", locked_at: null });
       skipped++;
       continue;
