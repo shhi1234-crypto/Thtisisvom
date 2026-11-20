@@ -112,6 +112,12 @@
   .member-utility-list .quick-link{min-height:64px;align-items:center}
 }
 
+  .profile-contact-nudge{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:15px;padding:14px 16px;border:1px solid #ddd5ff;border-radius:15px;background:linear-gradient(110deg,#f5f1ff,#f0fbfa)}
+  .profile-contact-nudge b{display:block;color:#4b4384;font-size:12px}
+  .profile-contact-nudge small{display:block;margin-top:4px;color:#777d92;font-size:10px;line-height:1.55}
+  .profile-contact-nudge button{flex:0 0 auto;min-height:36px;padding:0 12px;border:1px solid #d5cdf8;border-radius:11px;background:#fff;color:#6351d0;font:800 10px Pretendard,sans-serif;cursor:pointer}
+  .profile-message-purpose{margin-top:7px!important;color:#70778c!important;font-size:10px;line-height:1.6}
+  @media(max-width:520px){.profile-contact-nudge{align-items:flex-start;flex-direction:column;gap:10px}.profile-contact-nudge button{width:100%}}
 </style>
   <script src="/assets/vom-member-context.js?v=4"></script>
 <link rel="stylesheet" href="/assets/vom-shell.css?v=18">
@@ -339,6 +345,13 @@ function openHangoutRequest(){
   panel.open=true;
   panel.scrollIntoView({behavior:'smooth',block:'center'});
 }
+function openMessageSettings(){
+  const panel=document.getElementById('accountSettings');
+  if(!panel)return;
+  panel.open=true;
+  panel.scrollIntoView({behavior:'smooth',block:'center'});
+  window.setTimeout(()=>document.getElementById('profilePhone')?.focus({preventScroll:true}),220);
+}
 function fallbackCopyText(text){
   const area=document.createElement('textarea');
   area.value=text;
@@ -374,10 +387,11 @@ function renderDashboard(){
   const messaging=messagePreferences||{};
   const isOperator=['모임장','운영진'].includes(String(myMember.role||''));
   const operatorAlert=isOperator?'<label class="notification-choice"><input id="profileOperatorAlert" type="checkbox" '+(messaging.operator_alert_enabled?'checked':'')+'>운영진으로서 새 신청·취소 알림 받기</label>':'';
+  const contactPrompt=myMember.phone?'':'<aside class="profile-contact-nudge"><div><b>휴대폰 번호를 등록해 두세요</b><small>긴급한 일정 안내와 선택한 알림톡을 편하게 받을 수 있어요. 번호는 다른 회원에게 공개되지 않습니다.</small></div><button type="button" onclick="openMessageSettings()">번호·알림 설정</button></aside>';
   app.innerHTML=
     (force?'<div class="force-reset"><b>비밀번호 재설정이 필요해요.</b>운영진이 비밀번호를 초기화했습니다. 아래 개인 설정에서 나만 아는 비밀번호로 바꿔 주세요.</div>':'')+
     '<section class="card my-space-card member-command-center">'+
-      '<div class="member-command-head"><div class="member-command-copy"><h2>반가워요, '+name+'님 <span class="en">MY VOM</span></h2><p class="card-intro">지금 필요한 일정과 벙 신청부터 빠르게 이어가세요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div>'+
+      '<div class="member-command-head"><div class="member-command-copy"><h2>반가워요, '+name+'님 <span class="en">MY VOM</span></h2><p class="card-intro">지금 필요한 일정과 벙 신청부터 빠르게 이어가세요.</p></div><div class="member-chip"><i class="member-dot"></i>'+name+region+'</div></div>'+contactPrompt+
       '<div class="member-action-grid">'+
         '<a class="quick-link" href="/calendar/"><div><b>내 일정</b><small>VOM 모임과 행사 일정을 확인해요.</small></div><span>→</span></a>'+
         '<a class="quick-link" href="/calendar/?view=available"><div><b>참가 가능한 일정</b><small>현재 신청할 수 있는 공개 일정을 봐요.</small></div><span>→</span></a>'+
@@ -394,8 +408,8 @@ function renderDashboard(){
       '</div></details>'+
       '<details id="hangoutRequestForm" class="dashboard-detail hangout-request"><summary><div><b>VOM 벙 개설 신청 양식</b><small>복사해서 작성한 뒤, 편한 운영진에게 카카오톡으로 보내주세요.</small></div><i>⌄</i></summary><div class="hangout-request-body"><p>운영진이 확인한 뒤 카카오톡 일정표에 등록해 드려요.</p><pre class="hangout-request-template" aria-label="VOM 벙 개설 신청 양식">'+esc(hangoutRequestTemplate())+'</pre><button type="button" class="primary hangout-copy-button" onclick="copyHangoutRequest()">벙 양식 복사하기</button><p class="hangout-copy-note">복사 후 카카오톡에서 붙여넣고 빈칸을 채워 보내면 됩니다.</p></div></details>'+couponAndShopMarkup()+appInstallGuideMarkup()+
     '</section>'+
-    '<details id="accountSettings" class="account-settings"><summary><span class="settings-mark">⚙</span><div><b>개인 설정</b><small>내 프로필 · 비밀번호 변경</small></div><i class="settings-arrow">⌄</i></summary><div class="account-settings-body">'+
-      '<section class="account-setting-panel"><h3>내 프로필</h3><p class="card-intro">사는 지역, 좋아하는 가수와 직업을 직접 수정할 수 있어요.</p><div class="profile-row"><div class="field profile-region"><label for="profileRegion">사는 지역</label><input id="profileRegion" maxlength="40" value="'+esc(myMember.region||'')+'" placeholder="예: 부천"><p class="help">시·구·도 단위만 입력해 주세요. 상세 주소는 저장하지 않아요.</p></div><div class="field"><label for="profileFavorite">좋아하는 가수</label><input id="profileFavorite" maxlength="150" value="'+esc(myMember.favorite_singers||'')+'" placeholder="예: 박효신"></div><div class="field"><label for="profileJob">직업</label><input id="profileJob" maxlength="80" value="'+esc(myMember.job||'')+'" placeholder="예: 삐에로"></div></div><div class="profile-message-settings"><div class="field"><label for="profilePhone">알림 받을 휴대폰 번호 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(비공개)</em></label><input id="profilePhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="'+esc(myMember.phone||'')+'" placeholder="01012345678"><p class="help">행사 신청·입금·참가 확정 안내에만 사용하며 다른 회원에게 공개되지 않아요.</p></div><div class="notification-choices"><label class="notification-choice"><input id="profileEventNotice" type="checkbox" '+(messaging.event_transaction_enabled?'checked':'')+'>행사 신청·입금·참가 확정 알림 받기</label>'+operatorAlert+'</div></div><button class="primary" onclick="saveProfile()">프로필 저장</button></section>'+
+    '<details id="accountSettings" class="account-settings"><summary><span class="settings-mark">⚙</span><div><b>연락처 · 알림 설정</b><small>휴대폰 번호 · 수신 동의 · 내 프로필 · 비밀번호</small></div><i class="settings-arrow">⌄</i></summary><div class="account-settings-body">'+
+      '<section class="account-setting-panel"><h3>내 프로필</h3><p class="card-intro">사는 지역, 좋아하는 가수와 직업을 직접 수정할 수 있어요.</p><div class="profile-row"><div class="field profile-region"><label for="profileRegion">사는 지역</label><input id="profileRegion" maxlength="40" value="'+esc(myMember.region||'')+'" placeholder="예: 부천"><p class="help">시·구·도 단위만 입력해 주세요. 상세 주소는 저장하지 않아요.</p></div><div class="field"><label for="profileFavorite">좋아하는 가수</label><input id="profileFavorite" maxlength="150" value="'+esc(myMember.favorite_singers||'')+'" placeholder="예: 박효신"></div><div class="field"><label for="profileJob">직업</label><input id="profileJob" maxlength="80" value="'+esc(myMember.job||'')+'" placeholder="예: 삐에로"></div></div><div class="profile-message-settings"><div class="field"><label for="profilePhone">알림 받을 휴대폰 번호 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(비공개)</em></label><input id="profilePhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="'+esc(myMember.phone||'')+'" placeholder="01012345678"><p class="profile-message-purpose">번호는 본인과 연락처 확인 권한이 있는 운영진만 볼 수 있어요. 긴급한 일정 변경·안전 안내가 있을 때 연락하는 용도와, 아래에서 선택한 알림톡 자동화에 사용합니다. 알림톡 발송을 위해 SOLAPI 등 메시지 서비스에 전달될 수 있으며 다른 회원에게는 공개되지 않습니다.</p></div><div class="notification-choices"><label class="notification-choice"><input id="profileUrgentContact" type="checkbox" '+(messaging.urgent_contact_enabled?'checked':'')+'>긴급한 일정 변경·안전 안내를 위해 운영진이 연락하는 데 동의</label><label class="notification-choice"><input id="profileMemberNotice" type="checkbox" '+(messaging.member_notice_enabled?'checked':'')+'>VOM 주요 공지·운영 안내 알림톡 받기 (선택)</label><label class="notification-choice"><input id="profileEventNotice" type="checkbox" '+(messaging.event_transaction_enabled?'checked':'')+'>내 일정 참가 신청·입금·확정·취소 알림톡 받기</label>'+operatorAlert+'</div><p class="help">각 항목은 따로 선택할 수 있고, 언제든 이 화면에서 동의를 바꿀 수 있어요.</p></div><button class="primary" onclick="saveProfile()">프로필 저장</button></section>'+
       '<section class="account-setting-panel"><h3>비밀번호 변경</h3><p class="card-intro">본인만 아는 숫자 4자리로 설정해 주세요.</p><div class="profile-row"><div class="field"><label for="newPassword">새 비밀번호 (숫자 4자리)</label><input id="newPassword" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리"></div><div class="field"><label for="newPasswordConfirm">새 비밀번호 확인</label><input id="newPasswordConfirm" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="4" pattern="[0-9]{4}" placeholder="숫자 4자리 다시 입력"></div></div><div class="field"><label>새 비밀번호 힌트 <em style="font-style:normal;color:#9b9fb0;font-weight:500">(선택)</em></label><input id="newHint" maxlength="100" value="'+esc(accountSetting?.password_hint||'')+'" placeholder="예: 처음 함께 부른 곡"><p class="help">비밀번호 자체나 생일·전화번호는 적지 마세요.</p></div><button class="primary" onclick="changePassword()">비밀번호 저장</button></section>'+
       '<aside class="account-reset-guide"><b>비밀번호를 잊었다면</b><span>운영진에게 연락하면 초기화할 수 있어요. 초기화 후에는 이곳에서 새 비밀번호와 힌트를 다시 설정하면 됩니다.</span></aside>'+
     '</div></details>'+mySetlistMarkup();
@@ -654,10 +668,12 @@ async function saveProfile(){
   const favorite=document.getElementById('profileFavorite').value.trim();
   const job=document.getElementById('profileJob').value.trim();
   const phone=document.getElementById('profilePhone').value.trim();
+  const urgentContactEnabled=document.getElementById('profileUrgentContact').checked;
+  const memberNoticeEnabled=document.getElementById('profileMemberNotice').checked;
   const eventTransactionEnabled=document.getElementById('profileEventNotice').checked;
   const operatorAlertEnabled=document.getElementById('profileOperatorAlert')?.checked===true;
   try{
-    const data=await requestAccess({action:'self_profile_update',region,favorite_singers:favorite,job,phone,event_transaction_enabled:eventTransactionEnabled,operator_alert_enabled:operatorAlertEnabled},session?.access_token);
+    const data=await requestAccess({action:'self_profile_update',region,favorite_singers:favorite,job,phone,urgent_contact_enabled:urgentContactEnabled,member_notice_enabled:memberNoticeEnabled,event_transaction_enabled:eventTransactionEnabled,operator_alert_enabled:operatorAlertEnabled},session?.access_token);
     myMember={...myMember,...(data.member||{})};
     messagePreferences=data.messaging||messagePreferences;
     renderDashboard();
