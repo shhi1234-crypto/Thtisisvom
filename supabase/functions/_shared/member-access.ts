@@ -33,7 +33,7 @@ export async function memberContext(service: any, userId: string) {
   if (member?.is_active) {
     const [{data:setting,error:settingError},{data:messaging,error:messagingError}] = await Promise.all([
       service.from("member_account_settings").select("must_change_password").eq("member_id",member.id).maybeSingle(),
-      service.from("member_message_preferences").select("event_transaction_enabled,event_transaction_consented_at,operator_alert_enabled,operator_alert_consented_at").eq("member_id",member.id).maybeSingle(),
+      service.from("member_message_preferences").select("urgent_contact_enabled,urgent_contact_consented_at,member_notice_enabled,member_notice_consented_at,event_transaction_enabled,event_transaction_consented_at,operator_alert_enabled,operator_alert_consented_at").eq("member_id",member.id).maybeSingle(),
     ]);
     if (settingError) throw new Error("account_setting_failed");
     if (messagingError) throw new Error("message_preference_failed");
@@ -42,6 +42,10 @@ export async function memberContext(service: any, userId: string) {
       is_admin:false,
       member,
       messaging: {
+        urgent_contact_enabled: messaging?.urgent_contact_enabled === true,
+        urgent_contact_consented_at: messaging?.urgent_contact_consented_at || null,
+        member_notice_enabled: messaging?.member_notice_enabled === true,
+        member_notice_consented_at: messaging?.member_notice_consented_at || null,
         event_transaction_enabled: messaging?.event_transaction_enabled === true,
         event_transaction_consented_at: messaging?.event_transaction_consented_at || null,
         operator_alert_enabled: messaging?.operator_alert_enabled === true,
