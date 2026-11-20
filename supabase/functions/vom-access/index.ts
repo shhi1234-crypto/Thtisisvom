@@ -79,6 +79,12 @@ export async function handle(req: Request, service: any, authClient: any) {
       const job = profileText(body.job, "직업", 80);
       const phoneInput = profilePhone(body.phone);
       const phone = phoneInput === undefined ? context.member.phone || null : phoneInput;
+      const urgentContactEnabled = body.urgent_contact_enabled === undefined
+        ? context.messaging?.urgent_contact_enabled === true
+        : body.urgent_contact_enabled === true;
+      const memberNoticeEnabled = body.member_notice_enabled === undefined
+        ? context.messaging?.member_notice_enabled === true
+        : body.member_notice_enabled === true;
       const eventTransactionEnabled = body.event_transaction_enabled === undefined
         ? context.messaging?.event_transaction_enabled === true
         : body.event_transaction_enabled === true;
@@ -90,11 +96,21 @@ export async function handle(req: Request, service: any, authClient: any) {
         throw new ApiError(403, "운영 알림은 모임장·운영진 계정에서만 설정할 수 있어요.", "operator_required");
       }
       const operatorAlertEnabled = isOperator && requestedOperatorAlert;
-      if ((eventTransactionEnabled || operatorAlertEnabled) && !phone) {
-        throw new ApiError(400, "알림을 받으려면 휴대폰 번호를 입력해 주세요.", "phone_required");
+      if ((urgentContactEnabled || memberNoticeEnabled || eventTransactionEnabled || operatorAlertEnabled) && !phone) {
+        throw new ApiError(400, "연락처 이용이나 알림 수신을 선택하려면 휴대폰 번호를 입력해 주세요.", "phone_required");
       }
       const now = new Date().toISOString();
       const phoneChanged = phone !== (context.member.phone || null);
+      const urgentContactConsentAt = urgentContactEnabled
+        ? (context.messaging?.urgent_contact_enabled === true && context.messaging?.urgent_contact_consented_at && !phoneChanged
+          ? context.messaging.urgent_contact_consented_at
+          : now)
+        : null;
+      const memberNoticeConsentAt = memberNoticeEnabled
+        ? (context.messaging?.member_notice_enabled === true && context.messaging?.member_notice_consented_at && !phoneChanged
+          ? context.messaging.member_notice_consented_at
+          : now)
+        : null;
       const eventConsentAt = eventTransactionEnabled
         ? (context.messaging?.event_transaction_enabled === true && context.messaging?.event_transaction_consented_at && !phoneChanged
           ? context.messaging.event_transaction_consented_at
@@ -116,6 +132,10 @@ export async function handle(req: Request, service: any, authClient: any) {
       if (error || !member) throw new Error("self_profile_update_failed");
       const { error: preferenceError } = await service.from("member_message_preferences").upsert({
         member_id: context.member.id,
+        urgent_contact_enabled: urgentContactEnabled,
+        urgent_contact_consented_at: urgentContactConsentAt,
+        member_notice_enabled: memberNoticeEnabled,
+        member_notice_consented_at: memberNoticeConsentAt,
         event_transaction_enabled: eventTransactionEnabled,
         event_transaction_consented_at: eventConsentAt,
         operator_alert_enabled: operatorAlertEnabled,
@@ -126,7 +146,12 @@ export async function handle(req: Request, service: any, authClient: any) {
       return json(origin, {
         ok: true,
         member,
-        messaging: { event_transaction_enabled: eventTransactionEnabled, operator_alert_enabled: operatorAlertEnabled },
+        messaging: {
+          urgent_contact_enabled: urgentContactEnabled,
+          member_notice_enabled: memberNoticeEnabled,
+          event_transaction_enabled: eventTransactionEnabled,
+          operator_alert_enabled: operatorAlertEnabled,
+        },
       });
     }
 
