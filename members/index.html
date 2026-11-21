@@ -634,7 +634,7 @@ html[data-vom-theme="dark"] .activity-d10-person b{background:rgba(123,99,221,.3
 <div class="field-wrap"><label>듀엣 상대 (선택)</label><input id="memberSongDuet" class="field" list="memberNameOptions"></div>
 <div class="field-wrap full"><label>재생 자료 <span style="color:#dc7430;font-size:9px">필수</span></label><div class="reference-choice"><label><input name="memberSongReferenceType" type="radio" value="youtube" onchange="updateMemberSongReferenceType()"> YouTube 링크</label><label><input name="memberSongReferenceType" type="radio" value="file" onchange="updateMemberSongReferenceType()"> 파일 첨부</label></div><small class="reference-guide">둘 중 하나만 선택해 입력해주세요. 저장 후 아래 곡 목록에서 재생 또는 파일 열기를 꼭 확인해주세요.</small></div>
 <div id="memberSongYoutubeField" class="field-wrap full reference-field" hidden><label>YouTube 링크 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="memberSongYoutube" class="field" placeholder="https://youtube.com/..."></div>
-<div id="memberSongFileField" class="field-wrap full reference-field" hidden><label>MR · 음성 · 참고 파일 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="memberSongFile" class="field attachment-input" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small id="memberSongFileCurrent" class="file-help">카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하</small></div>
+<div id="memberSongFileField" class="field-wrap full reference-field" hidden><label>MR · 음성 · 참고 파일 <span style="color:#dc7430;font-size:9px">필수</span></label><input id="memberSongFile" class="field attachment-input" type="file" accept=".mp3,.m4a,.mp4,.mov,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf,video/mp4,video/quicktime"><small id="memberSongFileCurrent" class="file-help">휴대폰 영상(MP4 · MOV), 음성, MR, PDF · 파일당 50MB 이하</small></div>
 </div>
 <button class="save" onclick="saveMemberSong()">곡 저장</button>
 </div>
@@ -1173,8 +1173,8 @@ function setMemberSongReferenceType(type){
   fileField.hidden=type!=='file';
 }
 function updateMemberSongReferenceType(){setMemberSongReferenceType(selectedMemberSongReferenceType())}
-function resetMemberSongForm(){memberSongId.value='';memberSongTitle.value='';memberSongArtist.value='';memberSongDuet.value='';memberSongYoutube.value='';memberSongFile.value='';memberSongFileCurrent.textContent='카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하';setMemberSongReferenceType('');memberSongFormTitle.textContent='새 곡 추가'}
-function editMemberSong(id){const s=memberSongs.find(x=>String(x.id)===String(id));if(!s)return;memberSongId.value=s.id;memberSongTitle.value=s.song_title||'';memberSongArtist.value=s.artist_name||'';memberSongDuet.value=s.duet_name||'';memberSongYoutube.value=s.youtube_url||'';memberSongFile.value='';memberSongFileCurrent.textContent=s.file_name?`현재 첨부: ${s.file_name} · 파일 방식을 유지하면 그대로 저장되고, 새 파일을 고르면 교체됩니다.`:'첨부 파일 없음 · 카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능';setMemberSongReferenceType(s.youtube_url?'youtube':s.file_url?'file':'');memberSongFormTitle.textContent='곡 수정'}
+function resetMemberSongForm(){memberSongId.value='';memberSongTitle.value='';memberSongArtist.value='';memberSongDuet.value='';memberSongYoutube.value='';memberSongFile.value='';memberSongFileCurrent.textContent='휴대폰 영상(MP4 · MOV), 음성, MR, PDF · 파일당 50MB 이하';setMemberSongReferenceType('');memberSongFormTitle.textContent='새 곡 추가'}
+function editMemberSong(id){const s=memberSongs.find(x=>String(x.id)===String(id));if(!s)return;memberSongId.value=s.id;memberSongTitle.value=s.song_title||'';memberSongArtist.value=s.artist_name||'';memberSongDuet.value=s.duet_name||'';memberSongYoutube.value=s.youtube_url||'';memberSongFile.value='';memberSongFileCurrent.textContent=s.file_name?`현재 첨부: ${s.file_name} · 파일 방식을 유지하면 그대로 저장되고, 새 파일을 고르면 교체됩니다.`:'첨부 파일 없음 · 휴대폰 영상(MP4 · MOV), 음성, MR, PDF 가능';setMemberSongReferenceType(s.file_url?'file':s.youtube_url?'youtube':'');memberSongFormTitle.textContent='곡 수정'}
 async function addActivityLog(actionType,targetId,targetName,detail){
   try{
     await db.from('activity_logs').insert({
@@ -1218,7 +1218,7 @@ async function saveMemberSong(){
 
   const p={member_id:String(currentSongMember.id),vocalist_name:currentSongMember.name||'',song_title:title,artist_name:memberSongArtist.value.trim(),duet_member_id:duet?String(duet.id):null,duet_name:duetName,youtube_url:youtubeUrl,...attachment};
   const q=id?db.from('busking_repertoire').update(p).eq('id',id):db.from('busking_repertoire').insert(p).select('id').single();
-  const {data,error}=await q;if(error){alert('곡 저장 실패\n'+error.message);return}
+  const {data,error}=await q;if(error){if(attachment.file_path&&attachment.file_path!==before?.file_path)await removeBuskingAttachment(attachment.file_path);alert('곡 저장 실패\n'+error.message);return}
   if(before?.file_path&&before.file_path!==attachment.file_path&&adminMode){await removeBuskingAttachment(before.file_path)}
   const savedId=id||(data&&data.id)||'';
   await addActivityLog(id?'UPDATE':'ADD',savedId,currentSongMember.name,{
@@ -1243,10 +1243,10 @@ async function deleteMemberSong(id){
   await loadMemberSongs();renderMemberSongs()
 }
 
-const attachmentMime={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'audio/mp4',aac:'audio/aac',amr:'audio/amr',wav:'audio/wav',ogg:'audio/ogg',opus:'audio/opus',flac:'audio/flac','3gp':'audio/3gpp',webm:'audio/webm',pdf:'application/pdf'};
+const attachmentMime={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'video/mp4',mov:'video/quicktime',aac:'audio/aac',amr:'audio/amr',wav:'audio/wav',ogg:'audio/ogg',opus:'audio/opus',flac:'audio/flac','3gp':'video/3gpp',webm:'video/webm',pdf:'application/pdf'};
 const attachmentMaxBytes=50*1024*1024;
 function attachmentExt(name){const hit=String(name||'').toLowerCase().match(/\.([a-z0-9]+)$/);return hit?hit[1]:''}
-function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachmentMime[ext])throw new Error('MP3 · M4A · AAC · AMR · WAV · OGG · OPUS · FLAC · 3GP · WEBM · PDF 파일만 첨부할 수 있습니다.');if(Number(file?.size||0)>attachmentMaxBytes)throw new Error('첨부 파일은 50MB 이하만 올릴 수 있습니다.');return{ext,mime:attachmentMime[ext]}}
+function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachmentMime[ext])throw new Error('MP4 · MOV · WEBM · 3GP 영상, MP3 · M4A 등 음성, PDF 파일만 첨부할 수 있습니다.');if(Number(file?.size||0)>attachmentMaxBytes)throw new Error('첨부 파일은 50MB 이하만 올릴 수 있습니다.');return{ext,mime:['mp4','3gp','webm'].includes(ext)&&['audio/mp4','audio/3gpp','audio/webm'].includes(file.type)?file.type:attachmentMime[ext]}}
 function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);const memberId=currentSongMember?.id||currentMemberId||'unassigned';return `${prefix}/${memberId}/${Date.now()}-${token}.${ext}`}
 async function uploadMemberSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('repertoire',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
 async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
@@ -1256,15 +1256,14 @@ function youtubeReferenceUrl(value){
   try{const host=new URL(safe).hostname.toLowerCase().replace(/^www\./,'');return['youtube.com','m.youtube.com','music.youtube.com','youtu.be'].includes(host)?safe:''}catch(_e){return ''}
 }
 function memberSongReferenceSummary(song){
+  if(youtubeReferenceUrl(song?.youtube_url)&&publicReferenceUrl(song?.file_url))return `YouTube 링크 · 첨부 · ${song.file_name||'파일'}`;
   if(youtubeReferenceUrl(song?.youtube_url))return 'YouTube 링크';
   if(publicReferenceUrl(song?.file_url))return song?.file_name?`첨부 · ${song.file_name}`:'파일 첨부';
   return '링크/파일 없음';
 }
 function memberSongReferenceButtons(song){
   const youtube=youtubeReferenceUrl(song?.youtube_url),file=publicReferenceUrl(song?.file_url);
-  if(youtube)return `<a class="yt-btn" href="${attr(youtube)}" target="_blank" rel="noopener">YouTube ↗</a>`;
-  if(file)return `<a class="file-btn" href="${attr(file)}" target="_blank" rel="noopener">📎 파일 열기 ↗</a>`;
-  return '';
+  return (youtube?`<a class="yt-btn" href="${attr(youtube)}" target="_blank" rel="noopener">YouTube ↗</a>`:'')+(file?`<a class="file-btn" href="${attr(file)}" target="_blank" rel="noopener">📎 ${/\.(mp4|mov|webm|3gp)$/i.test(song?.file_name||'')?'영상':'파일'} 열기 ↗</a>`:'');
 }
 
 function openStaffRoles(){staffRoleOverlay.classList.add('open')}

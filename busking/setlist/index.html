@@ -1526,6 +1526,7 @@ function openNewPersonalSong(){
       <div class="field-wrap"><label>곡명 <span style="color:#c94b64">*</span></label><input id="newPersonalSongTitle" class="field" maxlength="80" placeholder="예: 밤편지"></div>
       <div class="field-wrap"><label>원곡 가수</label><input id="newPersonalSongArtist" class="field" maxlength="80" placeholder="예: 아이유"></div>
       <div class="field-wrap full"><label>유튜브 링크 <span style="font-weight:600">(선택)</span></label><input id="newPersonalSongYoutube" class="field" type="url" placeholder="https://www.youtube.com/..."></div>
+      <div class="field-wrap full"><label>영상 · 음성 · 참고 파일 <span style="font-weight:600">(선택, 50MB 이하)</span></label><input id="newPersonalSongFile" class="field" type="file" accept=".mp3,.m4a,.mp4,.mov,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf,video/mp4,video/quicktime"></div>
     </div>
     <div style="display:flex;justify-content:flex-end;gap:7px;margin-top:13px">
       <button class="secondary" type="button" onclick="renderSongLibrary()">← 개인곡 목록</button>
@@ -1540,7 +1541,12 @@ async function saveNewPersonalSong(){
   const artist=String(document.getElementById('newPersonalSongArtist')?.value||'').trim();
   const youtube=String(document.getElementById('newPersonalSongYoutube')?.value||'').trim();
   if(!title){alert('곡명을 입력해주세요.');return}
-  if(youtube&&!publicReferenceUrl(youtube)){alert('유효한 유튜브 링크를 입력해주세요.');return}
+  if(youtube&&!youtubeReferenceUrl(youtube)){alert('유효한 유튜브 링크를 입력해주세요.');return}
+  const pickedFile=document.getElementById('newPersonalSongFile')?.files?.[0];
+  if(!youtube&&!pickedFile){alert('유튜브 링크 또는 파일을 선택해주세요.');return}
+  if(youtube&&pickedFile){alert('유튜브 링크와 파일 중 하나만 선택해주세요.');return}
+  let attachment={file_url:null,file_name:null,file_path:null};
+  if(pickedFile){try{attachment=await uploadPersonalSongAttachment(pickedFile,slot.member_id)}catch(error){alert(error?.message||'파일 업로드에 실패했습니다.');return}}
 
   const member=memberById(slot.member_id);
   const payload={
@@ -1550,10 +1556,11 @@ async function saveNewPersonalSong(){
     artist_name:artist,
     duet_member_id:null,
     duet_name:'',
-    youtube_url:youtube
+    youtube_url:youtube||null,
+    ...attachment
   };
   const {data,error}=await db.from('busking_repertoire').insert(payload).select('*').single();
-  if(error){alert('신규 개인곡 저장 실패\\n'+error.message);return}
+  if(error){if(attachment.file_path)await removeBuskingAttachment(attachment.file_path);alert('신규 개인곡 저장 실패\\n'+error.message);return}
   repertoire=[...repertoire,data];
   newSongMode=false;
   await addSongToSlot(data.id);
@@ -2056,13 +2063,14 @@ function week(v){return['SUN','MON','TUE','WED','THU','FRI','SAT'][new Date(v+'T
 function norm(v){return String(v??'').trim().toLowerCase()}
 function esc(v){const d=document.createElement('div');d.textContent=String(v??'');return d.innerHTML}
 function attr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-const attachmentMime={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'audio/mp4',aac:'audio/aac',amr:'audio/amr',wav:'audio/wav',ogg:'audio/ogg',opus:'audio/opus',flac:'audio/flac','3gp':'audio/3gpp',webm:'audio/webm',pdf:'application/pdf'};
+const attachmentMime={mp3:'audio/mpeg',m4a:'audio/mp4',mp4:'video/mp4',mov:'video/quicktime',aac:'audio/aac',amr:'audio/amr',wav:'audio/wav',ogg:'audio/ogg',opus:'audio/opus',flac:'audio/flac','3gp':'video/3gpp',webm:'video/webm',pdf:'application/pdf'};
 const attachmentMaxBytes=50*1024*1024;
 function attachmentExt(name){const hit=String(name||'').toLowerCase().match(/\.([a-z0-9]+)$/);return hit?hit[1]:''}
-function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachmentMime[ext])throw new Error('MP3 · M4A · AAC · AMR · WAV · OGG · OPUS · FLAC · 3GP · WEBM · PDF 파일만 첨부할 수 있습니다.');if(Number(file?.size||0)>attachmentMaxBytes)throw new Error('첨부 파일은 50MB 이하만 올릴 수 있습니다.');return{ext,mime:attachmentMime[ext]}}
+function attachmentDetails(file){const ext=attachmentExt(file?.name);if(!attachmentMime[ext])throw new Error('MP4 · MOV · WEBM · 3GP 영상, MP3 · M4A 등 음성, PDF 파일만 첨부할 수 있습니다.');if(Number(file?.size||0)>attachmentMaxBytes)throw new Error('첨부 파일은 50MB 이하만 올릴 수 있습니다.');return{ext,mime:['mp4','3gp','webm'].includes(ext)&&['audio/mp4','audio/3gpp','audio/webm'].includes(file.type)?file.type:attachmentMime[ext]}}
 function attachmentPath(prefix,file){const {ext}=attachmentDetails(file);const token=window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2);return `${prefix}/${Date.now()}-${token}.${ext}`}
 async function uploadDirectSongAttachment(file){const {mime}=attachmentDetails(file);const path=attachmentPath('direct',file);const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
-async function removeBuskingAttachment(path){if(!adminMode||!path)return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
+async function uploadPersonalSongAttachment(file,memberId){const {mime}=attachmentDetails(file);const path=`repertoire/${memberId}/${Date.now()}-${window.crypto?.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)}.${attachmentExt(file.name)}`;const {error}=await db.storage.from('busking-files').upload(path,file,{cacheControl:'3600',upsert:false,contentType:mime});if(error)throw new Error(`파일 업로드에 실패했습니다.\n${error.message}`);const {data}=db.storage.from('busking-files').getPublicUrl(path);return{file_url:data.publicUrl,file_name:file.name,file_path:path}}
+async function removeBuskingAttachment(path){if(!path||(!adminMode&&!path.startsWith(`repertoire/${currentMemberId}/`)))return;const {error}=await db.storage.from('busking-files').remove([path]);if(error)console.warn('BUSKING FILE DELETE:',error)}
 function publicReferenceUrl(value){
   const raw=String(value||'').trim();
   if(!raw)return '';
@@ -2079,11 +2087,7 @@ function youtubeReferenceUrl(value){
 function songReferenceLink(song){
   const youtube=youtubeReferenceUrl(song?.youtube_url);
   const file=publicReferenceUrl(song?.file_url);
-  const href=youtube||file;
-  if(!href)return '';
-  const isFile=!youtube&&Boolean(file);
-  const label=isFile?'📎 파일 ↗':'유튜브 ↗';
-  return `<a class="song-resource ${isFile?'file':''}" href="${attr(href)}" ${isFile?`title="${attr(String(song?.file_name||'첨부 파일'))}"`:''} target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${label}</a>`;
+  return (youtube?`<a class="song-resource" href="${attr(youtube)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">유튜브 ↗</a>`:'')+(file?`<a class="song-resource file" href="${attr(file)}" title="${attr(String(song?.file_name||'첨부 파일'))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📎 ${/\.(mp4|mov|webm|3gp)$/i.test(song?.file_name||'')?'영상':'파일'} ↗</a>`:'');
 }
 function songReferenceLinks(song){return songReferenceLink(song)}
 function finalSongReferenceLink(song){return songReferenceLink(song)}
@@ -2140,7 +2144,7 @@ start().catch(err=>{
       <label class="full">참여자<div class="direct-members" id="directMembers"></div></label>
       <label>부<select id="directPart"><option value="1">1부</option><option value="2">2부</option></select></label>
       <label>유튜브 링크<input id="directYoutube" type="url" placeholder="선택"></label>
-      <label class="full">MR · 음성 · 참고 파일 (선택)<input id="directFile" type="file" accept=".mp3,.m4a,.mp4,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf"><small class="direct-file-note">카카오톡 음성(M4A · AMR · 3GP 포함), MR, 악보 PDF 가능 · 파일당 50MB 이하</small></label>
+      <label class="full">MR · 음성 · 참고 파일 (선택)<input id="directFile" type="file" accept=".mp3,.m4a,.mp4,.mov,.aac,.amr,.wav,.ogg,.opus,.flac,.3gp,.webm,.pdf,video/mp4,video/quicktime"><small class="direct-file-note">휴대폰 영상(MP4 · MOV), 음성, MR, PDF · 파일당 50MB 이하</small></label>
     </div>
     <div class="modal-actions"><button class="secondary" onclick="closeDirectSong()">취소</button><button class="primary" onclick="saveDirectSong()">추가</button></div>
   </div>
