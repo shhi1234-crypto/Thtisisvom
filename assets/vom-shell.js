@@ -910,7 +910,7 @@
   function loadBgmPlayer() {
     if (/^\/(admin|admin-settings|ot-admin|operator-alert|site-log)(\/|$)/.test(path)) return;
     const script = document.createElement('script');
-    script.src = '/assets/vom-bgm.js?v=1';
+    script.src = '/assets/vom-bgm.js?v=2';
     script.defer = true;
     document.body.appendChild(script);
   }

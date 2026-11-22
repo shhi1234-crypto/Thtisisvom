@@ -7,7 +7,7 @@
   const KEY = 'sb_publishable_PfwvwgO6402LfeqLPbUBgg_2bCwaX4R';
   const STATE_KEY = 'vom-bgm-state-v1';
   const CATEGORY_KEY = 'vom-bgm-category-v1';
-  const categoryNames = {ALL:'��ü',OST:'OST',KPOP:'K-POP',POP:'POP',JAZZ:'����',ETC:'��Ÿ'};
+  const categoryNames = {ALL:'전체',OST:'OST',KPOP:'K-POP',POP:'POP',JAZZ:'재즈',ETC:'기타'};
   const audio = new Audio();
   audio.preload = 'metadata';
   audio.volume = 0.55;
@@ -57,19 +57,19 @@
     if (!tracks.length) return;
     const track = currentTrack();
     root.classList.toggle('is-open', expanded);
-    root.querySelector('[data-bgm-title]').textContent = track?.title || '���� ����';
+    root.querySelector('[data-bgm-title]').textContent = track?.title || '음악 선택';
     root.querySelector('[data-bgm-artist]').textContent = track?.artist || categoryNames[track?.category] || 'VOM BGM';
     const play = root.querySelector('[data-bgm-play]');
-    play.textContent = audio.paused ? '��' : '��';
-    play.setAttribute('aria-label', audio.paused ? '���� ���' : '���� �Ͻ�����');
-    root.querySelector('[data-bgm-status]').textContent = blocked ? '����� ���� �����ϼ���' : '';
+    play.textContent = audio.paused ? '▶' : 'Ⅱ';
+    play.setAttribute('aria-label', audio.paused ? '음악 재생' : '음악 일시정지');
+    root.querySelector('[data-bgm-status]').textContent = blocked ? '재생을 눌러 시작하세요' : '';
     root.querySelector('[data-bgm-expand]').setAttribute('aria-expanded', String(expanded));
     const categories = root.querySelector('[data-bgm-categories]');
     categories.innerHTML = Object.entries(categoryNames).filter(([id]) =>
       id === 'ALL' || tracks.some(item => item.category === id)
     ).map(([id,label]) => `<button type="button" data-bgm-category="${id}" class="${id===currentCategory?'active':''}" aria-pressed="${id===currentCategory}">${label}</button>`).join('');
     root.querySelector('[data-bgm-list]').innerHTML = visibleTracks().map(item =>
-      `<button type="button" data-bgm-track="${safeText(item.id)}" class="${item.id===currentId?'active':''}"><span>${safeText(item.title)}<small>${safeText(item.artist || categoryNames[item.category] || '')}</small></span><i>${item.id===currentId&&!audio.paused?'?':''}</i></button>`
+      `<button type="button" data-bgm-track="${safeText(item.id)}" class="${item.id===currentId?'active':''}"><span>${safeText(item.title)}<small>${safeText(item.artist || categoryNames[item.category] || '')}</small></span><i>${item.id===currentId&&!audio.paused?'♫':''}</i></button>`
     ).join('');
   }
   function setTrack(track, keepTime = false) {
@@ -160,8 +160,8 @@
     root = document.createElement('aside');
     root.id = 'vomBgm';
     root.hidden = true;
-    root.setAttribute('aria-label','VOM ��� ����');
-    root.innerHTML = '<div class="vom-bgm-panel"><div class="vom-bgm-panel-head"><b>VOM MUSIC</b><span>���� ��� ��������</span></div><div class="vom-bgm-categories" data-bgm-categories></div><div class="vom-bgm-list" data-bgm-list></div><div class="vom-bgm-status" data-bgm-status aria-live="polite"></div></div><div class="vom-bgm-bar"><button type="button" class="vom-bgm-open" data-bgm-expand aria-label="���� ��� ��ġ��" aria-expanded="false"><span class="vom-bgm-note">?</span><span class="vom-bgm-copy"><strong data-bgm-title>VOM MUSIC</strong><small data-bgm-artist></small></span></button><button type="button" data-bgm-prev aria-label="���� ��">����</button><button type="button" data-bgm-play aria-label="���� ���">��</button><button type="button" data-bgm-next aria-label="���� ��">����</button></div>';
+    root.setAttribute('aria-label','VOM 배경 음악');
+    root.innerHTML = '<div class="vom-bgm-panel"><div class="vom-bgm-panel-head"><b>VOM MUSIC</b><span>곡을 골라 들으세요</span></div><div class="vom-bgm-categories" data-bgm-categories></div><div class="vom-bgm-list" data-bgm-list></div><div class="vom-bgm-status" data-bgm-status aria-live="polite"></div></div><div class="vom-bgm-bar"><button type="button" class="vom-bgm-open" data-bgm-expand aria-label="음악 목록 펼치기" aria-expanded="false"><span class="vom-bgm-note">♫</span><span class="vom-bgm-copy"><strong data-bgm-title>VOM MUSIC</strong><small data-bgm-artist></small></span></button><button type="button" data-bgm-prev aria-label="이전 곡">Ⅰ◀</button><button type="button" data-bgm-play aria-label="음악 재생">▶</button><button type="button" data-bgm-next aria-label="다음 곡">▶Ⅰ</button></div>';
     document.body.appendChild(root);
     root.querySelector('[data-bgm-expand]').addEventListener('click', () => { expanded = !expanded; paint(); if (expanded) void refreshTracks(); });
     root.querySelector('[data-bgm-play]').addEventListener('click', () => audio.paused ? void play() : pause());
@@ -203,4 +203,3 @@
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, {once:true});
   else mount();
 })();
-

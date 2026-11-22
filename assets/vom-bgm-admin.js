@@ -1,5 +1,5 @@
 /* Admin Settings BGM library. Loaded after the page's Supabase client. */
-const bgmCategoryLabels = {OST:'OST',KPOP:'K-POP',POP:'POP',JAZZ:'����',ETC:'��Ÿ'};
+const bgmCategoryLabels = {OST:'OST',KPOP:'K-POP',POP:'POP',JAZZ:'재즈',ETC:'기타'};
 const bgmMime = {mp3:'audio/mpeg',m4a:'audio/mp4',aac:'audio/aac',wav:'audio/wav',ogg:'audio/ogg',webm:'audio/webm',flac:'audio/flac'};
 const bgmMaxBytes = 50 * 1024 * 1024;
 let bgmTracks = [];
@@ -43,26 +43,26 @@ function renderBgmManager() {
     '<option value="'+key+'" '+((editing?.category||'OST')===key?'selected':'')+'>'+label+'</option>'
   ).join('');
   const rows = bgmTracks.map(item => '<article class="bgm-row"><div><strong>'+esc(item.title)+'</strong><small>'+
-    esc(item.artist||'���� ���Է�')+' �� '+esc(bgmCategoryLabels[item.category]||item.category)+' �� '+(item.is_active?'��� ��Ͽ� ǥ��':'����')+
-    ' �� ���� '+Number(item.sort_order||0)+'</small></div><div class="bgm-row-actions"><button type="button" onclick="editBgmTrack(\''+attr(item.id)+'\')">����</button><button type="button" class="delete" onclick="deleteBgmTrack(\''+attr(item.id)+'\')">����</button></div></article>').join('');
-  resourceStack.innerHTML = '<section class="resource-section bgm-admin"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(&quot;HOME&quot;)">�� � �ڷ�</button><div><div class="section-kicker">SITE BGM</div><h2>Ȩ������ ����</h2></div></div><span class="section-count">'+bgmTracks.length+'��</span></div>'+
-    '<p class="bgm-admin-intro">���� ������ �ø��� Ȩ�������� ���� �÷��̾ ǥ�õ˴ϴ�. ���� ������ ���� ���� �̾����� ������ �� �ڿ��� ó�� ������ ���ư��ϴ�.</p>'+
+    esc(item.artist||'가수 미입력')+' · '+esc(bgmCategoryLabels[item.category]||item.category)+' · '+(item.is_active?'재생 목록에 표시':'숨김')+
+    ' · 순서 '+Number(item.sort_order||0)+'</small></div><div class="bgm-row-actions"><button type="button" onclick="editBgmTrack(\''+attr(item.id)+'\')">수정</button><button type="button" class="delete" onclick="deleteBgmTrack(\''+attr(item.id)+'\')">삭제</button></div></article>').join('');
+  resourceStack.innerHTML = '<section class="resource-section bgm-admin"><div class="section-head"><div class="section-head-left"><button class="section-back" type="button" onclick="setFilter(&quot;HOME&quot;)">← 운영 자료</button><div><div class="section-kicker">SITE BGM</div><h2>홈페이지 음악</h2></div></div><span class="section-count">'+bgmTracks.length+'곡</span></div>'+
+    '<p class="bgm-admin-intro">음원 파일을 올리면 홈페이지의 작은 플레이어에 표시됩니다. 곡이 끝나면 다음 곡이 이어지고 마지막 곡 뒤에는 처음 곡으로 돌아갑니다.</p>'+
     (bgmError?'<p class="bgm-admin-message">'+esc(bgmError)+'</p>':'')+
-    '<div class="bgm-admin-form"><label>���<input id="bgmTitle" maxlength="120" value="'+esc(editing?.title||'')+'" placeholder="��: ���� �� ������ ����"></label>'+
-    '<label>���� �Ǵ� ��ó<input id="bgmArtist" maxlength="120" value="'+esc(editing?.artist||'')+'" placeholder="����"></label>'+
-    '<label>ī�װ���<select id="bgmCategory">'+options+'</select></label>'+
-    '<label>��� ����<input id="bgmOrder" type="number" min="0" value="'+Number(editing?.sort_order||0)+'"></label>'+
-    '<label class="wide">���� ���� '+(editing?'(��ü�� ���� ����)':'(�ʼ�)')+'<input id="bgmFile" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.webm,.flac"><small>MP3 �� M4A �� AAC �� WAV �� OGG �� WEBM �� FLAC, 50MB ����. �湮�ڰ� ���� �� �ֵ��� �����˴ϴ�.</small></label>'+
-    '<label class="check wide"><input id="bgmActive" type="checkbox" '+(editing?.is_active===false?'':'checked')+'> �湮�� ��� ��Ͽ� ǥ��</label>'+
-    '<div class="bgm-admin-actions">'+(editing?'<button type="button" onclick="cancelBgmEdit()">���</button>':'')+'<button class="primary" id="bgmSaveButton" type="button" onclick="saveBgmTrack()">'+(editing?'������� ����':'���� �߰�')+'</button></div></div>'+
-    '<div class="bgm-admin-list">'+(rows||'<p class="bgm-admin-intro">��ϵ� ������ �����ϴ�. ù ���� �߰��ϸ� �÷��̾ ǥ�õ˴ϴ�.</p>')+'</div></section>';
+    '<div class="bgm-admin-form"><label>곡명<input id="bgmTitle" maxlength="120" value="'+esc(editing?.title||'')+'" placeholder="예: 공연 전 분위기 음악"></label>'+
+    '<label>가수 또는 출처<input id="bgmArtist" maxlength="120" value="'+esc(editing?.artist||'')+'" placeholder="선택"></label>'+
+    '<label>카테고리<select id="bgmCategory">'+options+'</select></label>'+
+    '<label>재생 순서<input id="bgmOrder" type="number" min="0" value="'+Number(editing?.sort_order||0)+'"></label>'+
+    '<label class="wide">음원 파일 '+(editing?'(교체할 때만 선택)':'(필수)')+'<input id="bgmFile" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.webm,.flac"><small>MP3 · M4A · AAC · WAV · OGG · WEBM · FLAC, 50MB 이하. 방문자가 들을 수 있도록 공개됩니다.</small></label>'+
+    '<label class="check wide"><input id="bgmActive" type="checkbox" '+(editing?.is_active===false?'':'checked')+'> 방문자 재생 목록에 표시</label>'+
+    '<div class="bgm-admin-actions">'+(editing?'<button type="button" onclick="cancelBgmEdit()">취소</button>':'')+'<button class="primary" id="bgmSaveButton" type="button" onclick="saveBgmTrack()">'+(editing?'변경사항 저장':'음악 추가')+'</button></div></div>'+
+    '<div class="bgm-admin-list">'+(rows||'<p class="bgm-admin-intro">등록된 음악이 없습니다. 첫 곡을 추가하면 플레이어가 표시됩니다.</p>')+'</div></section>';
 }
 function editBgmTrack(id) { bgmEditingId = id; renderBgmManager(); document.getElementById('bgmTitle')?.focus(); }
 function cancelBgmEdit() { bgmEditingId = ''; renderBgmManager(); }
 function bgmFileDetails(file) {
   const ext = String(file?.name||'').toLowerCase().match(/\.([a-z0-9]+)$/)?.[1] || '';
-  if (!bgmMime[ext]) throw new Error('�����Ǵ� ���� ������ ������ �ּ���.');
-  if (!file.size || file.size > bgmMaxBytes) throw new Error('50MB ������ ���� ������ ������ �ּ���.');
+  if (!bgmMime[ext]) throw new Error('지원되는 음원 파일을 선택해 주세요.');
+  if (!file.size || file.size > bgmMaxBytes) throw new Error('50MB 이하의 음원 파일을 선택해 주세요.');
   return {ext,mime:ext==='wav'&&file.type==='audio/x-wav'?'audio/x-wav':bgmMime[ext]};
 }
 async function saveBgmTrack() {
@@ -70,13 +70,13 @@ async function saveBgmTrack() {
   const title = document.getElementById('bgmTitle')?.value.trim() || '';
   const file = document.getElementById('bgmFile')?.files?.[0];
   const before = bgmTracks.find(item => item.id === bgmEditingId);
-  if (!title) return alert('����� �Է��� �ּ���.');
-  if (!before && !file) return alert('���� ������ ������ �ּ���.');
+  if (!title) return alert('곡명을 입력해 주세요.');
+  if (!before && !file) return alert('음원 파일을 선택해 주세요.');
   let details;
   try { if (file) details = bgmFileDetails(file); } catch (error) { return alert(error.message); }
   const button = document.getElementById('bgmSaveButton');
   bgmBusy = true;
-  button.disabled = true; button.textContent = '���� �ߡ�';
+  button.disabled = true; button.textContent = '저장 중…';
   let uploadedPath = '';
   try {
     if (file) {
@@ -104,16 +104,16 @@ async function saveBgmTrack() {
     renderBgmManager();
   } catch (error) {
     if (uploadedPath) await db.storage.from('site-bgm').remove([uploadedPath]);
-    alert('������ �������� ���߽��ϴ�.\n'+(error.message||error));
+    alert('음악을 저장하지 못했습니다.\n'+(error.message||error));
   } finally {
     bgmBusy = false;
-    if (button.isConnected) { button.disabled = false; button.textContent = before?'������� ����':'���� �߰�'; }
+    if (button.isConnected) { button.disabled = false; button.textContent = before?'변경사항 저장':'음악 추가'; }
   }
 }
 async function deleteBgmTrack(id) {
   if (!adminMode || bgmBusy) return;
   const item = bgmTracks.find(track => track.id === id);
-  if (!item || !confirm('��'+item.title+'�� ������ �����ұ��?')) return;
+  if (!item || !confirm('‘'+item.title+'’ 음악을 삭제할까요?')) return;
   bgmBusy = true;
   try {
     const {error} = await db.from('site_bgm_tracks').delete().eq('id',id);
@@ -123,7 +123,6 @@ async function deleteBgmTrack(id) {
     if (bgmEditingId === id) bgmEditingId = '';
     await loadBgmTracks();
     renderBgmManager();
-  } catch (error) { alert('������ �������� ���߽��ϴ�.\n'+(error.message||error)); }
+  } catch (error) { alert('음악을 삭제하지 못했습니다.\n'+(error.message||error)); }
   finally { bgmBusy = false; }
 }
-
