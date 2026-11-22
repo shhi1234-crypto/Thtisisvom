@@ -907,6 +907,14 @@
     }).catch(function () {});
   }
 
+  function loadBgmPlayer() {
+    if (/^\/(admin|admin-settings|ot-admin|operator-alert|site-log)(\/|$)/.test(path)) return;
+    const script = document.createElement('script');
+    script.src = '/assets/vom-bgm.js?v=1';
+    script.defer = true;
+    document.body.appendChild(script);
+  }
+
   function bootstrap() {
     initVomTheme();
     setupPwa();
@@ -920,6 +928,7 @@
     refreshShell();
     loadSitePopup();
     loadConsultationWidget();
+    loadBgmPlayer();
   }
 
   if (document.readyState === 'loading') {

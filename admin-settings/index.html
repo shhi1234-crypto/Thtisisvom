@@ -153,6 +153,7 @@
         <button class="filter" data-filter="RENTAL" onclick="setFilter('RENTAL')">대관공연</button>
         <button class="filter" data-filter="GENERAL" onclick="setFilter('GENERAL')">기타 자료</button>
         <button class="filter" data-filter="IMAGES" onclick="setFilter('IMAGES')">이미지 보관함</button>
+        <button class="filter" data-filter="BGM" onclick="setFilter('BGM')">홈페이지 음악</button>
       </div>
       <button class="add" onclick="openEditor()">＋ 자료 추가</button>
     </div>
@@ -250,9 +251,10 @@ const remindersMeta={label:'리마인더 설정',kicker:'OPERATIONS ALERT',icon:
 const inquiriesMeta={label:'문의관리',kicker:'VOM INQUIRY CENTER',icon:'💬',description:'새 문의 확인 · 상태 관리 · 운영진 답변'};
 const couponsMeta={label:'쿠폰 · 상점',kicker:'POINT SHOP & COUPONS',icon:'🎟️',description:'우선 참가권 발급 · 사용 상태 · 상점 구성'};
 const popupMeta={label:'홈페이지 팝업',kicker:'SITE NOTICE',icon:'📢',description:'방문자와 회원에게 보여줄 공지 팝업'};
-const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,REMINDERS:remindersMeta,INQUIRIES:inquiriesMeta,COUPONS:couponsMeta,POPUP:popupMeta,IMAGES:imageMeta};
+const bgmMeta={label:'홈페이지 음악',kicker:'SITE BGM',icon:'♫',description:'배경 음악 · OST · 재생 목록 관리'};
+const folderMeta={...categoryMeta,OPERATIONS:operationsMeta,REMINDERS:remindersMeta,INQUIRIES:inquiriesMeta,COUPONS:couponsMeta,POPUP:popupMeta,IMAGES:imageMeta,BGM:bgmMeta};
 const initialSection=new URLSearchParams(location.search).get('section');
-let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],reminders=[],inquiries=[],inquiryMemberMap={},inquiryFilter='ALL',reminderEditingId='',reminderCreating=false,currentFilter=initialSection==='operations'?'OPERATIONS':initialSection==='inquiries'?'INQUIRIES':initialSection==='coupons'?'COUPONS':initialSection==='popup'?'POPUP':'HOME',operationFocusEventId=Number(new URLSearchParams(location.search).get('event'))||0,itemLoadError='',operationLoadError='',inquiryLoadError='',couponLoadError='',couponProducts=[],memberCoupons=[],couponMembers=[],sitePopupNotice={id:1,title:'',body:'',link_label:'',link_url:'',is_active:false,updated_at:null},popupLoadError='',referenceFileUrls={},currentReferenceFile=null,pendingReferenceFile=null,referenceFileRemoved=false,itemSaving=false,imageUploadCategory='POSTER';
+let adminMode=false,items=[],imageFiles=[],operationEvents=[],operationTasks=[],operationNotices=[],buskingSettings=[],reminders=[],inquiries=[],inquiryMemberMap={},inquiryFilter='ALL',reminderEditingId='',reminderCreating=false,currentFilter=initialSection==='operations'?'OPERATIONS':initialSection==='inquiries'?'INQUIRIES':initialSection==='coupons'?'COUPONS':initialSection==='popup'?'POPUP':initialSection==='bgm'?'BGM':'HOME',operationFocusEventId=Number(new URLSearchParams(location.search).get('event'))||0,itemLoadError='',operationLoadError='',inquiryLoadError='',couponLoadError='',couponProducts=[],memberCoupons=[],couponMembers=[],sitePopupNotice={id:1,title:'',body:'',link_label:'',link_url:'',is_active:false,updated_at:null},popupLoadError='',referenceFileUrls={},currentReferenceFile=null,pendingReferenceFile=null,referenceFileRemoved=false,itemSaving=false,imageUploadCategory='POSTER';
 const IMAGE_LIBRARY_BUCKET='admin-image-library';
 const IMAGE_LIBRARY_CATEGORIES=[
   {key:'POSTER',folder:'posters',label:'홍보용 포스터',description:'온라인 홍보 · 공유용',icon:'✦'},
@@ -280,7 +282,7 @@ async function start(){
   guard.classList.add('hidden');
   dashboard.classList.remove('hidden');
   bindImagePaste();
-  const results=await Promise.allSettled([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries(),loadCouponCenter(),loadPopupNotice()]);
+  const results=await Promise.allSettled([loadItems(),loadImageLibrary(),loadOperations(),loadReminders(),loadInquiries(),loadCouponCenter(),loadPopupNotice(),loadBgmTracks()]);
   if(results[2].status==='rejected')operationLoadError='일정 운영 정보를 불러오지 못했습니다. 다시 열어 주세요.';
   if(results[6].status==='rejected')popupLoadError='팝업 정보를 불러오지 못했습니다. 다시 열어 주세요.';
   renderResources();
@@ -1084,16 +1086,16 @@ function renderResources(){
   updateMaterialsTitle();
   const isHome=currentFilter==='HOME';
   folderHome.classList.toggle('hidden',!isHome);
-  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS'||currentFilter==='INQUIRIES'||currentFilter==='POPUP');
+  toolbar.classList.toggle('hidden',isHome||currentFilter==='OPERATIONS'||currentFilter==='REMINDERS'||currentFilter==='INQUIRIES'||currentFilter==='POPUP'||currentFilter==='BGM');
   resourceStack.classList.toggle('hidden',isHome);
 
   if(isHome){
     const loadError=itemLoadError?'<div class="section-empty folder-load-error">운영자료를 불러오지 못했습니다.<br>'+esc(itemLoadError)+'</div>':'';
-    const primaryCategories=['OPERATIONS','INQUIRIES','REMINDERS','COUPONS','POPUP'];
+    const primaryCategories=['OPERATIONS','INQUIRIES','REMINDERS','COUPONS','POPUP','BGM'];
     const archiveCategories=['BUSKING','RENTAL','GENERAL','IMAGES'];
     const folderCard=(category,meta,styleClass='')=>{
-      const count=category==='POPUP'?(sitePopupNotice.is_active?1:0):category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:category==='COUPONS'?memberCoupons.filter(item=>item.status==='AVAILABLE').length:items.filter(item=>item.category===category).length;
-      const countLabel=category==='POPUP'?(sitePopupNotice.is_active?'노출 중':'중지됨'):category==='IMAGES'?count+'장':category==='OPERATIONS'?count+'개 일정':category==='REMINDERS'?count+'개 활성':category==='INQUIRIES'?'새 문의 '+count+'건':category==='COUPONS'?'사용 가능 '+count+'장':count+'건';
+      const count=category==='BGM'?bgmTracks.filter(item=>item.is_active).length:category==='POPUP'?(sitePopupNotice.is_active?1:0):category==='IMAGES'?imageFiles.length:category==='OPERATIONS'?operationEvents.length:category==='REMINDERS'?reminders.filter(item=>item.is_active).length:category==='INQUIRIES'?inquiries.filter(isNewInquiry).length:category==='COUPONS'?memberCoupons.filter(item=>item.status==='AVAILABLE').length:items.filter(item=>item.category===category).length;
+      const countLabel=category==='BGM'?count+'곡 재생':category==='POPUP'?(sitePopupNotice.is_active?'노출 중':'중지됨'):category==='IMAGES'?count+'장':category==='OPERATIONS'?count+'개 일정':category==='REMINDERS'?count+'개 활성':category==='INQUIRIES'?'새 문의 '+count+'건':category==='COUPONS'?'사용 가능 '+count+'장':count+'건';
       return '<button class="folder-card '+category+' '+styleClass+'" type="button" onclick="setFilter(\''+category+'\')"><div class="folder-top"><span class="folder-icon">'+meta.icon+'</span><span class="folder-count">'+countLabel+'</span></div><div class="folder-kicker">'+meta.kicker+'</div><h2>'+meta.label+'</h2><p>'+meta.description+'</p><div class="folder-open"><span>열기</span><span>→</span></div></button>';
     };
     const primary=primaryCategories.map(category=>folderCard(category,folderMeta[category],'is-priority')).join('');
@@ -1126,6 +1128,11 @@ function renderResources(){
 
   if(currentFilter==='POPUP'){
     renderPopupNotice();
+    return;
+  }
+
+  if(currentFilter==='BGM'){
+    renderBgmManager();
     return;
   }
 
@@ -1551,6 +1558,7 @@ noticeOverlay.addEventListener('click',event=>{if(event.target===noticeOverlay)c
 document.addEventListener('keydown',event=>{if(event.key==='Escape'){closeEditor();closeBuskingNotice()}});
 start();
 </script>
-<script src="/assets/vom-shell.js?v=17"></script>
+<script src="/assets/vom-bgm-admin.js?v=1"></script>
+<script src="/assets/vom-shell.js?v=18"></script>
 </body>
 </html>
