@@ -834,7 +834,8 @@ function table(){
     return;
   }
 
-  box.innerHTML=members.map(m=>{
+  const tableMembers=[...members].sort((a,b)=>Number(stat(a)==='비활동'||a?.is_active===false)-Number(stat(b)==='비활동'||b?.is_active===false));
+  box.innerHTML=tableMembers.map(m=>{
     const staff=['모임장','운영진'].includes(role(m));
     const active=stat(m)==='활동중';
     const o=ord(m);
