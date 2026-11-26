@@ -45,9 +45,12 @@
     return String(index + 1).padStart(2, '0');
   }
   function newLine() {
-    return { id: makeId('line'), sectionTitle: '', lyrics: '', chorus: false, assignments: [], styles: [] };
+    return { id: makeId('line'), sectionTitle: '', lyrics: '', chorus: false, assignments: [], styles: [], leadDisplay:'names', registerMarker:null, overlaps:[] };
   }
   function normalizeLine(line) {
+    const marker = line?.registerMarker && typeof line.registerMarker === 'object' && ['high','low'].includes(line.registerMarker.register)
+      ? { participantId:String(line.registerMarker.participantId || ''), register:line.registerMarker.register }
+      : null;
     return {
       id: String(line?.id || makeId('line')),
       sectionTitle: String(line?.sectionTitle || ''),
@@ -60,6 +63,17 @@
         participantIds: Array.isArray(item.participantIds) ? item.participantIds.map(String) : [],
       })) : [],
       styles: Array.isArray(line?.styles) ? line.styles.map(item => ({ ...item, id: String(item.id || makeId('style')) })) : [],
+      leadDisplay: ['hidden','high-low'].includes(line?.leadDisplay) ? line.leadDisplay : 'names',
+      registerMarker: marker,
+      overlaps: Array.isArray(line?.overlaps) ? line.overlaps.map(item => ({
+        id:String(item.id || makeId('overlap')),
+        text:String(item.text || ''),
+        participantIds:Array.isArray(item.participantIds) ? item.participantIds.map(String) : [],
+        placement:item.placement === 'after' ? 'after' : 'above',
+        anchorText:String(item.anchorText || ''),
+        foregroundColor:safeColor(item.foregroundColor,'#c83f58'),
+        backgroundColor:/^#[0-9a-f]{6}$/i.test(String(item.backgroundColor || '')) ? item.backgroundColor : '',
+      })) : [],
     };
   }
   function normalizeProject(row) {
@@ -69,7 +83,7 @@
       round_number: Number(row?.round_number) || 1,
       song_title: String(row?.song_title || ''),
       data: {
-        version: 1,
+        version: 2,
         participants: Array.isArray(data.participants) ? data.participants.slice(0,4).map(person => ({
           id: String(person.id || makeId('singer')),
           name: String(person.name || ''),
@@ -151,6 +165,17 @@
   }
   function formatText(line) {
     const text = String(line.lyrics || '');
+    const inlineOverlaps = [];
+    line.overlaps.forEach(item => {
+      if (item.placement !== 'after' || !item.text || !item.anchorText) return;
+      const anchorStart = text.indexOf(item.anchorText);
+      if (anchorStart >= 0) inlineOverlaps.push({ start:anchorStart,offset:anchorStart + item.anchorText.length,item });
+    });
+    const overlayHtml = item => {
+      const singers = (item.participantIds || []).map(getParticipant).filter(Boolean).map(person => person.name).filter(Boolean);
+      const style = `color:${safeColor(item.foregroundColor,'#c83f58')};${item.backgroundColor?`background:${safeColor(item.backgroundColor)};`:''}print-color-adjust:exact;-webkit-print-color-adjust:exact`;
+      return `<span class="os-overlap-inline" data-overlap-render="true" contenteditable="false" style="${style}" title="겹침 구절${singers.length?` · ${esc(singers.join('·'))}`:''}">${esc(item.text)}${singers.length?`<small>${esc(singers.join('·'))}</small>`:''}</span>`;
+    };
     if (!text.length) return '';
     const ranges = [];
     line.assignments.forEach(item => {
@@ -161,8 +186,9 @@
       const range = styleRange(item, text);
       if (range) ranges.push(range);
     });
-    const boundaries = [...new Set([0, text.length, ...ranges.flat()])].sort((a,b) => a-b);
+    const boundaries = [...new Set([0, text.length, ...ranges.flat(), ...inlineOverlaps.flatMap(item=>[item.start,item.offset])])].sort((a,b) => a-b);
     const chunks = [];
+    inlineOverlaps.filter(item=>item.offset===0).forEach(item=>chunks.push(overlayHtml(item.item)));
     for (let index = 0; index < boundaries.length - 1; index += 1) {
       const start = boundaries[index], end = boundaries[index + 1];
       if (end <= start) continue;
@@ -179,7 +205,9 @@
       let color = gendersAreSame(leads) ? safeColor(leads[0].textColor) : '#202638';
       const adlibColors = additions.map(person => safeColor(person.additionalColor, PALETTE.neutral.background));
       let background = '';
-      if (adlibColors.length === 1) background = adlibColors[0];
+      const additionGenders = new Set(additions.map(person=>person.gender).filter(Boolean));
+      if (additionGenders.has('male') && additionGenders.has('female')) background = '#e7dcf8';
+      else if (adlibColors.length === 1) background = adlibColors[0];
       else if (adlibColors.length > 1) {
         const stop = 100 / adlibColors.length;
         background = `linear-gradient(90deg,${adlibColors.map((value,i)=>`${value} ${i*stop}% ${(i+1)*stop}%`).join(',')})`;
@@ -197,7 +225,10 @@
       if (background) css.push(`background:${background};print-color-adjust:exact;-webkit-print-color-adjust:exact`);
       if (bold) css.push('font-weight:800');
       const value = esc(text.slice(start, end));
-      chunks.push(css.length ? `<span style="${css.join(';')}">${value}</span>` : value);
+      let chunk = css.length ? `<span style="${css.join(';')}">${value}</span>` : value;
+      const anchoredOverlaps = inlineOverlaps.filter(item=>item.offset===end);
+      if (anchoredOverlaps.length) chunk = `<span class="os-overlap-anchor-wrap">${chunk}${anchoredOverlaps.map(item=>overlayHtml(item.item)).join('')}</span>`;
+      chunks.push(chunk);
     }
     return chunks.join('');
   }
@@ -207,6 +238,19 @@
       const background = safeColor(person.additionalColor, PALETTE.neutral.background);
       return `<span class="os-name ${extra?'os-name-extra':'os-name-lead'}" style="color:${color};${extra?`background:${background};print-color-adjust:exact;-webkit-print-color-adjust:exact`:''}">${esc(person.name)}</span>`;
     }).join('');
+  }
+  function renderRegisterMarker(marker) {
+    if (!marker) return '';
+    const person = getParticipant(marker.participantId);
+    if (!person) return '';
+    const label = marker.register === 'high' ? 'HIGH' : 'LOW';
+    return `<span class="os-register-marker" title="${esc(person.name)} ${label}"><b>${esc(person.name)}</b><small>${label}</small></span>`;
+  }
+  function renderOverlapAbove(item) {
+    if (item.placement !== 'above' || !item.text) return '';
+    const singers = (item.participantIds || []).map(getParticipant).filter(Boolean).map(person=>person.name).filter(Boolean);
+    const style = `color:${safeColor(item.foregroundColor,'#c83f58')};${item.backgroundColor?`background:${safeColor(item.backgroundColor)};`:''}print-color-adjust:exact;-webkit-print-color-adjust:exact`;
+    return `<span class="os-overlap-above-item" style="${style}" title="겹침 구절${singers.length?` · ${esc(singers.join('·'))}`:''}">${esc(item.text)}${singers.length?`<small>${esc(singers.join('·'))}</small>`:''}</span>`;
   }
   function assignmentNotes(line) {
     const text = String(line.lyrics || '');
@@ -224,6 +268,7 @@
     const lead = linePeople(line, 'original').concat(linePeople(line, 'together'));
     const uniqueLead = lead.filter((person, position) => lead.findIndex(other => other.id === person.id) === position);
     const additional = linePeople(line, 'additional');
+    const visibleLead = line.leadDisplay === 'hidden' ? [] : uniqueLead;
     const notes = assignmentNotes(line);
     const number = String(index + 1).padStart(2,'0');
     const section = esc(line.sectionTitle);
@@ -231,18 +276,49 @@
       <div class="os-line-main">
         <label class="os-line-number-wrap"><span class="os-number-label">번호</span><input class="os-line-number" data-number-for="${esc(line.id)}" type="text" inputmode="numeric" pattern="[0-9]{1,3}" value="${number}" aria-label="${number}번 줄 번호"></label>
         <div class="os-line-body">
-          <div class="os-lead-names" aria-label="원음 담당">${renderNames(uniqueLead)}</div>
+          <div class="os-lead-names${line.leadDisplay==='high-low'?' is-high-low':''}" aria-label="원음 담당">${renderNames(visibleLead)}</div>
+          <div class="os-lyric-stack"><div class="os-overlap-above" aria-label="겹침 구절">${line.overlaps.map(renderOverlapAbove).join('')}</div>
           <div class="os-lyric-editor" data-lyric-id="${esc(line.id)}" contenteditable="true" role="textbox" aria-multiline="false" aria-label="${number}번 가사" data-placeholder="가사를 입력하거나 편집하세요">${formatText(line)}</div>
+          </div>
           <div class="os-line-notes">${esc(notes)}</div>
         </div>
-        <div class="os-additional-names" aria-label="추가 보컬">${renderNames(additional,true)}</div>
+        <div class="os-additional-names" aria-label="추가 보컬 및 고저 표기">${renderRegisterMarker(line.registerMarker)}${renderNames(additional,true)}</div>
       </div>
+      ${renderLineDisplaySettings(line)}
       <div class="os-line-meta">
         <label class="os-section-field">구간명<input data-section-for="${esc(line.id)}" type="text" maxlength="80" value="${section}" placeholder="예: 후렴, 아웃트로"></label>
         <label class="os-chorus-toggle"><input data-chorus-for="${esc(line.id)}" type="checkbox"${line.chorus?' checked':''}> 후렴 노랑</label>
         <div class="os-line-actions"><button class="os-line-action" type="button" data-action="up" data-line-id="${esc(line.id)}" title="위로 이동" aria-label="${number}번 줄 위로 이동">↑</button><button class="os-line-action" type="button" data-action="down" data-line-id="${esc(line.id)}" title="아래로 이동" aria-label="${number}번 줄 아래로 이동">↓</button><button class="os-line-action is-danger" type="button" data-action="remove-line" data-line-id="${esc(line.id)}" title="줄 삭제" aria-label="${number}번 줄 삭제">삭제</button></div>
       </div>
     </article>`;
+  }
+  function renderLineDisplaySettings(line) {
+    const people = currentProject?.data.participants || [];
+    const marker = line.registerMarker || { participantId:'', register:'low' };
+    const summaryParts = [];
+    if (line.leadDisplay === 'hidden') summaryParts.push('왼쪽 이름 숨김');
+    if (line.leadDisplay === 'high-low') summaryParts.push('고음/저음 순서');
+    if (line.registerMarker) summaryParts.push(`${getParticipant(line.registerMarker.participantId)?.name || '참여자'} ${line.registerMarker.register==='high'?'HIGH':'LOW'}`);
+    if (line.overlaps.length) summaryParts.push(`겹침 ${line.overlaps.length}개`);
+    return `<details class="os-line-display-settings"><summary>표기 설정${summaryParts.length?` · ${esc(summaryParts.join(' · '))}`:''}</summary>
+      <div class="os-line-display-grid">
+        <label class="os-section-field">왼쪽 이름<select data-lead-display-for="${esc(line.id)}"><option value="names"${line.leadDisplay==='names'?' selected':''}>담당 이름 표시</option><option value="hidden"${line.leadDisplay==='hidden'?' selected':''}>담당 이름 숨김</option><option value="high-low"${line.leadDisplay==='high-low'?' selected':''}>고음/저음 순서</option></select></label>
+        <label class="os-section-field">오른쪽 고저 이름<select data-register-person-for="${esc(line.id)}"><option value="">표시 안 함</option>${people.map(person=>`<option value="${esc(person.id)}"${marker.participantId===person.id?' selected':''}>${esc(person.name || '이름 미입력')}</option>`).join('')}</select></label>
+        <label class="os-section-field">고저<select data-register-type-for="${esc(line.id)}"><option value="low"${marker.register==='low'?' selected':''}>LOW</option><option value="high"${marker.register==='high'?' selected':''}>HIGH</option></select></label>
+      </div>
+      <div class="os-overlap-settings"><div class="os-overlap-settings-top"><strong>겹침 구절</strong><button class="os-button os-small-button" type="button" data-action="add-overlap" data-line-id="${esc(line.id)}">＋ 구절</button></div>
+        ${line.overlaps.length ? line.overlaps.map(item=>`<div class="os-overlap-editor" data-overlap-row="${esc(item.id)}">
+          <label class="os-section-field">문구<input data-overlap-text="${esc(item.id)}" type="text" maxlength="120" value="${esc(item.text)}" placeholder="겹쳐 부르는 문구"></label>
+          <label class="os-section-field">위치<select data-overlap-placement="${esc(item.id)}"><option value="above"${item.placement==='above'?' selected':''}>가사 위에 겹치기</option><option value="after"${item.placement==='after'?' selected':''}>기준 구절 바로 뒤</option></select></label>
+          <label class="os-section-field">기준 구절<input data-overlap-anchor="${esc(item.id)}" type="text" maxlength="120" value="${esc(item.anchorText)}" placeholder="예: 네가 있기에"></label>
+          <div class="os-overlap-people"><span class="os-field-label">담당</span>${people.map(person=>`<label><input data-overlap-person="${esc(item.id)}" type="checkbox" value="${esc(person.id)}"${item.participantIds.includes(person.id)?' checked':''}>${esc(person.name || '이름 미입력')}</label>`).join('')}</div>
+          <label class="os-color-choice">글자색<input data-overlap-foreground="${esc(item.id)}" type="color" value="${safeColor(item.foregroundColor,'#c83f58')}"></label>
+          <label class="os-overlap-bg-toggle"><input data-overlap-bg-enabled="${esc(item.id)}" type="checkbox"${item.backgroundColor?' checked':''}> 배경 사용</label>
+          <input data-overlap-background="${esc(item.id)}" type="color" value="${safeColor(item.backgroundColor,'#fff1a8')}"${item.backgroundColor?'':' disabled'} aria-label="겹침 구절 배경색">
+          <button class="os-line-action is-danger" type="button" data-action="remove-overlap" data-line-id="${esc(line.id)}" data-overlap-id="${esc(item.id)}">삭제</button>
+        </div>`).join('') : '<p class="os-help">필요한 줄에서 겹침 구절을 추가하세요. 원 가사와 별도로 저장됩니다.</p>'}
+      </div>
+    </details>`;
   }
   function renderLines() {
     if (!currentProject?.data.lines.length) {
@@ -508,7 +584,14 @@
     const range = document.createRange();
     range.selectNodeContents(editor);
     range.setEnd(node,offset);
-    return range.toString().length;
+    const fragment = range.cloneContents();
+    fragment.querySelectorAll?.('[data-overlap-render]').forEach(item=>item.remove());
+    return String(fragment.textContent || '').length;
+  }
+  function editableLyricText(editor) {
+    const copy = editor.cloneNode(true);
+    copy.querySelectorAll('[data-overlap-render]').forEach(item=>item.remove());
+    return String(copy.textContent || '');
   }
   function selectionChange() {
     const selection = window.getSelection();
@@ -575,8 +658,11 @@
     if (!line) return;
     if (!inlineEditBefore) inlineEditBefore = clone(currentProject);
     const oldText = String(line.lyrics || '');
-    const nextText = String(editor.textContent || '').replace(/[\r\n]+/g,' ');
-    if (nextText !== editor.textContent) editor.textContent = nextText;
+    const nextText = editableLyricText(editor).replace(/[\r\n]+/g,' ');
+    if (nextText !== editableLyricText(editor)) {
+      editor.querySelectorAll('[data-overlap-render]').forEach(item=>item.remove());
+      editor.textContent = nextText;
+    }
     if (oldText !== nextText) {
       line.assignments = remapEntries(line.assignments,oldText,nextText);
       line.styles = remapEntries(line.styles,oldText,nextText);
@@ -621,6 +707,8 @@
         const participantIds = item.participantIds.filter(value => value !== id);
         return participantIds.length ? [{ ...item,participantIds }] : [];
       });
+      if (line.registerMarker?.participantId === id) line.registerMarker = null;
+      line.overlaps.forEach(item=>{ item.participantIds = item.participantIds.filter(value=>value!==id); });
     });
     selectedPerformerIds = selectedPerformerIds.filter(value => value !== id);
     finishMutation(before);
@@ -775,12 +863,66 @@
     finishMutation(before);
     ui.lyricsList.querySelector(`[data-lyric-id="${CSS.escape(line.id)}"]`)?.focus();
   }
+  function addOverlap(lineId) {
+    const line = currentProject?.data.lines.find(item=>item.id===lineId);
+    if (!line) return;
+    const before = beginMutation();
+    const item = { id:makeId('overlap'),text:'',participantIds:[],placement:'above',anchorText:'',foregroundColor:'#c83f58',backgroundColor:'' };
+    line.overlaps.push(item);
+    finishMutation(before);
+    const details = ui.lyricsList.querySelector(`[data-line-card="${CSS.escape(lineId)}"] .os-line-display-settings`);
+    if (details) details.open = true;
+    ui.lyricsList.querySelector(`[data-overlap-text="${CSS.escape(item.id)}"]`)?.focus();
+  }
+  function editLineDisplaySettings(event) {
+    const input = event.target.closest('[data-lead-display-for],[data-register-person-for],[data-register-type-for],[data-overlap-text],[data-overlap-placement],[data-overlap-anchor],[data-overlap-person],[data-overlap-foreground],[data-overlap-bg-enabled],[data-overlap-background]');
+    if (!input || !currentProject) return;
+    const lineCard = input.closest('[data-line-card]');
+    const line = currentProject.data.lines.find(item=>item.id===lineCard?.dataset.lineCard);
+    if (!line) return;
+    const wasOpen = lineCard.querySelector('.os-line-display-settings')?.open;
+    const before = beginMutation();
+    if (input.hasAttribute('data-lead-display-for')) {
+      line.leadDisplay = ['hidden','high-low'].includes(input.value) ? input.value : 'names';
+    } else if (input.hasAttribute('data-register-person-for')) {
+      line.registerMarker = input.value ? { participantId:input.value,register:line.registerMarker?.register || 'low' } : null;
+    } else if (input.hasAttribute('data-register-type-for')) {
+      if (line.registerMarker) line.registerMarker.register = input.value === 'high' ? 'high' : 'low';
+    } else {
+      const overlapId = input.dataset.overlapText || input.dataset.overlapPlacement || input.dataset.overlapAnchor || input.dataset.overlapPerson || input.dataset.overlapForeground || input.dataset.overlapBgEnabled || input.dataset.overlapBackground;
+      const item = line.overlaps.find(value=>value.id===overlapId);
+      if (!item) return;
+      if (input.hasAttribute('data-overlap-text')) item.text = input.value;
+      else if (input.hasAttribute('data-overlap-placement')) item.placement = input.value === 'after' ? 'after' : 'above';
+      else if (input.hasAttribute('data-overlap-anchor')) item.anchorText = input.value;
+      else if (input.hasAttribute('data-overlap-person')) {
+        const id = input.value;
+        item.participantIds = input.checked ? [...new Set([...item.participantIds,id])] : item.participantIds.filter(value=>value!==id);
+      } else if (input.hasAttribute('data-overlap-foreground')) item.foregroundColor = safeColor(input.value,'#c83f58');
+      else if (input.hasAttribute('data-overlap-bg-enabled')) item.backgroundColor = input.checked ? safeColor(ui.backgroundColor.value,'#fff1a8') : '';
+      else if (input.hasAttribute('data-overlap-background')) item.backgroundColor = safeColor(input.value,'#fff1a8');
+    }
+    finishMutation(before);
+    if (wasOpen) {
+      const details = ui.lyricsList.querySelector(`[data-line-card="${CSS.escape(line.id)}"] .os-line-display-settings`);
+      if (details) details.open = true;
+    }
+  }
   function lineAction(event) {
     const button = event.target.closest('[data-action]');
     if (!button || !currentProject) return;
     const action = button.dataset.action;
     const lineId = button.dataset.lineId;
     if (action === 'remove-person') { removeParticipant(button.dataset.personId); return; }
+    if (action === 'add-overlap') { addOverlap(lineId); return; }
+    if (action === 'remove-overlap') {
+      const line = currentProject.data.lines.find(item=>item.id===lineId);
+      if (!line) return;
+      const before = beginMutation();
+      line.overlaps = line.overlaps.filter(item=>item.id!==button.dataset.overlapId);
+      finishMutation(before);
+      return;
+    }
     const index = currentProject.data.lines.findIndex(line => line.id === lineId);
     if (index < 0) return;
     if (action === 'up') moveLine(lineId,index);
@@ -808,6 +950,20 @@
     event.preventDefault();
     const value = (event.clipboardData || window.clipboardData).getData('text').replace(/[\r\n]+/g,' ');
     document.execCommand('insertText',false,value);
+  }
+  function copyLyricTextWithoutOverlays(event) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || !selection.rangeCount) return;
+    const anchor = selection.anchorNode?.nodeType === Node.ELEMENT_NODE ? selection.anchorNode : selection.anchorNode?.parentElement;
+    const focus = selection.focusNode?.nodeType === Node.ELEMENT_NODE ? selection.focusNode : selection.focusNode?.parentElement;
+    const editor = anchor?.closest?.('.os-lyric-editor');
+    if (!editor || !editor.contains(focus)) return;
+    const fragment = selection.getRangeAt(0).cloneContents();
+    fragment.querySelectorAll?.('[data-overlap-render]').forEach(item=>item.remove());
+    const text = String(fragment.textContent || '');
+    if (!text) return;
+    event.preventDefault();
+    event.clipboardData?.setData('text/plain',text);
   }
   async function checkAccess() {
     const {data,error} = await db.auth.getSession();
@@ -883,11 +1039,13 @@
   });
   ui.lyricsList.addEventListener('keydown',event=>{ if(event.target.closest('.os-lyric-editor'))preventLineBreak(event); });
   ui.lyricsList.addEventListener('paste',plainTextPaste);
+  ui.lyricsList.addEventListener('copy',copyLyricTextWithoutOverlays);
   ui.lyricsList.addEventListener('change',event=>{
     const numberInput=event.target.closest('[data-number-for]');
     if(numberInput)moveLine(numberInput.dataset.numberFor,numberInput.value);
     else if(event.target.matches('[data-section-for]'))editSection(event);
     else if(event.target.matches('[data-chorus-for]'))changeChorus(event);
+    else if(event.target.closest('[data-lead-display-for],[data-register-person-for],[data-register-type-for],[data-overlap-text],[data-overlap-placement],[data-overlap-anchor],[data-overlap-person],[data-overlap-foreground],[data-overlap-bg-enabled],[data-overlap-background]'))editLineDisplaySettings(event);
   });
   ui.lyricsList.addEventListener('click',lineAction);
   document.addEventListener('selectionchange',selectionChange);
